@@ -1,0 +1,44 @@
+# Xcode
+*.xcodeproj
+*.xcworkspace
+!*.xcworkspace/contents.xcworkspacedata
+*.xcuserstate
+*.xcuserdatad
+xcuserdata/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Tuist
+.tuist
+Derived/
+graph.png
+
+# SPM
+.swiftpm
+.build
+Package.resolved
+
+# Swift
+*.swiftmodule
+*.swiftdoc
+*.playground
+
+# Config files
+Config/*.xcconfig
+!Config/Example.xcconfig
+
+# System files
+.DS_Store
+*.swp
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.log

@@ -1,0 +1,20 @@
+// Configuration Template
+// 이 파일을 복사해서 사용하세요:
+// 1. Debug.xcconfig로 복사
+// 2. Staging.xcconfig로 복사
+// 3. Release.xcconfig로 복사
+// 4. 실제 값으로 변경
+
+// Environment Type
+APP_ENV = <DEBUG|STAGING|RELEASE>
+
+// API Configuration
+API_BASE_URL = <YOUR_API_URL>
+
+// Feature Flags
+ENABLE_LOGGING = <YES|NO>
+
+// 추가 민감 정보가 있다면 여기에 추가:
+// API_KEY = <YOUR_API_KEY>
+// GOOGLE_MAP_KEY = <YOUR_KEY>
+// AWS_ACCESS_KEY = <YOUR_AWS_KEY>
