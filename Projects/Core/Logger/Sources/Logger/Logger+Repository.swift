@@ -8,6 +8,7 @@ extension Logger {
         log(
             message,
             level: .debug,
+            category: .repository,
             file: file,
             function: function,
             line: line
