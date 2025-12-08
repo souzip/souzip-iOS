@@ -10,7 +10,14 @@ public enum DefaultSettings {
         "CODE_SIGN_STYLE": "Automatic",
         "MARKETING_VERSION": .string(Environment.appVersion),
         "CURRENT_PROJECT_VERSION": .string(Environment.appBuildVersion),
-        "IPHONEOS_DEPLOYMENT_TARGET": "16.0"
+        "IPHONEOS_DEPLOYMENT_TARGET": "16.0",
+        
+        // Xcode 권장 설정 (경고 제거)
+        "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": true,
+        "ENABLE_USER_SCRIPT_SANDBOXING": false,  // SwiftLint, SwiftFormat 실행을 위해 false
+        "DEAD_CODE_STRIPPING": true,
+        "CLANG_ENABLE_MODULE_VERIFIER": true,    // Module Verifier 활성화
+        "ENABLE_STRINGSDICT_CODE_GENERATION": true  // String Catalog Symbol 생성 활성화
     ]
     
     // MARK: - Debug Settings
