@@ -1,6 +1,6 @@
-extension Logger {
-    public func logAPIRequest<T: EndpointLoggable>(
-        _ endpoint: T,
+public extension Logger {
+    func logAPIRequest(
+        _ endpoint: some EndpointLoggable,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -15,8 +15,8 @@ extension Logger {
         )
     }
 
-    public func logAPISuccess<T: EndpointLoggable>(
-        _ endpoint: T,
+    func logAPISuccess(
+        _ endpoint: some EndpointLoggable,
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -31,8 +31,8 @@ extension Logger {
         )
     }
 
-    public func logAPIFailure<T: EndpointLoggable>(
-        _ endpoint: T,
+    func logAPIFailure(
+        _ endpoint: some EndpointLoggable,
         error: Error,
         file: String = #file,
         function: String = #function,

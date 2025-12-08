@@ -1,5 +1,5 @@
-extension Logger {
-    public func logLifecycle(
+public extension Logger {
+    func logLifecycle(
         file: String = #file,
         function: String = #function,
         line: Int = #line
@@ -14,7 +14,7 @@ extension Logger {
         )
     }
 
-    public func logAction(
+    func logAction(
         _ action: CustomStringConvertible,
         file: String = #file,
         function: String = #function,
