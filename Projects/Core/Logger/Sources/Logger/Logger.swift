@@ -6,7 +6,7 @@ public final class Logger {
     private let osLogger: OSLog
     private let configuration: LoggerConfiguration
 
-    public init(configuration: LoggerConfiguration) {
+    init(configuration: LoggerConfiguration) {
         self.configuration = configuration
         self.osLogger = OSLog(
             subsystem: configuration.subsystem,

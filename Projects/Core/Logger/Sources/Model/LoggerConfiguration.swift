@@ -1,6 +1,6 @@
 import Foundation
 
-public struct LoggerConfiguration {
+struct LoggerConfiguration {
     let subsystem: String
     let category: String
 
