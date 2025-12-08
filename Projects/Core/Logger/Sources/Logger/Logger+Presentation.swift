@@ -4,7 +4,14 @@ extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        log("", level: .info, category: .ui, file: file, function: function, line: line)
+        log(
+            "Life Cycle",
+            level: .info,
+            category: .ui,
+            file: file,
+            function: function,
+            line: line
+        )
     }
 
     public func logAction(
@@ -13,6 +20,13 @@ extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        log("Action: \(action)", level: .debug, category: .ui, file: file, function: function, line: line)
+        log(
+            "Action: \(action)",
+            level: .debug,
+            category: .ui,
+            file: file,
+            function: function,
+            line: line
+        )
     }
 }

@@ -5,6 +5,13 @@ extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        log(message, level: .debug, category: .database, file: file, function: function, line: line)
+        log(
+            message,
+            level: .debug,
+            category: .database,
+            file: file,
+            function: function,
+            line: line
+        )
     }
 }
