@@ -8,6 +8,7 @@ disabled_rules:
   - function_parameter_count
   - generic_type_name
   - identifier_name
+  - implicit_return
   - inclusive_language
   - large_tuple
   - line_length
@@ -24,7 +25,6 @@ opt_in_rules:
   - empty_count
   - empty_string
   - force_unwrapping
-  - implicit_return
   - implicitly_unwrapped_optional
   - multiline_arguments_brackets
   - multiline_function_chains
@@ -33,8 +33,11 @@ opt_in_rules:
   - multiline_parameters_brackets
   - redundant_self_in_closure
   - redundant_type_annotation
-  - sorted_imports
   - toggle_bool
   - trailing_closure
   - vertical_whitespace_closing_braces
   - vertical_whitespace_opening_braces
+
+trailing_whitespace:
+  ignores_empty_lines: false
+  ignores_comments: false
