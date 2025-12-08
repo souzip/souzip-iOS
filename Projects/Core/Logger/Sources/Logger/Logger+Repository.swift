@@ -1,5 +1,5 @@
-extension Logger {
-    public func logRepository(
+public extension Logger {
+    func logRepository(
         _ message: String,
         file: String = #file,
         function: String = #function,

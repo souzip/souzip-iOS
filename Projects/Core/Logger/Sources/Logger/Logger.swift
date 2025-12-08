@@ -8,7 +8,7 @@ public final class Logger {
 
     init(configuration: LoggerConfiguration) {
         self.configuration = configuration
-        self.osLogger = OSLog(
+        osLogger = OSLog(
             subsystem: configuration.subsystem,
             category: configuration.category
         )
@@ -23,15 +23,15 @@ public final class Logger {
         line: Int = #line
     ) {
         #if DEBUG
-        let fileName = (file as NSString).lastPathComponent
-        let logMessage = "[\(category.rawValue)] [\(fileName):\(line)] \(function) - \(message)"
+            let fileName = (file as NSString).lastPathComponent
+            let logMessage = "[\(category.rawValue)] [\(fileName):\(line)] \(function) - \(message)"
 
-        os_log(
-            level.osLogType,
-            log: osLogger,
-            "%{public}@",
-            logMessage
-        )
+            os_log(
+                level.osLogType,
+                log: osLogger,
+                "%{public}@",
+                logMessage
+            )
         #endif
     }
 }

@@ -40,5 +40,11 @@ Config/*.xcconfig
 .vscode/
 .idea/
 
+# SwiftFormat
+.swiftformat.cache
+
+# Mise
+.mise.lock
+
 # Misc
 *.log

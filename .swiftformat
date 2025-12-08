@@ -1,0 +1,37 @@
+# ===== Swift 버전 =====
+--swiftversion 5.9
+
+# ===== 기본 포맷팅 =====
+--indent 4                          # 들여쓰기 4칸
+--indentcase false                  # case 문 들여쓰기 안함
+--trimwhitespace always             # 후행 공백 항상 제거
+--allman false                      # Allman 스타일 중괄호 사용 안함
+--wraparguments before-first        # 인자 줄바꿈 스타일
+--wrapparameters before-first       # 파라미터 줄바꿈 스타일
+--wrapcollections before-first      # 컬렉션 줄바꿈 스타일
+--closingparen balanced             # 닫는 괄호 위치
+
+# ===== Import 정렬 =====
+--importgrouping testable-bottom    # import 그룹화: testable을 맨 아래로
+
+# ===== 공백 제거 =====
+--stripunusedargs closure-only      # 사용하지 않는 클로저 인자 제거
+
+# ===== 세미콜론 =====
+--semicolons never                  # 세미콜론 사용 안함 (inline 제외)
+
+# ===== 비활성화할 규칙 =====
+--disable \
+    blankLinesAtEndOfScope,\
+    blankLinesAtStartOfScope
+
+# ===== 파일 제외 =====
+--exclude \
+    .build,\
+    Derived,\
+    Tuist/.build,\
+    **/.build,\
+    **/DerivedData,\
+    **/*.generated.swift,\
+    **/Derived/**,\
+    **/.tuist-generated
