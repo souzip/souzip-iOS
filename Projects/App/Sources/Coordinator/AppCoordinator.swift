@@ -52,6 +52,7 @@ private extension AppCoordinator {
             nav: nav,
             factory: factory
         )
+        addChild(coordinator)
         coordinator.navigate(.initial, animated: animated)
     }
 
@@ -60,6 +61,7 @@ private extension AppCoordinator {
             nav: nav,
             factory: factory
         )
+        addChild(coordinator)
         coordinator.navigate(.initial, animated: animated)
     }
 }
