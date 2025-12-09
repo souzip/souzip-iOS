@@ -41,9 +41,25 @@ final class AppCoordinator: Coordinator {
 }
 
 private extension AppCoordinator {
-    func showSplash(_ animated: Bool) {}
+    func showSplash(_ animated: Bool) {
+        let vc = SplashViewController()
+        vc.onFinish = { _ in }
+        nav.pushViewController(vc, animated: animated)
+    }
 
-    func showAuth(_ animated: Bool) {}
+    func showAuth(_ animated: Bool) {
+        let coordinator = AuthCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        coordinator.navigate(.initial, animated: animated)
+    }
 
-    func showMain(_ animated: Bool) {}
+    func showMain(_ animated: Bool) {
+        let coordinator = TabBarCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        coordinator.navigate(.initial, animated: animated)
+    }
 }
