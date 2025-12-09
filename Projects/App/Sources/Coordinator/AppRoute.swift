@@ -3,7 +3,7 @@ enum AppRoute: CustomStringConvertible {
     case auth
     case main
 
-    static var initial = Self.splash
+    static let initial = Self.splash
 
     var description: String {
         switch self {
