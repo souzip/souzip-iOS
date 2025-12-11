@@ -1,12 +1,6 @@
 import UIKit
 
-public final class TabBarCoordinator: Coordinator {
-    public typealias Route = TabBarRoute
-
-    public let nav: UINavigationController
-    public weak var parent: (any Coordinator)?
-    public var children: [any Coordinator] = []
-
+public final class TabBarCoordinator: BaseCoordinator<TabItem> {
     private let factory: PresentationFactory
 
     private let tabBar = UITabBarController()
@@ -19,23 +13,22 @@ public final class TabBarCoordinator: Coordinator {
         nav: UINavigationController,
         factory: PresentationFactory
     ) {
-        self.nav = nav
         self.factory = factory
+        super.init(nav: nav)
     }
 
-    public func navigate(_ route: Route, animated: Bool) {
-        switch route {
-        case .initial:
-            setupTabs(animated)
+    override public func start() {
+        setupTabBar()
+        navigate(.tab1)
+    }
 
-        case let .select(tab):
-            tabBar.selectedIndex = tab.rawValue
-        }
+    override public func navigate(_ route: Route) {
+        tabBar.selectedIndex = route.rawValue
     }
 }
 
 private extension TabBarCoordinator {
-    func setupTabs(_ animated: Bool) {
+    func setupTabBar() {
         let tab1VC = UIViewController()
         tab1VC.view.backgroundColor = .red
 
@@ -51,6 +44,6 @@ private extension TabBarCoordinator {
             tab3VC,
         ]
 
-        nav.setViewControllers([tabBar], animated: animated)
+        nav.setViewControllers([tabBar], animated: false)
     }
 }

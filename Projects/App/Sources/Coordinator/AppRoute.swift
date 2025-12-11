@@ -3,8 +3,6 @@ enum AppRoute: CustomStringConvertible {
     case auth
     case main
 
-    static let initial = Self.splash
-
     var description: String {
         switch self {
         case .splash: "Splash 화면 이동"

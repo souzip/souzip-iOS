@@ -1,23 +1,21 @@
 import UIKit
 
-public final class AuthCoordinator: Coordinator {
-    public typealias Route = AuthRoute
-
-    public let nav: UINavigationController
-    public var children: [any Coordinator] = []
-    public weak var parent: (any Coordinator)?
-
+public final class AuthCoordinator: BaseCoordinator<AuthRoute> {
     private let factory: PresentationFactory
 
     public init(
         nav: UINavigationController,
         factory: PresentationFactory
     ) {
-        self.nav = nav
         self.factory = factory
+        super.init(nav: nav)
     }
 
-    public func navigate(_ route: Route, animated: Bool = true) {
+    override public func start() {
+        navigate(.login)
+    }
+
+    override public func navigate(_ route: Route) {
         switch route {
         case .login:
             showLogin()
