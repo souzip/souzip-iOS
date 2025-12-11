@@ -15,7 +15,7 @@ public extension Logger {
     }
 
     func logAction(
-        _ action: CustomStringConvertible,
+        _ action: Any,
         file: String = #file,
         function: String = #function,
         line: Int = #line

@@ -22,7 +22,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             nav: nav,
             factory: presentationFactory
         )
-        coordinator?.navigate(.initial, animated: false)
+        coordinator?.start()
 
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = nav

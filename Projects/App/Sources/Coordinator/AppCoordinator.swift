@@ -2,66 +2,63 @@ import Logger
 import Presentation
 import UIKit
 
-final class AppCoordinator: Coordinator {
-    typealias Route = AppRoute
-
-    let nav: UINavigationController
-    weak var parent: (any Coordinator)?
-    var children: [any Coordinator] = []
-
+final class AppCoordinator: BaseCoordinator<AppRoute> {
     private let factory: PresentationFactory
 
     init(
         nav: UINavigationController,
         factory: PresentationFactory
     ) {
-        Logger.shared.logLifecycle()
-        self.nav = nav
         self.factory = factory
+        super.init(nav: nav)
     }
 
-    deinit {
-        Logger.shared.logLifecycle()
+    override func start() {
+        navigate(.main)
     }
 
-    func navigate(_ route: Route, animated: Bool = true) {
+    override func navigate(_ route: Route) {
         Logger.shared.logAction(route)
 
         switch route {
         case .splash:
-            showSplash(animated)
+            showSplash()
 
         case .auth:
-            showAuth(animated)
+            showAuth()
 
         case .main:
-            showMain(animated)
+            showMain()
         }
     }
 }
 
 private extension AppCoordinator {
-    func showSplash(_ animated: Bool) {
+    func showSplash() {
         let vc = SplashViewController()
         vc.onFinish = { _ in }
-        nav.pushViewController(vc, animated: animated)
+        nav.setViewControllers([vc], animated: false)
     }
 
-    func showAuth(_ animated: Bool) {
+    func showAuth() {
+        children.removeAll()
+
         let coordinator = AuthCoordinator(
             nav: nav,
             factory: factory
         )
         addChild(coordinator)
-        coordinator.navigate(.initial, animated: animated)
+        coordinator.start()
     }
 
-    func showMain(_ animated: Bool) {
+    func showMain() {
+        children.removeAll()
+
         let coordinator = TabBarCoordinator(
             nav: nav,
             factory: factory
         )
         addChild(coordinator)
-        coordinator.navigate(.initial, animated: animated)
+        coordinator.start()
     }
 }
