@@ -1,3 +1,4 @@
+import Logger
 import RxRelay
 import RxSwift
 import UIKit
@@ -27,8 +28,33 @@ class BaseViewController<
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        Logger.shared.logLifecycle()
         setEventBinding()
         bind()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Logger.shared.logLifecycle()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        Logger.shared.logLifecycle()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        Logger.shared.logLifecycle()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        Logger.shared.logLifecycle()
+    }
+
+    deinit {
+        Logger.shared.logLifecycle()
     }
 
     private func setEventBinding() {

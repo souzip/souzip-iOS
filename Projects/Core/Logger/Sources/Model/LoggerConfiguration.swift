@@ -1,6 +1,10 @@
 import Foundation
 
 struct LoggerConfiguration {
+    public static let debug = LoggerConfiguration(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.unknown.app"
+    )
+
     let subsystem: String
     let category: String
 
@@ -11,8 +15,4 @@ struct LoggerConfiguration {
         self.subsystem = subsystem
         self.category = category
     }
-
-    public static let `default` = LoggerConfiguration(
-        subsystem: Bundle.main.bundleIdentifier ?? "com.unknown.app"
-    )
 }

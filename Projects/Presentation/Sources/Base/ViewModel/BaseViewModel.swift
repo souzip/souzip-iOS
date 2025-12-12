@@ -1,3 +1,4 @@
+import Logger
 import RxRelay
 import RxSwift
 
@@ -21,6 +22,7 @@ class BaseViewModel<State, Action, Event, Route>: BaseViewModelProtocol {
         // Action 자동 바인딩
         action
             .subscribe { [weak self] action in
+                Logger.shared.logAction(action)
                 self?.handleAction(action)
             }
             .disposed(by: disposeBag)
@@ -46,10 +48,12 @@ class BaseViewModel<State, Action, Event, Route>: BaseViewModelProtocol {
     }
 
     func emit(_ event: Event) {
+        Logger.shared.logEvent(event)
         self.event.accept(event)
     }
 
     func navigate(to route: Route) {
+        Logger.shared.logRoute(route)
         self.route.accept(route)
     }
 }

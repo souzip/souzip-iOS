@@ -17,5 +17,8 @@ open class BaseCoordinator<Route>: Coordinator {
     }
 
     open func start() {}
-    open func navigate(_ route: Route) {}
+
+    open func navigate(_ route: Route) {
+        Logger.shared.logRoute(route)
+    }
 }
