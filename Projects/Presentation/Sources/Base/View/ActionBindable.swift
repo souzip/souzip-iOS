@@ -1,8 +1,6 @@
 import RxCocoa
-import RxRelay
 import RxSwift
 
-/// Action을 발행할 수 있는 타입
 protocol ActionBindable: AnyObject {
     associatedtype Action
 

@@ -1,6 +1,5 @@
 import Logger
 import RxCocoa
-import RxRelay
 import RxSwift
 import UIKit
 
