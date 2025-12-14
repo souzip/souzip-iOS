@@ -9,13 +9,14 @@ open class BaseCoordinator<Route>: Coordinator {
 
     public init(nav: UINavigationController) {
         self.nav = nav
-        Logger.shared.logLifecycle()
+        Logger.shared.logLifecycle(caller: self)
     }
 
     deinit {
-        Logger.shared.logLifecycle()
+        Logger.shared.logLifecycle(caller: self)
     }
 
     open func start() {}
+
     open func navigate(_ route: Route) {}
 }

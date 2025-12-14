@@ -14,12 +14,10 @@ final class AppCoordinator: BaseCoordinator<AppRoute> {
     }
 
     override func start() {
-        navigate(.main)
+        navigate(.splash)
     }
 
     override func navigate(_ route: Route) {
-        Logger.shared.logAction(route)
-
         switch route {
         case .splash:
             showSplash()

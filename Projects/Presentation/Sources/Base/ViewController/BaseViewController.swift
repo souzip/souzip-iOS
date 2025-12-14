@@ -1,11 +1,14 @@
+import Logger
 import RxRelay
 import RxSwift
 import UIKit
 
 class BaseViewController<
-    ViewModel: BaseViewModelProtocol,
-    ContentView: UIView
->: UIViewController {
+    ViewModel: BaseViewModelType,
+    ContentView: UIView & ActionBindable
+>: UIViewController where ContentView.Action == ViewModel.Action {
+    typealias Event = ViewModel.Event
+
     let viewModel: ViewModel
     let contentView: ContentView
     let disposeBag = DisposeBag()
@@ -27,24 +30,47 @@ class BaseViewController<
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setEventBinding()
-        bind()
+        Logger.shared.logLifecycle(caller: self)
+        bindBase()
     }
 
-    private func setEventBinding() {
-        viewModel.eventRelay
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Logger.shared.logLifecycle(caller: self)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        Logger.shared.logLifecycle(caller: self)
+    }
+
+    deinit {
+        Logger.shared.logLifecycle(caller: self)
+    }
+
+    // MARK: - Base Binding
+
+    private func bindBase() {
+        contentView.action
+            .bind(to: viewModel.action)
+            .disposed(by: disposeBag)
+
+        viewModel.event
             .subscribe { [weak self] event in
-                guard let self else { return }
-                handleEvent(event)
+                self?.handleEvent(event)
             }
             .disposed(by: disposeBag)
+
+        bindState()
     }
 
-    func bind() {
+    // MARK: - Override Points
+
+    func bindState() {
         // Override in subclass
     }
 
-    func handleEvent(_ event: ViewModel.Event) {
+    func handleEvent(_ event: Event) {
         // Override in subclass
     }
 }
@@ -58,7 +84,7 @@ extension BaseViewController {
         skipInitial: Bool = false,
         onNext: @escaping (T) -> Void
     ) {
-        viewModel.stateRelay
+        viewModel.state
             .map { $0[keyPath: keyPath] }
             .distinctUntilChanged()
             .skip(skipInitial ? 1 : 0)
@@ -72,7 +98,7 @@ extension BaseViewController {
         skipInitial: Bool = false,
         onNext: @escaping (T) -> Void
     ) {
-        viewModel.stateRelay
+        viewModel.state
             .map(compute)
             .distinctUntilChanged()
             .skip(skipInitial ? 1 : 0)
