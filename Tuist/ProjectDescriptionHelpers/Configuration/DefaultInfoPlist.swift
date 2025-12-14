@@ -7,7 +7,7 @@ public enum DefaultInfoPlist {
     private static let base: [String: Plist.Value] = [
         "CFBundleShortVersionString": .string(Environment.appVersion),
         "CFBundleVersion": .string(Environment.appBuildVersion),
-        "CFBundleDisplayName": .string(Environment.appName)
+        "CFBundleDisplayName": "$(APP_DISPLAY_NAME)"
     ]
     
     // MARK: - App Configuration
@@ -35,7 +35,7 @@ public enum DefaultInfoPlist {
     public static let app: InfoPlist = .extendingDefault(
         with: base.merging(appSpecific)
     )
-    
+
     public static let framework: InfoPlist = .default
     
     public static let test: InfoPlist = .default

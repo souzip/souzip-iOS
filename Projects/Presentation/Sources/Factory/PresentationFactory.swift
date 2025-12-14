@@ -13,7 +13,6 @@ public final class DefaultPresentationFactory: PresentationFactory {
     }
 
     public func makeLoginVC() -> UIViewController {
-        let vm = LoginViewModel()
-        return LoginViewController(viewModel: vm, contentView: LoginView())
+        UIViewController()
     }
 }
