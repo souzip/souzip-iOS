@@ -14,7 +14,6 @@ public extension Project {
             name: module.rawValue,
             organizationName: Environment.organizationName,
             settings: .settings(
-                base: DefaultSettings.base,
                 configurations: DefaultSettings.configurations
             ),
             targets: [
@@ -22,7 +21,7 @@ public extension Project {
                     name: module.rawValue,
                     destinations: Environment.deploymentDestination,
                     product: .app,
-                    bundleId: Environment.bundlePrefix,
+                    bundleId: "$(PRODUCT_BUNDLE_IDENTIFIER)",
                     deploymentTargets: Environment.deploymentTarget,
                     infoPlist: infoPlist ?? DefaultInfoPlist.app,
                     sources: ["Sources/**"],
