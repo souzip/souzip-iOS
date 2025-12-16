@@ -48,6 +48,7 @@ public enum ModuleDependencies {
             
         case .designSystem:
             return [
+                .module(.logger),
                 .module(.utils)
             ]
             
