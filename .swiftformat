@@ -23,7 +23,8 @@
 # ===== 비활성화할 규칙 =====
 --disable \
     blankLinesAtEndOfScope,\
-    blankLinesAtStartOfScope
+    blankLinesAtStartOfScope,\
+    wrapMultilineStatementBraces
 
 # ===== 파일 제외 =====
 --exclude \
