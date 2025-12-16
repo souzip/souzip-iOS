@@ -5,17 +5,20 @@ public final class TypographyTextField: UITextField {
 
     private var typography: Typography?
 
+    // MARK: - Overrides
+
+    override public var text: String? {
+        didSet {
+            applyTypography()
+        }
+    }
+
     // MARK: - Public Methods
 
     public func setTypography(_ typography: Typography) {
         self.typography = typography
         font = typography.font
-
-        if typography.letterSpacing != 0 {
-            var attributes = defaultTextAttributes
-            attributes[.kern] = typography.letterSpacing
-            defaultTextAttributes = attributes
-        }
+        applyTypography()
     }
 
     public func setPlaceholderTypography(
@@ -23,15 +26,25 @@ public final class TypographyTextField: UITextField {
         text: String,
         color: UIColor = .systemGray
     ) {
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: typography.font,
-            .kern: typography.letterSpacing,
-            .foregroundColor: color,
-        ]
+        var attributes = typography.toAttributes()
+        attributes[.foregroundColor] = color
 
         attributedPlaceholder = NSAttributedString(
             string: text,
             attributes: attributes
+        )
+    }
+
+    // MARK: - Private Methods
+
+    private func applyTypography() {
+        guard let typography,
+              let text,
+              !text.isEmpty else { return }
+
+        attributedText = NSAttributedString(
+            string: text,
+            attributes: typography.toAttributes()
         )
     }
 }

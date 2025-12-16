@@ -6,7 +6,7 @@ public extension Typography {
     static let subhead24SB = Typography(
         fontName: PretendardWeight.semiBold.postScriptName,
         fontSize: 24,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -15,14 +15,14 @@ public extension Typography {
     static let body1SB = Typography(
         fontName: PretendardWeight.semiBold.postScriptName,
         fontSize: 18,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body1R = Typography(
         fontName: PretendardWeight.regular.postScriptName,
         fontSize: 18,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -31,21 +31,21 @@ public extension Typography {
     static let body2SB = Typography(
         fontName: PretendardWeight.semiBold.postScriptName,
         fontSize: 16,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body2M = Typography(
         fontName: PretendardWeight.medium.postScriptName,
         fontSize: 16,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body2R = Typography(
         fontName: PretendardWeight.regular.postScriptName,
         fontSize: 16,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -54,7 +54,7 @@ public extension Typography {
     static let body3M = Typography(
         fontName: PretendardWeight.medium.postScriptName,
         fontSize: 14,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -63,14 +63,14 @@ public extension Typography {
     static let body4M = Typography(
         fontName: PretendardWeight.medium.postScriptName,
         fontSize: 12,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body4R = Typography(
         fontName: PretendardWeight.regular.postScriptName,
         fontSize: 12,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -79,7 +79,7 @@ public extension Typography {
     static let caption1SB = Typography(
         fontName: PretendardWeight.semiBold.postScriptName,
         fontSize: 10,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
@@ -88,14 +88,14 @@ public extension Typography {
     static let caption2SB = Typography(
         fontName: PretendardWeight.semiBold.postScriptName,
         fontSize: 8,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let caption2R = Typography(
         fontName: PretendardWeight.regular.postScriptName,
         fontSize: 8,
-        lineHeight: 150,
+        lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 }

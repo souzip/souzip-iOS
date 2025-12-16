@@ -27,21 +27,9 @@ public final class TypographyLabel: UILabel {
         guard let typography,
               let text else { return }
 
-        var attributes: [NSAttributedString.Key: Any] = [
-            .font: typography.font,
-            .kern: typography.letterSpacing,
-        ]
-
-        if let lineHeight = typography.lineHeight {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.minimumLineHeight = lineHeight
-            paragraphStyle.maximumLineHeight = lineHeight
-
-            let baselineOffset = (lineHeight - typography.font.lineHeight) / 2
-            attributes[.baselineOffset] = baselineOffset
-            attributes[.paragraphStyle] = paragraphStyle
-        }
-
-        attributedText = NSAttributedString(string: text, attributes: attributes)
+        attributedText = NSAttributedString(
+            string: text,
+            attributes: typography.toAttributes()
+        )
     }
 }

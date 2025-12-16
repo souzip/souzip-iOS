@@ -8,19 +8,13 @@ public extension UIButton {
     ) {
         titleLabel?.font = typography.font
 
-        var attributes: [NSAttributedString.Key: Any] = [
-            .font: typography.font,
-            .kern: typography.letterSpacing,
-        ]
+        var attributes = typography.toAttributes()
 
-        if let lineHeight = typography.lineHeight {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.minimumLineHeight = lineHeight
-            paragraphStyle.maximumLineHeight = lineHeight
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
             paragraphStyle.alignment = .center
-
-            let baselineOffset = (lineHeight - typography.font.lineHeight) / 2
-            attributes[.baselineOffset] = baselineOffset
+        } else if typography.actualLineHeight != nil {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .center
             attributes[.paragraphStyle] = paragraphStyle
         }
 
