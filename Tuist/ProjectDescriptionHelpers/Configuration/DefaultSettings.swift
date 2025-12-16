@@ -21,7 +21,7 @@ public enum DefaultSettings {
         // Module Verifier
         "ENABLE_MODULE_VERIFIER": "YES",
         "CLANG_ENABLE_MODULE_VERIFIER": "YES",
-//        "CLANG_MODULE_VERIFIER_SUPPORTED_LANGUAGES": "objective-c++",
+        "CLANG_MODULE_VERIFIER_SUPPORTED_LANGUAGES": "objective-c objective-c++",
 
         // Resource Symbol Generation
         "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
