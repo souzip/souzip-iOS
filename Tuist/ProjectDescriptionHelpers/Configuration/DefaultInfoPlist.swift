@@ -17,6 +17,7 @@ public enum DefaultInfoPlist {
         "UISupportedInterfaceOrientations": [
             "UIInterfaceOrientationPortrait"
         ],
+        "UIUserInterfaceStyle": "Dark",
         "UIApplicationSceneManifest": [
             "UIApplicationSupportsMultipleScenes": false,
             "UISceneConfigurations": [

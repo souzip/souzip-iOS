@@ -14,7 +14,7 @@ public extension Project {
             name: module.rawValue,
             organizationName: Environment.organizationName,
             settings: .settings(
-                configurations: DefaultSettings.configurations
+                configurations: DefaultSettings.configurations(isApp: true)
             ),
             targets: [
                 .target(
