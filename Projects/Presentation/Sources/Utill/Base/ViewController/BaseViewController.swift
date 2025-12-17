@@ -1,4 +1,5 @@
 import Logger
+import RxCocoa
 import RxRelay
 import RxSwift
 import UIKit
@@ -56,7 +57,8 @@ class BaseViewController<
             .disposed(by: disposeBag)
 
         viewModel.event
-            .subscribe { [weak self] event in
+            .asSignal()
+            .emit { [weak self] event in
                 self?.handleEvent(event)
             }
             .disposed(by: disposeBag)
@@ -75,34 +77,65 @@ class BaseViewController<
     }
 }
 
-// MARK: - State 관찰 헬퍼
+// MARK: - State 관찰 헬퍼 (선언형 방식)
 
 extension BaseViewController {
-    /// State의 특정 속성을 관찰
+    /// State 관찰 시작 (선언형)
     func observe<T: Equatable>(
-        _ keyPath: KeyPath<ViewModel.State, T>,
-        skipInitial: Bool = false,
-        onNext: @escaping (T) -> Void
-    ) {
-        viewModel.state
-            .map { $0[keyPath: keyPath] }
-            .distinctUntilChanged()
-            .skip(skipInitial ? 1 : 0)
-            .subscribe(onNext: onNext)
-            .disposed(by: disposeBag)
+        _ keyPath: KeyPath<ViewModel.State, T>
+    ) -> StateObserver<T> {
+        StateObserver(
+            source: viewModel.state
+                .asDriver()
+                .map { $0[keyPath: keyPath] },
+            disposeBag: disposeBag
+        )
     }
 
-    /// State를 계산하여 관찰
-    func observe<T: Equatable>(
-        compute: @escaping (ViewModel.State) -> T,
-        skipInitial: Bool = false,
-        onNext: @escaping (T) -> Void
-    ) {
-        viewModel.state
-            .map(compute)
-            .distinctUntilChanged()
-            .skip(skipInitial ? 1 : 0)
-            .subscribe(onNext: onNext)
+    /// State 계산하여 관찰 시작 (선언형)
+    func observeComputed<T: Equatable>(
+        _ compute: @escaping (ViewModel.State) -> T
+    ) -> StateObserver<T> {
+        StateObserver(
+            source: viewModel.state
+                .asDriver()
+                .map(compute),
+            disposeBag: disposeBag
+        )
+    }
+}
+
+// MARK: - StateObserver
+
+final class StateObserver<T: Equatable> {
+    private var source: Driver<T>
+    private let disposeBag: DisposeBag
+
+    init(source: Driver<T>, disposeBag: DisposeBag) {
+        self.source = source.distinctUntilChanged()
+        self.disposeBag = disposeBag
+    }
+
+    func skip(_ num: Int) -> Self {
+        source = source.skip(num)
+        return self
+    }
+
+    func when(_ condition: @escaping (T) -> Bool) -> Self {
+        source = source.filter(condition)
+        return self
+    }
+
+    func unwrapped<Wrapped>() -> StateObserver<Wrapped> where T == Wrapped? {
+        StateObserver<Wrapped>(
+            source: source.compactMap { $0 },
+            disposeBag: disposeBag
+        )
+    }
+
+    func onNext(_ handler: @escaping (T) -> Void) {
+        source
+            .drive(onNext: handler)
             .disposed(by: disposeBag)
     }
 }
