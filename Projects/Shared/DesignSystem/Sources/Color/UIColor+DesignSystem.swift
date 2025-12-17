@@ -11,6 +11,8 @@ public extension UIColor {
     static let dsGrey800: UIColor = .grey800
     static let dsGrey900: UIColor = .grey900
 
+    static let dsBackground: UIColor = .background
+
     // MARK: - Main
 
     static let dsMainR50: UIColor = .mainR50
