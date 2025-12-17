@@ -4,8 +4,7 @@ public extension Typography {
     // MARK: - Subhead
 
     static let subhead24SB = Typography(
-        fontName: PretendardWeight.semiBold.postScriptName,
-        fontSize: 24,
+        font: .pretendard(size: 24, weight: .semiBold),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -13,15 +12,13 @@ public extension Typography {
     // MARK: - Body1
 
     static let body1SB = Typography(
-        fontName: PretendardWeight.semiBold.postScriptName,
-        fontSize: 18,
+        font: .pretendard(size: 18, weight: .semiBold),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body1R = Typography(
-        fontName: PretendardWeight.regular.postScriptName,
-        fontSize: 18,
+        font: .pretendard(size: 18, weight: .regular),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -29,22 +26,19 @@ public extension Typography {
     // MARK: - Body2
 
     static let body2SB = Typography(
-        fontName: PretendardWeight.semiBold.postScriptName,
-        fontSize: 16,
+        font: .pretendard(size: 16, weight: .semiBold),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body2M = Typography(
-        fontName: PretendardWeight.medium.postScriptName,
-        fontSize: 16,
+        font: .pretendard(size: 16, weight: .medium),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body2R = Typography(
-        fontName: PretendardWeight.regular.postScriptName,
-        fontSize: 16,
+        font: .pretendard(size: 16, weight: .regular),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -52,8 +46,7 @@ public extension Typography {
     // MARK: - Body3
 
     static let body3M = Typography(
-        fontName: PretendardWeight.medium.postScriptName,
-        fontSize: 14,
+        font: .pretendard(size: 14, weight: .medium),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -61,15 +54,13 @@ public extension Typography {
     // MARK: - Body4
 
     static let body4M = Typography(
-        fontName: PretendardWeight.medium.postScriptName,
-        fontSize: 12,
+        font: .pretendard(size: 12, weight: .medium),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let body4R = Typography(
-        fontName: PretendardWeight.regular.postScriptName,
-        fontSize: 12,
+        font: .pretendard(size: 12, weight: .regular),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -77,8 +68,7 @@ public extension Typography {
     // MARK: - Caption1
 
     static let caption1SB = Typography(
-        fontName: PretendardWeight.semiBold.postScriptName,
-        fontSize: 10,
+        font: .pretendard(size: 10, weight: .semiBold),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
@@ -86,15 +76,13 @@ public extension Typography {
     // MARK: - Caption2
 
     static let caption2SB = Typography(
-        fontName: PretendardWeight.semiBold.postScriptName,
-        fontSize: 8,
+        font: .pretendard(size: 8, weight: .semiBold),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )
 
     static let caption2R = Typography(
-        fontName: PretendardWeight.regular.postScriptName,
-        fontSize: 8,
+        font: .pretendard(size: 8, weight: .regular),
         lineHeightMultiple: 1.5,
         letterSpacing: -0.25
     )

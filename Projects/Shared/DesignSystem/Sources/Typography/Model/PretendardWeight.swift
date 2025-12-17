@@ -1,3 +1,5 @@
+import UIKit
+
 public enum PretendardWeight {
     case black
     case bold
@@ -21,5 +23,17 @@ public enum PretendardWeight {
         case .semiBold: "Pretendard-SemiBold"
         case .thin: "Pretendard-Thin"
         }
+    }
+}
+
+public extension UIFont {
+    static func pretendard(size: CGFloat, weight: PretendardWeight) -> UIFont {
+        let fontName = weight.postScriptName
+
+        guard let font = UIFont(name: fontName, size: size) else {
+            return .systemFont(ofSize: size)
+        }
+
+        return font
     }
 }
