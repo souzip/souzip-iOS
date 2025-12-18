@@ -9,7 +9,10 @@ public enum DefaultInfoPlist {
         "CFBundleVersion": .string(Environment.appBuildVersion),
         "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
 
-        "API_BASE_URL": "$(API_BASE_URL)"
+        "API_BASE_URL": "$(API_BASE_URL)",
+        "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
+        "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
+        "APPLE_SERVICE_ID": "APPLE_SERVICE_ID"
     ]
     
     // MARK: - App Configuration
