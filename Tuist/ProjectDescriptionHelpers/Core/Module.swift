@@ -9,7 +9,7 @@ public enum Module: String, CaseIterable {
     case networking = "Networking"
     case logger = "Logger"
     case keychain = "Keychain"
-    case userDefaults = "Userdefaults"
+    case userDefaults = "UserDefaults"
 
     case designSystem = "DesignSystem"
     case utils = "Utils"

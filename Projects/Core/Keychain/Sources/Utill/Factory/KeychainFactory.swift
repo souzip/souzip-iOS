@@ -1,5 +1,5 @@
 public protocol KeychainFactory: AnyObject {
-    func makeKeychainStorge() -> KeychainStorage
+    func makeKeychainStorage() -> KeychainStorage
 }
 
 public final class DefaultKeychainFactory: KeychainFactory {
@@ -9,7 +9,7 @@ public final class DefaultKeychainFactory: KeychainFactory {
         self.bundleID = bundleID
     }
 
-    public func makeKeychainStorge() -> KeychainStorage {
+    public func makeKeychainStorage() -> KeychainStorage {
         DefaultKeychainStorage(service: bundleID)
     }
 }
