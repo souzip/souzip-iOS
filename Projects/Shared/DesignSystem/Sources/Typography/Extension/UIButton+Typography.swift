@@ -1,24 +1,23 @@
 import UIKit
 
-public extension UIButton {
-    func setTypography(
+public extension UIButton.Configuration {
+    mutating func setTypography(
         _ typography: Typography,
         title: String,
-        for state: UIControl.State = .normal
+        alignment: NSTextAlignment = .center
     ) {
-        titleLabel?.font = typography.font
-
         var attributes = typography.toAttributes()
 
         if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
-            paragraphStyle.alignment = .center
+            paragraphStyle.alignment = alignment
         } else if typography.actualLineHeight != nil {
             let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = .center
+            paragraphStyle.alignment = alignment
             attributes[.paragraphStyle] = paragraphStyle
         }
 
-        let attributedTitle = NSAttributedString(string: title, attributes: attributes)
-        setAttributedTitle(attributedTitle, for: state)
+        attributedTitle = AttributedString(
+            NSAttributedString(string: title, attributes: attributes)
+        )
     }
 }

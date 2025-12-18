@@ -45,26 +45,17 @@ public enum DefaultSettings {
         "GCC_OPTIMIZATION_LEVEL": "0",
         "DEBUG_INFORMATION_FORMAT": "dwarf",
         "ENABLE_TESTABILITY": "YES",
-        "OTHER_SWIFT_FLAGS": "-D DEBUG",
-
-        "PRODUCT_BUNDLE_IDENTIFIER": .string(Environment.BuildEnvironment.debug.bundleId),
-        "APP_DISPLAY_NAME": .string(Environment.BuildEnvironment.debug.displayName),
-        "ASSETCATALOG_COMPILER_APPICON_NAME": .string(Environment.BuildEnvironment.debug.appIconName)
+        "OTHER_SWIFT_FLAGS": "-D DEBUG"
     ]
 
     // MARK: - Staging Settings
 
     private static let stagingSettings: SettingsDictionary = [
-        // 컴파일 최적
+        // 컴파일 최적화
         "SWIFT_OPTIMIZATION_LEVEL": "-O",
         "SWIFT_COMPILATION_MODE": "wholemodule",
         "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-        "ENABLE_TESTABILITY": "NO",
-
-        // 환경별 설정 - Bundle ID, 앱 이름, 아이콘
-        "PRODUCT_BUNDLE_IDENTIFIER": .string(Environment.BuildEnvironment.staging.bundleId),
-        "APP_DISPLAY_NAME": .string(Environment.BuildEnvironment.staging.displayName),
-        "ASSETCATALOG_COMPILER_APPICON_NAME": .string(Environment.BuildEnvironment.staging.appIconName)
+        "ENABLE_TESTABILITY": "NO"
     ]
 
     // MARK: - Release Settings
@@ -74,33 +65,50 @@ public enum DefaultSettings {
         "SWIFT_OPTIMIZATION_LEVEL": "-O",
         "SWIFT_COMPILATION_MODE": "wholemodule",
         "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-        "ENABLE_TESTABILITY": "NO",
-
-        // 환경별 설정 - Bundle ID, 앱 이름, 아이콘
-        "PRODUCT_BUNDLE_IDENTIFIER": .string(Environment.BuildEnvironment.release.bundleId),
-        "APP_DISPLAY_NAME": .string(Environment.BuildEnvironment.release.displayName),
-        "ASSETCATALOG_COMPILER_APPICON_NAME": .string(Environment.BuildEnvironment.release.appIconName)
+        "ENABLE_TESTABILITY": "NO"
     ]
+
+    // MARK: - App Specific Settings
+
+    private static func appSettings(for environment: Environment.BuildEnvironment) -> SettingsDictionary {
+        return [
+            "PRODUCT_BUNDLE_IDENTIFIER": .string(environment.bundleId),
+            "APP_DISPLAY_NAME": .string(environment.displayName),
+            "ASSETCATALOG_COMPILER_APPICON_NAME": .string(environment.appIconName)
+        ]
+    }
 
     // MARK: - Configurations
 
-    public static let configurations: [Configuration] = [
-        .debug(
-            name: Environment.debugConfigName,
-            settings: base.merging(debugSettings),
-            xcconfig: .relativeToRoot("Config/Debug.xcconfig")
-        ),
-        .release(
-            name: Environment.stagingConfigName,
-            settings: base.merging(stagingSettings),
-            xcconfig: .relativeToRoot("Config/Staging.xcconfig")
-        ),
-        .release(
-            name: Environment.releaseConfigName,
-            settings: base.merging(releaseSettings),
-            xcconfig: .relativeToRoot("Config/Release.xcconfig")
-        )
-    ]
+    public static func configurations(isApp: Bool = false) -> [Configuration] {
+        var debug = base.merging(debugSettings)
+        var staging = base.merging(stagingSettings)
+        var release = base.merging(releaseSettings)
+
+        if isApp {
+            debug = debug.merging(appSettings(for: .debug))
+            staging = staging.merging(appSettings(for: .staging))
+            release = release.merging(appSettings(for: .release))
+        }
+
+        return [
+            .debug(
+                name: Environment.debugConfigName,
+                settings: debug,
+                xcconfig: .relativeToRoot("Config/Debug.xcconfig")
+            ),
+            .release(
+                name: Environment.stagingConfigName,
+                settings: staging,
+                xcconfig: .relativeToRoot("Config/Staging.xcconfig")
+            ),
+            .release(
+                name: Environment.releaseConfigName,
+                settings: release,
+                xcconfig: .relativeToRoot("Config/Release.xcconfig")
+            )
+        ]
+    }
 }
 
 // MARK: - Extensions

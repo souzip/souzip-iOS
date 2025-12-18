@@ -6,12 +6,11 @@ public struct Typography {
     public let letterSpacing: CGFloat
 
     public init(
-        fontName: String,
-        fontSize: CGFloat,
+        font: UIFont,
         lineHeightMultiple: CGFloat? = nil,
         letterSpacing: CGFloat = 0
     ) {
-        font = UIFont(name: fontName, size: fontSize) ?? .systemFont(ofSize: fontSize)
+        self.font = font
         self.lineHeightMultiple = lineHeightMultiple
         self.letterSpacing = letterSpacing
     }
