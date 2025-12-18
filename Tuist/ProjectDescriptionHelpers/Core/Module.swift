@@ -8,7 +8,9 @@ public enum Module: String, CaseIterable {
     
     case networking = "Networking"
     case logger = "Logger"
-    
+    case keychain = "Keychain"
+    case userDefaults = "Userdefaults"
+
     case designSystem = "DesignSystem"
     case utils = "Utils"
 }
@@ -20,7 +22,7 @@ extension Module {
             return .relativeToRoot("Projects/App")
         case .presentation, .domain, .data:
             return .relativeToRoot("Projects/\(rawValue)")
-        case .networking, .logger:
+        case .networking, .logger, .keychain, .userDefaults:
             return .relativeToRoot("Projects/Core/\(rawValue)")
         case .designSystem, .utils:
             return .relativeToRoot("Projects/Shared/\(rawValue)")
