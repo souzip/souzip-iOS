@@ -3,14 +3,12 @@ import UIKit
 
 extension UIViewController {
     func showDSAlert(
-        title: String? = nil,
         message: String,
         confirmTitle: String = "확인",
         confirmHandler: (() -> Void)? = nil
     ) {
         let alertView = DSAlertView()
         alertView.render(
-            title: title,
             message: message,
             confirmTitle: confirmTitle,
             confirmHandler: confirmHandler
@@ -19,7 +17,6 @@ extension UIViewController {
     }
 
     func showDSConfirmAlert(
-        title: String? = nil,
         message: String,
         confirmTitle: String = "확인",
         cancelTitle: String = "취소",
@@ -28,7 +25,6 @@ extension UIViewController {
     ) {
         let alertView = DSAlertView()
         alertView.render(
-            title: title,
             message: message,
             confirmTitle: confirmTitle,
             cancelTitle: cancelTitle,
