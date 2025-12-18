@@ -8,8 +8,10 @@ public enum ModuleDependencies {
                 .module(.presentation),
                 .module(.domain),
                 .module(.data),
+                .module(.networking),
                 .module(.logger),
-                .module(.designSystem)
+                .module(.keychain),
+                .module(.utils)
             ]
             
         case .presentation:
@@ -18,6 +20,7 @@ public enum ModuleDependencies {
                 .module(.logger),
                 .module(.designSystem),
                 .module(.utils),
+
                 .external(.rxSwift),
                 .external(.rxCocoa),
                 .external(.snapKit),
@@ -35,6 +38,8 @@ public enum ModuleDependencies {
                 .module(.domain),
                 .module(.networking),
                 .module(.logger),
+                .module(.keychain),
+                .module(.userDefaults),
                 .module(.utils)
             ]
             
@@ -42,14 +47,27 @@ public enum ModuleDependencies {
             return [
                 .module(.logger)
             ]
-            
+
         case .logger:
             return []
-            
-        case .designSystem:
+
+        case .keychain:
             return [
                 .module(.logger),
                 .module(.utils)
+            ]
+
+        case .userDefaults:
+            return [
+                .module(.logger),
+                .module(.utils)
+            ]
+
+        case .designSystem:
+            return [
+                .module(.logger),
+                .module(.utils),
+                .external(.snapKit)
             ]
             
         case .utils:
