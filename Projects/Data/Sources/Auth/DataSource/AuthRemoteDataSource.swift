@@ -27,7 +27,7 @@ public final class DefaultAuthRemoteDataSource: AuthRemoteDataSource {
 
         let oauthToken = try await service.login()
         let endpoint = AuthEndpoint.login(
-            provider: platform.rawValue,
+            provider: platform.apiPath,
             accessToken: oauthToken
         )
 
