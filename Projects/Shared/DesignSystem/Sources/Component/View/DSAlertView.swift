@@ -98,7 +98,6 @@ public final class DSAlertView: UIView {
     // MARK: - Render
 
     public func render(
-        title: String?,
         message: String,
         confirmTitle: String = "확인",
         cancelTitle: String? = nil,

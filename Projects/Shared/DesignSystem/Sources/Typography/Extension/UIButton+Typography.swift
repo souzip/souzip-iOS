@@ -8,13 +8,11 @@ public extension UIButton.Configuration {
     ) {
         var attributes = typography.toAttributes()
 
-        if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
-            paragraphStyle.alignment = alignment
-        } else if typography.actualLineHeight != nil {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = alignment
-            attributes[.paragraphStyle] = paragraphStyle
-        }
+        let paragraphStyle = (attributes[.paragraphStyle] as? NSMutableParagraphStyle)
+            ?? NSMutableParagraphStyle()
+
+        paragraphStyle.alignment = alignment
+        attributes[.paragraphStyle] = paragraphStyle
 
         attributedTitle = AttributedString(
             NSAttributedString(string: title, attributes: attributes)
