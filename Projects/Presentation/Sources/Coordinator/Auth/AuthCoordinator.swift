@@ -24,5 +24,8 @@ public final class AuthCoordinator: BaseCoordinator<AuthRoute> {
 }
 
 private extension AuthCoordinator {
-    func showLogin() {}
+    func showLogin() {
+        let vc = factory.makeLoginVC()
+        nav.setViewControllers([vc], animated: true)
+    }
 }
