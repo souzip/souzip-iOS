@@ -7,7 +7,9 @@ public enum DefaultInfoPlist {
     private static let base: [String: Plist.Value] = [
         "CFBundleShortVersionString": .string(Environment.appVersion),
         "CFBundleVersion": .string(Environment.appBuildVersion),
-        "CFBundleDisplayName": "$(APP_DISPLAY_NAME)"
+        "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
+
+        "API_BASE_URL": "$(API_BASE_URL)"
     ]
     
     // MARK: - App Configuration
