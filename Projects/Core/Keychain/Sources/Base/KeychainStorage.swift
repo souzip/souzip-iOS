@@ -2,23 +2,26 @@ import Foundation
 import Security
 import Utils
 
-public protocol KeychainStorage {
-    func save<T: Codable>(_ value: T, forKey key: KeychainKey) throws
-    func get<T: Codable>(forKey key: KeychainKey) throws -> T?
-    func delete(forKey key: KeychainKey) throws
-    func deleteAll() throws
+public protocol KeychainStorage: Sendable {
+    func save(_ value: some Codable, forKey key: KeychainKey) async throws
+    func get<T: Codable>(forKey key: KeychainKey) async throws -> T?
+    func delete(forKey key: KeychainKey) async throws
+    func deleteAll() async throws
 }
 
-public final class DefaultKeychainStorage: KeychainStorage {
+public actor DefaultKeychainStorage: KeychainStorage {
     private let service: String
 
     public init(service: String) {
         self.service = service
     }
 
-    public func save(_ value: some Codable, forKey key: KeychainKey) throws {
-        let data = try JSONEncoder().encode(value)
-        try? delete(forKey: key)
+    public func save(_ value: some Codable, forKey key: KeychainKey) async throws {
+        guard let data = try? JSONEncoder().encode(value) else {
+            throw KeychainError.encodingFailed
+        }
+
+        try await delete(forKey: key)
 
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -34,7 +37,7 @@ public final class DefaultKeychainStorage: KeychainStorage {
         }
     }
 
-    public func get<T: Codable>(forKey key: KeychainKey) throws -> T? {
+    public func get<T: Codable>(forKey key: KeychainKey) async throws -> T {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -46,7 +49,12 @@ public final class DefaultKeychainStorage: KeychainStorage {
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
-        guard status == errSecSuccess else {
+        switch status {
+        case errSecSuccess:
+            break
+        case errSecItemNotFound:
+            throw KeychainError.itemNotFound
+        default:
             throw KeychainError.loadFailed(status: status)
         }
 
@@ -54,10 +62,14 @@ public final class DefaultKeychainStorage: KeychainStorage {
             throw KeychainError.decodingFailed
         }
 
-        return try JSONDecoder().decode(T.self, from: data)
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            throw KeychainError.decodingFailed
+        }
     }
 
-    public func delete(forKey key: KeychainKey) throws {
+    public func delete(forKey key: KeychainKey) async throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -70,7 +82,7 @@ public final class DefaultKeychainStorage: KeychainStorage {
         }
     }
 
-    public func deleteAll() throws {
+    public func deleteAll() async throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
