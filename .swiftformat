@@ -6,6 +6,7 @@
 --indentcase false                  # case 문 들여쓰기 안함
 --trimwhitespace always             # 후행 공백 항상 제거
 --allman false                      # Allman 스타일 중괄호 사용 안함
+--wrapconditions preserve           # 조건문 줄바꿈 유지
 --wraparguments before-first        # 인자 줄바꿈 스타일
 --wrapparameters before-first       # 파라미터 줄바꿈 스타일
 --wrapcollections before-first      # 컬렉션 줄바꿈 스타일
