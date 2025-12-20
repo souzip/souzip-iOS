@@ -13,9 +13,17 @@ public final class DefaultPresentationFactory: PresentationFactory {
     }
 
     public func makeLoginVC() -> UIViewController {
-        let vm = LoginViewModel()
+        let vm = makeLoginVM()
         let view = LoginView()
         let vc = LoginViewController(viewModel: vm, contentView: view)
         return vc
+    }
+}
+
+private extension DefaultPresentationFactory {
+    func makeLoginVM() -> LoginViewModel {
+        .init(
+            login: factory.makeLoginUseCase()
+        )
     }
 }

@@ -1,3 +1,5 @@
+import Logger
+
 public extension Logger {
     func logLifecycle(
         caller: Any? = nil,
@@ -8,9 +10,8 @@ public extension Logger {
         let actualFile = caller.map { "\(String(describing: type(of: $0))).swift" } ?? file
         let actualLine = caller != nil ? 0 : line
 
-        log(
+        info(
             "Life Cycle",
-            level: .info,
             category: .ui,
             file: actualFile,
             function: function,
@@ -28,9 +29,8 @@ public extension Logger {
         let actualFile = caller.map { "\(String(describing: type(of: $0))).swift" } ?? file
         let actualLine = caller != nil ? 0 : line
 
-        log(
-            "State Changed: \(state)",
-            level: .debug,
+        debug(
+            "상태 변경: \(state)",
             category: .ui,
             file: actualFile,
             function: function,
@@ -48,9 +48,8 @@ public extension Logger {
         let actualFile = caller.map { "\(String(describing: type(of: $0))).swift" } ?? file
         let actualLine = caller != nil ? 0 : line
 
-        log(
-            "Action: \(action)",
-            level: .debug,
+        debug(
+            "사용자 액션: \(action)",
             category: .ui,
             file: actualFile,
             function: function,
@@ -68,9 +67,8 @@ public extension Logger {
         let actualFile = caller.map { "\(String(describing: type(of: $0))).swift" } ?? file
         let actualLine = caller != nil ? 0 : line
 
-        log(
-            "Event: \(event)",
-            level: .info,
+        info(
+            "이벤트: \(event)",
             category: .ui,
             file: actualFile,
             function: function,
@@ -88,9 +86,8 @@ public extension Logger {
         let actualFile = caller.map { "\(String(describing: type(of: $0))).swift" } ?? file
         let actualLine = caller != nil ? 0 : line
 
-        log(
-            "Route: \(route)",
-            level: .info,
+        info(
+            "화면 전환: \(route)",
             category: .ui,
             file: actualFile,
             function: function,

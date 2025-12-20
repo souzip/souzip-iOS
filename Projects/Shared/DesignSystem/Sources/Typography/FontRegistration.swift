@@ -4,11 +4,13 @@ import UIKit
 
 public final class FontRegistration {
     private static var isRegistered = false
-    private static let logger = Logger.shared
 
     public static func register() {
         guard !isRegistered else {
-            logger.warning("Fonts already registered", category: .general)
+            Logger.shared.warning(
+                "폰트가 이미 등록되어 있습니다.",
+                category: .general
+            )
             return
         }
 
@@ -33,7 +35,10 @@ public final class FontRegistration {
         }
 
         isRegistered = true
-        logger.info("Font registration completed: \(successCount)/\(fontNames.count) fonts registered", category: .general)
+        Logger.shared.info(
+            "폰트 등록이 완료되었습니다. (\(successCount)/\(fontNames.count)개 등록)",
+            category: .general
+        )
     }
 
     @discardableResult
@@ -43,16 +48,26 @@ public final class FontRegistration {
         in bundle: Bundle
     ) -> Bool {
         guard let fontURL = bundle.url(forResource: name, withExtension: ext) else {
-            logger.error("Font file not found: \(name).\(ext)", category: .general)
+            Logger.shared.error(
+                "폰트 파일을 찾을 수 없습니다: \(name).\(ext)",
+                category: .general
+            )
             return false
         }
 
         var error: Unmanaged<CFError>?
-        let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
+        let success = CTFontManagerRegisterFontsForURL(
+            fontURL as CFURL,
+            .process,
+            &error
+        )
 
         if !success,
            let error = error?.takeRetainedValue() {
-            logger.error("Failed to register font \(name): \(error)", category: .general)
+            Logger.shared.error(
+                "폰트 등록에 실패했습니다: \(name) (\(error.localizedDescription))",
+                category: .general
+            )
             return false
         }
 
