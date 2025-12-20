@@ -58,7 +58,7 @@ public final class DefaultNetworkClient: NetworkClient {
     ) async throws -> T where T: Decodable {
         // 1. Access Token 자동 주입
         var urlRequest = try endpoint.asURLRequest(baseURL: baseURL)
-        if let token = try? tokenRefresher?.getAccessToken() {
+        if let token = try? await tokenRefresher?.getAccessToken() {
             urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
 
@@ -93,7 +93,7 @@ public final class DefaultNetworkClient: NetworkClient {
     ) async throws -> T where T: Decodable {
         // 이미 재시도했으면 포기
         guard !isRetry else {
-            try? refresher.clearTokens()
+            try? await refresher.clearTokens()
             Logger.shared.logAPIFailure(
                 endpoint: endpoint.path,
                 statusCode: 401,
@@ -112,7 +112,7 @@ public final class DefaultNetworkClient: NetworkClient {
             return try await performRequest(endpoint, isRetry: true)
         } catch {
             // Refresh 실패 → 로그아웃
-            try? refresher.clearTokens()
+            try? await refresher.clearTokens()
             Logger.shared.error(
                 "Token refresh failed: \(error.localizedDescription)",
                 category: .network
