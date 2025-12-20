@@ -16,6 +16,9 @@ public enum AuthDefaultsKeys {
 }
 
 public enum UserDefaultsKeys {
+    public static let recentLoginPlatform =
+        DefaultsKey<Data?>("recent_login_platform", default: nil)
+
     public static let cachedUser =
         DefaultsKey<Data?>("user_cached_profile", default: nil)
 }
