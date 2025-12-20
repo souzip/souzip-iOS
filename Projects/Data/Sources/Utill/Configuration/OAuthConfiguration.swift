@@ -1,4 +1,4 @@
-import Foundation
+import KakaoSDKCommon
 
 public struct OAuthConfiguration {
     public let kakaoAppKey: String
@@ -13,5 +13,6 @@ public struct OAuthConfiguration {
         self.kakaoAppKey = kakaoAppKey
         self.googleClientID = googleClientID
         self.appleServiceID = appleServiceID
+        KakaoSDK.initSDK(appKey: kakaoAppKey)
     }
 }
