@@ -20,7 +20,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         coordinator = RootCoordinator(
             nav: nav,
-            factory: factory.presentationFactory
+            factory: factory.domainFactory
         )
         coordinator?.start()
 

@@ -1,10 +1,11 @@
-import RxRelay
+import RxCocoa
 import RxSwift
 import UIKit
 
 @MainActor
 public protocol Coordinator: AnyObject {
     associatedtype Route
+    associatedtype ParentRoute
 
     var nav: UINavigationController { get }
     var parent: (any Coordinator)? { get set }
@@ -12,12 +13,19 @@ public protocol Coordinator: AnyObject {
 
     func start()
     func navigate(_ route: Route)
+    func navigateToParent(_ route: ParentRoute)
 }
 
 public extension Coordinator {
-    func addChild(_ coordinator: any Coordinator) {
-        coordinator.parent = self
-        children.append(coordinator)
+    func addChild<C: Coordinator>(_ child: C) where C.ParentRoute == Route {
+        child.parent = self
+        if let baseChild = child as? BaseCoordinator<C.Route, C.ParentRoute> {
+            baseChild.sendParentRoute = { [weak self] parentRoute in
+                print(parentRoute)
+                self?.navigate(parentRoute)
+            }
+        }
+        children.append(child)
     }
 
     func removeChild(_ coordinator: any Coordinator) {
@@ -30,29 +38,25 @@ public extension Coordinator {
 }
 
 public extension Coordinator {
-    /// ViewModel Route를 Coordinator Route로 매핑하여 자동 바인딩
+    func bindRoute(_ scene: RoutedScene<Route>) {
+        scene.route
+            .asSignal()
+            .emit { [weak self] route in
+                self?.navigate(route)
+            }
+            .disposed(by: scene.disposeBag)
+    }
+
     func bindRoute<VMRoute>(
-        _ routeRelay: PublishRelay<VMRoute>,
-        mapper: @escaping (VMRoute) -> Route,
-        disposeBag: DisposeBag
+        _ scene: RoutedScene<VMRoute>,
+        mapper: @escaping (VMRoute) -> Route
     ) {
-        routeRelay
-            .subscribe { [weak self] vmRoute in
+        scene.route
+            .asSignal()
+            .emit { [weak self] vmRoute in
                 let coordinatorRoute = mapper(vmRoute)
                 self?.navigate(coordinatorRoute)
             }
-            .disposed(by: disposeBag)
-    }
-
-    /// ViewModel Route와 Coordinator Route가 같을 때 (매핑 불필요)
-    func bindRoute(
-        _ routeRelay: PublishRelay<Route>,
-        disposeBag: DisposeBag
-    ) {
-        routeRelay
-            .subscribe { [weak self] route in
-                self?.navigate(route)
-            }
-            .disposed(by: disposeBag)
+            .disposed(by: scene.disposeBag)
     }
 }
