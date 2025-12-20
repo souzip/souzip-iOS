@@ -1,0 +1,35 @@
+import Domain
+
+final class SplashViewModel: BaseViewModel<
+    SplashState,
+    SplashAction,
+    SplashEvent,
+    AuthRoute
+> {
+    // MARK: - UseCase
+
+    private let autoLogin: AutoLoginUseCase
+
+    // MARK: - Init
+
+    init(autoLogin: AutoLoginUseCase) {
+        self.autoLogin = autoLogin
+        super.init(initialState: State(minDisplayTime: .seconds(3)))
+        Task { await checkStatus() }
+    }
+
+    // MARK: - Private Logic
+
+    private func checkStatus() async {
+        async let loginTask = autoLogin.execute()
+        async let _: Void = Task.sleep(for: state.value.minDisplayTime)
+
+        let result = await loginTask
+
+        switch result {
+        case .success: navigate(to: .main)
+        case .shouldLogin: navigate(to: .login)
+        case .shouldOnboarding: navigate(to: .profile)
+        }
+    }
+}
