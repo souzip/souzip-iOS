@@ -1,5 +1,5 @@
 public protocol AutoLoginUseCase {
-    func execute() async -> LoginResult?
+    func execute() async -> AutoLoginResult
 }
 
 public final class DefaultAutoLoginUseCase: AutoLoginUseCase {
@@ -9,16 +9,20 @@ public final class DefaultAutoLoginUseCase: AutoLoginUseCase {
         self.authRepo = authRepo
     }
 
-    public func execute() async -> LoginResult? {
+    public func execute() async -> AutoLoginResult {
         let isLoggedIn = await authRepo.checkLoginStatus()
         guard isLoggedIn else {
-            return nil
+            return .shouldLogin
         }
 
-        do {
-            return try await authRepo.refreshToken()
-        } catch {
-            return nil
+        guard let result = try? await authRepo.refreshToken() else {
+            return .shouldLogin
         }
+
+        if result.needsOnboarding {
+            return .shouldOnboarding
+        }
+
+        return .success
     }
 }
