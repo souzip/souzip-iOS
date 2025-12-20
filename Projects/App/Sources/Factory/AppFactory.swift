@@ -1,10 +1,7 @@
 import Data
 import Domain
-import Foundation
 import Keychain
-import Logger
 import Networking
-import Presentation
 import UserDefaults
 import Utils
 
@@ -15,10 +12,7 @@ final class AppFactory {
     let domainFactory: DomainFactory
     let presentationFactory: PresentationFactory
 
-    init() {
-        // Configuration
-        let config = AppConfiguration()
-
+    init(config: AppConfiguration) {
         // keyChain
         let keychainFactory = DefaultKeychainFactory(bundleID: AppInfo.bundleID)
 
@@ -35,8 +29,7 @@ final class AppFactory {
         // Data
         let oauthConfig = OAuthConfiguration(
             kakaoAppKey: config.kakaoAppKey,
-            googleClientID: config.googleClientID,
-            appleServiceID: config.appleServiceID
+            googleClientID: config.googleClientID
         )
 
         let oauthServiceFactory = DefaultOAuthServiceFactory(configuration: oauthConfig)

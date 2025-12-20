@@ -1,7 +1,4 @@
 import Data
-import DesignSystem
-import Domain
-import Networking
 import Presentation
 import UIKit
 
@@ -16,10 +13,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
-        FontRegistration.register()
+        let config = AppConfiguration()
+        let factory = AppFactory(config: config)
 
         let nav = UINavigationController()
-        let factory = AppFactory()
 
         coordinator = AppCoordinator(
             nav: nav,
