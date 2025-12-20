@@ -128,9 +128,7 @@ public final class DefaultNetworkClient: NetworkClient {
     ) throws -> T where T: Decodable {
         switch response.statusCode {
         case 200 ... 299:
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let decoded = try decoder.decode(T.self, from: data)
+            let decoded = try JSONDecoder().decode(T.self, from: data)
             Logger.shared.logAPISuccess(endpoint: endpoint, statusCode: response.statusCode)
             return decoded
 
