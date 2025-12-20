@@ -6,8 +6,8 @@ public protocol UserDefaultsStorage: AnyObject {
     func set<Value>(_ value: Value, for key: DefaultsKey<Value>)
     func remove<Value>(_ key: DefaultsKey<Value>)
 
-    func getCodable<Value: Codable>(_ key: DefaultsKey<Value>) -> Value
-    func setCodable<Value: Codable>(_ value: Value, for key: DefaultsKey<Value>)
+    func getDecodable<T: Decodable>(from key: DefaultsKey<Data?>) throws -> T?
+    func setEncodable<T: Encodable>(_ value: T, for key: DefaultsKey<Data?>) throws
 }
 
 public final class DefaultUDStorage: UserDefaultsStorage {
@@ -29,13 +29,24 @@ public final class DefaultUDStorage: UserDefaultsStorage {
         userDefaults.removeObject(forKey: key.name)
     }
 
-    public func getCodable<Value: Codable>(_ key: DefaultsKey<Value>) -> Value {
-        guard let data = userDefaults.data(forKey: key.name) else { return key.defaultValue }
-        return (try? JSONDecoder().decode(Value.self, from: data)) ?? key.defaultValue
+    public func getDecodable<T: Decodable>(from key: DefaultsKey<Data?>) throws -> T? {
+        guard let data = userDefaults.data(forKey: key.name) else {
+            return nil
+        }
+
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            throw UserDefaultsError.decodingFailed(key: key.name, error: error)
+        }
     }
 
-    public func setCodable<Value: Codable>(_ value: Value, for key: DefaultsKey<Value>) {
-        guard let data = try? JSONEncoder().encode(value) else { return }
-        userDefaults.set(data, forKey: key.name)
+    public func setEncodable(_ value: some Encodable, for key: DefaultsKey<Data?>) throws {
+        do {
+            let data = try JSONEncoder().encode(value)
+            userDefaults.set(data, forKey: key.name)
+        } catch {
+            throw UserDefaultsError.encodingFailed(key: key.name, error: error)
+        }
     }
 }
