@@ -34,7 +34,7 @@ public final class DefaultTokenRefresher: TokenRefresher {
     }
 
     public func clearTokens() async throws {
-        try await authLocal.deleteAllTokens()
+        await authLocal.deleteAllTokens()
         userLocal.deleteUser()
     }
 }
