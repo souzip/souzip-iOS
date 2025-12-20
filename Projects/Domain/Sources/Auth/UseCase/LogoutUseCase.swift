@@ -3,13 +3,13 @@ public protocol LogoutUseCase {
 }
 
 public final class DefaultLogoutUseCase: LogoutUseCase {
-    private let repo: AuthRepository
+    private let authRepo: AuthRepository
 
-    public init(repo: AuthRepository) {
-        self.repo = repo
+    public init(authRepo: AuthRepository) {
+        self.authRepo = authRepo
     }
 
     public func execute() async throws {
-        try await repo.logout()
+        try await authRepo.logout()
     }
 }

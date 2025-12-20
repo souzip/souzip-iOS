@@ -4,4 +4,5 @@ public protocol AuthRepository {
     func withdraw() async throws
     func checkLoginStatus() async -> Bool
     func refreshToken() async throws -> LoginResult
+    func loadRecentLoginProvider() -> AuthProvider?
 }

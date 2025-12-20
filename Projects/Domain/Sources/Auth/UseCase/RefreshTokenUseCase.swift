@@ -3,13 +3,13 @@ public protocol RefreshTokenUseCase {
 }
 
 public final class DefaultRefreshTokenUseCase: RefreshTokenUseCase {
-    private let repo: AuthRepository
+    private let authRepo: AuthRepository
 
-    public init(repo: AuthRepository) {
-        self.repo = repo
+    public init(authRepo: AuthRepository) {
+        self.authRepo = authRepo
     }
 
     public func execute() async throws -> LoginResult {
-        try await repo.refreshToken()
+        try await authRepo.refreshToken()
     }
 }

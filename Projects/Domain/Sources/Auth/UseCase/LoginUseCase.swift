@@ -3,13 +3,13 @@ public protocol LoginUseCase {
 }
 
 public final class DefaultLoginUseCase: LoginUseCase {
-    private let repo: AuthRepository
+    private let authRepo: AuthRepository
 
-    public init(repo: AuthRepository) {
-        self.repo = repo
+    public init(authRepo: AuthRepository) {
+        self.authRepo = authRepo
     }
 
     public func execute(provider: AuthProvider) async throws -> LoginResult {
-        try await repo.login(provider: provider)
+        try await authRepo.login(provider: provider)
     }
 }
