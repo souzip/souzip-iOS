@@ -1,5 +1,6 @@
 import Foundation
 import Keychain
+import UserDefaults
 import Utils
 
 public protocol AuthLocalDataSource {
@@ -7,50 +8,70 @@ public protocol AuthLocalDataSource {
     func saveRefreshToken(_ token: String) async throws
     func getAccessToken() async throws -> String
     func getRefreshToken() async throws -> String
-    func deleteAccessToken() async throws
-    func deleteRefreshToken() async throws
-    func deleteAllTokens() async throws
+    func deleteAccessToken() async
+    func deleteRefreshToken() async
+    func deleteAllTokens() async
+
+    func saveOAuthPlatform(_ platform: OAuthPlatform)
+    func getOAuthPlatform() -> OAuthPlatform?
 }
 
 public final class DefaultAuthLocalDataSource: AuthLocalDataSource {
-    private let storage: KeychainStorage
+    private let keycahinStorage: KeychainStorage
+    private let userDefaultsStoarge: UserDefaultsStorage
 
-    public init(storage: KeychainStorage) {
-        self.storage = storage
+    public init(
+        keycahinStorage: KeychainStorage,
+        userDefaultsStoarge: UserDefaultsStorage
+    ) {
+        self.keycahinStorage = keycahinStorage
+        self.userDefaultsStoarge = userDefaultsStoarge
     }
 
+    // MARK: - Token
+
     public func saveAccessToken(_ token: String) async throws {
-        try await storage.save(token, forKey: KeychainKey.accessToken)
+        try await keycahinStorage.save(token, forKey: KeychainKey.accessToken)
     }
 
     public func saveRefreshToken(_ token: String) async throws {
-        try await storage.save(token, forKey: KeychainKey.refreshToken)
+        try await keycahinStorage.save(token, forKey: KeychainKey.refreshToken)
     }
 
     public func getAccessToken() async throws -> String {
-        guard let token: String = try await storage.get(forKey: KeychainKey.accessToken) else {
+        guard let token: String = try await keycahinStorage.get(forKey: KeychainKey.accessToken) else {
             throw KeychainError.loadFailed(status: errSecItemNotFound)
         }
         return token
     }
 
     public func getRefreshToken() async throws -> String {
-        guard let token: String = try await storage.get(forKey: KeychainKey.refreshToken) else {
+        guard let token: String = try await keycahinStorage.get(forKey: KeychainKey.refreshToken) else {
             throw KeychainError.loadFailed(status: errSecItemNotFound)
         }
         return token
     }
 
-    public func deleteAccessToken() async throws {
-        try await storage.delete(forKey: KeychainKey.accessToken)
+    public func deleteAccessToken() async {
+        try? await keycahinStorage.delete(forKey: KeychainKey.accessToken)
     }
 
-    public func deleteRefreshToken() async throws {
-        try await storage.delete(forKey: KeychainKey.refreshToken)
+    public func deleteRefreshToken() async {
+        try? await keycahinStorage.delete(forKey: KeychainKey.refreshToken)
     }
 
-    public func deleteAllTokens() async throws {
-        try? await deleteAccessToken()
-        try? await deleteRefreshToken()
+    public func deleteAllTokens() async {
+        await deleteAccessToken()
+        await deleteRefreshToken()
+    }
+
+    // MARK: - SNS Platform
+
+    public func saveOAuthPlatform(_ platform: OAuthPlatform) {
+        try? userDefaultsStoarge.setEncodable(platform, for: UserDefaultsKeys.recentLoginPlatform)
+    }
+
+    public func getOAuthPlatform() -> OAuthPlatform? {
+        try? userDefaultsStoarge.getDecodable(from: UserDefaultsKeys.recentLoginPlatform)
     }
 }

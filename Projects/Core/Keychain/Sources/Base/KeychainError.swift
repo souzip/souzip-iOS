@@ -8,7 +8,7 @@ public enum KeychainError: Error {
     case loadFailed(status: OSStatus)
     case deleteFailed(status: OSStatus)
 
-    var errorDescription: String? {
+    var errorDescription: String {
         switch self {
         case .encodingFailed:
             "데이터 인코딩에 실패했습니다."

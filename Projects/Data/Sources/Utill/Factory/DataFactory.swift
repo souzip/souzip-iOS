@@ -25,7 +25,8 @@ public final class DefaultDataFactory: DataFactory {
 
     private lazy var cachedTokenRefresher: TokenRefresher = {
         let localDataSource = DefaultAuthLocalDataSource(
-            storage: keychainFactory.makeKeychainStorage()
+            keycahinStorage: keychainFactory.makeKeychainStorage(),
+            userDefaultsStoarge: userDefaultsFactory.makeUDStorage()
         )
 
         let networkClient = networkFactory.makePlainClient()
@@ -50,13 +51,14 @@ public final class DefaultDataFactory: DataFactory {
         let oauthServices = oauthServiceFactory.makeOAuthServices()
         let networkClient = networkFactory.makePlainClient()
 
-        let remoteDataSource = DefaultAuthRemoteDataSource(
+        let authRemoteDataSource = DefaultAuthRemoteDataSource(
             networkClient: networkClient,
             oauthServices: oauthServices
         )
 
-        let localDataSource = DefaultAuthLocalDataSource(
-            storage: keychainFactory.makeKeychainStorage()
+        let authLocalDataSource = DefaultAuthLocalDataSource(
+            keycahinStorage: keychainFactory.makeKeychainStorage(),
+            userDefaultsStoarge: userDefaultsFactory.makeUDStorage()
         )
 
         let userLocalDataSource = DefaultUserLocalDataSource(
@@ -64,8 +66,8 @@ public final class DefaultDataFactory: DataFactory {
         )
 
         return DefaultAuthRepository(
-            remote: remoteDataSource,
-            local: localDataSource,
+            authRemote: authRemoteDataSource,
+            authLocal: authLocalDataSource,
             userLocal: userLocalDataSource
         )
     }()

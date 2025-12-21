@@ -12,13 +12,13 @@ extension AuthEndpoint: APIEndpoint {
     public var path: String {
         switch self {
         case let .login(provider, _):
-            "/api/v1/auth/\(provider)"
+            "/api/auth/login/\(provider)"
         case .refresh:
-            "/api/v1/auth/refresh"
+            "/api/auth/refresh"
         case .logout:
-            "/api/v1/auth/logout"
+            "/api/auth/logout"
         case .withdraw:
-            "/api/v1/auth/withdraw"
+            "/api/users/me"
         }
     }
 
@@ -36,17 +36,14 @@ extension AuthEndpoint: APIEndpoint {
     }
 
     public var body: Data? {
-        let encoder = JSONEncoder()
-        encoder.keyEncodingStrategy = .convertToSnakeCase
-
         switch self {
         case let .login(_, accessToken):
             let request = LoginRequest(accessToken: accessToken)
-            return try? encoder.encode(request)
+            return try? JSONEncoder().encode(request)
 
         case let .refresh(refreshToken):
             let request = RefreshRequest(refreshToken: refreshToken)
-            return try? encoder.encode(request)
+            return try? JSONEncoder().encode(request)
 
         case .logout, .withdraw:
             return nil

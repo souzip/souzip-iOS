@@ -3,8 +3,8 @@ import UserDefaults
 import Utils
 
 public protocol UserLocalDataSource {
-    func saveUser(_ user: LoginUserResponse) throws
-    func getUser() throws -> LoginUserResponse?
+    func saveUser(_ user: LoginUserResponse)
+    func getUser() -> LoginUserResponse?
     func deleteUser()
 }
 
@@ -16,14 +16,11 @@ public final class DefaultUserLocalDataSource: UserLocalDataSource {
     }
 
     public func saveUser(_ user: LoginUserResponse) {
-        guard let data = try? JSONEncoder().encode(user) else { return }
-        storage.set(data, for: UserDefaultsKeys.cachedUser)
+        try? storage.setEncodable(user, for: UserDefaultsKeys.cachedUser)
     }
 
     public func getUser() -> LoginUserResponse? {
-        let data: Data? = storage.get(UserDefaultsKeys.cachedUser)
-        guard let data else { return nil }
-        return try? JSONDecoder().decode(LoginUserResponse.self, from: data)
+        try? storage.getDecodable(from: UserDefaultsKeys.cachedUser)
     }
 
     public func deleteUser() {

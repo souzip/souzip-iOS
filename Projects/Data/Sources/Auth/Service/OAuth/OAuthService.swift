@@ -1,10 +1,8 @@
-import Domain
-
 public protocol OAuthService {
     func login() async throws -> String
 }
 
-public enum OAuthPlatform: String, Hashable {
+public enum OAuthPlatform: String, Codable {
     case kakao
     case google
     case apple

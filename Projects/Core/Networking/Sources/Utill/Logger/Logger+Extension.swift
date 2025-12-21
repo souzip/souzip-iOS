@@ -1,4 +1,5 @@
 import Foundation
+import Logger
 
 public extension Logger {
     func logNetworkRequest(
@@ -8,7 +9,7 @@ public extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        var message = "🌐 Network Request"
+        var message = "🌐 네트워크 요청"
         if let endpoint {
             message += " [\(endpoint)]"
         }
@@ -26,9 +27,8 @@ public extension Logger {
             message += "\nBody: \(bodyString)"
         }
 
-        log(
+        info(
             message,
-            level: .info,
             category: .network,
             file: file,
             function: function,
@@ -48,7 +48,7 @@ public extension Logger {
         let statusCode = response.statusCode
         let isSuccess = (200 ... 299).contains(statusCode)
 
-        var message = isSuccess ? "✅ Network Response" : "⚠️ Network Response"
+        var message = isSuccess ? "✅ 네트워크 응답" : "⚠️ 네트워크 응답"
         if let endpoint {
             message += " [\(endpoint)]"
         }
@@ -60,7 +60,6 @@ public extension Logger {
         if let data {
             message += "\nData Size: \(data.count) bytes"
 
-            // JSON인 경우 예쁘게 출력
             if let json = try? JSONSerialization.jsonObject(with: data),
                let prettyData = try? JSONSerialization.data(
                    withJSONObject: json,
@@ -71,16 +70,23 @@ public extension Logger {
             }
         }
 
-        let level: LogLevel = isSuccess ? .info : .warning
-
-        log(
-            message,
-            level: level,
-            category: .network,
-            file: file,
-            function: function,
-            line: line
-        )
+        if isSuccess {
+            info(
+                message,
+                category: .network,
+                file: file,
+                function: function,
+                line: line
+            )
+        } else {
+            warning(
+                message,
+                category: .network,
+                file: file,
+                function: function,
+                line: line
+            )
+        }
     }
 
     /// 네트워크 에러 로깅
@@ -91,7 +97,7 @@ public extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        var message = "❌ Network Error"
+        var message = "❌ 네트워크 오류"
         if let endpoint {
             message += " [\(endpoint)]"
         }
@@ -100,9 +106,8 @@ public extension Logger {
         message += "Error: \(error.localizedDescription)\n"
         message += "Type: \(String(describing: type(of: error)))"
 
-        log(
+        self.error(
             message,
-            level: .error,
             category: .network,
             file: file,
             function: function,
@@ -118,9 +123,8 @@ public extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        log(
-            "📡 API Call: \(method) \(endpoint)",
-            level: .debug,
+        debug(
+            "📡 API 호출: \(method) \(endpoint)",
             category: .network,
             file: file,
             function: function,
@@ -136,9 +140,8 @@ public extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        log(
-            "✅ API Success: \(endpoint) (\(statusCode))",
-            level: .info,
+        info(
+            "✅ API 성공: \(endpoint) (\(statusCode))",
             category: .network,
             file: file,
             function: function,
@@ -155,13 +158,12 @@ public extension Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        var logMessage = "❌ API Failure: \(endpoint)\n"
+        var logMessage = "❌ API 실패: \(endpoint)\n"
         logMessage += "Status Code: \(statusCode)\n"
         logMessage += "Message: \(message ?? "No message")"
 
-        log(
+        error(
             logMessage,
-            level: .error,
             category: .network,
             file: file,
             function: function,

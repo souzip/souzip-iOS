@@ -1,5 +1,5 @@
 public protocol DomainFactory: AnyObject {
-    func makeCheckLoginStatusUseCase() -> CheckLoginStatusUseCase
+    func makeCheckLoginStatusUseCase() -> AutoLoginUseCase
     func makeRefreshTokenUseCase() -> RefreshTokenUseCase
     func makeLoginUseCase() -> LoginUseCase
     func makeLogoutUseCase() -> LogoutUseCase
@@ -12,23 +12,23 @@ public final class DefaultDomainFactory: DomainFactory {
         self.factory = factory
     }
 
-    public func makeCheckLoginStatusUseCase() -> CheckLoginStatusUseCase {
+    public func makeCheckLoginStatusUseCase() -> AutoLoginUseCase {
         let authRepo = factory.makeAuthRepository()
-        return DefaultCheckLoginStatusUseCase(repo: authRepo)
+        return DefaultAutoLoginUseCase(authRepo: authRepo)
     }
 
     public func makeRefreshTokenUseCase() -> RefreshTokenUseCase {
         let authRepo = factory.makeAuthRepository()
-        return DefaultRefreshTokenUseCase(repo: authRepo)
+        return DefaultRefreshTokenUseCase(authRepo: authRepo)
     }
 
     public func makeLoginUseCase() -> LoginUseCase {
         let authRepo = factory.makeAuthRepository()
-        return DefaultLoginUseCase(repo: authRepo)
+        return DefaultLoginUseCase(authRepo: authRepo)
     }
 
     public func makeLogoutUseCase() -> LogoutUseCase {
         let authRepo = factory.makeAuthRepository()
-        return DefaultLogoutUseCase(repo: authRepo)
+        return DefaultLogoutUseCase(authRepo: authRepo)
     }
 }
