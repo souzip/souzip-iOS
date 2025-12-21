@@ -1,5 +1,6 @@
 public protocol DomainFactory: AnyObject {
     func makeAutoLoginUseCase() -> AutoLoginUseCase
+    func makeLoadRecentAuthProviderUseCase() -> LoadRecentAuthProviderUseCase
     func makeRefreshTokenUseCase() -> RefreshTokenUseCase
     func makeLoginUseCase() -> LoginUseCase
     func makeLogoutUseCase() -> LogoutUseCase
@@ -15,6 +16,11 @@ public final class DefaultDomainFactory: DomainFactory {
     public func makeAutoLoginUseCase() -> AutoLoginUseCase {
         let authRepo = factory.makeAuthRepository()
         return DefaultAutoLoginUseCase(authRepo: authRepo)
+    }
+
+    public func makeLoadRecentAuthProviderUseCase() -> LoadRecentAuthProviderUseCase {
+        let authRepo = factory.makeAuthRepository()
+        return DefaultLoadRecentAuthProviderUseCase(authRepo: authRepo)
     }
 
     public func makeRefreshTokenUseCase() -> RefreshTokenUseCase {

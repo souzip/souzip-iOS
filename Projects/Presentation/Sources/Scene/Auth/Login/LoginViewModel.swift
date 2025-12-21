@@ -10,13 +10,16 @@ final class LoginViewModel: BaseViewModel<
 > {
     // MARK: - UseCase
 
+    private let loadRecentAuthProvider: LoadRecentAuthProviderUseCase
     private let login: LoginUseCase
 
     // MARK: - Init
 
     init(
+        loadRecentAuthProvider: LoadRecentAuthProviderUseCase,
         login: LoginUseCase
     ) {
+        self.loadRecentAuthProvider = loadRecentAuthProvider
         self.login = login
         super.init(initialState: State())
         bindState()
@@ -32,14 +35,21 @@ final class LoginViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewDidLoad:
+            Task { await loadRecentProvider() }
         case let .tapLogin(provider):
             Task { await Login(provider) }
         case .tapGuest:
-            break
+            navigate(to: .main)
         }
     }
 
     // MARK: - Private Logic
+
+    private func loadRecentProvider() async {
+        let provider = await loadRecentAuthProvider.execute()
+        mutate { $0.recentAuthProvider = provider }
+    }
 
     private func Login(_ provider: AuthProvider) async {
         guard !state.value.isLoading else { return }

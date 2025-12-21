@@ -1,8 +1,8 @@
-public protocol LoadRecentAuthProvider {
+public protocol LoadRecentAuthProviderUseCase {
     func execute() async -> AuthProvider?
 }
 
-public final class DefaultLoadRecentAuthProvider: LoadRecentAuthProvider {
+public final class DefaultLoadRecentAuthProviderUseCase: LoadRecentAuthProviderUseCase {
     private let authRepo: AuthRepository
 
     public init(authRepo: AuthRepository) {

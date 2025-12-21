@@ -29,6 +29,7 @@ final class DefaultPresentationFactory: PresentationFactory {
 
     func makeLoginScene() -> RoutedScene<AuthRoute> {
         let vm = LoginViewModel(
+            loadRecentAuthProvider: domainFactory.makeLoadRecentAuthProviderUseCase(),
             login: domainFactory.makeLoginUseCase()
         )
         let view = LoginView()
