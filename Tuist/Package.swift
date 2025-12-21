@@ -3,22 +3,9 @@ import PackageDescription
 
 #if TUIST
     import ProjectDescription
-
-    let packageSettings = PackageSettings(
-        productTypes: [
-            "RxSwift": .framework,
-            "RxCocoa": .framework,
-            "SnapKit": .framework,
-            "Kingfisher": .framework
-        ],
-        baseSettings: .settings(
-            configurations: [
-                .debug(name: .configuration("Debug")),
-                .release(name: .configuration("Staging")),
-                .release(name: .configuration("Release"))
-            ]
-        )
-    )
+    import ProjectDescriptionHelpers
+    
+    let packageSettings = ExternalLibrary.packageSettings
 #endif
 
 let package = Package(
@@ -26,6 +13,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.7.0"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.7.0"),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0")
+        .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
+        .package(url: "https://github.com/kakao/kakao-ios-sdk", from: "2.26.0"),
+//        .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "9.0.0")
     ]
 )

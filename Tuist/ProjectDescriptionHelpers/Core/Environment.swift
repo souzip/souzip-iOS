@@ -17,7 +17,8 @@ public enum Environment {
 
     // MARK: - Platform
 
-    public static let deploymentTarget: DeploymentTargets = .iOS("16.0")
+    public static let deployment = "16.0"
+    public static let deploymentTarget: DeploymentTargets = .iOS(deployment)
     public static let deploymentDestination: Destinations = [.iPhone]
 
     // MARK: - Configuration Names

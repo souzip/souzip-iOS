@@ -1,4 +1,4 @@
-import Foundation
+import KakaoSDKUser
 
 public final class KakaoOAuthService: OAuthService {
     private let appKey: String
@@ -7,14 +7,28 @@ public final class KakaoOAuthService: OAuthService {
         self.appKey = appKey
     }
 
+    @MainActor
     public func login() async throws -> String {
-        // TODO: KakaoSDK 사용
-        // 1. KakaoSDK.initSDK(appKey: appKey)
-        // 2. 카카오톡 설치 여부 확인
-        //    - 설치됨: 카카오톡으로 로그인
-        //    - 미설치: 웹 로그인
-        // 3. Access Token 반환
+        try await withCheckedThrowingContinuation { cont in
+            if UserApi.isKakaoTalkLoginAvailable() {
+                UserApi.shared.loginWithKakaoTalk { token, error in
+                    if let error {
+                        cont.resume(throwing: OAuthServiceError.sdkError(error))
+                        return
+                    }
 
-        fatalError("KakaoSDK 구현 필요")
+                    cont.resume(returning: token?.accessToken ?? "")
+                }
+            } else {
+                UserApi.shared.loginWithKakaoAccount { token, error in
+                    if let error {
+                        cont.resume(throwing: OAuthServiceError.sdkError(error))
+                        return
+                    }
+
+                    cont.resume(returning: token?.accessToken ?? "")
+                }
+            }
+        }
     }
 }

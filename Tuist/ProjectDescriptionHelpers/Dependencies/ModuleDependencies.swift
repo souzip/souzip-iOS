@@ -11,7 +11,7 @@ public enum ModuleDependencies {
                 .module(.networking),
                 .module(.logger),
                 .module(.keychain),
-                .module(.utils)
+                .module(.utils),
             ]
             
         case .presentation:
@@ -23,8 +23,7 @@ public enum ModuleDependencies {
 
                 .external(.rxSwift),
                 .external(.rxCocoa),
-                .external(.snapKit),
-                .external(.kingfisher)
+                .external(.kingfisher),
             ]
             
         case .domain:
@@ -40,7 +39,11 @@ public enum ModuleDependencies {
                 .module(.logger),
                 .module(.keychain),
                 .module(.userDefaults),
-                .module(.utils)
+                .module(.utils),
+
+                .external(.kakaoSDKCommon),
+                .external(.kakaoSDKAuth),
+                .external(.kakaoSDKUser),
             ]
             
         case .networking:

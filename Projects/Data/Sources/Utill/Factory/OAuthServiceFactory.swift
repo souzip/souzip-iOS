@@ -15,7 +15,7 @@ public final class DefaultOAuthServiceFactory: OAuthServiceFactory {
         [
             .kakao: KakaoOAuthService(appKey: configuration.kakaoAppKey),
             .google: GoogleOAuthService(clientID: configuration.googleClientID),
-            .apple: AppleOAuthService(serviceID: configuration.appleServiceID),
+            .apple: AppleOAuthService(),
         ]
     }
 }

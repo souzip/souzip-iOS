@@ -12,7 +12,6 @@ public enum DefaultInfoPlist {
         "API_BASE_URL": "$(API_BASE_URL)",
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
         "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
-        "APPLE_SERVICE_ID": "APPLE_SERVICE_ID"
     ]
     
     // MARK: - App Configuration
@@ -33,7 +32,28 @@ public enum DefaultInfoPlist {
                     ]
                 ]
             ]
-        ]
+        ],
+
+        "LSApplicationQueriesSchemes": [
+          "kakaokompassauth",
+          "kakaolink",
+          "kakaoplus"
+        ],
+
+        "CFBundleURLTypes": [
+            [
+                "CFBundleTypeRole": "Editor",
+                "CFBundleURLSchemes": [
+                    "kakao$(KAKAO_APP_KEY)"
+                ]
+            ],
+            [
+                "CFBundleTypeRole": "Editor",
+                "CFBundleURLSchemes": [
+                    "$(GOOGLE_REVERSED_CLIENT_ID)"
+                ]
+            ]
+        ],
     ]
     
     // MARK: - Public InfoPlists
