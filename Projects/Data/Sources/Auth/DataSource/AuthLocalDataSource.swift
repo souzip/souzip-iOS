@@ -18,14 +18,14 @@ public protocol AuthLocalDataSource {
 
 public final class DefaultAuthLocalDataSource: AuthLocalDataSource {
     private let keycahinStorage: KeychainStorage
-    private let userDefaultsStoarge: UserDefaultsStorage
+    private let userDefaultsStorage: UserDefaultsStorage
 
     public init(
-        keycahinStorage: KeychainStorage,
-        userDefaultsStoarge: UserDefaultsStorage
+        keychainStorage: KeychainStorage,
+        userDefaultsStorage: UserDefaultsStorage
     ) {
-        self.keycahinStorage = keycahinStorage
-        self.userDefaultsStoarge = userDefaultsStoarge
+        keycahinStorage = keychainStorage
+        self.userDefaultsStorage = userDefaultsStorage
     }
 
     // MARK: - Token
@@ -68,10 +68,10 @@ public final class DefaultAuthLocalDataSource: AuthLocalDataSource {
     // MARK: - SNS Platform
 
     public func saveOAuthPlatform(_ platform: OAuthPlatform) {
-        try? userDefaultsStoarge.setEncodable(platform, for: UserDefaultsKeys.recentLoginPlatform)
+        try? userDefaultsStorage.setEncodable(platform, for: UserDefaultsKeys.recentLoginPlatform)
     }
 
     public func getOAuthPlatform() -> OAuthPlatform? {
-        try? userDefaultsStoarge.getDecodable(from: UserDefaultsKeys.recentLoginPlatform)
+        try? userDefaultsStorage.getDecodable(from: UserDefaultsKeys.recentLoginPlatform)
     }
 }
