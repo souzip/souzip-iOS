@@ -10,6 +10,12 @@ public final class DefaultLoginUseCase: LoginUseCase {
     }
 
     public func execute(provider: AuthProvider) async throws -> LoginResult {
-        try await authRepo.login(provider: provider)
+        let user = try await authRepo.login(provider: provider)
+
+        if user.needsOnboarding {
+            return .shouldOnboarding
+        }
+
+        return .ready
     }
 }

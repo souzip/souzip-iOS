@@ -1,5 +1,5 @@
 public enum AutoLoginResult {
-    case success
+    case ready
     case shouldLogin
     case shouldOnboarding
 }

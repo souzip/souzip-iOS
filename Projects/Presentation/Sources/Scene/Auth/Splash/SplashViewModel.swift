@@ -27,7 +27,7 @@ final class SplashViewModel: BaseViewModel<
         let result = await loginTask
 
         switch result {
-        case .success: navigate(to: .main)
+        case .ready: navigate(to: .main)
         case .shouldLogin: navigate(to: .login)
         case .shouldOnboarding: navigate(to: .profile)
         }

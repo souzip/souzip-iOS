@@ -8,9 +8,16 @@ final class LoginViewModel: BaseViewModel<
     LoginEvent,
     AuthRoute
 > {
+    // MARK: - UseCase
+
+    private let login: LoginUseCase
+
     // MARK: - Init
 
-    init() {
+    init(
+        login: LoginUseCase
+    ) {
+        self.login = login
         super.init(initialState: State())
         bindState()
     }
@@ -26,7 +33,7 @@ final class LoginViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case let .tapLogin(provider):
-            Login(provider)
+            Task { await Login(provider) }
         case .tapGuest:
             break
         }
@@ -34,8 +41,17 @@ final class LoginViewModel: BaseViewModel<
 
     // MARK: - Private Logic
 
-    private func Login(_ provider: AuthProvider) {
+    private func Login(_ provider: AuthProvider) async {
         guard !state.value.isLoading else { return }
-        print(provider)
+
+        do {
+            let result = try await login.execute(provider: provider)
+            switch result {
+            case .ready: navigate(to: .main)
+            case .shouldOnboarding: navigate(to: .profile)
+            }
+        } catch {
+            emit(.errorAlert(error.localizedDescription))
+        }
     }
 }

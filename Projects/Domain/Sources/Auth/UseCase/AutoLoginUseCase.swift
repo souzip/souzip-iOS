@@ -23,6 +23,6 @@ public final class DefaultAutoLoginUseCase: AutoLoginUseCase {
             return .shouldOnboarding
         }
 
-        return .success
+        return .ready
     }
 }

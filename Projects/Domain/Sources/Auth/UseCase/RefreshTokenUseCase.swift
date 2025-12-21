@@ -1,5 +1,5 @@
 public protocol RefreshTokenUseCase {
-    func execute() async throws -> LoginResult
+    func execute() async throws -> LoginUser
 }
 
 public final class DefaultRefreshTokenUseCase: RefreshTokenUseCase {
@@ -9,7 +9,7 @@ public final class DefaultRefreshTokenUseCase: RefreshTokenUseCase {
         self.authRepo = authRepo
     }
 
-    public func execute() async throws -> LoginResult {
+    public func execute() async throws -> LoginUser {
         try await authRepo.refreshToken()
     }
 }
