@@ -22,9 +22,10 @@ final class SplashViewModel: BaseViewModel<
 
     private func checkStatus() async {
         async let loginTask = autoLogin.execute()
-        async let _: Void = Task.sleep(for: state.value.minDisplayTime)
+        async let delay: Void = Task.sleep(for: state.value.minDisplayTime)
 
         let result = await loginTask
+        try? await delay
 
         switch result {
         case .ready: navigate(to: .main)

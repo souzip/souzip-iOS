@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreenIogo" translatesAutoresizingMaskIntoConstraints="NO" id="5mv-Az-WXA">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo_launchscreen" translatesAutoresizingMaskIntoConstraints="NO" id="5mv-Az-WXA">
                                 <rect key="frame" x="106.66666666666669" y="372" width="180" height="108"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="180" id="Hbg-fr-VAT"/>
@@ -39,9 +39,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchScreenIogo" width="200" height="120"/>
+        <image name="logo_launchscreen" width="200" height="120"/>
         <namedColor name="background">
-            <color red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.075000002980232239" green="0.082000002264976501" blue="0.086000002920627594" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
