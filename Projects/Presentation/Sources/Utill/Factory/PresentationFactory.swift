@@ -1,29 +1,43 @@
 import Domain
 import UIKit
 
-public protocol PresentationFactory: AnyObject {
-    func makeLoginVC() -> UIViewController
+protocol PresentationFactory: AnyObject {
+    func makeSplashScene() -> RoutedScene<AuthRoute>
+    func makeLoginScene() -> RoutedScene<AuthRoute>
 }
 
-public final class DefaultPresentationFactory: PresentationFactory {
-    private let factory: DomainFactory
+final class DefaultPresentationFactory: PresentationFactory {
+    private let domainFactory: DomainFactory
 
-    public init(factory: DomainFactory) {
-        self.factory = factory
+    init(domainFactory: DomainFactory) {
+        self.domainFactory = domainFactory
     }
 
-    public func makeLoginVC() -> UIViewController {
-        let vm = makeLoginVM()
+    func makeSplashScene() -> RoutedScene<AuthRoute> {
+        let vm = SplashViewModel(
+            autoLogin: domainFactory.makeAutoLoginUseCase()
+        )
+        let view = SplashView()
+        let vc = SplashViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeLoginScene() -> RoutedScene<AuthRoute> {
+        let vm = LoginViewModel(
+            login: domainFactory.makeLoginUseCase()
+        )
         let view = LoginView()
         let vc = LoginViewController(viewModel: vm, contentView: view)
-        return vc
-    }
-}
 
-private extension DefaultPresentationFactory {
-    func makeLoginVM() -> LoginViewModel {
-        .init(
-            login: factory.makeLoginUseCase()
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
         )
     }
 }

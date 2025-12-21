@@ -21,4 +21,7 @@ public enum UserDefaultsKeys {
 
     public static let cachedUser =
         DefaultsKey<Data?>("user_cached_profile", default: nil)
+
+    public static let needsOnboarding =
+        DefaultsKey<Bool>("needs_onboarding", default: false)
 }

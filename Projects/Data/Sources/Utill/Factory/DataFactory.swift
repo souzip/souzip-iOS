@@ -25,8 +25,8 @@ public final class DefaultDataFactory: DataFactory {
 
     private lazy var cachedTokenRefresher: TokenRefresher = {
         let localDataSource = DefaultAuthLocalDataSource(
-            keycahinStorage: keychainFactory.makeKeychainStorage(),
-            userDefaultsStoarge: userDefaultsFactory.makeUDStorage()
+            keychainStorage: keychainFactory.makeKeychainStorage(),
+            userDefaultsStorage: userDefaultsFactory.makeUDStorage()
         )
 
         let networkClient = networkFactory.makePlainClient()
@@ -57,8 +57,8 @@ public final class DefaultDataFactory: DataFactory {
         )
 
         let authLocalDataSource = DefaultAuthLocalDataSource(
-            keycahinStorage: keychainFactory.makeKeychainStorage(),
-            userDefaultsStoarge: userDefaultsFactory.makeUDStorage()
+            keychainStorage: keychainFactory.makeKeychainStorage(),
+            userDefaultsStorage: userDefaultsFactory.makeUDStorage()
         )
 
         let userLocalDataSource = DefaultUserLocalDataSource(

@@ -1,27 +1,23 @@
-import Logger
-import Presentation
+import Domain
 import UIKit
 
-final class AppCoordinator: BaseCoordinator<AppRoute> {
+public final class RootCoordinator: BaseCoordinator<RootRoute, Never> {
     private let factory: PresentationFactory
 
-    init(
+    public init(
         nav: UINavigationController,
-        factory: PresentationFactory
+        factory: DomainFactory
     ) {
-        self.factory = factory
+        self.factory = DefaultPresentationFactory(domainFactory: factory)
         super.init(nav: nav)
     }
 
-    override func start() {
-        navigate(.splash)
+    override public func start() {
+        navigate(.auth)
     }
 
-    override func navigate(_ route: Route) {
+    override public func navigate(_ route: Route) {
         switch route {
-        case .splash:
-            showSplash()
-
         case .auth:
             showAuth()
 
@@ -31,13 +27,7 @@ final class AppCoordinator: BaseCoordinator<AppRoute> {
     }
 }
 
-private extension AppCoordinator {
-    func showSplash() {
-        let vc = SplashViewController()
-        vc.onFinish = { _ in }
-        nav.setViewControllers([vc], animated: false)
-    }
-
+private extension RootCoordinator {
     func showAuth() {
         children.removeAll()
 

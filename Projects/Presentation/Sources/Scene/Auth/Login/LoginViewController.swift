@@ -5,9 +5,14 @@ final class LoginViewController: BaseViewController<
     LoginViewModel,
     LoginView
 > {
-    // MARK: - Properties
+    // MARK: - Indicator
 
-    private let loadingIndicator = UIActivityIndicatorView(style: .large)
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
 
     // MARK: - Lifecycle
 

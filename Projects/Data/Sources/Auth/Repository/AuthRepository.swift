@@ -18,20 +18,15 @@ public final class DefaultAuthRepository: AuthRepository {
         self.userLocal = userLocal
     }
 
-    public func login(provider: AuthProvider) async throws -> LoginResult {
+    public func login(provider: AuthProvider) async throws -> LoginUser {
         do {
             let platform = mapToPlatform(provider)
             let dto = try await authremote.login(platform: platform)
 
             try await authlocal.saveAccessToken(dto.accessToken)
             try await authlocal.saveRefreshToken(dto.refreshToken)
-            authlocal.saveOAuthPlatform(platform)
 
-            let user = LoginUserResponse(
-                userId: dto.user.userId,
-                nickname: dto.user.nickname
-            )
-            userLocal.saveUser(user)
+            userLocal.saveNeedsOnboarding(dto.needsOnboarding)
 
             return mapToDomain(dto)
         } catch {
@@ -69,7 +64,7 @@ public final class DefaultAuthRepository: AuthRepository {
         }
     }
 
-    public func refreshToken() async throws -> LoginResult {
+    public func refreshToken() async throws -> LoginUser {
         do {
             let refreshToken = try await authlocal.getRefreshToken()
             let dto = try await authremote.refresh(refreshToken: refreshToken)
@@ -81,9 +76,11 @@ public final class DefaultAuthRepository: AuthRepository {
                 throw AuthError.invalidUser
             }
 
-            return LoginResult(
-                nickname: user.nickname,
-                needsOnboarding: false
+            let needsOnboarding = userLocal.getNeedsOnboarding()
+
+            return LoginUser(
+                userId: user.userId,
+                needsOnboarding: needsOnboarding
             )
         } catch {
             throw mapToDomainError(error)
@@ -114,9 +111,9 @@ private extension DefaultAuthRepository {
         }
     }
 
-    func mapToDomain(_ dto: LoginResponse) -> LoginResult {
-        LoginResult(
-            nickname: dto.user.nickname,
+    func mapToDomain(_ dto: LoginResponse) -> LoginUser {
+        LoginUser(
+            userId: dto.user.userId,
             needsOnboarding: dto.needsOnboarding
         )
     }

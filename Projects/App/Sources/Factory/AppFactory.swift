@@ -10,7 +10,6 @@ final class AppFactory {
     let networkFactory: NetworkFactory
     let dataFactory: DataFactory
     let domainFactory: DomainFactory
-    let presentationFactory: PresentationFactory
 
     init(config: AppConfiguration) {
         // keyChain
@@ -44,13 +43,9 @@ final class AppFactory {
         // Domain
         let domainFactory = DefaultDomainFactory(factory: dataFactory)
 
-        // Presentation
-        let presentationFactory = DefaultPresentationFactory(factory: domainFactory)
-
         self.keychainFactory = keychainFactory
         self.networkFactory = networkFactory
         self.dataFactory = dataFactory
         self.domainFactory = domainFactory
-        self.presentationFactory = presentationFactory
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-public final class TabBarCoordinator: BaseCoordinator<TabItem> {
+final class TabBarCoordinator: BaseCoordinator<TabItem, RootRoute> {
     private let factory: PresentationFactory
 
     private let tabBar = UITabBarController()
@@ -9,7 +9,7 @@ public final class TabBarCoordinator: BaseCoordinator<TabItem> {
     private let tab2Nav = UINavigationController()
     private let tab3Nav = UINavigationController()
 
-    public init(
+    init(
         nav: UINavigationController,
         factory: PresentationFactory
     ) {
@@ -17,12 +17,12 @@ public final class TabBarCoordinator: BaseCoordinator<TabItem> {
         super.init(nav: nav)
     }
 
-    override public func start() {
+    override func start() {
         setupTabBar()
         navigate(.tab1)
     }
 
-    override public func navigate(_ route: Route) {
+    override func navigate(_ route: Route) {
         tabBar.selectedIndex = route.rawValue
     }
 }

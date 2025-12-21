@@ -1,9 +1,9 @@
 import UIKit
 
-public final class AuthCoordinator: BaseCoordinator<AuthRoute> {
+final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
     private let factory: PresentationFactory
 
-    public init(
+    init(
         nav: UINavigationController,
         factory: PresentationFactory
     ) {
@@ -11,21 +11,46 @@ public final class AuthCoordinator: BaseCoordinator<AuthRoute> {
         super.init(nav: nav)
     }
 
-    override public func start() {
-        navigate(.login)
+    override func start() {
+        navigate(.splash)
     }
 
-    override public func navigate(_ route: Route) {
+    override func navigate(_ route: Route) {
         switch route {
+        case .splash:
+            showSplash()
+
         case .login:
             showLogin()
+
+        case .profile:
+            showProfile()
+
+        case .category:
+            break
+
+        case .main:
+            showMain()
         }
     }
 }
 
 private extension AuthCoordinator {
+    func showSplash() {
+        let scene = factory.makeSplashScene()
+        bindRoute(scene)
+        nav.setViewControllers([scene.vc], animated: false)
+    }
+
     func showLogin() {
-        let vc = factory.makeLoginVC()
-        nav.setViewControllers([vc], animated: true)
+        let scene = factory.makeLoginScene()
+        bindRoute(scene)
+        nav.setViewControllers([scene.vc], animated: false)
+    }
+
+    func showProfile() {}
+
+    func showMain() {
+        navigateToParent(.main)
     }
 }

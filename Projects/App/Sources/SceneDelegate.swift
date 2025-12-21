@@ -4,7 +4,7 @@ import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-    private var coordinator: AppCoordinator?
+    private var coordinator: RootCoordinator?
 
     func scene(
         _ scene: UIScene,
@@ -18,9 +18,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let nav = UINavigationController()
 
-        coordinator = AppCoordinator(
+        coordinator = RootCoordinator(
             nav: nav,
-            factory: factory.presentationFactory
+            factory: factory.domainFactory
         )
         coordinator?.start()
 
