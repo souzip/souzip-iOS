@@ -37,6 +37,7 @@ class BaseViewModel<State, Action, Event, Route>: BaseViewModelType {
 
     func mutate(_ mutation: @escaping (inout State) -> Void) {
         var newState = state.value
+        Logger.shared.logState(newState)
         mutation(&newState)
         state.accept(newState)
     }
@@ -51,50 +52,5 @@ class BaseViewModel<State, Action, Event, Route>: BaseViewModelType {
     func navigate(to route: Route) {
         Logger.shared.logRoute(route, caller: self)
         self.route.accept(route)
-    }
-}
-
-// MARK: - State 관찰 헬퍼
-
-extension BaseViewModel {
-    func observe<T: Equatable>(
-        _ keyPath: KeyPath<State, T>,
-        skip: Int = 1,
-        onNext: @escaping (T) -> Void
-    ) {
-        state
-            .map { $0[keyPath: keyPath] }
-            .distinctUntilChanged()
-            .skip(skip)
-            .subscribe(onNext: onNext)
-            .disposed(by: disposeBag)
-    }
-
-    func observe<T: Equatable>(
-        skip: Int = 1,
-        compute: @escaping (State) -> T,
-        onNext: @escaping (T) -> Void
-    ) {
-        state
-            .map(compute)
-            .distinctUntilChanged()
-            .skip(skip)
-            .subscribe(onNext: onNext)
-            .disposed(by: disposeBag)
-    }
-
-    func observeAndMutate<T: Equatable>(
-        skip: Int = 1,
-        compute: @escaping (State) -> T,
-        mutation: @escaping (inout State, T) -> Void
-    ) {
-        state
-            .map(compute)
-            .distinctUntilChanged()
-            .skip(skip)
-            .subscribe { [weak self] value in
-                self?.mutate { mutation(&$0, value) }
-            }
-            .disposed(by: disposeBag)
     }
 }
