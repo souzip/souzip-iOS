@@ -1,7 +1,7 @@
 import Domain
 
 enum LoginAction {
-    case viewDidLoad
+    case viewWillAppear
     case tapLogin(AuthProvider)
     case tapGuest
 }

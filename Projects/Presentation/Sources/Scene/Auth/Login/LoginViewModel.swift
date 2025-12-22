@@ -28,14 +28,17 @@ final class LoginViewModel: BaseViewModel<
     // MARK: - Override
 
     override func bindState() {
-        observe(\.isLoading) { self.emit(.loading($0)) }
+        observe(\.isLoading)
+            .skip(1)
+            .map { .loading($0) }
+            .onNext(emit)
     }
 
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewDidLoad:
+        case .viewWillAppear:
             Task { await loadRecentProvider() }
         case let .tapLogin(provider):
             Task { await Login(provider) }
@@ -54,11 +57,14 @@ final class LoginViewModel: BaseViewModel<
     private func Login(_ provider: AuthProvider) async {
         guard !state.value.isLoading else { return }
 
+        mutate { $0.isLoading = true }
+        defer { mutate { $0.isLoading = false } }
+
         do {
             let result = try await login.execute(provider: provider)
             switch result {
             case .ready: navigate(to: .main)
-            case .shouldOnboarding: navigate(to: .profile)
+            case .shouldOnboarding: navigate(to: .terms)
             }
         } catch {
             emit(.errorAlert(error.localizedDescription))
