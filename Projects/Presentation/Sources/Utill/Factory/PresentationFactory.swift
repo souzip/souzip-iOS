@@ -4,6 +4,7 @@ import UIKit
 protocol PresentationFactory: AnyObject {
     func makeSplashScene() -> RoutedScene<AuthRoute>
     func makeLoginScene() -> RoutedScene<AuthRoute>
+    func makeTermsScene() -> RoutedScene<AuthRoute>
 }
 
 final class DefaultPresentationFactory: PresentationFactory {
@@ -34,6 +35,18 @@ final class DefaultPresentationFactory: PresentationFactory {
         )
         let view = LoginView()
         let vc = LoginViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeTermsScene() -> RoutedScene<AuthRoute> {
+        let vm = TermsViewModel()
+        let view = TermsView()
+        let vc = TermsViewController(viewModel: vm, contentView: view)
 
         return .init(
             vc: vc,

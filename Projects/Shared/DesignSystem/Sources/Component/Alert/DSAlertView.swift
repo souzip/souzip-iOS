@@ -113,11 +113,11 @@ public final class DSAlertView: UIView {
 
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        buttonStackView.addArrangedSubview(confirmButton)
         if let cancelTitle {
             cancelButton.setTitle(cancelTitle, for: .normal)
             buttonStackView.addArrangedSubview(cancelButton)
         }
+        buttonStackView.addArrangedSubview(confirmButton)
     }
 
     // MARK: - Actions
