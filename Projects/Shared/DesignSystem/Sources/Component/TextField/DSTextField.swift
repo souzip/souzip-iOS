@@ -73,6 +73,13 @@ public final class DSTextField: UIView {
 
     public func setReturnKeyType(_ returnKeyType: UIReturnKeyType = .done) {
         textField.returnKeyType = returnKeyType
+
+        textField.removeTarget(
+            self,
+            action: #selector(textFieldDidReturn),
+            for: .editingDidEndOnExit
+        )
+
         textField.addTarget(
             self,
             action: #selector(textFieldDidReturn),
