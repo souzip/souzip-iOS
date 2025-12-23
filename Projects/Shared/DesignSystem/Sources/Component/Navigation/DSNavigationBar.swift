@@ -59,6 +59,7 @@ public final class DSNavigationBar: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = 0
+        stackView.isHidden = true
         return stackView
     }()
 
@@ -117,6 +118,8 @@ public final class DSNavigationBar: UIView {
     }
 
     private func renderRight(_ buttons: [RightButton]) {
+        rightStackView.isHidden = false
+
         for button in buttons {
             let btn = UIButton(type: .system)
             btn.setImage(button.image, for: .normal)
