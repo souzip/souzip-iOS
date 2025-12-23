@@ -8,6 +8,7 @@ public enum DefaultInfoPlist {
         "CFBundleShortVersionString": .string(Environment.appVersion),
         "CFBundleVersion": .string(Environment.appBuildVersion),
         "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
+        "UIDesignRequiresCompatibility": true,
 
         "API_BASE_URL": "$(API_BASE_URL)",
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
