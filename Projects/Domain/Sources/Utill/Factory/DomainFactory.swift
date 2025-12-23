@@ -4,6 +4,8 @@ public protocol DomainFactory: AnyObject {
     func makeRefreshTokenUseCase() -> RefreshTokenUseCase
     func makeLoginUseCase() -> LoginUseCase
     func makeLogoutUseCase() -> LogoutUseCase
+
+    func makeValidateNicknameUseCase() -> ValidateNicknameUseCase
 }
 
 public final class DefaultDomainFactory: DomainFactory {
@@ -12,6 +14,8 @@ public final class DefaultDomainFactory: DomainFactory {
     public init(factory: DataFactory) {
         self.factory = factory
     }
+
+    // MARK: - Auth
 
     public func makeAutoLoginUseCase() -> AutoLoginUseCase {
         let authRepo = factory.makeAuthRepository()
@@ -36,5 +40,11 @@ public final class DefaultDomainFactory: DomainFactory {
     public func makeLogoutUseCase() -> LogoutUseCase {
         let authRepo = factory.makeAuthRepository()
         return DefaultLogoutUseCase(authRepo: authRepo)
+    }
+
+    // MARK: - Onboarding
+
+    public func makeValidateNicknameUseCase() -> ValidateNicknameUseCase {
+        DefaultValidateNicknameUseCase()
     }
 }

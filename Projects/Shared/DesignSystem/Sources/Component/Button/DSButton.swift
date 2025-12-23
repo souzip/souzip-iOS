@@ -5,6 +5,7 @@ public final class DSButton: UIButton {
 
     public init() {
         super.init(frame: .zero)
+        configure()
     }
 
     @available(*, unavailable)
@@ -39,5 +40,18 @@ public final class DSButton: UIButton {
         }
 
         configuration = config
+    }
+}
+
+// MARK: - UI Configuration
+
+private extension DSButton {
+    func configure() {
+        setAttributes()
+    }
+
+    func setAttributes() {
+        layer.cornerRadius = 10
+        clipsToBounds = true
     }
 }
