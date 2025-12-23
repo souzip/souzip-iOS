@@ -120,7 +120,6 @@ public final class DSNavigationBar: UIView {
         for button in buttons {
             let btn = UIButton(type: .system)
             btn.setImage(button.image, for: .normal)
-            btn.tintColor = .dsGreyWhite
 
             btn.snp.makeConstraints { $0.size.equalTo(40) }
 
