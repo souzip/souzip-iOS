@@ -21,7 +21,6 @@ public extension Coordinator {
         child.parent = self
         if let baseChild = child as? BaseCoordinator<C.Route, C.ParentRoute> {
             baseChild.sendParentRoute = { [weak self] parentRoute in
-                print(parentRoute)
                 self?.navigate(parentRoute)
             }
         }
