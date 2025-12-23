@@ -27,6 +27,7 @@ public final class DSAlertView: UIView {
         button.setTitleColor(.dsMain, for: .normal)
         button.backgroundColor = .dsMain.withAlphaComponent(0.1)
         button.layer.borderColor = UIColor.dsMain.cgColor
+        button.layer.borderWidth = 1
         button.layer.cornerRadius = 8
         return button
     }()
@@ -34,7 +35,7 @@ public final class DSAlertView: UIView {
     private let cancelButton: UIButton = {
         let button = UIButton(type: .system)
         button.titleLabel?.font = .pretendard(size: 17, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.dsGreyWhite, for: .normal)
         button.backgroundColor = .dsGrey700
         button.layer.cornerRadius = 8
         return button
@@ -76,7 +77,6 @@ public final class DSAlertView: UIView {
 
         containerView.snp.makeConstraints { make in
             make.width.equalTo(336)
-            make.height.equalTo(135)
             make.center.equalToSuperview()
         }
 
@@ -89,6 +89,7 @@ public final class DSAlertView: UIView {
             make.top.equalTo(messageLabel.snp.bottom).offset(12)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(24)
+            make.height.equalTo(48)
         }
 
         confirmButton.addTarget(self, action: #selector(confirmTapped), for: .touchUpInside)
@@ -112,11 +113,11 @@ public final class DSAlertView: UIView {
 
         buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
+        buttonStackView.addArrangedSubview(confirmButton)
         if let cancelTitle {
             cancelButton.setTitle(cancelTitle, for: .normal)
             buttonStackView.addArrangedSubview(cancelButton)
         }
-        buttonStackView.addArrangedSubview(confirmButton)
     }
 
     // MARK: - Actions
