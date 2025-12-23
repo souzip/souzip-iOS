@@ -30,7 +30,7 @@ final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
             showProfile()
 
         case .category:
-            break
+            showCategory()
 
         case .main:
             showMain()
@@ -56,6 +56,18 @@ private extension AuthCoordinator {
 
     func showTerms() {
         let scene = factory.makeTermsScene()
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
+
+    func showProfile() {
+        let scene = factory.makeProfileScene()
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
+
+    func showCategory() {
+        let scene = factory.makeCategoryScene()
         bindRoute(scene)
         nav.pushViewController(scene.vc, animated: true)
     }
