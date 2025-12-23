@@ -1,6 +1,8 @@
 import DesignSystem
 import UIKit
 
+// MARK: - Alert
+
 extension UIViewController {
     func showDSAlert(
         message: String,

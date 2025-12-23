@@ -63,6 +63,7 @@ public final class DSTextField: UIView {
     }
 
     public func setCharacterCountText(_ text: String) {
+        characterCountLabel.isHidden = text.isEmpty
         characterCountLabel.text = text
     }
 
@@ -70,10 +71,23 @@ public final class DSTextField: UIView {
         onTextChangedHandler = handler
     }
 
+    public func setReturnKeyType(_ returnKeyType: UIReturnKeyType = .done) {
+        textField.returnKeyType = returnKeyType
+        textField.addTarget(
+            self,
+            action: #selector(textFieldDidReturn),
+            for: .editingDidEndOnExit
+        )
+    }
+
     // MARK: - Private
 
     @objc private func textDidChange() {
         onTextChangedHandler?(textField.text ?? "")
+    }
+
+    @objc private func textFieldDidReturn() {
+        textField.resignFirstResponder()
     }
 }
 
@@ -95,19 +109,22 @@ private extension DSTextField {
     }
 
     func setConstraints() {
-        textField.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+        snp.makeConstraints { make in
             make.height.equalTo(48)
+        }
+
+        textField.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
         }
 
         characterCountLabel.snp.makeConstraints { make in
             make.leading.equalTo(textField.snp.trailing).offset(8)
-            make.trailing.equalToSuperview()
-            make.centerY.equalTo(textField)
+            make.trailing.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
         }
 
         underlineView.snp.makeConstraints { make in
-            make.top.equalTo(textField.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(1)
             make.bottom.equalToSuperview()
