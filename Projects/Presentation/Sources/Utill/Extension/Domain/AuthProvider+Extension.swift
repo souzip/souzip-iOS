@@ -27,14 +27,14 @@ extension AuthProvider {
         switch self {
         case .kakao: .black
         case .google: .black
-        case .apple: .white
+        case .apple: .dsGreyWhite
         }
     }
 
     var backgroundColor: UIColor {
         switch self {
         case .kakao: .yellow
-        case .google: .white
+        case .google: .dsGreyWhite
         case .apple: .black
         }
     }

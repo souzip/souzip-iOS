@@ -157,10 +157,10 @@ final class LoginView: BaseView<LoginAction> {
 
     override func setBindings() {
         for (provider, button) in loginButtons {
-            bind(button.rx.tap, to: .tapLogin(provider))
+            bind(button.rx.tap).to(.tapLogin(provider))
         }
 
-        bind(guestButton.rx.tap, to: .tapGuest)
+        bind(guestButton.rx.tap).to(.tapGuest)
     }
 
     // MARK: - Render

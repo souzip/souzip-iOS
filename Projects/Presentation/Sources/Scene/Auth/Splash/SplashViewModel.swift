@@ -30,7 +30,7 @@ final class SplashViewModel: BaseViewModel<
         switch result {
         case .ready: navigate(to: .main)
         case .shouldLogin: navigate(to: .login)
-        case .shouldOnboarding: navigate(to: .profile)
+        case .shouldOnboarding: navigate(to: .terms)
         }
     }
 }

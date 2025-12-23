@@ -23,6 +23,9 @@ final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
         case .login:
             showLogin()
 
+        case .terms:
+            showTerms()
+
         case .profile:
             showProfile()
 
@@ -31,6 +34,9 @@ final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
 
         case .main:
             showMain()
+
+        case .back:
+            nav.popViewController(animated: true)
         }
     }
 }
@@ -48,7 +54,11 @@ private extension AuthCoordinator {
         nav.setViewControllers([scene.vc], animated: false)
     }
 
-    func showProfile() {}
+    func showTerms() {
+        let scene = factory.makeTermsScene()
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
 
     func showMain() {
         navigateToParent(.main)

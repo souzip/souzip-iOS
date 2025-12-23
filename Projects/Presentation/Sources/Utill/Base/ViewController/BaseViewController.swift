@@ -14,6 +14,8 @@ class BaseViewController<
     let contentView: ContentView
     let disposeBag = DisposeBag()
 
+    var isSwipeBackEnabled: Bool { true }
+
     init(viewModel: ViewModel, contentView: ContentView) {
         self.viewModel = viewModel
         self.contentView = contentView
@@ -74,68 +76,5 @@ class BaseViewController<
 
     func handleEvent(_ event: Event) {
         // Override in subclass
-    }
-}
-
-// MARK: - State 관찰 헬퍼 (선언형 방식)
-
-extension BaseViewController {
-    /// State 관찰 시작 (선언형)
-    func observe<T: Equatable>(
-        _ keyPath: KeyPath<ViewModel.State, T>
-    ) -> StateObserver<T> {
-        StateObserver(
-            source: viewModel.state
-                .asDriver()
-                .map { $0[keyPath: keyPath] },
-            disposeBag: disposeBag
-        )
-    }
-
-    /// State 계산하여 관찰 시작 (선언형)
-    func observeComputed<T: Equatable>(
-        _ compute: @escaping (ViewModel.State) -> T
-    ) -> StateObserver<T> {
-        StateObserver(
-            source: viewModel.state
-                .asDriver()
-                .map(compute),
-            disposeBag: disposeBag
-        )
-    }
-}
-
-// MARK: - StateObserver
-
-final class StateObserver<T: Equatable> {
-    private var source: Driver<T>
-    private let disposeBag: DisposeBag
-
-    init(source: Driver<T>, disposeBag: DisposeBag) {
-        self.source = source.distinctUntilChanged()
-        self.disposeBag = disposeBag
-    }
-
-    func skip(_ num: Int) -> Self {
-        source = source.skip(num)
-        return self
-    }
-
-    func when(_ condition: @escaping (T) -> Bool) -> Self {
-        source = source.filter(condition)
-        return self
-    }
-
-    func unwrapped<Wrapped>() -> StateObserver<Wrapped> where T == Wrapped? {
-        StateObserver<Wrapped>(
-            source: source.compactMap { $0 },
-            disposeBag: disposeBag
-        )
-    }
-
-    func onNext(_ handler: @escaping (T) -> Void) {
-        source
-            .drive(onNext: handler)
-            .disposed(by: disposeBag)
     }
 }

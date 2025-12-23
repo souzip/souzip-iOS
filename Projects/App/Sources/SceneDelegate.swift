@@ -16,7 +16,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let config = AppConfiguration()
         let factory = AppFactory(config: config)
 
-        let nav = UINavigationController()
+        let nav = CommonNavigationController()
 
         coordinator = RootCoordinator(
             nav: nav,

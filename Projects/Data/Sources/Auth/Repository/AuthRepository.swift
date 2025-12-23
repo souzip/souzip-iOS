@@ -26,6 +26,7 @@ public final class DefaultAuthRepository: AuthRepository {
             try await authlocal.saveAccessToken(dto.accessToken)
             try await authlocal.saveRefreshToken(dto.refreshToken)
 
+            authlocal.saveOAuthPlatform(platform)
             userLocal.saveNeedsOnboarding(dto.needsOnboarding)
 
             return mapToDomain(dto)
