@@ -4,9 +4,9 @@ public enum ExternalLibrary: String, CaseIterable {
     // MARK: - Reactive
     
     case rxSwift = "RxSwift"
-    case rxCocoa = "RxCocoa"
     case rxRelay = "RxRelay"
-    
+    case rxCocoa = "RxCocoa"
+
     // MARK: - UI
     
     case snapKit = "SnapKit"

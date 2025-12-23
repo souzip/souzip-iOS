@@ -22,6 +22,7 @@ public enum ModuleDependencies {
                 .module(.utils),
 
                 .external(.rxSwift),
+                .external(.rxRelay),
                 .external(.rxCocoa),
                 .external(.kingfisher),
             ]
