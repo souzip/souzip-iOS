@@ -12,7 +12,7 @@ public extension UIColor {
     static let dsGrey900: UIColor = .grey900
 
     static let dsBackground: UIColor = .background
-    static let dsBackgroundDimmed: UIColor = .dsBackgroundDimmed
+    static let dsBackgroundDimmed: UIColor = .backgroundDimmed
 
     // MARK: - Main
 

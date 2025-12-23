@@ -69,7 +69,7 @@ public final class DSAlertView: UIView {
     // MARK: - Setup
 
     private func setupUI() {
-        backgroundColor = .black.withAlphaComponent(0.84)
+        backgroundColor = .dsBackgroundDimmed
 
         addSubview(containerView)
         containerView.addSubview(messageLabel)

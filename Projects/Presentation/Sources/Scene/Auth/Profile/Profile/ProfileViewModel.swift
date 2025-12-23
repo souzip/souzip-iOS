@@ -24,8 +24,8 @@ final class ProfileViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .viewDidLoad:
-            let maxLenght = validateNickname.policy.maxLength
-            mutate { $0.nicknameMaxLength = maxLenght }
+            let maxLength = validateNickname.policy.maxLength
+            mutate { $0.nicknameMaxLength = maxLength }
 
         case .tapBack:
             navigate(to: .back)
@@ -57,7 +57,6 @@ final class ProfileViewModel: BaseViewModel<
         let nickname = state.value.nickname
 
         switch validateNickname.execute(nickname) {
-
         case let .valid(validNickname):
             mutate {
                 $0.nickname = validNickname
