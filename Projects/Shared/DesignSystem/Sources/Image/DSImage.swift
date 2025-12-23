@@ -8,9 +8,17 @@ public extension UIImage {
 
     // MARK: - Profile
 
-    static let dsProfileDefault: UIImage = .dsProfileDefault
-    static let dsProfileRed: UIImage = .dsProfileRed
-    static let dsProfileYellow: UIImage = .dsProfileYellow
-    static let dsProfilePurple: UIImage = .dsProfilePurple
-    static let dsProfileBlue: UIImage = .dsProfileBlue
+    static let dsProfileDefault: UIImage = .profileDefault
+
+    static let dsProfileRed: UIImage = .profileRed
+    static let dsProfileRedSelected: UIImage = .profileRedSelected
+
+    static let dsProfileYellow: UIImage = .profileYellow
+    static let dsProfileYellowSelected: UIImage = .profileYellowSelected
+
+    static let dsProfilePurple: UIImage = .profilePurple
+    static let dsProfilePurpleSelected: UIImage = .profilePurpleSelected
+
+    static let dsProfileBlue: UIImage = .profileBlue
+    static let dsProfileBlueSelected: UIImage = .profileBlueSelected
 }

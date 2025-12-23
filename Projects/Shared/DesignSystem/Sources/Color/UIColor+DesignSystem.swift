@@ -12,6 +12,7 @@ public extension UIColor {
     static let dsGrey900: UIColor = .grey900
 
     static let dsBackground: UIColor = .background
+    static let dsBackgroundDimmed: UIColor = .dsBackgroundDimmed
 
     // MARK: - Main
 
@@ -25,4 +26,5 @@ public extension UIColor {
     static let dsSecondaryGreen: UIColor = .secondaryGreen
     static let dsSecondaryPurple: UIColor = .secondaryPurple
     static let dsSecondaryBlue: UIColor = .secondaryBlue
+    static let dsSecondaryError: UIColor = .secondaryError
 }
