@@ -6,7 +6,7 @@ protocol PresentationAuthFactory: AnyObject {
     func makeCategoryScene() -> RoutedScene<AuthRoute>
 }
 
-extension DefaultPresentationFactory: PresentationAuthFactory {
+extension DefaultPresentationFactory {
     func makeSplashScene() -> RoutedScene<AuthRoute> {
         let vm = SplashViewModel(
             autoLogin: domainFactory.makeAutoLoginUseCase()

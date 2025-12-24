@@ -1,11 +1,11 @@
 import UIKit
 
 final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
-    private let factory: PresentationFactory
+    private let factory: PresentationAuthFactory
 
     init(
         nav: UINavigationController,
-        factory: PresentationFactory
+        factory: PresentationAuthFactory
     ) {
         self.factory = factory
         super.init(nav: nav)
