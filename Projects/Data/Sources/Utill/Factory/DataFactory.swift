@@ -72,7 +72,35 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    private lazy var cachedOnboardingRepository: OnboardingRepository = {
+        let networkClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let onboardingRemoteDataSource = DefaultOnboardingRemoteDataSource(
+            networkClient: networkClient
+        )
+
+        let onboardingLocalDataSource = DefaultOnboardingLocalDataSource(
+            storage: userDefaultsFactory.makeUDStorage()
+        )
+
+        let userLocalDataSource = DefaultUserLocalDataSource(
+            storage: userDefaultsFactory.makeUDStorage()
+        )
+
+        return DefaultOnboardingRepository(
+            onboardingRemote: onboardingRemoteDataSource,
+            onboardingLocal: onboardingLocalDataSource,
+            userLocal: userLocalDataSource
+        )
+    }()
+
     // MARK: - Public
 
-    public func makeAuthRepository() -> AuthRepository { cachedAuthRepository }
+    public func makeAuthRepository() -> AuthRepository {
+        cachedAuthRepository
+    }
+
+    public func makeOnboardingRepository() -> OnboardingRepository {
+        cachedOnboardingRepository
+    }
 }
