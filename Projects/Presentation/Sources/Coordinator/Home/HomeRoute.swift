@@ -1,0 +1,3 @@
+enum HomeRoute {
+    case globe
+}

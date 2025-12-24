@@ -1,0 +1,3 @@
+enum DiscoveryRoute {
+    case discovery
+}

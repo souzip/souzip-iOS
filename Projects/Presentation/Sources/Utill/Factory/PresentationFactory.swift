@@ -1,7 +1,9 @@
 import Domain
 import UIKit
 
-protocol PresentationFactory: AnyObject {}
+protocol PresentationFactory:
+    AnyObject,
+    PresentationAuthFactory {}
 
 final class DefaultPresentationFactory: PresentationFactory {
     let domainFactory: DomainFactory

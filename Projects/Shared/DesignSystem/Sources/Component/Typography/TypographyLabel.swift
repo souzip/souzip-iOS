@@ -7,6 +7,12 @@ public final class TypographyLabel: UILabel {
 
     // MARK: - Overrides
 
+    override public var textAlignment: NSTextAlignment {
+        didSet {
+            applyTypography()
+        }
+    }
+
     override public var text: String? {
         didSet {
             applyTypography()
@@ -27,9 +33,19 @@ public final class TypographyLabel: UILabel {
         guard let typography,
               let text else { return }
 
+        var attributes = typography.toAttributes()
+
+        if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
+            paragraphStyle.alignment = textAlignment
+        } else {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = textAlignment
+            attributes[.paragraphStyle] = paragraphStyle
+        }
+
         attributedText = NSAttributedString(
             string: text,
-            attributes: typography.toAttributes()
+            attributes: attributes
         )
     }
 }

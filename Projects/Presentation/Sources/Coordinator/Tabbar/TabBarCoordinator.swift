@@ -1,49 +1,86 @@
 import UIKit
 
-final class TabBarCoordinator: BaseCoordinator<TabItem, RootRoute> {
+final class TabBarCoordinator: BaseCoordinator<TabRoute, RootRoute> {
     private let factory: PresentationFactory
 
-    private let tabBar = UITabBarController()
+    private let tabController = CommonTabbarController()
 
-    private let tab1Nav = UINavigationController()
-    private let tab2Nav = UINavigationController()
-    private let tab3Nav = UINavigationController()
+    private let homeNav = CommonNavigationController()
+    private let discoveryNav = CommonNavigationController()
+    private let myPageNav = CommonNavigationController()
 
-    init(
-        nav: UINavigationController,
-        factory: PresentationFactory
-    ) {
+    private var selectedTab: TabRoute = .home
+
+    init(nav: UINavigationController, factory: PresentationFactory) {
         self.factory = factory
         super.init(nav: nav)
     }
 
     override func start() {
-        setupTabBar()
-        navigate(.tab1)
+        setupChildCoordinators()
+        setupTabController()
+        navigate(.home)
     }
 
     override func navigate(_ route: Route) {
-        tabBar.selectedIndex = route.rawValue
+        selectedTab = route
+
+        switch route {
+        case .home:
+            tabController.setSelectedIndex(route.rawValue)
+            tabController.showContent(homeNav)
+
+        case .discovery:
+            tabController.setSelectedIndex(route.rawValue)
+            tabController.showContent(discoveryNav)
+
+        case .myPage:
+            tabController.setSelectedIndex(route.rawValue)
+            tabController.showContent(myPageNav)
+        }
     }
 }
 
+// MARK: - Private Methods
+
 private extension TabBarCoordinator {
-    func setupTabBar() {
-        let tab1VC = UIViewController()
-        tab1VC.view.backgroundColor = .red
+    func setupChildCoordinators() {
+        let home = HomeCoordinator(nav: homeNav, factory: factory)
+        let discovery = DiscoveryCoordinator(nav: discoveryNav, factory: factory)
+        let myPage = MyPageCoordinator(nav: myPageNav, factory: factory)
 
-        let tab2VC = UIViewController()
-        tab2VC.view.backgroundColor = .green
+        addChild(home)
+        addChild(discovery)
+        addChild(myPage)
 
-        let tab3VC = UIViewController()
-        tab3VC.view.backgroundColor = .blue
+        home.start()
+        discovery.start()
+        myPage.start()
+    }
 
-        tabBar.viewControllers = [
-            tab1VC,
-            tab2VC,
-            tab3VC,
-        ]
+    func setupTabController() {
+        tabController.setTabs(TabRoute.items)
+        tabController.onTabTapped = { [weak self] route in
+            guard let self else { return }
 
-        nav.setViewControllers([tabBar], animated: false)
+            if route == selectedTab {
+                handleTabReselected(route)
+            } else {
+                navigate(route)
+            }
+        }
+
+        nav.setViewControllers([tabController], animated: false)
+    }
+
+    func handleTabReselected(_ tab: TabRoute) {
+        switch tab {
+        case .home:
+            homeNav.popToRootViewController(animated: true)
+        case .discovery:
+            discoveryNav.popToRootViewController(animated: true)
+        case .myPage:
+            myPageNav.popToRootViewController(animated: true)
+        }
     }
 }
