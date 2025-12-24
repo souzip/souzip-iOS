@@ -48,6 +48,7 @@ public extension UIImage {
 
     static let dsIconLocationTarget: UIImage = .iconLocationTarget
     static let dsIconLocationTargetActive: UIImage = .iconLocationTargetActive
+    static let dsIconGlobe: UIImage = .iconGlobe
 
     // MARK: - System / Utility
 
