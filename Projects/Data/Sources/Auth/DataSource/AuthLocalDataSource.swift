@@ -68,10 +68,10 @@ public final class DefaultAuthLocalDataSource: AuthLocalDataSource {
     // MARK: - SNS Platform
 
     public func saveOAuthPlatform(_ platform: OAuthPlatform) {
-        try? userDefaultsStorage.setEncodable(platform, for: UserDefaultsKeys.recentLoginPlatform)
+        try? userDefaultsStorage.setEncodable(platform, for: AuthDefaultsKeys.recentLoginPlatform)
     }
 
     public func getOAuthPlatform() -> OAuthPlatform? {
-        try? userDefaultsStorage.getDecodable(from: UserDefaultsKeys.recentLoginPlatform)
+        try? userDefaultsStorage.getDecodable(from: AuthDefaultsKeys.recentLoginPlatform)
     }
 }

@@ -86,6 +86,10 @@ private extension DefaultOnboardingRepository {
             }
         }
 
+        if let onboardingError = error as? OnboardingError {
+            return onboardingError
+        }
+
         return .networkFailed
     }
 }

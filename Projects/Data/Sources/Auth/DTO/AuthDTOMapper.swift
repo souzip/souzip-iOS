@@ -4,7 +4,7 @@ import Foundation
 public enum AuthDTOMapper {
     public static func toDomain(_ dto: LoginResponse) -> LoginUser {
         LoginUser(
-            userId: dto.user.nickname,
+            userId: dto.user.userId,
             nickname: dto.user.nickname,
             needsOnboarding: dto.needsOnboarding
         )

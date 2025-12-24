@@ -1,9 +1,4 @@
-import Foundation
-
 public enum UserDefaultsKeys {
-    public static let recentLoginPlatform =
-        DefaultsKey<Data?>("recent_login_platform", default: nil)
-
     public static let userId =
         DefaultsKey<String>("user_id", default: "")
 

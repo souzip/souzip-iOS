@@ -1,4 +1,6 @@
+import Foundation
+
 public enum AuthDefaultsKeys {
-    public static let recentLoginProvider =
-        DefaultsKey<String?>("recent_login_provider", default: nil)
+    public static let recentLoginPlatform =
+        DefaultsKey<Data?>("recent_login_platform", default: nil)
 }
