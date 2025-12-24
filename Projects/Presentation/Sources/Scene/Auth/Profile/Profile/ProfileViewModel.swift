@@ -9,13 +9,19 @@ final class ProfileViewModel: BaseViewModel<
     // MARK: - UseCase
 
     private let validateNickname: ValidateNicknameUseCase
+    private let saveNickname: SaveNicknameUseCase
+    private let saveProfileImageColor: SaveProfileImageColorUseCase
 
     // MARK: - Init
 
     init(
-        validateNickname: ValidateNicknameUseCase
+        validateNickname: ValidateNicknameUseCase,
+        saveNickname: SaveNicknameUseCase,
+        saveProfileImageColor: SaveProfileImageColorUseCase
     ) {
         self.validateNickname = validateNickname
+        self.saveNickname = saveNickname
+        self.saveProfileImageColor = saveProfileImageColor
         super.init(initialState: State())
     }
 
@@ -47,29 +53,35 @@ final class ProfileViewModel: BaseViewModel<
             }
 
         case .tapCompleteButton:
-            validateAndProceed()
+            Task { await validateAndProceed() }
         }
     }
 
     // MARK: - Private Logic
 
-    private func validateAndProceed() {
+    private func validateAndProceed() async {
+        guard let profileColor = state.value.selectedImageType else {
+            return
+        }
+
         let nickname = state.value.nickname
 
-        switch validateNickname.execute(nickname) {
-        case let .valid(validNickname):
-            mutate {
-                $0.nickname = validNickname
-                $0.nicknameErrorMessage = nil
-                $0.isNicknameValid = true
-            }
-            navigate(to: .category)
+        do {
+            let result = try await validateNickname.execute(nickname)
 
-        case let .invalid(_, error):
             mutate {
-                $0.nicknameErrorMessage = error.localizedDescription
-                $0.isNicknameValid = false
+                $0.nickname = result.nickname
+                $0.nicknameErrorMessage = result.nicknameErrorMessage
+                $0.isNicknameValid = result.isValid
             }
+
+            if result.isValid {
+                saveNickname.execute(nickname: nickname)
+                saveProfileImageColor.execute(color: profileColor)
+                navigate(to: .category)
+            }
+        } catch {
+            emit(.showAlert(error.localizedDescription))
         }
     }
 }

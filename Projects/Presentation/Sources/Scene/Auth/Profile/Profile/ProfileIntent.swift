@@ -24,5 +24,5 @@ struct ProfileState {
 
 enum ProfileEvent {
     case showImagePicker
-    case showError(String)
+    case showAlert(String)
 }

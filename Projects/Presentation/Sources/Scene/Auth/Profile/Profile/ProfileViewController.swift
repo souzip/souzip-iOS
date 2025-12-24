@@ -42,7 +42,7 @@ final class ProfileViewController: BaseViewController<
         case .showImagePicker:
             showImagePicker()
 
-        case let .showError(message):
+        case let .showAlert(message):
             showDSAlert(message: message)
         }
     }

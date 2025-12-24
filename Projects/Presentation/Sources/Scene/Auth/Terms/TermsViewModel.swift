@@ -6,11 +6,17 @@ final class TermsViewModel: BaseViewModel<
     TermsEvent,
     AuthRoute
 > {
+    // MARK: - UseCase
+
+    private let saveMarketingConsent: SaveMarketingConsentUseCase
+
     // MARK: - Life Cycle
 
-    init() {
+    init(
+        saveMarketingConsent: SaveMarketingConsentUseCase
+    ) {
+        self.saveMarketingConsent = saveMarketingConsent
         super.init(initialState: State())
-        bindState()
     }
 
     // MARK: - Action Handling
@@ -86,13 +92,14 @@ final class TermsViewModel: BaseViewModel<
         }
     }
 
-    private func handleMarketingConfirm(_ agree: Bool) {
-        if agree {
+    private func handleMarketingConfirm(_ isAgreed: Bool) {
+        if isAgreed {
             mutate { state in
                 state.marketing.isAgreed = true
             }
         }
 
+        saveMarketingConsent.execute(isAgreed: isAgreed)
         navigate(to: .profile)
     }
 }
