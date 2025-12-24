@@ -25,7 +25,7 @@ public extension UIImage {
     static let dsIconCategoryFashionSelected: UIImage = .iconCategoryFashionSelected
 
     static let dsIconCategoryHealthBeauty: UIImage = .iconCategoryHealthAndBeauty
-    static let dsIconCategoryHealthBeautySelected: UIImage = .iconCategoryHealthAndBeauty
+    static let dsIconCategoryHealthBeautySelected: UIImage = .iconCategoryHealthAndBeautySelected
 
     static let dsIconCategoryLifestyle: UIImage = .iconCategoryLifestyle
     static let dsIconCategoryLifestyleSelected: UIImage = .iconCategoryLifestyleSelected

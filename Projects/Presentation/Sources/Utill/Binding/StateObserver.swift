@@ -17,6 +17,15 @@ final class StateObserver<T> {
     }
 
     @discardableResult
+    func take(_ count: Int) -> Self {
+        source = source
+            .asObservable()
+            .take(count)
+            .asDriver(onErrorDriveWith: .empty())
+        return self
+    }
+
+    @discardableResult
     func when(_ condition: @escaping (T) -> Bool) -> Self {
         source = source.filter(condition)
         return self
