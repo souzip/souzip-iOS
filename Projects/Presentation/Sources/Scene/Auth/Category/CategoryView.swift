@@ -63,7 +63,6 @@ final class CategoryView: BaseView<CategoryAction> {
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(naviBar.snp.bottom).offset(24)
             make.horizontalEdges.equalToSuperview().inset(20)
-//            make.height.equalTo(72)
         }
 
         subTitleLabel.snp.makeConstraints { make in

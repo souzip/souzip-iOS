@@ -29,8 +29,6 @@ final class CategoryChipCell: UICollectionViewCell {
     // MARK: - Public
 
     func render(item: CategoryItem) {
-        isSelected = item.isSelected
-
         if item.isSelected {
             iconTitleView.render(
                 title: item.category.title,

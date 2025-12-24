@@ -8,7 +8,6 @@ final class CategoryGridView: UIView {
     // MARK: - Action
 
     let toggle = PublishRelay<Item>()
-    private let disposeBag = DisposeBag()
 
     // MARK: - Types
 
