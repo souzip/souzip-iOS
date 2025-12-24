@@ -1,11 +1,10 @@
 import Domain
 import Keychain
 import Networking
-import UserDefaults
 
 public final class DefaultAuthRepository: AuthRepository {
-    private let authremote: AuthRemoteDataSource
-    private let authlocal: AuthLocalDataSource
+    private let authRemote: AuthRemoteDataSource
+    private let authLocal: AuthLocalDataSource
     private let userLocal: UserLocalDataSource
 
     public init(
@@ -13,23 +12,25 @@ public final class DefaultAuthRepository: AuthRepository {
         authLocal: AuthLocalDataSource,
         userLocal: UserLocalDataSource
     ) {
-        authremote = authRemote
-        authlocal = authLocal
+        self.authRemote = authRemote
+        self.authLocal = authLocal
         self.userLocal = userLocal
     }
 
     public func login(provider: AuthProvider) async throws -> LoginUser {
         do {
             let platform = mapToPlatform(provider)
-            let dto = try await authremote.login(platform: platform)
+            let dto = try await authRemote.login(platform: platform)
 
-            try await authlocal.saveAccessToken(dto.accessToken)
-            try await authlocal.saveRefreshToken(dto.refreshToken)
+            try await authLocal.saveAccessToken(dto.accessToken)
+            try await authLocal.saveRefreshToken(dto.refreshToken)
 
-            authlocal.saveOAuthPlatform(platform)
-            userLocal.saveNeedsOnboarding(dto.needsOnboarding)
+            authLocal.saveOAuthPlatform(platform)
 
-            return mapToDomain(dto)
+            userLocal.saveUserId(dto.user.userId)
+            userLocal.saveUserNickname(dto.user.nickname)
+
+            return AuthDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
         }
@@ -37,9 +38,9 @@ public final class DefaultAuthRepository: AuthRepository {
 
     public func logout() async throws {
         do {
-            await authlocal.deleteAllTokens()
+            await authLocal.deleteAllTokens()
             userLocal.deleteUser()
-            try await authremote.logout()
+            try await authRemote.logout()
         } catch {
             throw mapToDomainError(error)
         }
@@ -47,9 +48,9 @@ public final class DefaultAuthRepository: AuthRepository {
 
     public func withdraw() async throws {
         do {
-            await authlocal.deleteAllTokens()
+            await authLocal.deleteAllTokens()
             userLocal.deleteUser()
-            try await authremote.withdraw()
+            try await authRemote.withdraw()
         } catch {
             throw mapToDomainError(error)
         }
@@ -57,8 +58,8 @@ public final class DefaultAuthRepository: AuthRepository {
 
     public func checkLoginStatus() async -> Bool {
         do {
-            _ = try await authlocal.getAccessToken()
-            _ = try await authlocal.getRefreshToken()
+            _ = try await authLocal.getAccessToken()
+            _ = try await authLocal.getRefreshToken()
             return true
         } catch {
             return false
@@ -67,33 +68,30 @@ public final class DefaultAuthRepository: AuthRepository {
 
     public func refreshToken() async throws -> LoginUser {
         do {
-            let refreshToken = try await authlocal.getRefreshToken()
-            let dto = try await authremote.refresh(refreshToken: refreshToken)
+            let refreshToken = try await authLocal.getRefreshToken()
+            let dto = try await authRemote.refresh(refreshToken: refreshToken)
 
-            try await authlocal.saveAccessToken(dto.accessToken)
-            try await authlocal.saveRefreshToken(dto.refreshToken)
+            try await authLocal.saveAccessToken(dto.accessToken)
+            try await authLocal.saveRefreshToken(dto.refreshToken)
 
-            guard let user = userLocal.getUser() else {
+            guard let userDTO = userLocal.getUser() else {
                 throw AuthError.invalidUser
             }
 
-            let needsOnboarding = userLocal.getNeedsOnboarding()
-
-            return LoginUser(
-                userId: user.userId,
-                needsOnboarding: needsOnboarding
-            )
+            return UserDTOMapper.toDomain(userDTO)
         } catch {
             throw mapToDomainError(error)
         }
     }
 
     public func loadRecentLoginProvider() -> AuthProvider? {
-        let platform = authlocal.getOAuthPlatform()
+        let platform = authLocal.getOAuthPlatform()
         guard let platform else { return nil }
         return mapToProvider(platform)
     }
 }
+
+// MARK: - Mapper
 
 private extension DefaultAuthRepository {
     func mapToPlatform(_ provider: AuthProvider) -> OAuthPlatform {
@@ -110,13 +108,6 @@ private extension DefaultAuthRepository {
         case .google: .google
         case .apple: .apple
         }
-    }
-
-    func mapToDomain(_ dto: LoginResponse) -> LoginUser {
-        LoginUser(
-            userId: dto.user.userId,
-            needsOnboarding: dto.needsOnboarding
-        )
     }
 
     func mapToDomainError(_ error: Error) -> AuthError {

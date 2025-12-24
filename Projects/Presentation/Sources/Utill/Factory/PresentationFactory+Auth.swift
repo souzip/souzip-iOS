@@ -37,7 +37,9 @@ extension DefaultPresentationFactory {
     }
 
     func makeTermsScene() -> RoutedScene<AuthRoute> {
-        let vm = TermsViewModel()
+        let vm = TermsViewModel(
+            saveMarketingConsent: domainFactory.makeSaveMarketingConsentUseCase()
+        )
         let view = TermsView()
         let vc = TermsViewController(viewModel: vm, contentView: view)
 
@@ -50,7 +52,9 @@ extension DefaultPresentationFactory {
 
     func makeProfileScene() -> RoutedScene<AuthRoute> {
         let vm = ProfileViewModel(
-            validateNickname: domainFactory.makeValidateNicknameUseCase()
+            validateNickname: domainFactory.makeValidateNicknameUseCase(),
+            saveNickname: domainFactory.makeSaveNicknameUseCase(),
+            saveProfileImageColor: domainFactory.makeSaveProfileImageColorUseCase()
         )
         let view = ProfileView()
         let vc = ProfileViewController(viewModel: vm, contentView: view)
@@ -63,7 +67,10 @@ extension DefaultPresentationFactory {
     }
 
     func makeCategoryScene() -> RoutedScene<AuthRoute> {
-        let vm = CategoryViewModel()
+        let vm = CategoryViewModel(
+            saveCategories: domainFactory.makeSaveCategoriesUseCase(),
+            completeOnboarding: domainFactory.makeCompleteOnboardingUseCase()
+        )
         let view = CategoryView()
         let vc = CategoryViewController(viewModel: vm, contentView: view)
 

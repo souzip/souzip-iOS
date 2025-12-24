@@ -3,15 +3,41 @@ import Foundation
 public protocol ValidateNicknameUseCase {
     var policy: NicknameValidationPolicy { get }
 
-    func execute(_ nickname: String) -> NicknameValidationResult
+    func execute(_ nickname: String) async throws -> NicknameValidationResult
 }
 
 public final class DefaultValidateNicknameUseCase: ValidateNicknameUseCase {
     public let policy = NicknameValidationPolicy()
 
-    public init() {}
+    private let onboardingRepo: OnboardingRepository
 
-    public func execute(_ nickname: String) -> NicknameValidationResult {
+    public init(onboardingRepo: OnboardingRepository) {
+        self.onboardingRepo = onboardingRepo
+    }
+
+    public func execute(_ nickname: String) async throws -> NicknameValidationResult {
+        let validationResult = validateLocally(nickname)
+
+        switch validationResult {
+        case let .valid(validNickname):
+            let isAvailable = try await onboardingRepo.checkNickname(validNickname)
+
+            if isAvailable {
+                return .valid(nickname: validNickname)
+            } else {
+                return .invalid(nickname: validNickname, error: .duplicated)
+            }
+
+        case .invalid:
+            return validationResult
+        }
+    }
+}
+
+// MARK: - Local Validation
+
+private extension DefaultValidateNicknameUseCase {
+    func validateLocally(_ nickname: String) -> NicknameValidationResult {
         let min = policy.minLength
         let max = policy.maxLength
 

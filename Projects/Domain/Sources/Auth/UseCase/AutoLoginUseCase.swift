@@ -20,7 +20,7 @@ public final class DefaultAutoLoginUseCase: AutoLoginUseCase {
         }
 
         if result.needsOnboarding {
-            return .shouldOnboarding
+            return .shouldLogin
         }
 
         return .ready

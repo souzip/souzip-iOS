@@ -1,6 +1,6 @@
 import Foundation
 
-public enum KeychainError: Error {
+public enum KeychainError: Error, LocalizedError {
     case encodingFailed
     case decodingFailed
     case itemNotFound
@@ -8,7 +8,7 @@ public enum KeychainError: Error {
     case loadFailed(status: OSStatus)
     case deleteFailed(status: OSStatus)
 
-    var errorDescription: String {
+    public var errorDescription: String {
         switch self {
         case .encodingFailed:
             "데이터 인코딩에 실패했습니다."

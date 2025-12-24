@@ -14,8 +14,11 @@ struct CategoryState {
     )
 
     var canComplete: Bool { selected.count >= 1 }
+    var isLoading: Bool = false
 }
 
 enum CategoryEvent {
     case showToast(message: String)
+    case showAlert(message: String)
+    case loading(Bool)
 }
