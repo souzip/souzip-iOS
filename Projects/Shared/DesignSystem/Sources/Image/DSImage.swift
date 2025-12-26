@@ -21,4 +21,8 @@ public extension UIImage {
 
     static let dsProfileBlue: UIImage = .profileBlue
     static let dsProfileBlueSelected: UIImage = .profileBlueSelected
+
+    // MARK: - Location
+
+    static let dsCurrentLocation: UIImage = .currentLocation
 }
