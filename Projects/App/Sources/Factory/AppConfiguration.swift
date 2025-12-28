@@ -1,4 +1,5 @@
 import DesignSystem
+import Presentation
 import Utils
 
 struct AppConfiguration {
@@ -8,5 +9,6 @@ struct AppConfiguration {
 
     init() {
         FontRegistration.register()
+        ImageCacheConfiguration.shared.setup()
     }
 }
