@@ -3,7 +3,8 @@ import UIKit
 
 protocol PresentationFactory:
     AnyObject,
-    PresentationAuthFactory {}
+    PresentationAuthFactory,
+    PresentationHomeFactory {}
 
 final class DefaultPresentationFactory: PresentationFactory {
     let domainFactory: DomainFactory
