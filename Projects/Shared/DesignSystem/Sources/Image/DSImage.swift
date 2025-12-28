@@ -25,4 +25,11 @@ public extension UIImage {
     // MARK: - Location
 
     static let dsCurrentLocation: UIImage = .currentLocation
+
+    static let dsSouvenirPin: UIImage = .souvenirPin
+    static let dsSouvenirPinSelected: UIImage = .souvenirPinSelected
+
+    // MARK: - Character
+
+    static let dsCharacterTraveler: UIImage = .characterTraveler
 }
