@@ -12,7 +12,7 @@ final class GlobeView: BaseView<GlobeAction> {
 
     private let searchBarView: MapSearchBarView = {
         let view = MapSearchBarView()
-        view.configure(with: .map(locationName: "일본"))
+        view.render(with: .globe)
         return view
     }()
 
@@ -32,6 +32,26 @@ final class GlobeView: BaseView<GlobeAction> {
         return button
     }()
 
+    private let searchInLocationButton: UIButton = {
+        var config = UIButton.Configuration.filled()
+        config.baseBackgroundColor = .dsMain
+        config.baseForegroundColor = .dsGreyWhite
+        config.cornerStyle = .capsule
+
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)
+        config.image = .dsIconSearch
+        config.imagePadding = 10
+        config.imagePlacement = .leading
+
+        var titleAttr = AttributedString("현 지도에서 검색")
+        config.setTypography(.body2R, title: "현 지도에서 검색")
+        config.contentInsets = .init(top: 10, leading: 20, bottom: 10, trailing: 20)
+
+        let button = UIButton(configuration: config)
+        button.isHidden = true
+        return button
+    }()
+
     private let souvenirCarouselView: SouvenirCarouselView = {
         let view = SouvenirCarouselView()
         view.isHidden = true
@@ -47,6 +67,7 @@ final class GlobeView: BaseView<GlobeAction> {
     // MARK: - Properties
 
     private var currentLocationButtonBottomConstraint: Constraint?
+    private var searchInLocationButtonBottomConstraint: Constraint?
     private var mapViewTopConstraint: Constraint?
 
     // MARK: - Override
@@ -59,6 +80,7 @@ final class GlobeView: BaseView<GlobeAction> {
         [
             mapContainerView,
             currentLocationButton,
+            searchInLocationButton,
             souvenirCarouselView,
             souvenirSheetView,
             searchBarView,
@@ -76,6 +98,12 @@ final class GlobeView: BaseView<GlobeAction> {
             make.trailing.equalToSuperview().inset(20)
             self.currentLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
             make.size.equalTo(42)
+        }
+
+        searchInLocationButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            self.searchInLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
+            make.height.equalTo(44)
         }
 
         souvenirCarouselView.snp.makeConstraints { make in
@@ -103,12 +131,26 @@ final class GlobeView: BaseView<GlobeAction> {
 
         bind(currentLocationButton.rx.tap).to(.taplocationButton)
 
+        // 현 지도에서 검색: center + radius 전달
+        searchInLocationButton.rx.tap
+            .bind { [weak self] in
+                guard let self else { return }
+
+                let mapArea = getCurrentMapArea()
+                action.accept(.tapSearchInLocation(
+                    center: mapArea.center,
+                    radius: mapArea.radius
+                ))
+            }
+            .disposed(by: disposeBag)
+
         souvenirSheetView.heightRelay
             .bind { [weak self] height in
                 guard let self, !souvenirSheetView.isHidden else { return }
 
                 let bottomInset = 12 + height
                 updateLocationButtonPosition(bottomInset: bottomInset)
+                updateSearchInLocationButtonPosition(bottomInset: bottomInset)
                 updateCameraForSheet(height: height)
             }
             .disposed(by: disposeBag)
@@ -119,8 +161,8 @@ final class GlobeView: BaseView<GlobeAction> {
             .to(.mapReady)
 
         bind(
-            mapContainerView.cameraDidMove
-                .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            mapContainerView.cameraDidMove.asObservable()
+//                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
         )
         .map { Action.cameraDidMove($0) }
 
@@ -186,6 +228,7 @@ final class GlobeView: BaseView<GlobeAction> {
             mapContainerView.showCountryBadges(isHidden: false)
             mapContainerView.showUserLocation(isHidden: true)
             mapContainerView.showSouvenirPins(isHidden: true)
+            searchBarView.render(with: .globe)
 
         case .map:
             mapContainerView.configureAsMap()
@@ -206,8 +249,26 @@ final class GlobeView: BaseView<GlobeAction> {
         }
     }
 
+    func renderSearchInLocation(isVisible: Bool) {
+        searchInLocationButton.isHidden = !isVisible
+    }
+
     func renderCarouselView(_ items: [SouvenirListItem]) {
         souvenirCarouselView.render(items: items)
+    }
+
+    func renderSearchView(_ name: String?) {
+        guard let name else {
+            searchBarView.render(with: .globe)
+            return
+        }
+
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            searchBarView.render(with: .globeBack)
+            return
+        }
+
+        searchBarView.render(with: .map(locationName: name))
     }
 
     // MARK: - Event
@@ -235,10 +296,6 @@ final class GlobeView: BaseView<GlobeAction> {
         souvenirCarouselView.isHidden = true
         souvenirSheetView.isHidden = true
         mapContainerView.deselectAllSouvenirPins()
-    }
-
-    func render(isBackButtonVisible: Bool) {
-//        backButton.isHidden = !isBackButtonVisible
     }
 
     func moveCamera(
@@ -270,6 +327,16 @@ final class GlobeView: BaseView<GlobeAction> {
         layoutIfNeeded()
     }
 
+    private func updateSearchInLocationButtonPosition(bottomInset: CGFloat) {
+        searchInLocationButtonBottomConstraint?.update(inset: bottomInset)
+
+        let threshold = max(bounds.height * 0.6, 200)
+        let shouldHide = bottomInset > threshold
+
+        searchInLocationButton.alpha = shouldHide ? 0 : 1
+        layoutIfNeeded()
+    }
+
     private func updateCameraForSheet(height: CGFloat) {
         let screenHeight = UIScreen.main.bounds.height
         let halfHeight = screenHeight * 0.5
@@ -278,5 +345,17 @@ final class GlobeView: BaseView<GlobeAction> {
         UIView.animate(withDuration: 0.3) {
             self.mapContainerView.updateCameraPadding(extraLift: lift)
         }
+    }
+
+    // 현재 지도 영역 정보 가져오기
+    private func getCurrentMapArea() -> (center: CLLocationCoordinate2D, radius: Double) {
+        let center = mapContainerView.getCurrentCenter()
+        let radius = mapContainerView.getCurrentSearchRadius()
+        return (center, radius)
+    }
+
+    // 조회반경만 가져오기
+    private func getCurrentSearchRadius() -> Double {
+        mapContainerView.getCurrentSearchRadius()
     }
 }

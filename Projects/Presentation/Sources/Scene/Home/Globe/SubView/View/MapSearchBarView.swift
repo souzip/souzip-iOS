@@ -20,6 +20,14 @@ final class MapSearchBarView: UIView {
             showSearchIcon: true
         )
 
+        static let globeBack = Configuration(
+            showBackButton: true,
+            text: "✈️  어디로 떠나시나요?",
+            textColor: .dsGreyWhite,
+            showCloseButton: false,
+            showSearchIcon: false
+        )
+
         static func map(locationName: String) -> Configuration {
             Configuration(
                 showBackButton: true,
@@ -51,8 +59,11 @@ final class MapSearchBarView: UIView {
     }()
 
     private let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(.dsIconArrowLeft, for: .normal)
+        var config = UIButton.Configuration.plain()
+        config.image = .dsIconArrowLeft
+        config.contentInsets = .zero
+
+        let button = UIButton(configuration: config)
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
@@ -67,11 +78,13 @@ final class MapSearchBarView: UIView {
     }()
 
     private let closeButton: UIButton = {
-        let button = UIButton()
-        button.setImage(.dsIconCancel, for: .normal)
+        var config = UIButton.Configuration.plain()
+        config.image = .dsIconCancel
+        config.contentInsets = .zero
+
+        let button = UIButton(configuration: config)
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
-
         return button
     }()
 
@@ -102,7 +115,7 @@ final class MapSearchBarView: UIView {
 
     // MARK: - Public
 
-    func configure(with config: Configuration) {
+    func render(with config: Configuration) {
         backButton.isHidden = !config.showBackButton
         titleLabel.text = config.text
         titleLabel.textColor = config.textColor

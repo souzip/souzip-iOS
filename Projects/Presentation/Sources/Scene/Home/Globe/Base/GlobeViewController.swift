@@ -24,9 +24,13 @@ final class GlobeViewController: BaseViewController<
             .distinct()
             .onNext(contentView.renderSouvenirPins)
 
-        observe(\.isBackButtonVisible)
+        observe(\.searchResult)
             .distinct()
-            .onNext(contentView.render(isBackButtonVisible:))
+            .onNext(contentView.renderSearchView)
+
+        observe(\.shouldShowSearchInLocationButton)
+            .distinct()
+            .onNext(contentView.renderSearchInLocation)
     }
 
     // MARK: - Event
