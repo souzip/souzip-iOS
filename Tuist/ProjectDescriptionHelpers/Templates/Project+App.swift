@@ -28,7 +28,10 @@ public extension Project {
                     resources: ["Resources/**"],
                     entitlements: .file(path: .relativeToRoot("Projects/App/App.entitlements")),
                     scripts: scripts,
-                    dependencies: dependencies
+                    dependencies: dependencies,
+                    settings: .settings(
+                        configurations: DefaultSettings.configurations(isApp: true)
+                    )
                 )
             ],
             schemes: DefaultSchemes.appSchemes(for: module)

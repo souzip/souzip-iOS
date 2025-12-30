@@ -48,16 +48,6 @@ public enum DefaultSettings {
         "OTHER_SWIFT_FLAGS": "-D DEBUG"
     ]
 
-    // MARK: - Staging Settings
-
-    private static let stagingSettings: SettingsDictionary = [
-        // 컴파일 최적화
-        "SWIFT_OPTIMIZATION_LEVEL": "-O",
-        "SWIFT_COMPILATION_MODE": "wholemodule",
-        "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-        "ENABLE_TESTABILITY": "NO"
-    ]
-
     // MARK: - Release Settings
 
     private static let releaseSettings: SettingsDictionary = [
@@ -82,12 +72,10 @@ public enum DefaultSettings {
 
     public static func configurations(isApp: Bool = false) -> [Configuration] {
         var debug = base.merging(debugSettings)
-        var staging = base.merging(stagingSettings)
         var release = base.merging(releaseSettings)
 
         if isApp {
             debug = debug.merging(appSettings(for: .debug))
-            staging = staging.merging(appSettings(for: .staging))
             release = release.merging(appSettings(for: .release))
         }
 
@@ -98,14 +86,28 @@ public enum DefaultSettings {
                 xcconfig: .relativeToRoot("Config/Debug.xcconfig")
             ),
             .release(
-                name: Environment.stagingConfigName,
-                settings: staging,
-                xcconfig: .relativeToRoot("Config/Staging.xcconfig")
-            ),
-            .release(
                 name: Environment.releaseConfigName,
                 settings: release,
                 xcconfig: .relativeToRoot("Config/Release.xcconfig")
+            )
+        ]
+    }
+
+    public static func targetConfigurations(isApp: Bool = false) -> [Configuration] {
+        guard isApp else { return [] }
+
+        let debugAppSettings = appSettings(for: .debug)
+        let releaseAppSettings = appSettings(for: .release)
+
+        return [
+            .debug(
+                name: Environment.debugConfigName,
+                settings: debugAppSettings
+                // xcconfig는 project level에서 처리됨
+            ),
+            .release(
+                name: Environment.releaseConfigName,
+                settings: releaseAppSettings
             )
         ]
     }
