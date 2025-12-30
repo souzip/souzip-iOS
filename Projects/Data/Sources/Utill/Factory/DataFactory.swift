@@ -21,7 +21,7 @@ public final class DefaultDataFactory: DataFactory {
         self.userDefaultsFactory = userDefaultsFactory
     }
 
-    // MARK: - Cached Instances
+    // MARK: - Token Refresher
 
     private lazy var cachedTokenRefresher: TokenRefresher = {
         let localDataSource = DefaultAuthLocalDataSource(
@@ -46,6 +46,8 @@ public final class DefaultDataFactory: DataFactory {
             userLocal: userLocalDataSource
         )
     }()
+
+    // MARK: - Auth
 
     private lazy var cachedAuthRepository: AuthRepository = {
         let oauthServices = oauthServiceFactory.makeOAuthServices()
@@ -72,6 +74,8 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Onboarding
+
     private lazy var cachedOnboardingRepository: OnboardingRepository = {
         let networkClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
 
@@ -94,6 +98,22 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Souvenir
+
+    private lazy var cachedSouvenirRepository: SouvenirRepository = {
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let souvenirRemoteDataSource = DefaultSouvenirRemoteDataSource(
+            plain: plainClient,
+            authed: authedClient
+        )
+
+        return DefaultSouvenirRepository(
+            souvenirRemote: souvenirRemoteDataSource
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -106,5 +126,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeCountryRepository() -> CountryRepository {
         DefaultCountryRepository()
+    }
+
+    public func makeSouvenirRepository() -> SouvenirRepository {
+        cachedSouvenirRepository
     }
 }
