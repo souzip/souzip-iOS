@@ -125,7 +125,7 @@ final class SearchTextFieldView: UIView {
             .disposed(by: disposeBag)
 
         clearButton.rx.tap
-            .do(onDispose: { [weak self] in
+            .do(onNext: { [weak self] in
                 self?.textField.text = ""
                 self?.textField.becomeFirstResponder()
                 self?.clearButton.isHidden = true

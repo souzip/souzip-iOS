@@ -8,7 +8,7 @@ final class SearchCountryViewController: BaseViewController<
     // MARK: - UI
 
     private let loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .large)
+        let indicator = UIActivityIndicatorView()
         indicator.style = .large
         indicator.hidesWhenStopped = true
         return indicator
