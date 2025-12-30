@@ -1,5 +1,3 @@
-// Presentation/Discovery/GlobeViewModel.swift
-
 import CoreLocation
 import Domain
 import Foundation
@@ -13,6 +11,7 @@ final class GlobeViewModel: BaseViewModel<
     // MARK: - Repository
 
     private let countryRepo: CountryRepository
+    private let souvenirRepo: SouvenirRepository
 
     // MARK: - Properties
 
@@ -21,9 +20,11 @@ final class GlobeViewModel: BaseViewModel<
     // MARK: - Init
 
     init(
-        countryRepo: CountryRepository
+        countryRepo: CountryRepository,
+        souvenirRepo: SouvenirRepository
     ) {
         self.countryRepo = countryRepo
+        self.souvenirRepo = souvenirRepo
         super.init(initialState: State())
     }
 
@@ -152,17 +153,18 @@ private extension GlobeViewModel {
     func handleSearchInLocationTap(center: CLLocationCoordinate2D, radius: Double) {
         mutate { $0.shouldShowSearchInLocationButton = false }
 
-        print("🔍 현 지도에서 검색:")
-        print("  - 중심: \(center.latitude), \(center.longitude)")
-        print("  - 반경: \(radius)m (\(radius / 1000)km)")
+        Task {
+            let results = try await souvenirRepo.getNearbySouvenirs(
+                latitude: center.latitude,
+                longitude: center.longitude,
+                radiusMeter: Int(radius)
+            )
 
-        // TODO: 서버 API 호출
-        // Task {
-        //     let results = try await searchUseCase.searchArea(
-        //         center: center,
-        //         radius: radius
-        //     )
-        // }
+            mutate {
+                $0.souvenirs = results
+                $0.shouldShowSearchInLocationButton = false
+            }
+        }
     }
 }
 
@@ -174,25 +176,24 @@ private extension GlobeViewModel {
         animated: Bool = true,
         extraLift: CGFloat = 0
     ) {
-        let souvenirs = SouvenirMockData.createMockSouvenirs()
-
         let fixedRadius: Double = 500
-        print("🔍 위치 버튼 (Globe → Map):")
-        print("  - 중심: \(coordinate.latitude), \(coordinate.longitude)")
-        print("  - 반경: \(fixedRadius)m (\(fixedRadius / 1000)km)")
+        Task {
+            let results = try await souvenirRepo.getNearbySouvenirs(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                radiusMeter: Int(fixedRadius)
+            )
 
-        // TODO: 서버 API 호출
-        // Task {
-        //     let results = try await searchUseCase.searchArea(
-        //         center: userLocation,
-        //         radius: radius
-        //     )
-        // }
+            mutate {
+                $0.souvenirs = results
+                $0.souvenirs = results
+                $0.sheetViewMode = .bottomSheet(results)
+                $0.shouldShowSearchInLocationButton = false
+            }
+        }
 
         mutate {
             $0.mapMode = .map
-            $0.souvenirs = souvenirs
-            $0.sheetViewMode = .bottomSheet(souvenirs)
         }
         moveCameraToCoordinate(
             coordinate,
@@ -200,8 +201,6 @@ private extension GlobeViewModel {
             animated: animated,
             extraLift: extraLift
         )
-
-        mutate { $0.shouldShowSearchInLocationButton = false }
     }
 }
 

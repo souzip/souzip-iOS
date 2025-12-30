@@ -2,7 +2,8 @@ public protocol DomainFactory:
     AnyObject,
     DomainAuthFactory,
     DomainOnboardingFactory,
-    DomainCountryFactory {}
+    DomainCountryFactory,
+    DomainSouvenirFactory {}
 
 public final class DefaultDomainFactory: DomainFactory {
     let factory: DataFactory

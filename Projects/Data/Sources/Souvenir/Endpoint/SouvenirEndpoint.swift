@@ -4,7 +4,7 @@ import Networking
 public enum SouvenirEndpoint {
     case getSouvenir(id: Int)
     case createSouvenir(data: MultipartSouvenirData)
-    case updateSouvenir(id: Int, data: MultipartSouvenirData)  // ✅ 똑같이 MultipartSouvenirData
+    case updateSouvenir(id: Int, data: MultipartSouvenirData)
     case deleteSouvenir(id: Int)
     case getNearbySouvenirs(latitude: Double, longitude: Double, radiusMeter: Int?)
 }
@@ -41,7 +41,7 @@ extension SouvenirEndpoint: APIEndpoint {
     public var headers: [String: String]? {
         switch self {
         case .createSouvenir, .updateSouvenir:
-            nil  // multipart는 NetworkClient에서 자동 처리
+            nil // multipart는 NetworkClient에서 자동 처리
         default:
             ["Content-Type": "application/json"]
         }
@@ -52,7 +52,7 @@ extension SouvenirEndpoint: APIEndpoint {
         case let .getNearbySouvenirs(latitude, longitude, radiusMeter):
             var params: [String: Any] = [
                 "latitude": latitude,
-                "longitude": longitude
+                "longitude": longitude,
             ]
             if let radius = radiusMeter {
                 params["radiusMeter"] = radius
@@ -69,9 +69,9 @@ extension SouvenirEndpoint: MultipartEndpoint {
     public func createMultipartBody(boundary: String) -> Data {
         switch self {
         case let .createSouvenir(data), let .updateSouvenir(_, data):
-            return buildMultipartBody(with: data, boundary: boundary)
+            buildMultipartBody(with: data, boundary: boundary)
         default:
-            return Data()
+            Data()
         }
     }
 
