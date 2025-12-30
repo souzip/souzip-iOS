@@ -93,9 +93,7 @@ public enum DefaultSettings {
         ]
     }
 
-    public static func targetConfigurations(isApp: Bool = false) -> [Configuration] {
-        guard isApp else { return [] }
-
+    public static func targetConfigurations() -> [Configuration] {
         let debugAppSettings = appSettings(for: .debug)
         let releaseAppSettings = appSettings(for: .release)
 
@@ -103,7 +101,6 @@ public enum DefaultSettings {
             .debug(
                 name: Environment.debugConfigName,
                 settings: debugAppSettings
-                // xcconfig는 project level에서 처리됨
             ),
             .release(
                 name: Environment.releaseConfigName,

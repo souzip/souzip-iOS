@@ -16,7 +16,7 @@ final class SouvenirEmptyView: UIView {
 
     private let titleLabel: TypographyLabel = {
         let label = TypographyLabel()
-        label.text = "아직 정보가 없어요!\n최초의 발견자가 되어주세요"
+        label.text = "앗, 아직 정보가 없어요!\n최초의 발견자가 되어주세요"
         label.textColor = .dsGreyWhite
         label.numberOfLines = 2
         label.textAlignment = .center

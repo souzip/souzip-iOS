@@ -30,7 +30,7 @@ public extension Project {
                     scripts: scripts,
                     dependencies: dependencies,
                     settings: .settings(
-                        configurations: DefaultSettings.configurations(isApp: true)
+                        configurations: DefaultSettings.targetConfigurations()
                     )
                 )
             ],
