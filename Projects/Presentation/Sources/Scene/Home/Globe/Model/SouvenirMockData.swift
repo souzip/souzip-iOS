@@ -17,7 +17,6 @@ enum SouvenirMockData {
                 krwPrice: 12000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/bindaetteok.jpg",
-                distanceMeter: 150,
                 coordinate: Coordinate(latitude: 37.5705, longitude: 126.9999),
                 address: "서울특별시 종로구 창경궁로"
             ),
@@ -30,7 +29,6 @@ enum SouvenirMockData {
                 krwPrice: 28000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/hangwa.jpg",
-                distanceMeter: 300,
                 coordinate: Coordinate(latitude: 37.5730, longitude: 126.9835),
                 address: "서울특별시 종로구 인사동길"
             ),
@@ -43,7 +41,6 @@ enum SouvenirMockData {
                 krwPrice: 15000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/yakgwa.jpg",
-                distanceMeter: 420,
                 coordinate: Coordinate(latitude: 37.5695, longitude: 126.9870),
                 address: "서울특별시 종로구 종로3가"
             ),
@@ -58,7 +55,6 @@ enum SouvenirMockData {
                 krwPrice: 22000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/soap.jpg",
-                distanceMeter: 250,
                 coordinate: Coordinate(latitude: 37.5715, longitude: 126.9820),
                 address: "서울특별시 종로구 인사동"
             ),
@@ -71,7 +67,6 @@ enum SouvenirMockData {
                 krwPrice: 18000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/perfume.jpg",
-                distanceMeter: 380,
                 coordinate: Coordinate(latitude: 37.5742, longitude: 126.9845),
                 address: "서울특별시 종로구 관훈동"
             ),
@@ -86,7 +81,6 @@ enum SouvenirMockData {
                 krwPrice: 35000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/scarf.jpg",
-                distanceMeter: 200,
                 coordinate: Coordinate(latitude: 37.5708, longitude: 126.9840),
                 address: "서울특별시 종로구 인사동10길"
             ),
@@ -99,7 +93,6 @@ enum SouvenirMockData {
                 krwPrice: 12000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/norigae.jpg",
-                distanceMeter: 320,
                 coordinate: Coordinate(latitude: 37.5735, longitude: 126.9810),
                 address: "서울특별시 종로구 인사동길"
             ),
@@ -112,7 +105,6 @@ enum SouvenirMockData {
                 krwPrice: 8000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/socks.jpg",
-                distanceMeter: 450,
                 coordinate: Coordinate(latitude: 37.5690, longitude: 126.9885),
                 address: "서울특별시 종로구 낙원동"
             ),
@@ -127,7 +119,6 @@ enum SouvenirMockData {
                 krwPrice: 25000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/fan.jpg",
-                distanceMeter: 180,
                 coordinate: Coordinate(latitude: 37.5725, longitude: 126.9830),
                 address: "서울특별시 종로구 인사동5길"
             ),
@@ -140,7 +131,6 @@ enum SouvenirMockData {
                 krwPrice: 15000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/hanji.jpg",
-                distanceMeter: 280,
                 coordinate: Coordinate(latitude: 37.5718, longitude: 126.9875),
                 address: "서울특별시 종로구 관철동"
             ),
@@ -155,7 +145,6 @@ enum SouvenirMockData {
                 krwPrice: 18000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/top.jpg",
-                distanceMeter: 350,
                 coordinate: Coordinate(latitude: 37.5698, longitude: 126.9820),
                 address: "서울특별시 종로구 수송동"
             ),
@@ -168,7 +157,6 @@ enum SouvenirMockData {
                 krwPrice: 22000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/puzzle.jpg",
-                distanceMeter: 410,
                 coordinate: Coordinate(latitude: 37.5745, longitude: 126.9890),
                 address: "서울특별시 종로구 안국동"
             ),
@@ -183,7 +171,6 @@ enum SouvenirMockData {
                 krwPrice: 45000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/porcelain.jpg",
-                distanceMeter: 220,
                 coordinate: Coordinate(latitude: 37.5710, longitude: 126.9850),
                 address: "서울특별시 종로구 인사동11길"
             ),
@@ -196,7 +183,6 @@ enum SouvenirMockData {
                 krwPrice: 68000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/lacquerware.jpg",
-                distanceMeter: 290,
                 coordinate: Coordinate(latitude: 37.5733, longitude: 126.9825),
                 address: "서울특별시 종로구 견지동"
             ),
@@ -211,7 +197,6 @@ enum SouvenirMockData {
                 krwPrice: 42000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/teacup.jpg",
-                distanceMeter: 330,
                 coordinate: Coordinate(latitude: 37.5702, longitude: 126.9895),
                 address: "서울특별시 종로구 익선동"
             ),
@@ -224,7 +209,6 @@ enum SouvenirMockData {
                 krwPrice: 16000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/cutlery.jpg",
-                distanceMeter: 270,
                 coordinate: Coordinate(latitude: 37.5728, longitude: 126.9865),
                 address: "서울특별시 종로구 공평동"
             ),
@@ -239,7 +223,6 @@ enum SouvenirMockData {
                 krwPrice: 12000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/postcard.jpg",
-                distanceMeter: 240,
                 coordinate: Coordinate(latitude: 37.5712, longitude: 126.9815),
                 address: "서울특별시 종로구 인사동8길"
             ),
@@ -252,7 +235,6 @@ enum SouvenirMockData {
                 krwPrice: 38000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/minhwa.jpg",
-                distanceMeter: 360,
                 coordinate: Coordinate(latitude: 37.5740, longitude: 126.9880),
                 address: "서울특별시 종로구 계동"
             ),
@@ -267,7 +249,6 @@ enum SouvenirMockData {
                 krwPrice: 5000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/magnet.jpg",
-                distanceMeter: 190,
                 coordinate: Coordinate(latitude: 37.5722, longitude: 126.9842),
                 address: "서울특별시 종로구 인사동길"
             ),
@@ -280,7 +261,6 @@ enum SouvenirMockData {
                 krwPrice: 18000,
                 currencySymbol: "₩",
                 thumbnail: "https://example.com/snowglobe.jpg",
-                distanceMeter: 310,
                 coordinate: Coordinate(latitude: 37.5695, longitude: 126.9835),
                 address: "서울특별시 종로구 종로2가"
             ),

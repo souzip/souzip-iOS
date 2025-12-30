@@ -3,11 +3,10 @@ public struct SouvenirListItem: Hashable {
     public let name: String
     public let category: SouvenirCategory
     public let purpose: SouvenirPurpose
-    public let localPrice: Int
-    public let krwPrice: Int
-    public let currencySymbol: String
+    public let localPrice: Int?
+    public let krwPrice: Int?
+    public let currencySymbol: String?
     public let thumbnail: String
-    public let distanceMeter: Int
     public let coordinate: Coordinate
     public let address: String
 
@@ -16,11 +15,10 @@ public struct SouvenirListItem: Hashable {
         name: String,
         category: SouvenirCategory,
         purpose: SouvenirPurpose,
-        localPrice: Int,
-        krwPrice: Int,
-        currencySymbol: String,
+        localPrice: Int?,
+        krwPrice: Int?,
+        currencySymbol: String?,
         thumbnail: String,
-        distanceMeter: Int,
         coordinate: Coordinate,
         address: String
     ) {
@@ -32,7 +30,6 @@ public struct SouvenirListItem: Hashable {
         self.krwPrice = krwPrice
         self.currencySymbol = currencySymbol
         self.thumbnail = thumbnail
-        self.distanceMeter = distanceMeter
         self.coordinate = coordinate
         self.address = address
     }

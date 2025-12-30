@@ -1,5 +1,4 @@
-public struct SouvenirDetail {
-    public let id: Int
+public struct SouvenirInput {
     public let name: String
     public let localPrice: Int?
     public let currencySymbol: String?
@@ -11,28 +10,20 @@ public struct SouvenirDetail {
     public let category: SouvenirCategory
     public let purpose: SouvenirPurpose
     public let countryCode: String
-    public let isOwned: Bool
-    public let owner: SouvenirOwner
-    public let files: [SouvenirFile]
 
     public init(
-        id: Int,
         name: String,
-        localPrice: Int?,
-        currencySymbol: String?,
-        krwPrice: Int?,
+        localPrice: Int? = nil,
+        currencySymbol: String? = nil,
+        krwPrice: Int? = nil,
         description: String,
         address: String,
-        locationDetail: String?,
+        locationDetail: String? = nil,
         coordinate: Coordinate,
         category: SouvenirCategory,
         purpose: SouvenirPurpose,
-        countryCode: String,
-        isOwned: Bool,
-        owner: SouvenirOwner,
-        files: [SouvenirFile]
+        countryCode: String
     ) {
-        self.id = id
         self.name = name
         self.localPrice = localPrice
         self.currencySymbol = currencySymbol
@@ -44,16 +35,5 @@ public struct SouvenirDetail {
         self.category = category
         self.purpose = purpose
         self.countryCode = countryCode
-        self.isOwned = isOwned
-        self.owner = owner
-        self.files = files
-    }
-
-    public var thumbnailUrl: String? {
-        files.first?.url
-    }
-
-    public var imageUrls: [String] {
-        files.map(\.url)
     }
 }
