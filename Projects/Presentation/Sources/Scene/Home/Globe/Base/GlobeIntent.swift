@@ -9,6 +9,7 @@ enum GlobeAction {
 
     case tapCountryBadge(CountryBadge)
     case taplocationButton
+    case tapSearchInLocation(center: CLLocationCoordinate2D, radius: Double)
 
     case tapSearch
     case tapBack
@@ -24,13 +25,16 @@ enum GlobeAction {
 
 struct GlobeState {
     var mapMode: MapMode = .globe
+    var mapEntrySource: MapEntrySource = .other
     var lastGlobeCenter: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
     var countryBadges: [CountryBadge] = []
 
     var sheetViewMode: SheetViewMode = .hide
     var souvenirs: [SouvenirListItem] = []
 
-    var isBackButtonVisible: Bool { mapMode == .map }
+    var searchResult: String?
+
+    var shouldShowSearchInLocationButton: Bool = false
 }
 
 enum MapMode: Equatable {
@@ -48,6 +52,11 @@ enum BottomSheetLevel: Equatable {
     case min
     case mid
     case max
+}
+
+enum MapEntrySource {
+    case search
+    case other
 }
 
 // MARK: - Event

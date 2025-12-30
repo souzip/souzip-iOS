@@ -16,6 +16,12 @@ final class HomeCoordinator: BaseCoordinator<HomeRoute, TabRoute> {
         switch route {
         case .globe:
             showGlobe()
+
+        case let .search(onResult):
+            showSearch(onResult: onResult)
+
+        case .pop:
+            nav.popViewController(animated: true)
         }
     }
 }
@@ -25,5 +31,12 @@ private extension HomeCoordinator {
         let scene = factory.makeGlobeScene()
         bindRoute(scene)
         nav.setViewControllers([scene.vc], animated: true)
+    }
+
+    func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
+        let scene = factory.makeSearchScene(onResult: onResult)
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
     }
 }

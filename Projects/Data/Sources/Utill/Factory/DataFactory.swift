@@ -103,4 +103,8 @@ public final class DefaultDataFactory: DataFactory {
     public func makeOnboardingRepository() -> OnboardingRepository {
         cachedOnboardingRepository
     }
+
+    public func makeCountryRepository() -> CountryRepository {
+        DefaultCountryRepository()
+    }
 }

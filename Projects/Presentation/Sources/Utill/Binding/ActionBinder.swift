@@ -31,6 +31,16 @@ public final class ActionBinder<Input, Action> {
         )
     }
 
+    @discardableResult
+    public func debounce(_ interval: RxTimeInterval, scheduler: SchedulerType = MainScheduler.instance)
+        -> ActionBinder<Input, Action> {
+        ActionBinder(
+            source: source.debounce(interval, scheduler: scheduler),
+            sink: sink,
+            disposeBag: disposeBag
+        )
+    }
+
     public func map(_ transform: @escaping (Input) -> Action) {
         source
             .map(transform)

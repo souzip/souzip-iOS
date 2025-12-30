@@ -13,7 +13,7 @@ public enum DefaultInfoPlist {
     // MARK: - Privacy Configuration
 
     private static let privacy: [String: Plist.Value] = [
-        "NSLocationWhenInUseUsageDescription": "",
+        "NSLocationWhenInUseUsageDescription": "지도에서 내 위치를 확인하여 근처 기념품을 추천받기 위해 권한이 필요합니다.(필수권한)",
     ]
 
     // MARK: - App Configuration

@@ -32,4 +32,5 @@ public extension UIImage {
     // MARK: - Character
 
     static let dsCharacterTraveler: UIImage = .characterTraveler
+    static let dsCharacterSearch: UIImage = .characterSearch
 }
