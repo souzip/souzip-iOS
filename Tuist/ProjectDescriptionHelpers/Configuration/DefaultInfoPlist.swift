@@ -1,23 +1,31 @@
 import ProjectDescription
 
 public enum DefaultInfoPlist {
-    
     // MARK: - Base Configuration
-    
+
     private static let base: [String: Plist.Value] = [
         "CFBundleShortVersionString": .string(Environment.appVersion),
         "CFBundleVersion": .string(Environment.appBuildVersion),
         "CFBundleDisplayName": "$(APP_DISPLAY_NAME)",
         "UIDesignRequiresCompatibility": true,
+    ]
 
+    // MARK: - Privacy Configuration
+
+    private static let privacy: [String: Plist.Value] = [
+        "NSLocationWhenInUseUsageDescription": "",
+    ]
+
+    // MARK: - App Configuration
+
+    private static let appSpecific: [String: Plist.Value] = [
+        // API Keys & Tokens
         "API_BASE_URL": "$(API_BASE_URL)",
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
         "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
-    ]
-    
-    // MARK: - App Configuration
-    
-    private static let appSpecific: [String: Plist.Value] = [
+        "MBXAccessToken": "$(MAPBOX_ACCESS_TOKEN)",
+
+        // UI Configuration
         "UILaunchStoryboardName": "LaunchScreen",
         "UISupportedInterfaceOrientations": [
             "UIInterfaceOrientationPortrait"
@@ -35,12 +43,12 @@ public enum DefaultInfoPlist {
             ]
         ],
 
+        // URL Schemes
         "LSApplicationQueriesSchemes": [
           "kakaokompassauth",
           "kakaolink",
           "kakaoplus"
         ],
-
         "CFBundleURLTypes": [
             [
                 "CFBundleTypeRole": "Editor",
@@ -60,7 +68,9 @@ public enum DefaultInfoPlist {
     // MARK: - Public InfoPlists
     
     public static let app: InfoPlist = .extendingDefault(
-        with: base.merging(appSpecific)
+        with: base
+            .merging(privacy)
+            .merging(appSpecific)
     )
 
     public static let framework: InfoPlist = .default

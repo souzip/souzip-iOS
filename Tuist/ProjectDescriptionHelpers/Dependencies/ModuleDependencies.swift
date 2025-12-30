@@ -25,6 +25,7 @@ public enum ModuleDependencies {
                 .external(.rxRelay),
                 .external(.rxCocoa),
                 .external(.kingfisher),
+                .external(.mapboxMaps)
             ]
             
         case .domain:

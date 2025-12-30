@@ -37,8 +37,8 @@ class BaseViewModel<State, Action, Event, Route>: BaseViewModelType {
 
     func mutate(_ mutation: @escaping (inout State) -> Void) {
         var newState = state.value
-        Logger.shared.logState(newState)
         mutation(&newState)
+        Logger.shared.logState(newState)
         state.accept(newState)
     }
 

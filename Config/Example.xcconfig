@@ -5,16 +5,13 @@
 // 3. Release.xcconfig로 복사
 // 4. 실제 값으로 변경
 
-// Environment Type
-APP_ENV = <DEBUG|STAGING|RELEASE>
+// API 설정
+API_BASE_URL =
 
-// API Configuration
-API_BASE_URL = <YOUR_API_URL>
+// OAuth 키
+KAKAO_APP_KEY =
+GOOGLE_CLIENT_ID =
+GOOGLE_REVERSED_CLIENT_ID =
 
-// Feature Flags
-ENABLE_LOGGING = <YES|NO>
-
-// 추가 민감 정보가 있다면 여기에 추가:
-// API_KEY = <YOUR_API_KEY>
-// GOOGLE_MAP_KEY = <YOUR_KEY>
-// AWS_ACCESS_KEY = <YOUR_AWS_KEY>
+// MapBox 키
+MAPBOX_ACCESS_TOKEN =

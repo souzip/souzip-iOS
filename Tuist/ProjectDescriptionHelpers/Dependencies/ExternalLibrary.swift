@@ -20,7 +20,11 @@ public enum ExternalLibrary: String, CaseIterable {
     case kakaoSDKCommon = "KakaoSDKCommon"
     case kakaoSDKAuth = "KakaoSDKAuth"
     case kakaoSDKUser = "KakaoSDKUser"
-//
+
+    // MARK: - MapBox
+
+    case mapboxMaps = "MapboxMaps"
+
 //    // MARK: - Google Sign In
 //
 //    case googleSignIn = "GoogleSignIn"
@@ -31,6 +35,7 @@ public extension ExternalLibrary {
 
     var productType: Product {
         switch self {
+        case .mapboxMaps: .framework
         default: .staticFramework
         }
     }
