@@ -32,7 +32,11 @@ final class MapboxView: UIView {
 
     override init(frame: CGRect) {
         let mapInitOptions = MapInitOptions(
-            mapStyle: .standard(theme: .default, lightPreset: .night)
+            mapStyle: .standard(
+                theme: .default,
+                lightPreset: .night,
+                showPlaceLabels: false
+            )
         )
         mapboxMapView = MapView(frame: frame, mapInitOptions: mapInitOptions)
         super.init(frame: frame)
@@ -50,6 +54,7 @@ final class MapboxView: UIView {
 
     private func setMapView() {
         mapboxMapView.ornaments.options.scaleBar.visibility = .hidden
+        mapboxMapView.ornaments.options.compass.visibility = .hidden
 
         mapboxMapView.ornaments.options.logo.position = .bottomLeft
         mapboxMapView.ornaments.options.logo.margins = CGPoint(x: 0, y: 0)
@@ -95,6 +100,8 @@ extension MapboxView {
         try? mapboxMapView.mapboxMap.setCameraBounds(
             with: CameraBoundsOptions(maxZoom: 4.0, minZoom: 1.5)
         )
+
+        setPlaceLabelsVisible(false)
     }
 
     func configureAsMap() {
@@ -102,6 +109,8 @@ extension MapboxView {
         try? mapboxMapView.mapboxMap.setCameraBounds(
             with: CameraBoundsOptions(maxZoom: 20.0, minZoom: 5.0)
         )
+
+        setPlaceLabelsVisible(true)
     }
 
     func moveCamera(
@@ -313,6 +322,18 @@ private extension MapboxView {
             selectedSouvenirIndex = index
         } else {
             selectedSouvenirIndex = nil
+        }
+    }
+
+    func setPlaceLabelsVisible(_ visible: Bool) {
+        do {
+            try mapboxMapView.mapboxMap.setStyleImportConfigProperty(
+                for: "basemap",
+                config: "showPlaceLabels",
+                value: visible
+            )
+        } catch {
+            print("에러남")
         }
     }
 }
