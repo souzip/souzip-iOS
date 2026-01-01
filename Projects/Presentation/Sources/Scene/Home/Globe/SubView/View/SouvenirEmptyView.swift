@@ -7,6 +7,8 @@ import UIKit
 final class SouvenirEmptyView: UIView {
     // MARK: - UI
 
+    var tapUpload: Observable<Void> { uploadButton.rx.tap.asObservable() }
+
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit

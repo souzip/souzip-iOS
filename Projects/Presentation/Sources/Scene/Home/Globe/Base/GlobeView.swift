@@ -154,6 +154,16 @@ final class GlobeView: BaseView<GlobeAction> {
                 updateCameraForSheet(height: height)
             }
             .disposed(by: disposeBag)
+
+        souvenirSheetView.tapSouvenirItem
+            .map { .tapSouvenirItem($0) }
+            .bind(to: action)
+            .disposed(by: disposeBag)
+
+        souvenirSheetView.tapUpload
+            .map { .tapUpload }
+            .bind(to: action)
+            .disposed(by: disposeBag)
     }
 
     private func bindMapContainer() {

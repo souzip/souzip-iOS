@@ -31,6 +31,10 @@ final class SouvenirSheetView: UIView {
     // MARK: - Action
 
     let heightRelay = PublishRelay<CGFloat>()
+    let tapSouvenirItem = PublishRelay<SouvenirListItem>()
+    let tapUpload = PublishRelay<Void>()
+
+    private let disposeBag = DisposeBag()
 
     // MARK: - Pan
 
@@ -119,6 +123,7 @@ final class SouvenirSheetView: UIView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
         setGestures()
     }
 
@@ -157,6 +162,22 @@ final class SouvenirSheetView: UIView {
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+    }
+
+    private func setBindings() {
+        souvenirGridView.shouldDismissSheet
+            .bind { [weak self] in
+                self?.setLevel(.min)
+            }
+            .disposed(by: disposeBag)
+
+        souvenirGridView.itemTap
+            .bind(to: tapSouvenirItem)
+            .disposed(by: disposeBag)
+
+        souvenirGridView.tapUpload
+            .bind(to: tapUpload)
+            .disposed(by: disposeBag)
     }
 
     private func setGestures() {
