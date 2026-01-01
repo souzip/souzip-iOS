@@ -64,6 +64,9 @@ final class GlobeViewModel: BaseViewModel<
 
         case let .tapSouvenirItem(item):
             handleSouvenirItemTap(item)
+
+        case .tapUpload:
+            navigate(to: .createSouvenir)
         }
     }
 }
@@ -225,7 +228,7 @@ private extension GlobeViewModel {
 
         switch entrySource {
         case .search:
-            navigate(to: .search { [weak self] item in
+            navigate(to: .searchCountry { [weak self] item in
                 self?.handleCountrySelected(item)
             })
 
@@ -280,7 +283,6 @@ private extension GlobeViewModel {
             emit(.moveBottomSheetHeight(.mid))
 
         case .map:
-            // ✅ 이미 Map 모드: 카메라만 이동
             emit(
                 .moveCamera(
                     coordinate: userLocation,
@@ -315,8 +317,7 @@ private extension GlobeViewModel {
     }
 
     func handleSouvenirItemTap(_ item: SouvenirListItem) {
-        // TODO: Navigate to detail screen
-        print("Tapped souvenir item: \(item.name)")
+        print(item)
     }
 }
 
@@ -324,7 +325,7 @@ private extension GlobeViewModel {
 
 private extension GlobeViewModel {
     private func handleSearchTap() {
-        navigate(to: .search { [weak self] item in
+        navigate(to: .searchCountry { [weak self] item in
             self?.handleCountrySelected(item)
         })
     }

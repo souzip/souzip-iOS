@@ -155,6 +155,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         disposeBag = DisposeBag()
         setBindings()
         imageView.image = nil
+        imageView.kf.cancelDownloadTask()
         setPriceVisibility(isHidden: true)
     }
 

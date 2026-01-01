@@ -4,7 +4,7 @@ public enum Environment {
 
     // MARK: - App Information
 
-    public static let appName = "Souzip"
+    public static let appName = "수집"
     public static let bundlePrefix = "com.swyp.souzip"
     public static let organizationName = "SWYP"
     public static let organizationTeamId = "3PVV8DQPL6"

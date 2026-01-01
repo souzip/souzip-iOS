@@ -10,6 +10,9 @@ final class SouvenirGridView: UIView {
 
     let itemTap = PublishRelay<Item>()
     let shouldDismissSheet = PublishRelay<Void>()
+    let tapUpload = PublishRelay<Void>()
+
+    private let disposeBag = DisposeBag()
 
     // MARK: - Types
 
@@ -79,6 +82,7 @@ private extension SouvenirGridView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
 
     func setAttributes() {
@@ -111,6 +115,12 @@ private extension SouvenirGridView {
             make.top.equalToSuperview().inset(55)
             make.centerX.equalToSuperview()
         }
+    }
+
+    func setBindings() {
+        emptyView.tapUpload
+            .bind(to: tapUpload)
+            .disposed(by: disposeBag)
     }
 }
 

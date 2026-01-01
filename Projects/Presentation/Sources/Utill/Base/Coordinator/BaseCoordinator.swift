@@ -8,6 +8,7 @@ public class BaseCoordinator<Route, ParentRoute>: Coordinator {
     public weak var parent: (any Coordinator)?
 
     public var sendParentRoute: ((ParentRoute) -> Void)?
+    public var onFinish: (() -> Void)?
 
     public init(nav: UINavigationController) {
         self.nav = nav
@@ -22,5 +23,9 @@ public class BaseCoordinator<Route, ParentRoute>: Coordinator {
     public func navigate(_ route: Route) {}
     public func navigateToParent(_ route: ParentRoute) {
         sendParentRoute?(route)
+    }
+
+    public func finish() {
+        onFinish?()
     }
 }

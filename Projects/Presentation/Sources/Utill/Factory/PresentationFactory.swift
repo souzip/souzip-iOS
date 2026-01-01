@@ -4,7 +4,8 @@ import UIKit
 protocol PresentationFactory:
     AnyObject,
     PresentationAuthFactory,
-    PresentationHomeFactory {}
+    PresentationHomeFactory,
+    PresentationSouvenirFactory {}
 
 final class DefaultPresentationFactory: PresentationFactory {
     let domainFactory: DomainFactory

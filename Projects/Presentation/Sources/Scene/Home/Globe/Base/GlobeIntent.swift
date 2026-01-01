@@ -18,6 +18,7 @@ enum GlobeAction {
     case tapSouvenirPin(SouvenirListItem)
     case tapCarouselClose
 
+    case tapUpload
     case tapSouvenirItem(SouvenirListItem)
 }
 

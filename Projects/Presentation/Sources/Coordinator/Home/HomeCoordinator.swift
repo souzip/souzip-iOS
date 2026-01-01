@@ -1,9 +1,9 @@
 import UIKit
 
 final class HomeCoordinator: BaseCoordinator<HomeRoute, TabRoute> {
-    private let factory: PresentationHomeFactory
+    private let factory: PresentationFactory
 
-    init(nav: UINavigationController, factory: PresentationHomeFactory) {
+    init(nav: UINavigationController, factory: PresentationFactory) {
         self.factory = factory
         super.init(nav: nav)
     }
@@ -17,11 +17,17 @@ final class HomeCoordinator: BaseCoordinator<HomeRoute, TabRoute> {
         case .globe:
             showGlobe()
 
-        case let .search(onResult):
-            showSearch(onResult: onResult)
+        case .createSouvenir:
+            showCreateSouvenir()
+
+        case let .searchCountry(onResult):
+            showSearchCountry(onResult)
 
         case .pop:
             nav.popViewController(animated: true)
+
+        case .dismiss:
+            nav.dismiss(animated: true)
         }
     }
 }
@@ -33,10 +39,23 @@ private extension HomeCoordinator {
         nav.setViewControllers([scene.vc], animated: true)
     }
 
-    func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
-        let scene = factory.makeSearchScene(onResult: onResult)
-        scene.vc.hidesBottomBarWhenPushed = true
-        bindRoute(scene)
-        nav.pushViewController(scene.vc, animated: true)
+    func showCreateSouvenir() {
+        let coordinator = SouvenirCoordinator(
+            nav: nav,
+            factory: factory
+        )
+
+        addTemporaryChild(coordinator)
+        coordinator.navigate(.create)
+    }
+
+    func showSearchCountry(_ onResult: @escaping (SearchResultItem) -> Void) {
+        let coordinator = SouvenirCoordinator(
+            nav: nav,
+            factory: factory
+        )
+
+        addTemporaryChild(coordinator)
+        coordinator.navigate(.search(onResult: onResult))
     }
 }
