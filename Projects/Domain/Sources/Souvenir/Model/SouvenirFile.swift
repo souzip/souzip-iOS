@@ -1,4 +1,4 @@
-public struct SouvenirFile {
+public struct SouvenirFile: Hashable {
     public let id: Int
     public let url: String
     public let originalName: String

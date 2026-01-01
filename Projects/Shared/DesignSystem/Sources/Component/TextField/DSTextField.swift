@@ -8,7 +8,7 @@ public final class DSTextField: UIView {
         let textField = TypographyTextField()
         textField.backgroundColor = .clear
         textField.textColor = .dsGreyWhite
-        textField.setTypography(.body2R)
+        textField.setTypography(.body3M)
         return textField
     }()
 
@@ -52,7 +52,7 @@ public final class DSTextField: UIView {
 
     public func setPlaceholder(_ placeholder: String) {
         textField.setPlaceholderTypography(
-            .body2R,
+            .body3M,
             text: placeholder,
             color: .dsGrey500
         )
@@ -69,6 +69,10 @@ public final class DSTextField: UIView {
 
     public func onTextChanged(_ handler: @escaping (String) -> Void) {
         onTextChangedHandler = handler
+    }
+
+    public func setKeyboardType(_ type: UIKeyboardType) {
+        textField.keyboardType = type
     }
 
     public func setReturnKeyType(_ returnKeyType: UIReturnKeyType = .done) {

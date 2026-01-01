@@ -93,7 +93,7 @@ public final class DSNavigationBar: UIView {
 
     // MARK: - Render
 
-    private func render(title: String, style: Style) {
+    public func render(title: String, style: Style) {
         titleLabel.text = title
 
         switch style {
