@@ -186,7 +186,6 @@ private extension GlobeViewModel {
 
             mutate {
                 $0.souvenirs = results
-                $0.souvenirs = results
                 $0.sheetViewMode = .bottomSheet(results)
                 $0.shouldShowSearchInLocationButton = false
             }
