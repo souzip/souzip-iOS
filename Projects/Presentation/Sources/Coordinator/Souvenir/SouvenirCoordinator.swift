@@ -20,7 +20,7 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
         case .detail:
             showDetailSouvenir()
 
-        case .edit:
+        case let .edit(detail, onResult):
             showEditSouvenir()
 
         case let .search(onResult):
@@ -62,9 +62,11 @@ private extension SouvenirCoordinator {
         nav.setViewControllers([vc], animated: false)
     }
 
-    func showEditSouvenir() {
-        let scene = factory.makeSouvenirFormScene(mode: .create)
-        scene.vc.modalPresentationStyle = .fullScreen
+    func showEditSouvenir(
+        _ detail: SouvenirDetail,
+        _ onResult: (SouvenirDetail) -> Void
+    ) {
+        let scene = factory.makeSouvenirFormScene(mode: .edit(detail))
         bindRoute(scene)
         let modalNav = CommonNavigationController(rootViewController: scene.vc)
         modalNav.modalPresentationStyle = .fullScreen

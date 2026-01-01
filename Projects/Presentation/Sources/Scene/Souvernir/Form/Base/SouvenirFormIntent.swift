@@ -95,8 +95,6 @@ struct SouvenirFormState {
             !address.isEmpty &&
             category != nil &&
             !description.isEmpty
-
-        true
     }
 }
 

@@ -3,7 +3,10 @@ import Domain
 
 enum SouvenirRoute {
     case create
-    case edit
+    case edit(
+        detail: SouvenirDetail,
+        onResult: (SouvenirDetail) -> Void
+    )
     case detail
     case search(onResult: (SearchResultItem) -> Void)
     case locationPicker(

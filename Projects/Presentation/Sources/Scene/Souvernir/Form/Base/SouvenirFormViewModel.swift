@@ -228,7 +228,6 @@ final class SouvenirFormViewModel: BaseViewModel<
                 )
                 navigate(to: .dismiss)
             } catch {
-                print(error.localizedDescription)
                 emit(.showError("사진을 처리하는 중 문제가 발생했어요.\n다시 선택해주세요."))
             }
         }
@@ -240,7 +239,6 @@ final class SouvenirFormViewModel: BaseViewModel<
                 _ = try await souvenirRepo.updateSouvenir(id: id, input: input)
                 navigate(to: .dismiss)
             } catch {
-                print(error.localizedDescription)
                 emit(.showError("저장 중 문제가 발생했어요.\n잠시 후 다시 시도해주세요."))
             }
         }
