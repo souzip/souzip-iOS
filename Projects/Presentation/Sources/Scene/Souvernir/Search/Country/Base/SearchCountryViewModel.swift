@@ -4,7 +4,7 @@ final class SearchCountryViewModel: BaseViewModel<
     SearchCountryState,
     SearchCountryAction,
     SearchCountryEvent,
-    HomeRoute
+    SouvenirRoute
 > {
     // MARK: - Properties
 
@@ -25,7 +25,7 @@ final class SearchCountryViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .back:
-            navigate(to: .pop)
+            navigate(to: .finish)
 
         case let .searchTextChangedUI(text):
             handleSearchTextChangedUI(text)
@@ -96,6 +96,5 @@ final class SearchCountryViewModel: BaseViewModel<
 
     private func handleSelectItem(_ item: SearchResultItem) {
         onResult(item)
-        navigate(to: .pop)
     }
 }

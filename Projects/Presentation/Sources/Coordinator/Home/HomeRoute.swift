@@ -1,6 +1,8 @@
 enum HomeRoute {
     case globe
-    case search(onResult: (SearchResultItem) -> Void)
+    case createSouvenir
+    case searchCountry(onResult: (SearchResultItem) -> Void)
 
     case pop
+    case dismiss
 }
