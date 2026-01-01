@@ -8,7 +8,8 @@ protocol PresentationHomeFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeGlobeScene() -> RoutedScene<HomeRoute> {
         let vm = GlobeViewModel(
-            countryRepo: domainFactory.makeCountryRepository()
+            countryRepo: domainFactory.makeCountryRepository(),
+            souvenirRepo: domainFactory.makeSouvenirRepository()
         )
         let view = GlobeView()
         let vc = GlobeViewController(viewModel: vm, contentView: view)

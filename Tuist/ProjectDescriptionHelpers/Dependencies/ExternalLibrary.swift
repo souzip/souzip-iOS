@@ -36,6 +36,7 @@ public extension ExternalLibrary {
     var productType: Product {
         switch self {
         case .mapboxMaps: .framework
+        case .rxSwift, .rxRelay, .rxCocoa: .framework
         default: .staticFramework
         }
     }
@@ -58,7 +59,6 @@ public extension ExternalLibrary {
                 ],
                 configurations: [
                     .debug(name: .configuration("Debug")),
-                    .release(name: .configuration("Staging")),
                     .release(name: .configuration("Release"))
                 ]
             )

@@ -14,7 +14,7 @@ final class SearchEmptyView: UIView {
 
     private let messageLabel: UILabel = {
         let label = UILabel()
-        label.text = "나라 · 도시 이름으로 검색해보세요!"
+        label.text = "나라 · 도시 이름으로 검색해보세요"
         label.font = .pretendard(size: 18, weight: .light)
         label.textColor = .dsGreyWhite
         label.textAlignment = .center

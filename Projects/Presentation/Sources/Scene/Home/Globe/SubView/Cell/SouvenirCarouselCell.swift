@@ -169,8 +169,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
             image: item.category.selectedImage
         )
 
-        // 가격 정보
-        let hasPrice = (item.localPrice > 0)
+        let hasPrice = (item.localPrice != nil || item.krwPrice != nil)
         if hasPrice {
             localPriceLabel.text = item.formattedLocalPrice
             krwPriceLabel.text = item.formattedKrwPrice

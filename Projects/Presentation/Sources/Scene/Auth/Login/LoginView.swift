@@ -37,17 +37,12 @@ final class LoginView: BaseView<LoginAction> {
         return imageView
     }()
 
-    private let welcomeLabel: UILabel = {
-        let label = UILabel()
+    private let welcomeLabel: TypographyLabel = {
+        let label = TypographyLabel()
         label.numberOfLines = 2
         label.textColor = .dsGreyWhite
         label.textAlignment = .center
-        label.font = .pretendard(size: 19, weight: .medium)
-        let attributedText = NSAttributedString(
-            string: "발견의 즐거움, 기록의 설렘\n수집에 오신 걸 환영해요",
-            attributes: [.kern: -0.25]
-        )
-        label.attributedText = attributedText
+        label.setTypography(.body1SB)
         return label
     }()
 

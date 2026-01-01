@@ -10,12 +10,7 @@ public enum DefaultSchemes {
                 module: module
             ),
             createScheme(
-                name: "\(Environment.appName)-Staging",
-                configuration: Environment.stagingConfigName,
-                module: module
-            ),
-            createScheme(
-                name: "\(Environment.appName)-Release",
+                name: "\(Environment.appName)",
                 configuration: Environment.releaseConfigName,
                 module: module
             )

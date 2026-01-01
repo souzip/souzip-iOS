@@ -1,4 +1,4 @@
-public enum SouvenirPurpose: CaseIterable {
+public enum SouvenirPurpose: String {
     case gift
     case personal
 }
