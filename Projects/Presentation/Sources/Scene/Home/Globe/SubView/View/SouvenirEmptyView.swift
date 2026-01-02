@@ -12,7 +12,7 @@ final class SouvenirEmptyView: UIView {
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFit
-        view.image = .dsCharacterTraveler
+        view.image = .dsCharacterPrepareTrip
         return view
     }()
 
