@@ -8,7 +8,6 @@ final class SearchCountryViewModel: BaseViewModel<
 > {
     // MARK: - Properties
 
-    private let mockData = SearchResultItem.mockData()
     private let onResult: (SearchResultItem) -> Void
 
     // MARK: - Init
@@ -59,16 +58,6 @@ final class SearchCountryViewModel: BaseViewModel<
 
     private func handleSearchTextChangedAPI(_ text: String) {
         guard !text.isEmpty else { return }
-
-        // 현재는 목 데이터 필터링
-        let filtered = mockData.filter { item in
-            item.name.localizedCaseInsensitiveContains(text)
-        }
-
-        mutate { state in
-            state.items = filtered
-            state.isEmpty = filtered.isEmpty
-        }
 
         // 추후 API 연동
         // Task {
