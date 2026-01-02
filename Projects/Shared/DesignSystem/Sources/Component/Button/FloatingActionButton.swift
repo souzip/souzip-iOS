@@ -2,7 +2,6 @@ import SnapKit
 import UIKit
 
 public final class DSFAButton: UIButton {
-
     // MARK: - Initialization
 
     public init(image: UIImage?) {

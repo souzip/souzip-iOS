@@ -28,6 +28,14 @@ public final class DSTextField: UIView {
         return label
     }()
 
+    private let contentStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.alignment = .center
+        sv.spacing = 8
+        return sv
+    }()
+
     // MARK: - Properties
 
     private var onTextChangedHandler: ((String) -> Void)?
@@ -112,11 +120,11 @@ private extension DSTextField {
     }
 
     func setHierarchy() {
-        [
-            textField,
-            characterCountLabel,
-            underlineView,
-        ].forEach { addSubview($0) }
+        addSubview(contentStackView)
+        addSubview(underlineView)
+
+        contentStackView.addArrangedSubview(textField)
+        contentStackView.addArrangedSubview(characterCountLabel)
     }
 
     func setConstraints() {
@@ -124,15 +132,20 @@ private extension DSTextField {
             make.height.equalTo(48)
         }
 
-        textField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(10)
+        contentStackView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(10)
             make.centerY.equalToSuperview()
+            make.height.equalTo(21)
         }
 
-        characterCountLabel.snp.makeConstraints { make in
-            make.leading.equalTo(textField.snp.trailing).offset(8)
-            make.trailing.equalToSuperview().inset(10)
-            make.centerY.equalToSuperview()
+        underlineView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(10)
+            make.height.equalTo(1)
+            make.bottom.equalToSuperview()
+        }
+
+        textField.snp.makeConstraints { make in
+            make.height.equalTo(21)
         }
 
         underlineView.snp.makeConstraints { make in
