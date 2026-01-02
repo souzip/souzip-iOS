@@ -9,18 +9,21 @@ public final class DSNavigationBar: UIView {
         case close // close
         case Settings // back + settings
         case backManage // back + edit, delete
+        case backEtc
     }
 
     public enum RightButton {
         case settings
         case edit
         case delete
+        case etc
 
         var image: UIImage? {
             switch self {
             case .settings: .dsIconSettingBold
             case .edit: .dsIconEdit
             case .delete: .dsIconTrash
+            case .etc: .dsIconMoreVertical
             }
         }
     }
@@ -109,6 +112,10 @@ public final class DSNavigationBar: UIView {
         case .backManage:
             renderLeft(.back)
             renderRight([.edit, .delete])
+
+        case .backEtc:
+            renderLeft(.back)
+            renderRight([.etc])
         }
     }
 
@@ -118,6 +125,11 @@ public final class DSNavigationBar: UIView {
 
     private func renderRight(_ buttons: [RightButton]) {
         rightStackView.isHidden = false
+
+        for arrangedSubview in rightStackView.arrangedSubviews {
+            rightStackView.removeArrangedSubview(arrangedSubview)
+            arrangedSubview.removeFromSuperview()
+        }
 
         for button in buttons {
             let btn = UIButton(type: .system)

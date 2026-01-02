@@ -57,4 +57,5 @@ public extension UIImage {
     static let dsIconSettingBold: UIImage = .iconSettingBold
     static let dsIconTrash: UIImage = .iconTrash
     static let dsIconUserProfile: UIImage = .iconUserProfile
+    static let dsIconMoreVertical: UIImage = .iconMoreVertical
 }
