@@ -25,7 +25,7 @@ final class SearchCountryViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .back:
-            navigate(to: .finish)
+            navigate(to: .pop)
 
         case let .searchTextChangedUI(text):
             handleSearchTextChangedUI(text)

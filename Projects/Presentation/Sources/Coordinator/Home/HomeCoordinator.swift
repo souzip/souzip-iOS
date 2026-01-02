@@ -17,11 +17,8 @@ final class HomeCoordinator: BaseCoordinator<HomeRoute, TabRoute> {
         case .globe:
             showGlobe()
 
-        case .createSouvenir:
-            showCreateSouvenir()
-
-        case let .searchCountry(onResult):
-            showSearchCountry(onResult)
+        case let .souvenirRoute(souvenirRoute):
+            handleSouvenirRoute(souvenirRoute)
 
         case .pop:
             nav.popViewController(animated: true)
@@ -57,5 +54,17 @@ private extension HomeCoordinator {
 
         addTemporaryChild(coordinator)
         coordinator.navigate(.search(onResult: onResult))
+    }
+}
+
+private extension HomeCoordinator {
+    func handleSouvenirRoute(_ route: SouvenirRoute) {
+        let coordinator = SouvenirCoordinator(
+            nav: nav,
+            factory: factory
+        )
+
+        addTemporaryChild(coordinator)
+        coordinator.navigate(route)
     }
 }

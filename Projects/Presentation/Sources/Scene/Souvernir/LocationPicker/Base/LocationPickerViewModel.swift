@@ -43,7 +43,7 @@ final class LocationPickerViewModel: BaseViewModel<
 
     private func handleComplete(coordinate: CLLocationCoordinate2D) {
         let detail = state.value.detailText
-
         onComplete(coordinate, detail)
+        navigate(to: .poptoForm)
     }
 }
