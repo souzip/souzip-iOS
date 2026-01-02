@@ -12,13 +12,13 @@ extension SouvenirDetail {
     }
 
     // 표시용 가격 (원화 우선)
-    var displayPrice: String {
+    var displayPrice: String? {
         if let formatted = formattedKrwPrice {
             formatted
         } else if let formatted = formattedLocalPrice {
             formatted
         } else {
-            "가격 정보 없음"
+            nil
         }
     }
 }

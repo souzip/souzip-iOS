@@ -20,8 +20,8 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
         case let .edit(detail, onResult):
             showEditSouvenir(detail, onResult)
 
-        case .detail:
-            showDetailSouvenir()
+        case let .detail(id):
+            showDetailSouvenir(id)
 
         case let .search(onResult):
             showSearch(onResult: onResult)
@@ -57,7 +57,7 @@ private extension SouvenirCoordinator {
     // MARK: - Present (Create / Edit)
 
     func showCreateSouvenir() {
-        let scene = factory.makeSouvenirFormScene(mode: .create)
+        let scene = factory.makeSouvenirFormScene(mode: .create, onResult: nil)
         bindRoute(scene)
 
         let modal = CommonNavigationController(rootViewController: scene.vc)
@@ -69,9 +69,12 @@ private extension SouvenirCoordinator {
 
     func showEditSouvenir(
         _ detail: SouvenirDetail,
-        _ onResult: (SouvenirDetail) -> Void
+        _ onResult: @escaping (SouvenirDetail) -> Void
     ) {
-        let scene = factory.makeSouvenirFormScene(mode: .edit(detail))
+        let scene = factory.makeSouvenirFormScene(
+            mode: .edit(detail),
+            onResult: onResult
+        )
         bindRoute(scene)
 
         let modal = CommonNavigationController(rootViewController: scene.vc)
@@ -81,18 +84,18 @@ private extension SouvenirCoordinator {
         nav.present(modal, animated: true)
     }
 
-    // MARK: - Detail
-
-    func showDetailSouvenir() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .green
-        activeNav().setViewControllers([vc], animated: false)
-    }
-
     // MARK: - Push
+
+    func showDetailSouvenir(_ id: Int) {
+        let scene = factory.makeSouvenirDetailScene(id: id)
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
 
     func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
         let scene = factory.makeSearchScene(onResult: onResult)
+        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         activeNav().pushViewController(scene.vc, animated: true)
     }
@@ -105,6 +108,7 @@ private extension SouvenirCoordinator {
             initialCoordinate: initialCoordinate,
             onComplete: onComplete
         )
+        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         activeNav().pushViewController(scene.vc, animated: true)
     }
@@ -117,6 +121,7 @@ private extension SouvenirCoordinator {
             initailCategory: initialCategory,
             onComplete: onComplete
         )
+        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         activeNav().pushViewController(scene.vc, animated: true)
     }

@@ -184,12 +184,23 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         addressFieldView.renderDescription(description)
     }
 
-    func renderPrice(_ currencySymbol: String) {
-        priceFieldView.updateLocalCurrencySymbol(currencySymbol)
+    func renderPrice(
+        _ price: String,
+        _ currencySymbol: String
+    ) {
+        priceFieldView.render(price: price, currencySymbol: currencySymbol)
+    }
+
+    func renderPurpose(_ purpose: SouvenirPurpose) {
+        purposeToggleView.render(purpose)
     }
 
     func renderCategory(_ category: SouvenirCategory?) {
         categoryFieldView.render(category)
+    }
+
+    func renderDescription(_ description: String) {
+        descriptionFieldView.updateUI(text: description)
     }
 
     func renderSubmitButton(title: String, isEnabled: Bool) {

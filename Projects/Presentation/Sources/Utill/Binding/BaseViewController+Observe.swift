@@ -5,7 +5,7 @@ extension BaseViewController {
         StateObserver(source: viewModel.state.asDriver(), disposeBag: disposeBag)
     }
 
-    func observe<T: Equatable>(_ keyPath: KeyPath<ViewModel.State, T>) -> StateObserver<T> {
+    func observe<T>(_ keyPath: KeyPath<ViewModel.State, T>) -> StateObserver<T> {
         observeState()
             .map { $0[keyPath: keyPath] }
     }
