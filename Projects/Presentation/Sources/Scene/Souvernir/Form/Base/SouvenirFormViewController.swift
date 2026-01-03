@@ -42,14 +42,22 @@ final class SouvenirFormViewController: BaseViewController<
             .map { ($0.address, $0.locationDetail) }
             .onNext { [weak self] in self?.contentView.renderAddress($0, $1) }
 
-        observe(\.currencySymbol)
-            .distinct()
+        observeState()
+            .map { ($0.localPrice, $0.currencySymbol) }
             .onNext(contentView.renderPrice)
+
+        observe(\.purpose)
+            .distinct()
+            .onNext(contentView.renderPurpose)
 
         observeState()
             .map(\.category)
             .distinct()
             .onNext { [weak self] in self?.contentView.renderCategory($0) }
+
+        observe(\.description)
+            .distinct()
+            .onNext(contentView.renderDescription)
 
         observeState()
             .map { ($0.submitButtonTitle, $0.isSubmitEnabled) }

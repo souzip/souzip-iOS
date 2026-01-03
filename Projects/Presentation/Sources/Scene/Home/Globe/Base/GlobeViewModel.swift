@@ -321,7 +321,7 @@ private extension GlobeViewModel {
     }
 
     func handleSouvenirItemTap(_ item: SouvenirListItem) {
-        print(item)
+        navigate(to: .souvenirRoute(.detail(id: item.id)))
     }
 }
 

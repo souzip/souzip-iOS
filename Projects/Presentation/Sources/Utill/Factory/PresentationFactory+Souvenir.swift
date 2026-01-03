@@ -2,8 +2,11 @@ import CoreLocation
 import Domain
 
 protocol PresentationSouvenirFactory: AnyObject {
-//    func makeSouvenirDetailScene() -> RoutedScene<SouvenirRoute>
-    func makeSouvenirFormScene(mode: SouvenirFormMode) -> RoutedScene<SouvenirRoute>
+    func makeSouvenirDetailScene(id: Int) -> RoutedScene<SouvenirRoute>
+    func makeSouvenirFormScene(
+        mode: SouvenirFormMode,
+        onResult: ((SouvenirDetail) -> Void)?
+    ) -> RoutedScene<SouvenirRoute>
     func makeSearchScene(
         onResult: @escaping (SearchResultItem) -> Void
     ) -> RoutedScene<SouvenirRoute>
@@ -18,13 +21,28 @@ protocol PresentationSouvenirFactory: AnyObject {
 }
 
 extension DefaultPresentationFactory {
-//    func makeSouvenirDetailScene() -> RoutedScene<SouvenirRoute> {
-//
-//    }
+    func makeSouvenirDetailScene(id: Int) -> RoutedScene<SouvenirRoute> {
+        let vm = SouvenirDetailViewModel(
+            souvenirId: id,
+            souvenirRepo: domainFactory.makeSouvenirRepository()
+        )
+        let view = SouvenirDetailView()
+        let vc = SouvenirDetailViewController(viewModel: vm, contentView: view)
 
-    func makeSouvenirFormScene(mode: SouvenirFormMode) -> RoutedScene<SouvenirRoute> {
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeSouvenirFormScene(
+        mode: SouvenirFormMode,
+        onResult: ((SouvenirDetail) -> Void)? = nil
+    ) -> RoutedScene<SouvenirRoute> {
         let vm = SouvenirFormViewModel(
             mode: mode,
+            onResult: onResult,
             souvenirRepo: domainFactory.makeSouvenirRepository()
         )
 

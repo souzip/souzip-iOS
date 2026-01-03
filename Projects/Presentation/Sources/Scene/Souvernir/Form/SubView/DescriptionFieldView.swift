@@ -112,6 +112,7 @@ final class DescriptionFieldView: UIView {
     }
 
     func updateUI(text: String) {
+        textView.text = text
         placeholderLabel.isHidden = !text.isEmpty
         countLabel.text = "\(text.count)/2,000"
     }
@@ -128,6 +129,7 @@ final class DescriptionFieldView: UIView {
 extension DescriptionFieldView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let text = textView.text ?? ""
+        updatePlaceholder(isHidden: !text.isEmpty)
         updateCount(text: text)
         textChanged.accept(text)
     }

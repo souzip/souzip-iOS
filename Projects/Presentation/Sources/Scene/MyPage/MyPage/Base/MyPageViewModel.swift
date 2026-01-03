@@ -48,7 +48,7 @@ final class MyPageViewModel: BaseViewModel<
 
         mutate { state in
             state.profile = profile
-//            state.collectionSouvenirs = souvenirs
+            state.collectionSouvenirs = souvenirs
         }
     }
 

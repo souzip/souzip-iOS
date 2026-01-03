@@ -13,13 +13,17 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private let souvenirRepo: SouvenirRepository
 
+    private let onResult: ((SouvenirDetail) -> Void)?
+
     // MARK: - Life Cycle
 
     init(
         mode: SouvenirFormMode,
+        onResult: ((SouvenirDetail) -> Void)? = nil,
         souvenirRepo: SouvenirRepository
     ) {
         self.souvenirRepo = souvenirRepo
+        self.onResult = onResult
         var initialState = SouvenirFormState(mode: mode)
 
         // 수정 모드인 경우 기존 데이터 로드
@@ -28,7 +32,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             initialState.name = detail.name
             initialState.address = detail.address
             initialState.locationDetail = detail.locationDetail ?? ""
-            initialState.localPrice = detail.formattedLocalPrice ?? ""
+            initialState.localPrice = detail.displayPrice ?? ""
             initialState.currencySymbol = detail.currencySymbol ?? ""
             initialState.purpose = detail.purpose
             initialState.category = detail.category
@@ -227,7 +231,7 @@ final class SouvenirFormViewModel: BaseViewModel<
                 )
                 navigate(to: .dismiss)
             } catch {
-                emit(.showError("사진을 처리하는 중 문제가 발생했어요.\n다시 선택해주세요."))
+                emit(.showError(error.localizedDescription))
             }
         }
     }
@@ -235,10 +239,11 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleUpdate(id: Int, input: SouvenirInput) {
         Task {
             do {
-                _ = try await souvenirRepo.updateSouvenir(id: id, input: input)
+                let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
+                onResult?(souvenirDetail)
                 navigate(to: .dismiss)
             } catch {
-                emit(.showError("저장 중 문제가 발생했어요.\n잠시 후 다시 시도해주세요."))
+                emit(.showError(error.localizedDescription))
             }
         }
     }
