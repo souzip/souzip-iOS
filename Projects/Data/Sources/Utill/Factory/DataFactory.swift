@@ -98,6 +98,22 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Country
+
+    private lazy var cachedCountryRepository: CountryRepository = {
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let countryRemoteDataSource = DefaultCountryRemoteDataSource(
+            plain: plainClient,
+            authed: authedClient
+        )
+
+        return DefaultCountryRepository(
+            countryRemote: countryRemoteDataSource
+        )
+    }()
+
     // MARK: - Souvenir
 
     private lazy var cachedSouvenirRepository: SouvenirRepository = {
@@ -123,8 +139,11 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
+        let countryLocalDataSource = DefaultCountryLocalDataSource()
+
         return DefaultDiscoveryRepository(
-            discoveryRemote: discoveryRemoteDataSource
+            discoveryRemote: discoveryRemoteDataSource,
+            countryLocal: countryLocalDataSource
         )
     }()
 
@@ -139,7 +158,7 @@ public final class DefaultDataFactory: DataFactory {
     }
 
     public func makeCountryRepository() -> CountryRepository {
-        DefaultCountryRepository()
+        cachedCountryRepository
     }
 
     public func makeSouvenirRepository() -> SouvenirRepository {

@@ -1,8 +1,15 @@
 import Domain
 import Foundation
+import Networking
 
 final class DefaultCountryRepository: CountryRepository {
-    func fetchCountries() async throws -> [Country] {
+    private let countryRemote: CountryRemoteDataSource
+
+    public init(countryRemote: CountryRemoteDataSource) {
+        self.countryRemote = countryRemote
+    }
+
+    func fetchCountries() async throws -> [CountryDetail] {
         let dto: CountryResponseDTO =
             try JSONLoader.load(filename: "country", as: CountryResponseDTO.self)
 
@@ -15,6 +22,57 @@ final class DefaultCountryRepository: CountryRepository {
                 PopularDestinationsKR.orderIndex[$0.code, default: .max]
                     < PopularDestinationsKR.orderIndex[$1.code, default: .max]
             }
+    }
+
+    // MARK: - Address
+
+    func getAddress(
+        latitude: Double,
+        longitude: Double
+    ) async throws -> GeocodingAddress {
+        do {
+            let dto = try await countryRemote.getAddress(
+                latitude: latitude,
+                longitude: longitude
+            )
+            return CountryDTOMapper.toDomain(dto)
+        } catch {
+            throw mapToDomainError(error)
+        }
+    }
+
+    // MARK: - Search
+
+    func searchLocations(
+        keyword: String
+    ) async throws -> [SearchedLocation] {
+        do {
+            let dto = try await countryRemote.searchLocations(keyword: keyword)
+            return CountryDTOMapper.toDomain(dto)
+        } catch {
+            throw mapToDomainError(error)
+        }
+    }
+}
+
+// MARK: - Error Mapper
+
+private extension DefaultCountryRepository {
+    func mapToDomainError(_ error: Error) -> CountryError {
+        if let networkError = error as? NetworkError {
+            switch networkError {
+            case .unauthorized:
+                return .unauthorized
+            case .serverError:
+                return .serverError
+            case .noData:
+                return .notFound
+            case .invalidURL, .unknown, .encodingError, .decodingError:
+                return .networkError
+            }
+        }
+
+        return .unknown
     }
 }
 

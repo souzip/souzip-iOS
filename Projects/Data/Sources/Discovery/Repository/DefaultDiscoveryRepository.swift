@@ -4,9 +4,14 @@ import Networking
 
 public final class DefaultDiscoveryRepository: DiscoveryRepository {
     private let discoveryRemote: DiscoveryRemoteDataSource
+    private let countryLocal: CountryLocalDataSource
 
-    public init(discoveryRemote: DiscoveryRemoteDataSource) {
+    public init(
+        discoveryRemote: DiscoveryRemoteDataSource,
+        countryLocal: CountryLocalDataSource
+    ) {
         self.discoveryRemote = discoveryRemote
+        self.countryLocal = countryLocal
     }
 
     // MARK: - Public
@@ -32,11 +37,15 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
     public func getTop3CountryStats() async throws -> [DiscoveryCountryStat] {
         do {
             let dto = try await discoveryRemote.getTop3CountryStats()
-            return dto.map {
-                DiscoveryCountryStat(
-                    countryCode: $0.countryCode,
-                    countryNameKr: $0.countryNameKr,
-                    souvenirCount: $0.souvenirCount
+
+            return try dto.map { item in
+                let country = try countryLocal.fetchCountry(countryCode: item.countryCode)
+
+                return DiscoveryCountryStat(
+                    countryCode: item.countryCode,
+                    countryNameKr: item.countryNameKr,
+                    souvenirCount: item.souvenirCount,
+                    imageUrl: country.flagImageURL
                 )
             }
         } catch {

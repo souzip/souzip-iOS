@@ -11,6 +11,7 @@ final class SouvenirFormViewModel: BaseViewModel<
 > {
     // MARK: - Repository
 
+    private let countryRepo: CountryRepository
     private let souvenirRepo: SouvenirRepository
 
     private let onResult: ((SouvenirDetail) -> Void)?
@@ -20,10 +21,12 @@ final class SouvenirFormViewModel: BaseViewModel<
     init(
         mode: SouvenirFormMode,
         onResult: ((SouvenirDetail) -> Void)? = nil,
+        countryRepo: CountryRepository,
         souvenirRepo: SouvenirRepository
     ) {
-        self.souvenirRepo = souvenirRepo
         self.onResult = onResult
+        self.countryRepo = countryRepo
+        self.souvenirRepo = souvenirRepo
         var initialState = SouvenirFormState(mode: mode)
 
         // 수정 모드인 경우 기존 데이터 로드
@@ -85,8 +88,9 @@ final class SouvenirFormViewModel: BaseViewModel<
             mutate { state in
                 state.coordinate = coordinate
                 state.locationDetail = detail
-                state.address = "test" // 임시
             }
+
+            Task { await updateAddress(coordinate) }
 
         case let .updateLocalPrice(text):
             handleUpdatePrice(text)
@@ -137,6 +141,21 @@ final class SouvenirFormViewModel: BaseViewModel<
         mutate { state in
             guard case .create = state.mode else { return }
             state.localPhotos.removeAll { $0.id == id }
+        }
+    }
+
+    private func updateAddress(_ coordinate: Coordinate) async {
+        do {
+            let address = try await countryRepo.getAddress(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude
+            )
+            mutate {
+                $0.address = address.formattedAddress
+                $0.currencySymbol = address.countryCode
+            }
+        } catch {
+            emit(.showError(error.localizedDescription))
         }
     }
 

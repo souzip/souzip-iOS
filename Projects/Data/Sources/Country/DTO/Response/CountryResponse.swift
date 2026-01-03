@@ -33,8 +33,8 @@ struct CurrencyDTO: Decodable {
 // MARK: - Mapping
 
 extension CountryDTO {
-    func toDomain() -> Country {
-        Country(
+    func toDomain() -> CountryDetail {
+        CountryDetail(
             nameEnglish: nameEn,
             nameKorean: nameKr,
             code: code,

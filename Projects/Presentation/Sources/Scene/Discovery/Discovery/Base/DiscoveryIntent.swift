@@ -35,10 +35,10 @@ extension DiscoveryData {
                     .init(id: "vn", title: "베트남", flagImage: "https://picsum.photos/seed/banner1/800/400", isSelected: false),
                 ],
                 souvenirCards: [
-                    .init(id: "1", imageURL: "https://picsum.photos/seed/souvenir1/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "2", imageURL: "https://picsum.photos/seed/souvenir2/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "3", imageURL: "https://picsum.photos/seed/souvenir3/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "4", imageURL: "https://picsum.photos/seed/souvenir4/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 1, imageURL: "https://picsum.photos/seed/souvenir1/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 2, imageURL: "https://picsum.photos/seed/souvenir2/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 3, imageURL: "https://picsum.photos/seed/souvenir3/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 4, imageURL: "https://picsum.photos/seed/souvenir4/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
                 ]
             ),
             banner: .init(
@@ -56,10 +56,10 @@ extension DiscoveryData {
                     .init(category: .fashion, isSelected: false),
                 ],
                 souvenirCards: [
-                    .init(id: "5", imageURL: "https://picsum.photos/seed/souvenir5/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "6", imageURL: "https://picsum.photos/seed/souvenir6/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "7", imageURL: "https://picsum.photos/seed/souvenir7/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
-                    .init(id: "8", imageURL: "https://picsum.photos/seed/souvenir8/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 5, imageURL: "https://picsum.photos/seed/souvenir5/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 6, imageURL: "https://picsum.photos/seed/souvenir6/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 7, imageURL: "https://picsum.photos/seed/souvenir7/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
+                    .init(id: 8, imageURL: "https://picsum.photos/seed/souvenir8/400/400", title: "기념품명기념품명기념...", category: "카테고리"),
                 ],
                 moreButtonTitle: "더보기"
             ),
