@@ -3,4 +3,7 @@ enum DiscoveryRoute {
     case recommend
 
     case souvenirRoute(SouvenirRoute)
+
+    case pop
+    case dimiss
 }

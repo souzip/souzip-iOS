@@ -18,10 +18,16 @@ final class DiscoveryCoordinator: BaseCoordinator<DiscoveryRoute, TabRoute> {
             showDiscovery()
 
         case .recommend:
-            break
+            showRecommend()
 
         case let .souvenirRoute(souvenirRoute):
             handleSouvenirRoute(souvenirRoute)
+
+        case .pop:
+            nav.popViewController(animated: true)
+
+        case .dimiss:
+            nav.dismiss(animated: true)
         }
     }
 }
@@ -31,6 +37,12 @@ private extension DiscoveryCoordinator {
         let scene = factory.makeDiscoveryScene()
         bindRoute(scene)
         nav.setViewControllers([scene.vc], animated: false)
+    }
+
+    func showRecommend() {
+        let scene = factory.makeRecommendScene()
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
     }
 }
 

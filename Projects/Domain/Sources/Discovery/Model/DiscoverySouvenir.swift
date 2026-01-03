@@ -2,6 +2,7 @@ public struct DiscoverySouvenir: Equatable {
     public let id: Int
     public let name: String
     public let category: String
+    public let countryCode: String
     public let thumbnailUrl: String
 
     public init(
@@ -14,6 +15,7 @@ public struct DiscoverySouvenir: Equatable {
         self.id = id
         self.name = name
         self.category = category
+        self.countryCode = countryCode
         self.thumbnailUrl = thumbnailUrl
     }
 }

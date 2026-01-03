@@ -1,4 +1,5 @@
 import DesignSystem
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -56,6 +57,7 @@ final class CountryChipCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         flagImageView.image = nil
+        flagImageView.kf.cancelDownloadTask()
     }
 
     // MARK: - Private

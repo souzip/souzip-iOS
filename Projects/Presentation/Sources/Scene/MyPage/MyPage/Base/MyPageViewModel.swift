@@ -6,6 +6,8 @@ final class MyPageViewModel: BaseViewModel<
     MyPageEvent,
     MyPageRoute
 > {
+
+    
     // MARK: - Init
 
     init() {

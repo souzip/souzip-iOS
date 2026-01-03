@@ -82,7 +82,7 @@ private extension GlobeViewModel {
     }
 
     func loadCountryBadges() async {
-        let badges = try? await countryRepo.fetchCountries()
+        let badges = try? countryRepo.fetchCountries()
             .map(CountryBadge.init)
 
         mutate {

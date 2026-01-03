@@ -14,11 +14,11 @@ final class DefaultCountryRepository: CountryRepository {
         self.countryLocal = countryLocal
     }
 
-    func fetchCountries() async throws -> [CountryDetail] {
+    func fetchCountries() throws -> [CountryDetail] {
         try countryLocal.fetchCountries()
     }
 
-    func fetchCountry(countryCode: String) async throws -> CountryDetail {
+    func fetchCountry(countryCode: String) throws -> CountryDetail {
         try countryLocal.fetchCountry(countryCode: countryCode)
     }
 

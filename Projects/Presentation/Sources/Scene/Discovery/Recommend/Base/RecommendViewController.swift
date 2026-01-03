@@ -1,8 +1,8 @@
-final class DiscoveryViewController: BaseViewController<
-    DiscoveryViewModel,
-    DiscoveryView
+final class RecommendViewController: BaseViewController<
+    RecommendViewModel,
+    RecommendView
 > {
-    // MARK: - Life Cycle
+    // MARK: - LIfe Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -12,8 +12,7 @@ final class DiscoveryViewController: BaseViewController<
     // MARK: - Bind
 
     override func bindState() {
-        observeState()
-            .map(\.sectionModels)
+        observe(\.sectionModels)
             .onNext(contentView.render)
     }
 

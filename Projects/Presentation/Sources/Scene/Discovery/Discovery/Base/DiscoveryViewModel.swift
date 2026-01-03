@@ -42,7 +42,7 @@ final class DiscoveryViewModel: BaseViewModel<
             handleMoreButtonTap()
 
         case .tapFAB:
-            break
+            navigate(to: .recommend)
         }
     }
 
@@ -199,28 +199,18 @@ final class DiscoveryViewModel: BaseViewModel<
 
     // MARK: - Fetch Helpers
 
-    private func fetchTopCountries(codes: [String]) async throws -> [CountryChipItem] {
-        try await withThrowingTaskGroup(of: CountryChipItem.self) { group in
-            for code in codes {
-                group.addTask { [countryRepo] in
-                    let country = try await countryRepo.fetchCountry(countryCode: code)
+    private func fetchTopCountries(codes: [String]) throws -> [CountryChipItem] {
+        codes.compactMap { code -> CountryChipItem? in
+            guard let country = try? countryRepo.fetchCountry(
+                countryCode: code
+            ) else { return nil }
 
-                    return CountryChipItem(
-                        countryCode: country.code,
-                        title: country.nameKorean,
-                        flagImage: country.flagImageURL,
-                        isSelected: false
-                    )
-                }
-            }
-
-            var result: [CountryChipItem] = []
-            for try await item in group {
-                result.append(item)
-            }
-
-            let order = Dictionary(uniqueKeysWithValues: codes.enumerated().map { ($0.element, $0.offset) })
-            return result.sorted { order[$0.countryCode, default: .max] < order[$1.countryCode, default: .max] }
+            return CountryChipItem(
+                countryCode: country.code,
+                title: country.nameKorean,
+                flagImage: country.flagImageURL,
+                isSelected: false
+            )
         }
     }
 

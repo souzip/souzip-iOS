@@ -3,7 +3,6 @@ import SnapKit
 import UIKit
 
 final class RankCardCell: UICollectionViewCell {
-
     // MARK: - UI Components
 
     private let firstCardView = RankCardView()

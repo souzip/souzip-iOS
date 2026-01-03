@@ -1,4 +1,5 @@
 import DesignSystem
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -40,6 +41,12 @@ final class SouvenirCardCell: UICollectionViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        imageView.kf.cancelDownloadTask()
     }
 
     // MARK: - Public

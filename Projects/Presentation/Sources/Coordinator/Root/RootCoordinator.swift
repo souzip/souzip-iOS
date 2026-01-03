@@ -13,7 +13,7 @@ public final class RootCoordinator: BaseCoordinator<RootRoute, Never> {
     }
 
     override public func start() {
-        navigate(.main)
+        navigate(.auth)
     }
 
     override public func navigate(_ route: Route) {

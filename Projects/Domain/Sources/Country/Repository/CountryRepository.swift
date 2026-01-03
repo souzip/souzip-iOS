@@ -1,6 +1,6 @@
 public protocol CountryRepository {
-    func fetchCountries() async throws -> [CountryDetail]
-    func fetchCountry(countryCode: String) async throws -> CountryDetail
+    func fetchCountries() throws -> [CountryDetail]
+    func fetchCountry(countryCode: String) throws -> CountryDetail
 
     func getAddress(
         latitude: Double,
