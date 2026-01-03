@@ -114,6 +114,20 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    private lazy var cachedDiscoveryRepository: DiscoveryRepository = {
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let discoveryRemoteDataSource = DefaultDiscoveryRemoteDataSource(
+            plain: plainClient,
+            authed: authedClient
+        )
+
+        return DefaultDiscoveryRepository(
+            discoveryRemote: discoveryRemoteDataSource
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -130,5 +144,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeSouvenirRepository() -> SouvenirRepository {
         cachedSouvenirRepository
+    }
+
+    public func makeDiscoveryRepository() -> DiscoveryRepository {
+        cachedDiscoveryRepository
     }
 }
