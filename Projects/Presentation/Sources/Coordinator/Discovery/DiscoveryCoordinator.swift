@@ -16,14 +16,32 @@ final class DiscoveryCoordinator: BaseCoordinator<DiscoveryRoute, TabRoute> {
         switch route {
         case .discovery:
             showDiscovery()
+
+        case .recommend:
+            break
+
+        case let .souvenirRoute(souvenirRoute):
+            handleSouvenirRoute(souvenirRoute)
         }
     }
 }
 
 private extension DiscoveryCoordinator {
     func showDiscovery() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .blue
-        nav.setViewControllers([vc], animated: false)
+        let scene = factory.makeDiscoveryScene()
+        bindRoute(scene)
+        nav.setViewControllers([scene.vc], animated: false)
+    }
+}
+
+private extension DiscoveryCoordinator {
+    func handleSouvenirRoute(_ route: SouvenirRoute) {
+        let coordinator = SouvenirCoordinator(
+            nav: nav,
+            factory: factory
+        )
+
+        addTemporaryChild(coordinator)
+        coordinator.navigate(route)
     }
 }
