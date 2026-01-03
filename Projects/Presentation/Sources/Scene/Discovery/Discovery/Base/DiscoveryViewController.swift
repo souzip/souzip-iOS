@@ -2,11 +2,18 @@ final class DiscoveryViewController: BaseViewController<
     DiscoveryViewModel,
     DiscoveryView
 > {
+    // MARK: - Life Cycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.action.accept(.viewDidLoad)
+    }
+
     // MARK: - Bind
 
     override func bindState() {
         observeState()
-            .map { ($0.data, $0.isCategoryExpanded) }
+            .map(\.sectionModels)
             .onNext(contentView.render)
     }
 

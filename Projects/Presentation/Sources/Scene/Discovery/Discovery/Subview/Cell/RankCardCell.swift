@@ -70,7 +70,7 @@ final class RankCardCell: UICollectionViewCell {
             style: .first,
             rank: firstItem.rank,
             imageURLString: firstItem.flagImage,
-            title: firstItem.country,
+            title: firstItem.title,
             count: firstItem.count
         )
 
@@ -78,7 +78,7 @@ final class RankCardCell: UICollectionViewCell {
             style: .normal,
             rank: secondItem.rank,
             imageURLString: secondItem.flagImage,
-            title: secondItem.country,
+            title: secondItem.title,
             count: secondItem.count
         )
 
@@ -86,7 +86,7 @@ final class RankCardCell: UICollectionViewCell {
             style: .normal,
             rank: thirdItem.rank,
             imageURLString: thirdItem.flagImage,
-            title: thirdItem.country,
+            title: thirdItem.title,
             count: thirdItem.count
         )
     }

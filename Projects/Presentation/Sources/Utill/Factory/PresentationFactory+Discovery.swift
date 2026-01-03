@@ -4,7 +4,10 @@ protocol PresentationDiscoveryFactory: AnyObject {
 
 extension DefaultPresentationFactory {
     func makeDiscoveryScene() -> RoutedScene<DiscoveryRoute> {
-        let vm = DiscoveryViewModel()
+        let vm = DiscoveryViewModel(
+            discoveryRepo: domainFactory.makeDiscoveryRepository(),
+            countryRepo: domainFactory.makeCountryRepository()
+        )
         let view = DiscoveryView()
         let vc = DiscoveryViewController(viewModel: vm, contentView: view)
 

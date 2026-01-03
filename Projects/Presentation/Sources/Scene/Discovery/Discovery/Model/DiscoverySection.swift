@@ -1,90 +1,39 @@
 import Domain
 
-// MARK: - Discovery Domain Models
+struct DiscoverySectionModel {
+    let section: DiscoverySection
+    let items: [DiscoveryItem]
+}
 
-/// 발견 화면 섹션
-enum DiscoverySection: Int, CaseIterable {
+enum DiscoverySection: Hashable {
     case top10CountryChips
     case top10Cards
-    case banner
     case categoryChips
     case categoryCards
     case categoryMore
-    case statisticsChips
+    case statisticsChips(date: String)
+
+    case spacer
 }
 
-/// 발견 화면 아이템
-enum DiscoveryItem: Hashable {
-    case countryChip(CountryChipItem)
-    case souvenirCard(SouvenirCardItem)
-    case banner(BannerItem)
-    case categoryChip(CategoryChipItem)
-    case moreButton(String)
-    case statCountryChip([StatCountryChipItem])
-}
+extension DiscoverySection {
+    var title: String {
+        switch self {
+        case .top10CountryChips:
+            "한국인이 자주 찾는\n나라별 추천 기념품 TOP 10"
+        case .categoryChips:
+            "요즘 떠오르는\n카테고리별 기념품 추천"
+        case .statisticsChips:
+            "수집에서 기념품이\n가장 많이 등록된 나라"
+        default: ""
+        }
+    }
 
-/// 국가 칩 아이템
-struct CountryChipItem: Hashable {
-    let id: String
-    let title: String
-    let flagImage: String // 국기 이미지
-    let isSelected: Bool
-}
-
-/// 기념품 카드 아이템
-struct SouvenirCardItem: Hashable {
-    let id: Int
-    let imageURL: String?
-    let title: String
-    let category: String
-}
-
-/// 배너 아이템
-struct BannerItem: Hashable {
-    let id: String
-    let imageURL: String?
-}
-
-/// 카테고리 칩 아이템
-struct CategoryChipItem: Hashable {
-    let category: SouvenirCategory
-    let isSelected: Bool
-}
-
-/// 섹션 헤더 아이템
-struct SectionHeaderItem: Hashable {
-    let id: String
-    let title: String
-    let subtitle: String?
-}
-
-/// 통계 국가 칩 아이템 (크기가 다른 칩)
-struct StatCountryChipItem: Hashable {
-    let id: String
-    let country: String
-    let flagImage: String
-    let count: String
-    let rank: Int
-}
-
-struct Top10Section {
-    let header: SectionHeaderItem
-    let countryChips: [CountryChipItem]
-    let souvenirCards: [SouvenirCardItem]
-}
-
-struct BannerSection {
-    let banner: BannerItem
-}
-
-struct CategorySection {
-    let header: SectionHeaderItem
-    let categoryChips: [CategoryChipItem]
-    let souvenirCards: [SouvenirCardItem]
-    let moreButtonTitle: String
-}
-
-struct StatisticsSection {
-    let header: SectionHeaderItem
-    let countryChips: [StatCountryChipItem]
+    var subTitle: String {
+        switch self {
+        case let .statisticsChips(date):
+            "\(date) 등록 기념품 수 기준"
+        default: ""
+        }
+    }
 }

@@ -33,8 +33,6 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
     // MARK: - Data
 
     private var dataSource: DataSource?
-    private var currentData: DiscoveryData?
-    private var isCategoryExpanded: Bool = false
 
     // MARK: - Init
 
@@ -84,64 +82,12 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
     // MARK: - Public
 
-    func render(_ data: DiscoveryData?, _ isCategoryExpanded: Bool) {
-        guard let data else { return }
-
-        currentData = data
-        self.isCategoryExpanded = isCategoryExpanded
-
+    func render(_ sectionModels: [DiscoverySectionModel]) {
         var snapshot = Snapshot()
-
-        // Top10 섹션
-        if let top10 = data.top10 {
-            snapshot.appendSections([.top10CountryChips])
-            snapshot.appendItems(
-                top10.countryChips.map { .countryChip($0) },
-                toSection: .top10CountryChips
-            )
-
-            snapshot.appendSections([.top10Cards])
-            snapshot.appendItems(
-                top10.souvenirCards.map { .souvenirCard($0) },
-                toSection: .top10Cards
-            )
+        for model in sectionModels {
+            snapshot.appendSections([model.section])
+            snapshot.appendItems(model.items, toSection: model.section)
         }
-
-        // Banner 섹션
-        if let banner = data.banner {
-            snapshot.appendSections([.banner])
-            snapshot.appendItems([.banner(banner.banner)], toSection: .banner)
-        }
-
-        // Category 섹션
-        if let category = data.category {
-            snapshot.appendSections([.categoryChips])
-            snapshot.appendItems(
-                category.categoryChips.map { .categoryChip($0) },
-                toSection: .categoryChips
-            )
-
-            snapshot.appendSections([.categoryCards])
-            snapshot.appendItems(
-                category.souvenirCards.map { .souvenirCard($0) },
-                toSection: .categoryCards
-            )
-
-            if !isCategoryExpanded {
-                snapshot.appendSections([.categoryMore])
-                snapshot.appendItems([.moreButton(category.moreButtonTitle)], toSection: .categoryMore)
-            }
-        }
-
-        // Statistics 섹션
-        if let statistics = data.statistics {
-            snapshot.appendSections([.statisticsChips])
-            snapshot.appendItems(
-                [.statCountryChip(statistics.countryChips)],
-                toSection: .statisticsChips
-            )
-        }
-
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
@@ -164,16 +110,9 @@ private extension DiscoveryView {
             cell.render(item: item)
         }
 
-        let bannerRegistration = UICollectionView.CellRegistration<
-            BannerCell,
-            BannerItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
-
         let categoryChipRegistration = UICollectionView.CellRegistration<
             DiscoveryCategoryChipCell,
-            CategoryChipItem
+            CategoryItem
         > { cell, _, item in
             cell.render(item: item)
         }
@@ -192,29 +131,21 @@ private extension DiscoveryView {
             cell.render(item)
         }
 
-        // Header Supplementary Registration
+        let spacerRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell,
+            Void
+        > { _, _, _ in }
+
         let headerRegistration = UICollectionView.SupplementaryRegistration<
             DiscoverySectionHeaderView
         >(
             elementKind: UICollectionView.elementKindSectionHeader
         ) { [weak self] supplementaryView, _, indexPath in
             guard let self,
-                  let section = dataSource?.sectionIdentifier(for: indexPath.row) else { return }
+                  let section = dataSource?.sectionIdentifier(for: indexPath.section)
+            else { return }
 
-            let headerItem: SectionHeaderItem? = switch section {
-            case .top10CountryChips:
-                currentData?.top10?.header
-            case .categoryChips:
-                currentData?.category?.header
-            case .statisticsChips:
-                currentData?.statistics?.header
-            default:
-                nil
-            }
-
-            if let headerItem {
-                supplementaryView.render(item: headerItem)
-            }
+            supplementaryView.render(section: section)
         }
 
         dataSource = .init(
@@ -227,35 +158,40 @@ private extension DiscoveryView {
                     for: indexPath,
                     item: chipItem
                 )
+
             case let .souvenirCard(cardItem):
                 collectionView.dequeueConfiguredReusableCell(
                     using: souvenirCardRegistration,
                     for: indexPath,
                     item: cardItem
                 )
-            case let .banner(bannerItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: bannerRegistration,
-                    for: indexPath,
-                    item: bannerItem
-                )
+
             case let .categoryChip(chipItem):
                 collectionView.dequeueConfiguredReusableCell(
                     using: categoryChipRegistration,
                     for: indexPath,
                     item: chipItem
                 )
+
             case let .moreButton(title):
                 collectionView.dequeueConfiguredReusableCell(
                     using: moreButtonRegistration,
                     for: indexPath,
                     item: title
                 )
+
             case let .statCountryChip(chipItem):
                 collectionView.dequeueConfiguredReusableCell(
                     using: rankCardRegistration,
                     for: indexPath,
                     item: chipItem
+                )
+
+            case .spacer:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: spacerRegistration,
+                    for: indexPath,
+                    item: ()
                 )
             }
         }
@@ -288,20 +224,27 @@ private extension DiscoveryView {
             else { return nil }
 
             let section = switch kind {
-            case .top10CountryChips: makeTop10ChipsSectionLayout()
-            case .top10Cards: makeTop10CardsSectionLayout()
-            case .banner: makeBannerSectionLayout()
-            case .categoryChips: makeCategoryChipsSectionLayout()
-            case .categoryCards: makeCategoryCardsSectionLayout()
-            case .categoryMore: makeCategoryMoreSectionLayout()
-            case .statisticsChips: makeStatisticsChipsSectionLayout()
+            case .top10CountryChips:
+                makeTop10ChipsSectionLayout()
+            case .top10Cards:
+                makeTop10CardsSectionLayout()
+            case .categoryChips:
+                makeCategoryChipsSectionLayout()
+            case .categoryCards:
+                makeCategoryCardsSectionLayout()
+            case .categoryMore:
+                makeCategoryMoreSectionLayout()
+            case .statisticsChips:
+                makeStatisticsChipsSectionLayout()
+            case .spacer:
+                makeSpacerSectionLayout()
             }
 
             section.contentInsets.top = topSpacing(for: kind)
             section.contentInsets.bottom = bottomSpacing(for: kind)
 
             switch kind {
-            case .banner, .statisticsChips:
+            case .statisticsChips:
                 section.contentInsets.leading = 0
                 section.contentInsets.trailing = 0
             default:
@@ -319,8 +262,6 @@ private extension DiscoveryView {
             Space.headerToContent
         case .top10Cards:
             Space.sameMeaning
-        case .banner:
-            Space.differentMeaning
         case .categoryChips:
             Space.headerToContent
         case .categoryCards:
@@ -329,17 +270,19 @@ private extension DiscoveryView {
             Space.toButton
         case .statisticsChips:
             17
+        case .spacer:
+            0
         }
     }
 
     func bottomSpacing(for kind: Section) -> CGFloat {
         switch kind {
-        case .banner: 40
-        case .categoryMore: 40
-        case .categoryCards:
-            isCategoryExpanded ? 40 : 0
-        case .statisticsChips: 68
-        default: 0
+        case .statisticsChips:
+            68
+        case .top10Cards:
+            40
+        default:
+            0
         }
     }
 }
@@ -401,27 +344,6 @@ private extension DiscoveryView {
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
         section.interGroupSpacing = 8
-        return section
-    }
-
-    // 배너 섹션
-    func makeBannerSectionLayout() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-
-        let section = NSCollectionLayoutSection(group: group)
         return section
     }
 
@@ -502,11 +424,10 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 
-    // Statistics 칩 섹션 (헤더 + Flexible Wrap)
+    // Statistics 섹션
     func makeStatisticsChipsSectionLayout() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -525,7 +446,6 @@ private extension DiscoveryView {
 
         let section = NSCollectionLayoutSection(group: group)
 
-        // 헤더 추가
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .estimated(80)
@@ -538,6 +458,23 @@ private extension DiscoveryView {
         header.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
 
         section.boundarySupplementaryItems = [header]
+        return section
+    }
+
+    func makeSpacerSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(40)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = itemSize
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
         return section
     }
 }

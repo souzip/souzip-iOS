@@ -35,10 +35,10 @@ final class DiscoverySectionHeaderView: UICollectionReusableView {
 
     // MARK: - Public
 
-    func render(item: SectionHeaderItem) {
-        titleLabel.text = item.title
-        subtitleLabel.text = item.subtitle
-        subtitleLabel.isHidden = item.subtitle == nil
+    func render(section: DiscoverySection) {
+        titleLabel.text = section.title
+        subtitleLabel.text = section.subTitle
+        subtitleLabel.isHidden = section.subTitle.isEmpty
     }
 }
 

@@ -6,17 +6,29 @@ final class DiscoveryViewModel: BaseViewModel<
     DiscoveryEvent,
     DiscoveryRoute
 > {
+    // MARK: - Repository
+
+    private let discoveryRepo: DiscoveryRepository
+    private let countryRepo: CountryRepository
+
     // MARK: - Init
 
-    init() {
+    init(
+        discoveryRepo: DiscoveryRepository,
+        countryRepo: CountryRepository
+    ) {
+        self.discoveryRepo = discoveryRepo
+        self.countryRepo = countryRepo
         super.init(initialState: State())
-        Task { await loadInitialData() }
     }
 
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewDidLoad:
+            Task { await loadInitialData() }
+
         case let .countryChipTap(item):
             Task { await handleCountryChipTap(item) }
 
@@ -37,157 +49,215 @@ final class DiscoveryViewModel: BaseViewModel<
     // MARK: - Data Loading
 
     private func loadInitialData() async {
-        let mockData = DiscoveryData.mock
+        do {
+            let topCountryCodes = ["JP", "HK", "TW"]
 
-        mutate { state in
-            // 1. 먼저 전체 카드 저장 (8개)
-            if let category = mockData.category {
-                state.fullCategoryCards = category.souvenirCards
+            // 0) 기본 카테고리 + 첫번째 선택
+            let defaultCategories = CategoryItem.defaultItems
+            guard let firstCategory = defaultCategories.first?.category else {
+                mutate { state in
+                    state.countries = []
+                    state.countrySouvenirs = []
+                    state.categories = []
+                    state.categorySouvenirs = []
+                    state.isCategoryExpanded = false
+                    state.statCountry = []
+                }
+                return
             }
 
-            // 2. 화면에 표시할 데이터는 4개로 제한
-            var displayData = mockData
-            if let category = mockData.category {
-                let limitedCards = Array(category.souvenirCards.prefix(4))
-                let updatedCategory = CategorySection(
-                    header: category.header,
-                    categoryChips: category.categoryChips,
-                    souvenirCards: limitedCards,
-                    moreButtonTitle: category.moreButtonTitle
-                )
-                displayData = DiscoveryData(
-                    top10: mockData.top10,
-                    banner: mockData.banner,
-                    category: updatedCategory,
-                    statistics: mockData.statistics
-                )
+            let selectedCategories = defaultCategories.map {
+                CategoryItem(category: $0.category, isSelected: $0.category == firstCategory)
             }
 
-            state.data = displayData
+            async let countriesTask: [CountryChipItem] = fetchTopCountries(codes: topCountryCodes)
+
+            async let categorySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCategory(category: firstCategory)
+
+            async let statsTask: [StatCountryChipItem] = fetchDiscoveryStats()
+
+            let countries = try await countriesTask
+            guard let firstCountryCode = countries.first?.countryCode else {
+                mutate { state in
+                    state.countries = []
+                    state.countrySouvenirs = []
+                    state.categories = selectedCategories
+                    state.categorySouvenirs = []
+                    state.isCategoryExpanded = false
+                    state.statCountry = []
+                }
+                return
+            }
+
+            async let countrySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCountry(countryCode: firstCountryCode)
+
+            let (
+                countrySouvenirs,
+                categorySouvenirs,
+                stats
+            ) = try await (
+                countrySouvenirsTask,
+                categorySouvenirsTask,
+                statsTask
+            )
+
+            mutate { state in
+                state.countries = countries.enumerated().map { idx, chip in
+                    CountryChipItem(
+                        countryCode: chip.countryCode,
+                        title: chip.title,
+                        flagImage: chip.flagImage,
+                        isSelected: idx == 0
+                    )
+                }
+
+                state.countrySouvenirs = countrySouvenirs
+                state.categories = selectedCategories
+                state.categorySouvenirs = categorySouvenirs
+                state.isCategoryExpanded = false
+                state.statCountry = stats
+            }
+        } catch {
+            emit(.showErrorAlert(error.localizedDescription))
         }
     }
 
-    // MARK: - Private Logic
+    // MARK: - Country Tap
 
     private func handleCountryChipTap(_ item: CountryChipItem) async {
-        guard let data = state.value.data,
-              let top10 = data.top10 else { return }
+        guard state.value.countries.contains(where: { $0.countryCode == item.countryCode && $0.isSelected }) == false else {
+            return
+        }
 
-        // 이미 선택된 칩이면 무시
-        if state.value.selectedCountryId == item.id { return }
+        setSelectedCountry(code: item.countryCode)
 
-        // TODO: 실제로는 try await fetchTop10Cards(countryId: item.id)
-        let newCards = await fetchMockSouvenirCards(for: item.id)
-
-        mutate { state in
-            state.selectedCountryId = item.id
-
-            let updatedChips = top10.countryChips.map { chip in
-                CountryChipItem(
-                    id: chip.id,
-                    title: chip.title,
-                    flagImage: chip.flagImage,
-                    isSelected: chip.id == item.id
-                )
-            }
-
-            let updatedTop10 = Top10Section(
-                header: top10.header,
-                countryChips: updatedChips,
-                souvenirCards: newCards
-            )
-
-            state.data = DiscoveryData(
-                top10: updatedTop10,
-                banner: data.banner,
-                category: data.category,
-                statistics: data.statistics
-            )
+        do {
+            let souvenirs = try await fetchTop10ByCountry(countryCode: item.countryCode)
+            setCountrySouvenirs(souvenirs)
+        } catch {
+            emit(.showErrorAlert(error.localizedDescription))
         }
     }
 
-    private func handleCategoryChipTap(_ item: CategoryChipItem) async {
-        guard let data = state.value.data,
-              let category = data.category else { return }
-
-        // 이미 선택된 칩이면 무시
-        let selectedId = "\(item.category.title)"
-        if state.value.selectedCategoryId == selectedId { return }
-
-        // TODO: 실제로는 try await fetchCategoryCards(category: item.category)
-        let fullCards = await fetchMockSouvenirCards(for: item.category)
-
+    private func setSelectedCountry(code: String) {
         mutate { state in
-            state.selectedCategoryId = selectedId
-            state.isCategoryExpanded = false
-            state.fullCategoryCards = fullCards
-
-            let updatedChips = category.categoryChips.map { chip in
-                CategoryChipItem(
-                    category: chip.category,
-                    isSelected: chip.category == item.category
+            state.countries = state.countries.map { chip in
+                CountryChipItem(
+                    countryCode: chip.countryCode,
+                    title: chip.title,
+                    flagImage: chip.flagImage,
+                    isSelected: chip.countryCode == code
                 )
             }
-
-            let limitedCards = Array(fullCards.prefix(4))
-            let updatedCategory = CategorySection(
-                header: category.header,
-                categoryChips: updatedChips,
-                souvenirCards: limitedCards,
-                moreButtonTitle: category.moreButtonTitle
-            )
-
-            state.data = DiscoveryData(
-                top10: data.top10,
-                banner: data.banner,
-                category: updatedCategory,
-                statistics: data.statistics
-            )
         }
+    }
+
+    private func setCountrySouvenirs(_ items: [SouvenirCardItem]) {
+        mutate { $0.countrySouvenirs = items }
+    }
+
+    // MARK: - Category Tap
+
+    private func handleCategoryChipTap(_ item: CategoryItem) async {
+        guard state.value.categories.contains(where: { $0.category == item.category && $0.isSelected }) == false else {
+            return
+        }
+
+        setSelectedCategory(category: item.category)
+        setCategoryExpanded(false)
+
+        do {
+            let souvenirs = try await fetchTop10ByCategory(category: item.category)
+            setCategorySouvenirs(souvenirs)
+        } catch {
+            emit(.showErrorAlert(error.localizedDescription))
+        }
+    }
+
+    private func setSelectedCategory(category: SouvenirCategory) {
+        mutate { state in
+            state.categories = state.categories.map { chip in
+                CategoryItem(
+                    category: chip.category,
+                    isSelected: chip.category == category
+                )
+            }
+        }
+    }
+
+    private func setCategorySouvenirs(_ items: [SouvenirCardItem]) {
+        mutate { $0.categorySouvenirs = items }
+    }
+
+    private func setCategoryExpanded(_ expanded: Bool) {
+        mutate { $0.isCategoryExpanded = expanded }
     }
 
     private func handleMoreButtonTap() {
-        guard let data = state.value.data,
-              let category = data.category else { return }
+        mutate { $0.isCategoryExpanded.toggle() }
+    }
 
-        mutate { state in
-            state.isCategoryExpanded = true
+    // MARK: - Fetch Helpers
 
-            let updatedCategory = CategorySection(
-                header: category.header,
-                categoryChips: category.categoryChips,
-                souvenirCards: state.fullCategoryCards,
-                moreButtonTitle: category.moreButtonTitle
-            )
+    private func fetchTopCountries(codes: [String]) async throws -> [CountryChipItem] {
+        try await withThrowingTaskGroup(of: CountryChipItem.self) { group in
+            for code in codes {
+                group.addTask { [countryRepo] in
+                    let country = try await countryRepo.fetchCountry(countryCode: code)
 
-            state.data = DiscoveryData(
-                top10: data.top10,
-                banner: data.banner,
-                category: updatedCategory,
-                statistics: data.statistics
+                    return CountryChipItem(
+                        countryCode: country.code,
+                        title: country.nameKorean,
+                        flagImage: country.flagImageURL,
+                        isSelected: false
+                    )
+                }
+            }
+
+            var result: [CountryChipItem] = []
+            for try await item in group {
+                result.append(item)
+            }
+
+            let order = Dictionary(uniqueKeysWithValues: codes.enumerated().map { ($0.element, $0.offset) })
+            return result.sorted { order[$0.countryCode, default: .max] < order[$1.countryCode, default: .max] }
+        }
+    }
+
+    private func fetchTop10ByCountry(countryCode: String) async throws -> [SouvenirCardItem] {
+        let souvenirs = try await discoveryRepo.getTop10SouvenirsByCountry(countryCode: countryCode)
+        return souvenirs.map {
+            SouvenirCardItem(
+                id: $0.id,
+                imageURL: $0.thumbnailUrl,
+                title: $0.name,
+                category: $0.category
             )
         }
     }
 
-    // MARK: - Mock API Calls (TODO: 실제 API로 교체)
-
-    private func fetchMockSouvenirCards(for countryId: String) async -> [SouvenirCardItem] {
-        [
-            SouvenirCardItem(id: 1, imageURL: "https://picsum.photos/seed/\(countryId)1/400/400", title: "\(countryId) 기념품 1", category: "카테고리"),
-            SouvenirCardItem(id: 2, imageURL: "https://picsum.photos/seed/\(countryId)2/400/400", title: "\(countryId) 기념품 2", category: "카테고리"),
-            SouvenirCardItem(id: 3, imageURL: "https://picsum.photos/seed/\(countryId)3/400/400", title: "\(countryId) 기념품 3", category: "카테고리"),
-            SouvenirCardItem(id: 4, imageURL: "https://picsum.photos/seed/\(countryId)4/400/400", title: "\(countryId) 기념품 4", category: "카테고리"),
-        ]
+    private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirCardItem] {
+        let souvenirs = try await discoveryRepo.getTop10SouvenirsByCategory(category: category)
+        return souvenirs.map {
+            SouvenirCardItem(
+                id: $0.id,
+                imageURL: $0.thumbnailUrl,
+                title: $0.name,
+                category: $0.category
+            )
+        }
     }
 
-    private func fetchMockSouvenirCards(for category: SouvenirCategory) async -> [SouvenirCardItem] {
-        let categoryName = category.title
-        return (1 ... 8).map { index in
-            SouvenirCardItem(
-                id: 1,
-                imageURL: "https://picsum.photos/seed/\(categoryName)\(index)/400/400",
-                title: "\(categoryName) 기념품 \(index)",
-                category: categoryName
+    private func fetchDiscoveryStats() async throws -> [StatCountryChipItem] {
+        let stats = try await discoveryRepo.getTop3CountryStats()
+
+        // rank: 1~3
+        return stats.enumerated().map { index, item in
+            StatCountryChipItem(
+                flagImage: item.imageUrl,
+                title: item.countryNameKr,
+                count: "\(item.souvenirCount)",
+                rank: index + 1
             )
         }
     }
