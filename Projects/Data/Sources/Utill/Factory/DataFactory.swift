@@ -109,8 +109,11 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
+        let countryLocalDataSource = DefaultCountryLocalDataSource()
+
         return DefaultCountryRepository(
-            countryRemote: countryRemoteDataSource
+            countryRemote: countryRemoteDataSource,
+            countryLocal: countryLocalDataSource
         )
     }()
 

@@ -4,24 +4,22 @@ import Networking
 
 final class DefaultCountryRepository: CountryRepository {
     private let countryRemote: CountryRemoteDataSource
+    private let countryLocal: CountryLocalDataSource
 
-    public init(countryRemote: CountryRemoteDataSource) {
+    public init(
+        countryRemote: CountryRemoteDataSource,
+        countryLocal: CountryLocalDataSource
+    ) {
         self.countryRemote = countryRemote
+        self.countryLocal = countryLocal
     }
 
     func fetchCountries() async throws -> [CountryDetail] {
-        let dto: CountryResponseDTO =
-            try JSONLoader.load(filename: "country", as: CountryResponseDTO.self)
+        try countryLocal.fetchCountries()
+    }
 
-        let all = dto.data.countries.map { $0.toDomain() }
-
-        // TOP30만 남기고, 요청 순서 유지
-        return all
-            .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
-            .sorted {
-                PopularDestinationsKR.orderIndex[$0.code, default: .max]
-                    < PopularDestinationsKR.orderIndex[$1.code, default: .max]
-            }
+    func fetchCountry(countryCode: String) async throws -> CountryDetail {
+        try countryLocal.fetchCountry(countryCode: countryCode)
     }
 
     // MARK: - Address

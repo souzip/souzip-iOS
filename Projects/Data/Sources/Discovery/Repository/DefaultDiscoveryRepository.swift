@@ -25,8 +25,11 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
         }
     }
 
-    public func getTop10SouvenirsByCategory(categoryName: String) async throws -> [DiscoverySouvenir] {
+    public func getTop10SouvenirsByCategory(
+        category: SouvenirCategory
+    ) async throws -> [DiscoverySouvenir] {
         do {
+            let categoryName = OnboardingDTOMapper.toDTO(category)
             let dto = try await discoveryRemote.getTop10ByCategory(categoryName: categoryName)
             return mapSouvenirs(dto)
         } catch {
