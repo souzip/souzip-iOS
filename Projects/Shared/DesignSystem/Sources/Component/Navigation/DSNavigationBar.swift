@@ -7,7 +7,7 @@ public final class DSNavigationBar: UIView {
     public enum Style {
         case back // back
         case close // close
-        case backSettings // back + settings
+        case Settings // back + settings
         case backManage // back + edit, delete
     }
 
@@ -103,8 +103,7 @@ public final class DSNavigationBar: UIView {
         case .close:
             renderLeft(.close)
 
-        case .backSettings:
-            renderLeft(.back)
+        case .Settings:
             renderRight([.settings])
 
         case .backManage:

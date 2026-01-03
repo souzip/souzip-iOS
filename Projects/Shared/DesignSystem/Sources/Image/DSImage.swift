@@ -33,6 +33,12 @@ public extension UIImage {
 
     // MARK: - Character
 
-    static let dsCharacterTraveler: UIImage = .characterTraveler
-    static let dsCharacterSearch: UIImage = .characterSearch
+    static let dsCharacterNotification: UIImage = .characterNotification
+    static let dsCharacterPrepareTrip: UIImage = .characterPrepareTrip
+    static let dsCharacterWaiting: UIImage = .characterWaiting
+    static let dsCharacterDeparture: UIImage = .characterDeparture
+
+    static let dsCharacterWorried: UIImage = .characterWorried
+    static let dsCharacterSearch: UIImage = .characterSearching
+    static let dsCharacterTraveling: UIImage = .characterTraveling
 }

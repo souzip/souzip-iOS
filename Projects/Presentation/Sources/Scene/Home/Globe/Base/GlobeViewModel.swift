@@ -66,7 +66,7 @@ final class GlobeViewModel: BaseViewModel<
             handleSouvenirItemTap(item)
 
         case .tapUpload:
-            navigate(to: .createSouvenir)
+            navigate(to: .souvenirRoute(.create))
         }
     }
 }
@@ -228,9 +228,13 @@ private extension GlobeViewModel {
 
         switch entrySource {
         case .search:
-            navigate(to: .searchCountry { [weak self] item in
-                self?.handleCountrySelected(item)
-            })
+            navigate(
+                to: .souvenirRoute(
+                    .search { [weak self] item in
+                        self?.handleCountrySelected(item)
+                    }
+                )
+            )
 
         case .other:
             mutate {
@@ -325,9 +329,13 @@ private extension GlobeViewModel {
 
 private extension GlobeViewModel {
     private func handleSearchTap() {
-        navigate(to: .searchCountry { [weak self] item in
-            self?.handleCountrySelected(item)
-        })
+        navigate(
+            to: .souvenirRoute(
+                .search { [weak self] item in
+                    self?.handleCountrySelected(item)
+                }
+            )
+        )
     }
 
     private func handleCountrySelected(_ item: SearchResultItem) {

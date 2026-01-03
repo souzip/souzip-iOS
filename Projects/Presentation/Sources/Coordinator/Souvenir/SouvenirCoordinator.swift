@@ -5,38 +5,44 @@ import UIKit
 final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
     private let factory: PresentationSouvenirFactory
 
+    private weak var modalNav: UINavigationController?
+
     init(nav: UINavigationController, factory: PresentationSouvenirFactory) {
         self.factory = factory
         super.init(nav: nav)
     }
-
-    override func start() {}
 
     override func navigate(_ route: Route) {
         switch route {
         case .create:
             showCreateSouvenir()
 
+        case let .edit(detail, onResult):
+            showEditSouvenir(detail, onResult)
+
         case .detail:
             showDetailSouvenir()
-
-        case let .edit(detail, onResult):
-            showEditSouvenir()
 
         case let .search(onResult):
             showSearch(onResult: onResult)
 
-        case let .locationPicker(initiail, onComplete):
-            showLocationPicker(initialCoordinate: initiail, onComplete: onComplete)
+        case let .locationPicker(initial, onComplete):
+            showLocationPicker(
+                initialCoordinate: initial,
+                onComplete: onComplete
+            )
 
         case let .categoryPicker(initial, onComplete):
-            showCategoryPicker(initial, onComplete)
+            showCategoryPicker(
+                initial,
+                onComplete
+            )
 
         case .pop:
-            nav.popViewController(animated: true)
+            handlePop()
 
         case .dismiss:
-            nav.dismiss(animated: true)
+            handleDismiss()
 
         case .poptoForm:
             popToForm()
@@ -48,18 +54,17 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
 }
 
 private extension SouvenirCoordinator {
+    // MARK: - Present (Create / Edit)
+
     func showCreateSouvenir() {
         let scene = factory.makeSouvenirFormScene(mode: .create)
         bindRoute(scene)
-        let modalNav = CommonNavigationController(rootViewController: scene.vc)
-        modalNav.modalPresentationStyle = .fullScreen
-        nav.present(modalNav, animated: true)
-    }
 
-    func showDetailSouvenir() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .green
-        nav.setViewControllers([vc], animated: false)
+        let modal = CommonNavigationController(rootViewController: scene.vc)
+        modal.modalPresentationStyle = .fullScreen
+
+        modalNav = modal
+        nav.present(modal, animated: true)
     }
 
     func showEditSouvenir(
@@ -68,9 +73,28 @@ private extension SouvenirCoordinator {
     ) {
         let scene = factory.makeSouvenirFormScene(mode: .edit(detail))
         bindRoute(scene)
-        let modalNav = CommonNavigationController(rootViewController: scene.vc)
-        modalNav.modalPresentationStyle = .fullScreen
-        nav.present(modalNav, animated: true)
+
+        let modal = CommonNavigationController(rootViewController: scene.vc)
+        modal.modalPresentationStyle = .fullScreen
+
+        modalNav = modal
+        nav.present(modal, animated: true)
+    }
+
+    // MARK: - Detail
+
+    func showDetailSouvenir() {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .green
+        activeNav().setViewControllers([vc], animated: false)
+    }
+
+    // MARK: - Push
+
+    func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
+        let scene = factory.makeSearchScene(onResult: onResult)
+        bindRoute(scene)
+        activeNav().pushViewController(scene.vc, animated: true)
     }
 
     func showLocationPicker(
@@ -81,9 +105,8 @@ private extension SouvenirCoordinator {
             initialCoordinate: initialCoordinate,
             onComplete: onComplete
         )
-        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
-        nav.pushViewController(scene.vc, animated: true)
+        activeNav().pushViewController(scene.vc, animated: true)
     }
 
     func showCategoryPicker(
@@ -94,21 +117,55 @@ private extension SouvenirCoordinator {
             initailCategory: initialCategory,
             onComplete: onComplete
         )
-        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
-        nav.pushViewController(scene.vc, animated: true)
+        activeNav().pushViewController(scene.vc, animated: true)
+    }
+}
+
+private extension SouvenirCoordinator {
+    var activeNavForPush: UINavigationController {
+        modalNav ?? nav
     }
 
-    func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
-        let scene = factory.makeSearchScene(onResult: onResult)
-        scene.vc.hidesBottomBarWhenPushed = true
-        bindRoute(scene)
-        nav.pushViewController(scene.vc, animated: true)
+    func activeNav() -> UINavigationController {
+        modalNav ?? nav
+    }
+
+    func handlePop() {
+        let currentNav = activeNav()
+
+        if currentNav.viewControllers.count > 1 {
+            currentNav.popViewController(animated: true)
+            return
+        }
+
+        // pop 불가 → 흐름 종료
+        if let modal = modalNav {
+            modal.dismiss(animated: true)
+            modalNav = nil
+        }
+
+        finish()
+    }
+
+    func handleDismiss() {
+        if let modal = modalNav {
+            modal.dismiss(animated: true)
+            modalNav = nil
+        }
+
+        finish()
     }
 
     func popToForm() {
-        if let formVC = nav.viewControllers.first(where: { $0 is SouvenirFormViewController }) {
-            nav.popToViewController(formVC, animated: true)
+        let currentNav = activeNav()
+
+        if let formVC = currentNav.viewControllers.first(
+            where: { $0 is SouvenirFormViewController }
+        ) {
+            currentNav.popToViewController(formVC, animated: true)
+        } else {
+            handlePop()
         }
     }
 }

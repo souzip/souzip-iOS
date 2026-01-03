@@ -16,14 +16,38 @@ final class MyPageCoordinator: BaseCoordinator<MyPageRoute, TabRoute> {
         switch route {
         case .myPage:
             showMyPage()
+
+        case .setting:
+            break
+
+        case let .souvenirRoute(sovenirRoute):
+            handleSouvenirRoute(sovenirRoute)
+
+        case .pop:
+            nav.popViewController(animated: true)
+
+        case .dismiss:
+            nav.dismiss(animated: true)
         }
     }
 }
 
 private extension MyPageCoordinator {
     func showMyPage() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .green
-        nav.setViewControllers([vc], animated: false)
+        let scene = factory.makeMyPageScene()
+        bindRoute(scene)
+        nav.setViewControllers([scene.vc], animated: true)
+    }
+}
+
+private extension MyPageCoordinator {
+    func handleSouvenirRoute(_ route: SouvenirRoute) {
+        let coordinator = SouvenirCoordinator(
+            nav: nav,
+            factory: factory
+        )
+
+        addTemporaryChild(coordinator)
+        coordinator.navigate(route)
     }
 }

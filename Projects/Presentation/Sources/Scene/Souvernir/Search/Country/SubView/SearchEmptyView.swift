@@ -7,7 +7,7 @@ final class SearchEmptyView: UIView {
 
     private let illustrationImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .dsCharacterSearch
+        imageView.image = .dsCharacterWaiting
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

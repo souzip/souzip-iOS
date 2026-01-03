@@ -92,7 +92,7 @@ extension SouvenirEndpoint: MultipartEndpoint {
         if !data.imageFiles.isEmpty {
             for (index, imageData) in data.imageFiles.enumerated() {
                 body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"files\"; filename=\"image\(index).jpg\"\r\n")
+                body.append("Content-Disposition: form-data; name=\"files\"; filename=\"image\(index + 1).jpg\"\r\n")
                 body.append("Content-Type: image/jpeg\r\n\r\n")
                 body.append(imageData)
                 body.append("\r\n")

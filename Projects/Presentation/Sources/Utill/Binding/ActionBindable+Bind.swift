@@ -8,6 +8,10 @@ extension ActionBindable {
         ActionBinder(source: observable, sink: action, disposeBag: disposeBag)
     }
 
+    func bind<T>(_ realy: PublishRelay<T>) -> ActionBinder<T, Action> {
+        ActionBinder(source: realy.asObservable(), sink: action, disposeBag: disposeBag)
+    }
+
     // ControlEvent
     func bind<T>(_ controlEvent: ControlEvent<T>) -> ActionBinder<T, Action> {
         ActionBinder(source: controlEvent.asObservable(), sink: action, disposeBag: disposeBag)

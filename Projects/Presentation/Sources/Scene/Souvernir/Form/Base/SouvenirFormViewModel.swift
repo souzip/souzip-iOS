@@ -73,7 +73,6 @@ final class SouvenirFormViewModel: BaseViewModel<
                             coordinate.toCoordinate,
                             detail
                         ))
-                        self?.navigate(to: .poptoForm)
                     }
                 )
             })
