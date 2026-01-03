@@ -66,4 +66,6 @@ enum MyPageVisibleContent {
     case likedEmpty
 }
 
-enum MyPageEvent {}
+enum MyPageEvent {
+    case showErrorAlert(String)
+}

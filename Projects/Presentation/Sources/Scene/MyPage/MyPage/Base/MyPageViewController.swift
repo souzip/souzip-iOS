@@ -32,4 +32,11 @@ final class MyPageViewController: BaseViewController<
             .distinct()
             .onNext(contentView.renderCollection)
     }
+
+    override func handleEvent(_ event: Event) {
+        switch event {
+        case let .showErrorAlert(message):
+            showDSAlert(message: message)
+        }
+    }
 }

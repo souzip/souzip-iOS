@@ -39,6 +39,7 @@ final class LoginView: BaseView<LoginAction> {
 
     private let welcomeLabel: TypographyLabel = {
         let label = TypographyLabel()
+        label.text = "지금 내 주변, 기념품 모음집\n수집에 오신 걸 환영합니다!"
         label.numberOfLines = 2
         label.textColor = .dsGreyWhite
         label.textAlignment = .center

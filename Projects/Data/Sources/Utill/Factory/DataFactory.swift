@@ -150,6 +150,25 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - User
+
+    private lazy var cachedUserRepository: UserRepository = {
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let userRemoteDataSource = DefaultUserRemoteDataSource(
+            networkClient: authedClient
+        )
+
+        let userLocalRemoteDataSource = DefaultUserLocalDataSource(
+            storage: userDefaultsFactory.makeUDStorage()
+        )
+
+        return DefaultUserRepository(
+            userRemote: userRemoteDataSource,
+            userLocal: userLocalRemoteDataSource
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -170,5 +189,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeDiscoveryRepository() -> DiscoveryRepository {
         cachedDiscoveryRepository
+    }
+
+    public func makeUserRepository() -> UserRepository {
+        cachedUserRepository
     }
 }
