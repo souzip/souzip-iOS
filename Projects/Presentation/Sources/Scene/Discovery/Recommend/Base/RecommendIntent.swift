@@ -16,6 +16,7 @@ enum RecommendAction {
 
 enum RecommendEvent {
     case showErrorAlert(message: String)
+    case loading(Bool)
 }
 
 // MARK: - State
@@ -79,7 +80,7 @@ private extension RecommendState {
             ))
 
             // 3) 더보기(4개 초과일 때만)
-            if preferredNeedsMore {
+            if isPreferredExpanded {
                 models.append(.init(
                     section: .preferredMore,
                     items: [.moreButton("더보기")]

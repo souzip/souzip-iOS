@@ -100,7 +100,7 @@ final class PriceFieldView: UIView {
         if !price.isEmpty { setUnknownPrice(false) }
 
         isProgrammaticTextUpdate = true
-        priceTextField.setText(price)
+        priceTextField.setText(price.comma)
         isProgrammaticTextUpdate = false
 
         if currencySymbol == "₩" {
@@ -355,5 +355,18 @@ final class PriceFieldView: UIView {
         formatter.maximumFractionDigits = 0
 
         return formatter.string(from: NSNumber(value: number)) ?? numberString
+    }
+}
+
+extension String {
+    var comma: String {
+        let digits = filter(\.isNumber)
+        guard let number = Int(digits) else { return self }
+
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.groupingSeparator = ","
+        f.locale = Locale(identifier: "en_US_POSIX")
+        return f.string(from: NSNumber(value: number)) ?? digits
     }
 }

@@ -371,13 +371,13 @@ private extension DiscoveryView {
     func makeCategoryChipsSectionLayout() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(30)
+            heightDimension: .absolute(34)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(30)
+            heightDimension: .absolute(34)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
