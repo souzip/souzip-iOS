@@ -37,6 +37,9 @@ final class TabBarCoordinator: BaseCoordinator<TabRoute, RootRoute> {
         case .myPage:
             tabController.setSelectedIndex(route.rawValue)
             tabController.showContent(myPageNav)
+
+        case .showLogin:
+            navigateToParent(.login)
         }
     }
 }
@@ -81,6 +84,8 @@ private extension TabBarCoordinator {
             discoveryNav.popToRootViewController(animated: true)
         case .myPage:
             myPageNav.popToRootViewController(animated: true)
+        default:
+            break
         }
     }
 }

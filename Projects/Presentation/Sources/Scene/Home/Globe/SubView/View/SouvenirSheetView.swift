@@ -238,11 +238,11 @@ final class SouvenirSheetView: UIView {
 
     // MARK: - Pan
 
-    @objc private func handlePan(_ gr: UIPanGestureRecognizer) {
+    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
         guard let superview else { return }
-        let translation = gr.translation(in: superview)
+        let translation = gesture.translation(in: superview)
 
-        switch gr.state {
+        switch gesture.state {
         case .began:
             panStartHeight = currentHeight
 

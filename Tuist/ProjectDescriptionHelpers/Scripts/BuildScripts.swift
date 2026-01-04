@@ -67,11 +67,11 @@ public enum BuildScripts {
     // MARK: - Default Collections
     
     public static var app: [TargetScript] {
-        [swiftFormat, swiftLint]
+        [swiftFormat]
     }
     
     public static var framework: [TargetScript] {
-        [swiftFormat, swiftLint]
+        [swiftFormat]
     }
     
     public static var test: [TargetScript] {

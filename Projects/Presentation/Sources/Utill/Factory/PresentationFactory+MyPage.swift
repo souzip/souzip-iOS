@@ -1,5 +1,6 @@
 protocol PresentationMyPageFactory: AnyObject {
     func makeMyPageScene() -> RoutedScene<MyPageRoute>
+    func makeSetting() -> RoutedScene<MyPageRoute>
 }
 
 extension DefaultPresentationFactory {
@@ -9,6 +10,20 @@ extension DefaultPresentationFactory {
         )
         let view = MyPageView()
         let vc = MyPageViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeSetting() -> RoutedScene<MyPageRoute> {
+        let vm = SettingViewModel(
+            authRepo: domainFactory.makeAuthRepository()
+        )
+        let view = SettingView()
+        let vc = SettingViewController(viewModel: vm, contentView: view)
 
         return .init(
             vc: vc,

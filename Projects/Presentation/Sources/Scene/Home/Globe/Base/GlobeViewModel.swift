@@ -332,6 +332,7 @@ private extension GlobeViewModel {
         navigate(
             to: .souvenirRoute(
                 .search { [weak self] item in
+                    self?.navigate(to: .pop)
                     self?.handleCountrySelected(item)
                 }
             )

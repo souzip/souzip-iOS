@@ -29,10 +29,11 @@ public final class DefaultDataFactory: DataFactory {
             userDefaultsStorage: userDefaultsFactory.makeUDStorage()
         )
 
-        let networkClient = networkFactory.makePlainClient()
+        let plainClient = networkFactory.makePlainClient()
 
         let remoteDataSource = DefaultAuthRemoteDataSource(
-            networkClient: networkClient,
+            plain: plainClient,
+            authed: nil,
             oauthServices: [:]
         )
 
@@ -51,10 +52,13 @@ public final class DefaultDataFactory: DataFactory {
 
     private lazy var cachedAuthRepository: AuthRepository = {
         let oauthServices = oauthServiceFactory.makeOAuthServices()
-        let networkClient = networkFactory.makePlainClient()
+
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
 
         let authRemoteDataSource = DefaultAuthRemoteDataSource(
-            networkClient: networkClient,
+            plain: plainClient,
+            authed: authedClient,
             oauthServices: oauthServices
         )
 

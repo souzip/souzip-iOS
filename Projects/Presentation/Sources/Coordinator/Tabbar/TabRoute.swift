@@ -6,7 +6,9 @@ public enum TabRoute: Int, CaseIterable {
     case home
     case myPage
 
-    public var item: DSTabBarItem {
+    case showLogin
+
+    public var item: DSTabBarItem? {
         switch self {
         case .discovery:
             .init(
@@ -26,8 +28,9 @@ public enum TabRoute: Int, CaseIterable {
                 image: .dsIconUserProfile,
                 selectedImage: .dsIconUserProfile.withTintColor(.dsMain)
             )
+        default: nil
         }
     }
 
-    public static var items: [DSTabBarItem] { allCases.map(\.item) }
+    public static var items: [DSTabBarItem] { allCases.compactMap(\.item) }
 }

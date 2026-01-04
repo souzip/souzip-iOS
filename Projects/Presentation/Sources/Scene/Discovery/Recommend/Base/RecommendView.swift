@@ -114,7 +114,11 @@ private extension RecommendView {
             UploadPromptCell,
             Void
         > { cell, _, _ in
-            cell
+            cell.action
+                .bind { [weak self] in
+                    self?.action.accept(.uploadButtonTap)
+                }
+                .disposed(by: cell.disposeBag)
         }
 
         let spacerRegistration = UICollectionView.CellRegistration<

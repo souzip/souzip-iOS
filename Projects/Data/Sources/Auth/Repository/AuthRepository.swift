@@ -38,20 +38,24 @@ public final class DefaultAuthRepository: AuthRepository {
 
     public func logout() async throws {
         do {
+            try await authRemote.logout()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
-            try await authRemote.logout()
         } catch {
+            await authLocal.deleteAllTokens()
+            userLocal.deleteUser()
             throw mapToDomainError(error)
         }
     }
 
     public func withdraw() async throws {
         do {
+            try await authRemote.withdraw()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
-            try await authRemote.withdraw()
         } catch {
+            await authLocal.deleteAllTokens()
+            userLocal.deleteUser()
             throw mapToDomainError(error)
         }
     }

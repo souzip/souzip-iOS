@@ -99,6 +99,8 @@ final class LoginView: BaseView<LoginAction> {
     override func setAttributes() {
         backgroundColor = .dsBackground
         makeLoginButtons()
+
+        guestButton.isHidden
     }
 
     override func setHierarchy() {

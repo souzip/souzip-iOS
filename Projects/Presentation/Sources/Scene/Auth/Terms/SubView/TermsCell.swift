@@ -32,6 +32,7 @@ final class TermsCell: UICollectionViewCell, ActionBindable {
     private let detailButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(.dsIconChevronRight, for: .normal)
+        button.tintColor = .dsGreyWhite
         return button
     }()
 

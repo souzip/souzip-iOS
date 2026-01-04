@@ -150,9 +150,11 @@ final class SouvenirFormViewModel: BaseViewModel<
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
+
+            let country = try countryRepo.fetchCountry(countryCode: address.countryCode)
             mutate {
                 $0.address = address.formattedAddress
-                $0.currencySymbol = address.countryCode
+                $0.currencySymbol = country.currency.symbol
             }
         } catch {
             emit(.showError(error.localizedDescription))

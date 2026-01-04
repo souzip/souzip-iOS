@@ -23,6 +23,9 @@ public final class RootCoordinator: BaseCoordinator<RootRoute, Never> {
 
         case .main:
             showMain()
+
+        case .login:
+            showLogin()
         }
     }
 }
@@ -48,5 +51,16 @@ private extension RootCoordinator {
         )
         addChild(coordinator)
         coordinator.start()
+    }
+
+    func showLogin() {
+        children.removeAll()
+
+        let coordinator = AuthCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        addChild(coordinator)
+        coordinator.navigate(.login)
     }
 }
