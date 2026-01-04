@@ -21,13 +21,13 @@ extension TermsType {
         switch self {
         case .age14: nil
         case .service:
-            URL(string: "https://example.com/terms/service")
+            URL(string: "https://www.souzip.com/terms")
         case .privacy:
-            URL(string: "https://example.com/terms/privacy")
+            URL(string: "https://www.souzip.com/privacy")
         case .location:
-            URL(string: "https://example.com/terms/location")
+            URL(string: "https://www.souzip.com/location-terms")
         case .marketing:
-            URL(string: "https://example.com/terms/marketing")
+            URL(string: "https://www.souzip.com/marketing-terms")
         }
     }
 }

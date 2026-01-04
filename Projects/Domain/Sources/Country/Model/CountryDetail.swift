@@ -1,4 +1,4 @@
-public struct Country {
+public struct CountryDetail {
     public let nameEnglish: String
     public let nameKorean: String
     public let code: String

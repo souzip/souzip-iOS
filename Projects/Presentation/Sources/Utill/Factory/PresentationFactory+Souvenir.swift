@@ -43,6 +43,7 @@ extension DefaultPresentationFactory {
         let vm = SouvenirFormViewModel(
             mode: mode,
             onResult: onResult,
+            countryRepo: domainFactory.makeCountryRepository(),
             souvenirRepo: domainFactory.makeSouvenirRepository()
         )
 
@@ -59,7 +60,10 @@ extension DefaultPresentationFactory {
     func makeSearchScene(
         onResult: @escaping (SearchResultItem) -> Void
     ) -> RoutedScene<SouvenirRoute> {
-        let vm = SearchCountryViewModel(onResult: onResult)
+        let vm = SearchCountryViewModel(
+            onResult: onResult,
+            countryRepo: domainFactory.makeCountryRepository()
+        )
         let view = SearchCountryView()
         let vc = SearchCountryViewController(viewModel: vm, contentView: view)
 

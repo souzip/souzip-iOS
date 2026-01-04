@@ -150,9 +150,10 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
 
     private let addressLabel: TypographyLabel = {
         let label = TypographyLabel()
-        label.setTypography(.body2M)
         label.textColor = .dsGreyWhite
         label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
+        label.setTypography(.body2M)
         return label
     }()
 
@@ -167,7 +168,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     private let copyAddressButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = .dsIconLinkSelected
-        config.title = "복사"
         config.imagePadding = 0
         config.contentInsets = .init(
             top: 6,
@@ -180,6 +180,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         config.background.cornerRadius = 2
         config.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(pointSize: 20)
 
+        config.setTypography(.body4M, title: "복사")
         let button = UIButton(configuration: config)
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -341,8 +342,14 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         renderImages(detail.imageUrls)
 
         // 소유자
-        profileImageView.setStaticAsset(detail.owner.profileImageUrl)
-        usernameLabel.text = detail.owner.nickname
+
+        if detail.isOwned {
+            profileImageView.isHidden = true
+            usernameLabel.isHidden = true
+        } else {
+            profileImageView.setSVG(detail.owner.profileImageUrl)
+            usernameLabel.text = detail.owner.nickname
+        }
 
         // 목적
         purposeLabel.text = detail.purpose.title
@@ -391,7 +398,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             addressLabel.snp.makeConstraints { make in
                 make.top.equalTo(map.snp.bottom).offset(12)
                 make.leading.equalToSuperview().inset(20)
-                make.trailing.lessThanOrEqualTo(copyAddressButton.snp.leading)
+                make.trailing.lessThanOrEqualTo(copyAddressButton.snp.leading).offset(-5)
                 make.height.equalTo(32)
             }
 

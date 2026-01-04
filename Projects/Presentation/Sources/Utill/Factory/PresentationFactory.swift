@@ -6,7 +6,8 @@ protocol PresentationFactory:
     PresentationAuthFactory,
     PresentationHomeFactory,
     PresentationSouvenirFactory,
-    PresentationMyPageFactory {}
+    PresentationMyPageFactory,
+    PresentationDiscoveryFactory {}
 
 final class DefaultPresentationFactory: PresentationFactory {
     let domainFactory: DomainFactory

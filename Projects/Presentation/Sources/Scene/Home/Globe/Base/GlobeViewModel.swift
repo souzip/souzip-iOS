@@ -82,7 +82,7 @@ private extension GlobeViewModel {
     }
 
     func loadCountryBadges() async {
-        let badges = try? await countryRepo.fetchCountries()
+        let badges = try? countryRepo.fetchCountries()
             .map(CountryBadge.init)
 
         mutate {
@@ -190,7 +190,6 @@ private extension GlobeViewModel {
             mutate {
                 $0.souvenirs = results
                 $0.sheetViewMode = .bottomSheet(results)
-                $0.shouldShowSearchInLocationButton = false
             }
         }
 
@@ -332,6 +331,7 @@ private extension GlobeViewModel {
         navigate(
             to: .souvenirRoute(
                 .search { [weak self] item in
+                    self?.navigate(to: .pop)
                     self?.handleCountrySelected(item)
                 }
             )

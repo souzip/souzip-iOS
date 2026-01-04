@@ -3,6 +3,8 @@ public protocol DomainAuthFactory: AnyObject {
     func makeLoadRecentAuthProviderUseCase() -> LoadRecentAuthProviderUseCase
     func makeLoginUseCase() -> LoginUseCase
     func makeLogoutUseCase() -> LogoutUseCase
+
+    func makeAuthRepository() -> AuthRepository
 }
 
 public extension DefaultDomainFactory {
@@ -24,5 +26,9 @@ public extension DefaultDomainFactory {
     func makeLogoutUseCase() -> LogoutUseCase {
         let authRepo = factory.makeAuthRepository()
         return DefaultLogoutUseCase(authRepo: authRepo)
+    }
+
+    func makeAuthRepository() -> AuthRepository {
+        factory.makeAuthRepository()
     }
 }

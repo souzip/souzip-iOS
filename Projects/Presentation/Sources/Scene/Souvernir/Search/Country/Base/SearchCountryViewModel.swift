@@ -10,12 +10,16 @@ final class SearchCountryViewModel: BaseViewModel<
 
     private let onResult: (SearchResultItem) -> Void
 
+    private let countryRepo: CountryRepository
+
     // MARK: - Init
 
     init(
-        onResult: @escaping (SearchResultItem) -> Void
+        onResult: @escaping (SearchResultItem) -> Void,
+        countryRepo: CountryRepository
     ) {
         self.onResult = onResult
+        self.countryRepo = countryRepo
         super.init(initialState: State())
     }
 
@@ -59,20 +63,51 @@ final class SearchCountryViewModel: BaseViewModel<
     private func handleSearchTextChangedAPI(_ text: String) {
         guard !text.isEmpty else { return }
 
-        // 추후 API 연동
-        // Task {
-        //     do {
-        //         let results = try await searchUseCase.search(query: text)
-        //         mutate { state in
-        //             state.items = results
-        //             state.isEmpty = results.isEmpty
-        //         }
-        //         emit(.loading(false))
-        //     } catch {
-        //         emit(.loading(false))
-        //         emit(.showToast(message: "검색 실패"))
-        //     }
-        // }
+        Task {
+            do {
+                emit(.loading(true))
+                let results = try await countryRepo.searchLocations(keyword: text)
+                let items = mapToSearchResultItems(results)
+                mutate { state in
+                    state.items = items
+                    state.isEmpty = items.isEmpty
+                }
+                emit(.loading(false))
+            } catch {
+                emit(.showAlert(message: error.localizedDescription))
+                emit(.loading(false))
+            }
+        }
+    }
+
+    private func mapToSearchResultItems(
+        _ locations: [SearchedLocation]
+    ) -> [SearchResultItem] {
+        locations.map { location in
+            let type: SearchResultType =
+                location.type == .country ? .country : .city
+
+            let name: String
+            let subName: String
+
+            switch type {
+            case .country:
+                name = location.nameKr
+                subName = ""
+
+            case .city:
+                name = location.nameKr
+                subName = location.countryNameKr ?? ""
+            }
+
+            return SearchResultItem(
+                id: "\(type)-\(location.id)",
+                name: name,
+                subName: subName,
+                type: type,
+                coordinate: location.coordinate.toCLLocationCoordinate2D
+            )
+        }
     }
 
     private func handleClearSearch() {

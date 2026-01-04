@@ -3,6 +3,8 @@ import Foundation
 import Networking
 
 public final class DefaultSouvenirRepository: SouvenirRepository {
+    private(set) var needsMyPageRefresh: Bool = false
+
     private let souvenirRemote: SouvenirRemoteDataSource
 
     public init(souvenirRemote: SouvenirRemoteDataSource) {
@@ -34,6 +36,7 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
             )
 
             let dto = try await souvenirRemote.createSouvenir(data: multipartData)
+            needsMyPageRefresh = true
             return SouvenirDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
@@ -57,6 +60,7 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
                 id: id,
                 data: multipartData
             )
+            needsMyPageRefresh = true
             return SouvenirDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
@@ -90,6 +94,11 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
         } catch {
             throw mapToDomainError(error)
         }
+    }
+
+    public func consumeMyPageNeedsRefresh() async -> Bool {
+        defer { needsMyPageRefresh = false }
+        return needsMyPageRefresh
     }
 }
 

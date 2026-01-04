@@ -18,10 +18,13 @@ final class MyPageCoordinator: BaseCoordinator<MyPageRoute, TabRoute> {
             showMyPage()
 
         case .setting:
-            break
+            showSetting()
 
         case let .souvenirRoute(sovenirRoute):
             handleSouvenirRoute(sovenirRoute)
+
+        case .login:
+            navigateToParent(.showLogin)
 
         case .pop:
             nav.popViewController(animated: true)
@@ -37,6 +40,13 @@ private extension MyPageCoordinator {
         let scene = factory.makeMyPageScene()
         bindRoute(scene)
         nav.setViewControllers([scene.vc], animated: true)
+    }
+
+    func showSetting() {
+        let scene = factory.makeSetting()
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
     }
 }
 

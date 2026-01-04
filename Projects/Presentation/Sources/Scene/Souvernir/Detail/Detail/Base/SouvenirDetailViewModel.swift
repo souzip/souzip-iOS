@@ -49,7 +49,8 @@ final class SouvenirDetailViewModel: BaseViewModel<
             emit(.showReport)
 
         case .tapCopy:
-            break
+            guard let address = state.value.detail?.address else { return }
+            emit(.copy(address))
 
         case .confirmDelete:
             Task { await handleConfirmDelete() }

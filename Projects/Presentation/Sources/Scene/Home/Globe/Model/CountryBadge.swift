@@ -29,7 +29,7 @@ extension CountryBadge {
         return colors[index]
     }
 
-    init(country: Country) {
+    init(country: CountryDetail) {
         coordinate = country.coordinate.toCLLocationCoordinate2D
         countryName = country.nameKorean
         imageURL = country.flagImageURL

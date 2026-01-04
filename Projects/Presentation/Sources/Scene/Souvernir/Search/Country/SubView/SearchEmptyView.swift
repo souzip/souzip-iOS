@@ -7,17 +7,17 @@ final class SearchEmptyView: UIView {
 
     private let illustrationImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .dsCharacterWaiting
+        imageView.image = .dsCharacterSearch
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
-    private let messageLabel: UILabel = {
-        let label = UILabel()
+    private let messageLabel: TypographyLabel = {
+        let label = TypographyLabel()
         label.text = "나라 · 도시 이름으로 검색해보세요"
-        label.font = .pretendard(size: 18, weight: .light)
         label.textColor = .dsGreyWhite
         label.textAlignment = .center
+        label.setTypography(.body2R)
         return label
     }()
 

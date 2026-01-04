@@ -1,4 +1,5 @@
 import DesignSystem
+import SafariServices
 import SnapKit
 import UIKit
 
@@ -29,7 +30,7 @@ public final class ReportActionSheetViewController: UIViewController {
     }()
 
     private let closeButton: UIButton = {
-        var config = UIButton.Configuration.plain()
+        var config = UIButton.Configuration.filled()
         config.title = "닫기"
         config.baseForegroundColor = .dsGreyWhite
         config.baseBackgroundColor = .dsGrey700
@@ -115,8 +116,13 @@ public final class ReportActionSheetViewController: UIViewController {
 
     @objc private func didTapReport() {
         dismissAnimation { [weak self] in
-            self?.dismiss(animated: false)
-            // 구글폼 (TODO)
+            let urlString = "https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform"
+
+            guard let url = URL(string: urlString) else { return }
+
+            let vc = SFSafariViewController(url: url)
+            vc.modalPresentationStyle = .pageSheet
+            self?.present(vc, animated: true)
         }
     }
 

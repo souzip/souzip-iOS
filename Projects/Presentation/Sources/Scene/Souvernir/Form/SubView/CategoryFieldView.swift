@@ -23,6 +23,7 @@ final class CategoryFieldView: UIView {
     private let arrowImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .dsIconChevronRight
+        imageView.tintColor = .dsGreyWhite
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

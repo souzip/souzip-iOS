@@ -14,6 +14,7 @@ public enum ExternalLibrary: String, CaseIterable {
     // MARK: - Utility
     
     case kingfisher = "Kingfisher"
+    case swiftSVG = "SwiftSVG"
 
     // MARK: - Kakao SDK
 

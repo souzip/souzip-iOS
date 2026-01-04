@@ -74,7 +74,7 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         }
 
         emptyView.snp.makeConstraints { make in
-            make.edges.equalTo(collectionView)
+            make.center.equalToSuperview()
         }
     }
 

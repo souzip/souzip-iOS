@@ -1,6 +1,7 @@
 import Domain
 
 enum MyPageAction {
+    case viewWillAppear
     case viewDidLoad
     case tapSetting
     case tapSegmentTab(CollectionTab)
@@ -66,4 +67,6 @@ enum MyPageVisibleContent {
     case likedEmpty
 }
 
-enum MyPageEvent {}
+enum MyPageEvent {
+    case showErrorAlert(String)
+}

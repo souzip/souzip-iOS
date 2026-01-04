@@ -10,4 +10,5 @@ public protocol SouvenirRepository {
         longitude: Double,
         radiusMeter: Int?
     ) async throws -> [SouvenirListItem]
+    func consumeMyPageNeedsRefresh() async -> Bool
 }

@@ -5,6 +5,7 @@ public final class DSNavigationBar: UIView {
     // MARK: - Types
 
     public enum Style {
+        case title
         case back // back
         case close // close
         case Settings // back + settings
@@ -100,6 +101,8 @@ public final class DSNavigationBar: UIView {
         titleLabel.text = title
 
         switch style {
+        case .title: break
+
         case .back:
             renderLeft(.back)
 

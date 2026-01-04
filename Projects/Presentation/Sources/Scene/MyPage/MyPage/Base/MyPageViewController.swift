@@ -12,6 +12,11 @@ final class MyPageViewController: BaseViewController<
         viewModel.action.accept(.viewDidLoad)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.action.accept(.viewWillAppear)
+    }
+
     // MARK: - Bind
 
     override func bindState() {
@@ -31,5 +36,12 @@ final class MyPageViewController: BaseViewController<
         observe(\.collectionData)
             .distinct()
             .onNext(contentView.renderCollection)
+    }
+
+    override func handleEvent(_ event: Event) {
+        switch event {
+        case let .showErrorAlert(message):
+            showDSAlert(message: message)
+        }
     }
 }

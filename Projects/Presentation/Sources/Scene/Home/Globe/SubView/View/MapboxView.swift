@@ -326,15 +326,11 @@ private extension MapboxView {
     }
 
     func setPlaceLabelsVisible(_ visible: Bool) {
-        do {
-            try mapboxMapView.mapboxMap.setStyleImportConfigProperty(
-                for: "basemap",
-                config: "showPlaceLabels",
-                value: visible
-            )
-        } catch {
-            print("에러남")
-        }
+        try? mapboxMapView.mapboxMap.setStyleImportConfigProperty(
+            for: "basemap",
+            config: "showPlaceLabels",
+            value: visible
+        )
     }
 }
 

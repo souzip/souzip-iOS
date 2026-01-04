@@ -1,3 +1,4 @@
+import SafariServices
 import UIKit
 
 final class TermsViewController: BaseViewController<
@@ -28,6 +29,11 @@ final class TermsViewController: BaseViewController<
             } cancelHandler: {
                 self.viewModel.action.accept(.confirmMarketing(false))
             }
+
+        case let .showSFView(url):
+            let vc = SFSafariViewController(url: url)
+            vc.modalPresentationStyle = .pageSheet
+            present(vc, animated: true)
         }
     }
 }

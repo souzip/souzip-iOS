@@ -29,10 +29,11 @@ public final class DefaultDataFactory: DataFactory {
             userDefaultsStorage: userDefaultsFactory.makeUDStorage()
         )
 
-        let networkClient = networkFactory.makePlainClient()
+        let plainClient = networkFactory.makePlainClient()
 
         let remoteDataSource = DefaultAuthRemoteDataSource(
-            networkClient: networkClient,
+            plain: plainClient,
+            authed: nil,
             oauthServices: [:]
         )
 
@@ -51,10 +52,13 @@ public final class DefaultDataFactory: DataFactory {
 
     private lazy var cachedAuthRepository: AuthRepository = {
         let oauthServices = oauthServiceFactory.makeOAuthServices()
-        let networkClient = networkFactory.makePlainClient()
+
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
 
         let authRemoteDataSource = DefaultAuthRemoteDataSource(
-            networkClient: networkClient,
+            plain: plainClient,
+            authed: authedClient,
             oauthServices: oauthServices
         )
 
@@ -98,6 +102,25 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Country
+
+    private lazy var cachedCountryRepository: CountryRepository = {
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let countryRemoteDataSource = DefaultCountryRemoteDataSource(
+            plain: plainClient,
+            authed: authedClient
+        )
+
+        let countryLocalDataSource = DefaultCountryLocalDataSource()
+
+        return DefaultCountryRepository(
+            countryRemote: countryRemoteDataSource,
+            countryLocal: countryLocalDataSource
+        )
+    }()
+
     // MARK: - Souvenir
 
     private lazy var cachedSouvenirRepository: SouvenirRepository = {
@@ -114,6 +137,42 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    private lazy var cachedDiscoveryRepository: DiscoveryRepository = {
+        let plainClient = networkFactory.makePlainClient()
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let discoveryRemoteDataSource = DefaultDiscoveryRemoteDataSource(
+            plain: plainClient,
+            authed: authedClient
+        )
+
+        let countryLocalDataSource = DefaultCountryLocalDataSource()
+
+        return DefaultDiscoveryRepository(
+            discoveryRemote: discoveryRemoteDataSource,
+            countryLocal: countryLocalDataSource
+        )
+    }()
+
+    // MARK: - User
+
+    private lazy var cachedUserRepository: UserRepository = {
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let userRemoteDataSource = DefaultUserRemoteDataSource(
+            networkClient: authedClient
+        )
+
+        let userLocalRemoteDataSource = DefaultUserLocalDataSource(
+            storage: userDefaultsFactory.makeUDStorage()
+        )
+
+        return DefaultUserRepository(
+            userRemote: userRemoteDataSource,
+            userLocal: userLocalRemoteDataSource
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -125,10 +184,18 @@ public final class DefaultDataFactory: DataFactory {
     }
 
     public func makeCountryRepository() -> CountryRepository {
-        DefaultCountryRepository()
+        cachedCountryRepository
     }
 
     public func makeSouvenirRepository() -> SouvenirRepository {
         cachedSouvenirRepository
+    }
+
+    public func makeDiscoveryRepository() -> DiscoveryRepository {
+        cachedDiscoveryRepository
+    }
+
+    public func makeUserRepository() -> UserRepository {
+        cachedUserRepository
     }
 }

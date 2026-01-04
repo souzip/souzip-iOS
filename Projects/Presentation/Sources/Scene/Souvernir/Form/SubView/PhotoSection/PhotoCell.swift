@@ -39,8 +39,8 @@ final class PhotoCell: UICollectionViewCell {
     private let deleteButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.baseBackgroundColor = .dsGrey900
-        config.baseForegroundColor = .dsGreyWhite
         config.cornerStyle = .capsule
+        config.image = .dsIconCancel.resized(to: CGSize(width: 10, height: 10))
         let button = UIButton(configuration: config)
         button.isHidden = true
         return button
@@ -113,7 +113,7 @@ private extension PhotoCell {
         deleteButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(4)
             make.trailing.equalToSuperview().inset(4)
-            make.width.height.equalTo(20)
+            make.width.height.equalTo(14)
         }
 
         deleteButton.addTarget(self, action: #selector(didTapDelete), for: .touchUpInside)
