@@ -31,16 +31,6 @@ final class RecommendView: BaseView<RecommendAction> {
 
     private var dataSource: DataSource?
 
-    // MARK: - Init
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
-
     // MARK: - Override
 
     override func setAttributes() {
@@ -75,9 +65,13 @@ final class RecommendView: BaseView<RecommendAction> {
 
     func render(_ sections: [RecommendSectionModel]) {
         var snapshot = Snapshot()
+        var appended = Set<Section>()
 
         for model in sections {
-            snapshot.appendSections([model.section])
+            if appended.contains(model.section) == false {
+                snapshot.appendSections([model.section])
+                appended.insert(model.section)
+            }
             snapshot.appendItems(model.items, toSection: model.section)
         }
 
@@ -125,6 +119,13 @@ private extension RecommendView {
             UICollectionViewCell,
             Void
         > { _, _, _ in }
+
+        let emptyRegistration = UICollectionView.CellRegistration<
+            EmptyStateCell,
+            String
+        > { cell, _, text in
+            cell.render(text)
+        }
 
         let headerRegistration = UICollectionView.SupplementaryRegistration<
             RecommendSectionHeaderView
@@ -185,6 +186,13 @@ private extension RecommendView {
                     for: indexPath,
                     item: ()
                 )
+
+            case let .empty(_, text):
+                collectionView.dequeueConfiguredReusableCell(
+                    using: emptyRegistration,
+                    for: indexPath,
+                    item: text
+                )
             }
         }
 
@@ -216,12 +224,23 @@ private extension RecommendView {
                   let section = dataSource?.sectionIdentifier(for: sectionIndex)
             else { return nil }
 
+            let isEmptySection: Bool = {
+                guard let ds = self.dataSource else { return false }
+                let snapshot = ds.snapshot()
+                let items = snapshot.itemIdentifiers(inSection: section)
+                guard items.count == 1 else { return false }
+                if case .empty = items[0] { return true }
+                return false
+            }()
+
             let layoutSection: NSCollectionLayoutSection = switch section {
             case .preferredCategoryChips:
                 makeChipsSectionLayout(hasHeader: true)
 
             case .preferredCategoryCards:
-                makeCardsSectionLayout(hasHeader: false)
+                isEmptySection
+                    ? makeEmptyFullWidthSectionLayout(height: 219, hasHeader: false)
+                    : makeCardsSectionLayout(hasHeader: false)
 
             case .preferredMore:
                 makeMoreButtonSectionLayout()
@@ -292,13 +311,13 @@ private extension RecommendView {
     func makeChipsSectionLayout(hasHeader: Bool) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(30)
+            heightDimension: .absolute(40)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .estimated(100),
-            heightDimension: .absolute(30)
+            heightDimension: .absolute(40)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
@@ -432,6 +451,24 @@ private extension RecommendView {
 
         return section
     }
+
+    func makeEmptyFullWidthSectionLayout(height: CGFloat, hasHeader: Bool) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(height)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = itemSize
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
+
+        return section
+    }
 }
 
 // MARK: - UICollectionView Delegate
@@ -466,7 +503,7 @@ extension RecommendView: UICollectionViewDelegate {
                 break
             }
 
-        case .spacer:
+        default:
             break
         }
     }

@@ -40,4 +40,6 @@ enum RecommendItem: Hashable {
     case moreButton(String)
     case uploadPrompt
     case spacer
+
+    case empty(id: String, text: String)
 }

@@ -12,6 +12,11 @@ final class MyPageViewController: BaseViewController<
         viewModel.action.accept(.viewDidLoad)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.action.accept(.viewWillAppear)
+    }
+
     // MARK: - Bind
 
     override func bindState() {

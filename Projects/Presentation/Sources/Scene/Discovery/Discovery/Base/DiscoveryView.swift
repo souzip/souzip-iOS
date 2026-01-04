@@ -34,16 +34,6 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
     private var dataSource: DataSource?
 
-    // MARK: - Init
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
-
     // MARK: - Override
 
     override func setAttributes() {
@@ -84,10 +74,16 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
     func render(_ sectionModels: [DiscoverySectionModel]) {
         var snapshot = Snapshot()
+        var appended = Set<Section>()
+
         for model in sectionModels {
-            snapshot.appendSections([model.section])
+            if appended.contains(model.section) == false {
+                snapshot.appendSections([model.section])
+                appended.insert(model.section)
+            }
             snapshot.appendItems(model.items, toSection: model.section)
         }
+
         dataSource?.apply(snapshot, animatingDifferences: true)
     }
 }
@@ -129,6 +125,13 @@ private extension DiscoveryView {
             [StatCountryChipItem]
         > { cell, _, item in
             cell.render(item)
+        }
+
+        let emptyRegistration = UICollectionView.CellRegistration<
+            EmptyStateCell,
+            String
+        > { cell, _, text in
+            cell.render(text)
         }
 
         let spacerRegistration = UICollectionView.CellRegistration<
@@ -187,6 +190,13 @@ private extension DiscoveryView {
                     item: chipItem
                 )
 
+            case let .empty(_, text):
+                collectionView.dequeueConfiguredReusableCell(
+                    using: emptyRegistration,
+                    for: indexPath,
+                    item: text
+                )
+
             case .spacer:
                 collectionView.dequeueConfiguredReusableCell(
                     using: spacerRegistration,
@@ -223,15 +233,25 @@ private extension DiscoveryView {
                   let kind = dataSource?.sectionIdentifier(for: sectionIndex)
             else { return nil }
 
+            let isEmptySection: Bool = {
+                guard let ds = self.dataSource else { return false }
+                let snapshot = ds.snapshot()
+                let items = snapshot.itemIdentifiers(inSection: kind)
+                return items.count == 1 && {
+                    if case .empty = items[0] { return true }
+                    return false
+                }()
+            }()
+
             let section = switch kind {
             case .top10CountryChips:
                 makeTop10ChipsSectionLayout()
             case .top10Cards:
-                makeTop10CardsSectionLayout()
+                isEmptySection ? makeEmptyFullWidthSectionLayout(height: 219) : makeTop10CardsSectionLayout()
             case .categoryChips:
                 makeCategoryChipsSectionLayout()
             case .categoryCards:
-                makeCategoryCardsSectionLayout()
+                isEmptySection ? makeEmptyFullWidthSectionLayout(height: 219) : makeCategoryCardsSectionLayout()
             case .categoryMore:
                 makeCategoryMoreSectionLayout()
             case .statisticsChips:
@@ -458,6 +478,23 @@ private extension DiscoveryView {
         header.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
 
         section.boundarySupplementaryItems = [header]
+        return section
+    }
+
+    func makeEmptyFullWidthSectionLayout(height: CGFloat) -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(height)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = itemSize
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
         return section
     }
 

@@ -1,4 +1,5 @@
 import DesignSystem
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -7,7 +8,7 @@ final class MyPageHeaderView: UIView {
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .dsGreyWhite
         imageView.layer.cornerRadius = 35
         imageView.clipsToBounds = true
@@ -54,7 +55,7 @@ final class MyPageHeaderView: UIView {
     // MARK: - Configure
 
     func render(_ data: ProfileData) {
-        profileImageView.setProfileImage(data.profileImageUrl)
+        profileImageView.setSVG(data.profileImageUrl)
         nicknameLabel.text = data.nickname
 
         if data.email.isEmpty {

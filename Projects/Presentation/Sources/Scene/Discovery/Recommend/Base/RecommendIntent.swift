@@ -61,23 +61,30 @@ private extension RecommendState {
             items: countries.map { .countryChip($0) }
         ))
 
-        // 2) 선호 카테고리 기반 - cards (기본 4개, expand면 전체)
-        let preferredNeedsMore = preferredSouvenirs.count > 4
-        let preferredVisible = isPreferredExpanded
-            ? preferredSouvenirs
-            : Array(preferredSouvenirs.prefix(4))
-
-        models.append(.init(
-            section: .preferredCategoryCards,
-            items: preferredVisible.map { .souvenirCard($0) }
-        ))
-
-        // 3) 선호 카테고리 기반 - 더보기(4개 초과일 때만)
-        if preferredNeedsMore {
+        // 2) 선호 카테고리 기반 - cards (비었으면 empty 1개)
+        if preferredSouvenirs.isEmpty {
             models.append(.init(
-                section: .preferredMore,
-                items: [.moreButton("더보기")]
+                section: .preferredCategoryCards,
+                items: [.empty(id: "preferred-empty", text: "비어있습니다")]
             ))
+        } else {
+            let preferredNeedsMore = preferredSouvenirs.count > 4
+            let preferredVisible = isPreferredExpanded
+                ? preferredSouvenirs
+                : Array(preferredSouvenirs.prefix(4))
+
+            models.append(.init(
+                section: .preferredCategoryCards,
+                items: preferredVisible.map { .souvenirCard($0) }
+            ))
+
+            // 3) 더보기(4개 초과일 때만)
+            if preferredNeedsMore {
+                models.append(.init(
+                    section: .preferredMore,
+                    items: [.moreButton("더보기")]
+                ))
+            }
         }
 
         // spacer (업로드 섹션과 간격 분리)

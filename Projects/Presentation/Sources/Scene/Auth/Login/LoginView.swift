@@ -100,7 +100,7 @@ final class LoginView: BaseView<LoginAction> {
         backgroundColor = .dsBackground
         makeLoginButtons()
 
-        guestButton.isHidden
+        guestButton.isHidden = true
     }
 
     override func setHierarchy() {
@@ -136,20 +136,14 @@ final class LoginView: BaseView<LoginAction> {
         }
 
         welcomeLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(lbStackView.snp.top).offset(-56)
+            make.bottom.equalTo(lbStackView.snp.top).offset(-48)
             make.centerX.equalToSuperview()
         }
 
         lbStackView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(guestButton.snp.top).offset(-42)
-            make.height.equalTo(182)
-        }
-
-        guestButton.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(44)
-            make.height.equalTo(16)
-            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(116)
+            make.height.equalTo(116)
         }
     }
 
@@ -187,7 +181,17 @@ final class LoginView: BaseView<LoginAction> {
 
     private func makeLoginButtons() {
         for provider in AuthProvider.allCases {
+            guard provider != .google else { continue }
+
             let button = makeLoginButton(provider)
+
+            if provider == .apple {
+                button.layer.borderColor = UIColor.dsGrey900.cgColor
+                button.layer.borderWidth = 1
+            }
+
+            button.layer.cornerRadius = 10
+            button.clipsToBounds = true
             loginButtons[provider] = button
             lbStackView.addArrangedSubview(button)
         }
@@ -204,7 +208,6 @@ final class LoginView: BaseView<LoginAction> {
         config.image = provider.image.withConfiguration(symbolConfig)
 
         config.baseForegroundColor = provider.titleColor
-        config.background.cornerRadius = 10
         config.background.backgroundColor = provider.backgroundColor
 
         config.setTypography(.body2M, title: provider.title)

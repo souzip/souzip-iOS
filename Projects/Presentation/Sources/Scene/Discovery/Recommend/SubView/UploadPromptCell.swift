@@ -75,6 +75,7 @@ private extension UploadPromptCell {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
 
     func setAttributes() {

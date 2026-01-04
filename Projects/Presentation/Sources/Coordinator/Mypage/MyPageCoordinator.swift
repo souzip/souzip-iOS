@@ -44,6 +44,7 @@ private extension MyPageCoordinator {
 
     func showSetting() {
         let scene = factory.makeSetting()
+        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         nav.pushViewController(scene.vc, animated: true)
     }

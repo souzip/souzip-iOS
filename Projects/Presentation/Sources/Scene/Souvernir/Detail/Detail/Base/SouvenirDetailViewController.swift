@@ -62,6 +62,10 @@ final class SouvenirDetailViewController: BaseViewController<
             let sheet = ReportActionSheetViewController()
             sheet.modalPresentationStyle = .overFullScreen
             present(sheet, animated: false)
+
+        case let .copy(address):
+            UIPasteboard.general.string = address
+            showToast("주소가 복사되었습니다")
         }
     }
 

@@ -27,14 +27,14 @@ extension UserEndpoint: APIEndpoint {
         ["Content-Type": "application/json"]
     }
 
-    public var queryParameters: [String: String]? {
+    public var parameters: [String: Any]? {
         switch self {
         case .getUserProfile:
             nil
         case let .getUserSouvenirs(page, size):
             [
-                "page": "\(page)",
-                "size": "\(size)",
+                "page": page,
+                "size": size,
             ]
         }
     }

@@ -54,8 +54,8 @@ public extension Coordinator {
 public extension Coordinator {
     func bindRoute(_ scene: RoutedScene<Route>) {
         scene.route
-            .asSignal()
-            .throttle(.milliseconds(100))
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .asSignal(onErrorSignalWith: .empty())
             .emit { [weak self] route in
                 self?.navigate(route)
             }

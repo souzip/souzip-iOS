@@ -24,6 +24,7 @@ struct DiscoveryState {
     var sectionModels: [DiscoverySectionModel] {
         var models: [DiscoverySectionModel] = []
 
+        // 1) 나라 칩
         if !countries.isEmpty {
             models.append(.init(
                 section: .top10CountryChips,
@@ -31,13 +32,19 @@ struct DiscoveryState {
             ))
         }
 
-        if !countrySouvenirs.isEmpty {
+        // 2) 나라별 Top10 카드
+        if !countries.isEmpty {
+            let items: [DiscoveryItem] = countrySouvenirs.isEmpty
+                ? [.empty(id: "top10Cards-empty", text: "비어있습니다")]
+                : countrySouvenirs.map { .souvenirCard($0) }
+
             models.append(.init(
                 section: .top10Cards,
-                items: countrySouvenirs.map { .souvenirCard($0) }
+                items: items
             ))
         }
 
+        // 3) 카테고리 칩
         if !categories.isEmpty {
             models.append(.init(
                 section: .categoryChips,
@@ -45,37 +52,41 @@ struct DiscoveryState {
             ))
         }
 
-        if !categorySouvenirs.isEmpty {
-            let visible = isCategoryExpanded
-                ? categorySouvenirs
-                : Array(categorySouvenirs.prefix(4))
-
-            models.append(.init(
-                section: .categoryCards,
-                items: visible.map { .souvenirCard($0) }
-            ))
-
-            if !isCategoryExpanded, categorySouvenirs.count > 4 {
+        // 4) 카테고리 카드/엠티/더보기
+        if !categories.isEmpty {
+            if categorySouvenirs.isEmpty {
                 models.append(.init(
-                    section: .categoryMore,
-                    items: [.moreButton("더보기")]
+                    section: .categoryCards,
+                    items: [.empty(id: "categoryCards-empty", text: "비어있습니다")]
                 ))
+            } else {
+                let visible = isCategoryExpanded
+                    ? categorySouvenirs
+                    : Array(categorySouvenirs.prefix(4))
+
+                models.append(.init(
+                    section: .categoryCards,
+                    items: visible.map { .souvenirCard($0) }
+                ))
+
+                if !isCategoryExpanded, categorySouvenirs.count > 4 {
+                    models.append(.init(
+                        section: .categoryMore,
+                        items: [.moreButton("더보기")]
+                    ))
+                }
             }
         }
 
-        models.append(
-            DiscoverySectionModel(
-                section: .spacer,
-                items: [.spacer]
-            )
-        )
+        // spacer
+        models.append(.init(section: .spacer, items: [.spacer]))
 
+        // stats
         if !statCountry.isEmpty {
             let date = Date()
             let calendar = Calendar.current
             let year = calendar.component(.year, from: date) % 100
             let month = calendar.component(.month, from: date)
-
             let dateText = "\(year)년 \(month)월"
 
             models.append(.init(
@@ -86,6 +97,7 @@ struct DiscoveryState {
 
         return models
     }
+
 }
 
 enum DiscoveryEvent {

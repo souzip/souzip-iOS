@@ -6,7 +6,9 @@ protocol PresentationMyPageFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeMyPageScene() -> RoutedScene<MyPageRoute> {
         let vm = MyPageViewModel(
-            userRepo: domainFactory.makeUserRepository()
+            userRepo: domainFactory.makeUserRepository(),
+            souvenirRepo: domainFactory.makeSouvenirRepository(),
+            countryRepo: domainFactory.makeCountryRepository()
         )
         let view = MyPageView()
         let vc = MyPageViewController(viewModel: vm, contentView: view)

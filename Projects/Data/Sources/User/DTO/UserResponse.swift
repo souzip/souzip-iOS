@@ -12,22 +12,25 @@ public struct UserProfileResponse: Decodable {
 // MARK: - Souvenirs (기념품 목록 API 응답)
 
 public struct UserSouvenirsResponse: Decodable {
-    public let souvenirs: [SouvenirItemResponse]
+    public let content: [SouvenirItemResponse]
     public let pagination: PaginationResponse
 }
 
 public struct SouvenirItemResponse: Decodable {
     public let id: Int
     public let thumbnailUrl: String
-    public let country: String
+    public let countryCode: String
     public let createdAt: String
     public let updatedAt: String
 }
 
 public struct PaginationResponse: Decodable {
     public let currentPage: Int
-    public let pageSize: Int
-    public let totalElements: Int
     public let totalPages: Int
+    public let totalItems: Int
+    public let pageSize: Int
+    public let first: Bool
+    public let last: Bool
     public let hasNext: Bool
+    public let hasPrevious: Bool
 }

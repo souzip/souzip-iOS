@@ -20,4 +20,5 @@ enum SouvenirDetailEvent {
     case showDeleteAlert
     case showReport
     case loading(Bool)
+    case copy(String)
 }

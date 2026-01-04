@@ -46,6 +46,8 @@ final class SettingView: BaseView<SettingAction>, UITableViewDataSource, UITable
         tableView.dataSource = self
         tableView.delegate = self
 
+        bind(naviBar.onLeftTap).to(.back)
+
         tableView.register(SettingCell.self, forCellReuseIdentifier: "SettingCell")
     }
 

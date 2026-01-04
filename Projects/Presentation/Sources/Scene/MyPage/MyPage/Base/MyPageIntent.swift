@@ -1,6 +1,7 @@
 import Domain
 
 enum MyPageAction {
+    case viewWillAppear
     case viewDidLoad
     case tapSetting
     case tapSegmentTab(CollectionTab)

@@ -9,13 +9,19 @@ final class MyPageViewModel: BaseViewModel<
     // MARK: - Repository
 
     private let userRepo: UserRepository
+    private let souvenirRepo: SouvenirRepository
+    private let countryRepo: CountryRepository
 
     // MARK: - Init
 
     init(
-        userRepo: UserRepository
+        userRepo: UserRepository,
+        souvenirRepo: SouvenirRepository,
+        countryRepo: CountryRepository
     ) {
         self.userRepo = userRepo
+        self.souvenirRepo = souvenirRepo
+        self.countryRepo = countryRepo
         super.init(initialState: State())
     }
 
@@ -23,6 +29,13 @@ final class MyPageViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewWillAppear:
+            Task {
+                let needs = await souvenirRepo.consumeMyPageNeedsRefresh()
+                guard needs else { return }
+                await loadInitialData()
+            }
+
         case .viewDidLoad:
             Task { await loadInitialData() }
 
@@ -54,9 +67,21 @@ final class MyPageViewModel: BaseViewModel<
             let profile = try await profileTask
             let souvenirs = try await souvenirsTask
 
+            let mapSouvenirs = souvenirs.compactMap { souvenir -> SouvenirThumbnail? in
+                guard let country = try? countryRepo.fetchCountry(countryCode: souvenir.country) else { return nil }
+
+                return .init(
+                    id: souvenir.id,
+                    thumbnailUrl: souvenir.thumbnailUrl,
+                    country: country.nameKorean,
+                    createdAt: souvenir.createdAt,
+                    updatedAt: souvenir.updatedAt
+                )
+            }
+
             mutate { state in
                 state.profile = profile
-                state.collectionSouvenirs = souvenirs
+                state.collectionSouvenirs = mapSouvenirs
             }
         } catch {
             emit(.showErrorAlert(error.localizedDescription))

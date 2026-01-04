@@ -38,7 +38,7 @@ final class SouvenirThumbnailCell: UICollectionViewCell {
     // MARK: - Public
 
     func render(_ item: SouvenirThumbnailItem) {
-        imageView.setFeedImage(item.thumbnailUrl)
+        imageView.setProfileImage(item.thumbnailUrl)
     }
 }
 

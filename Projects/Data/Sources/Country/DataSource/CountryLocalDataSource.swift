@@ -10,10 +10,7 @@ public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
     public init() {}
 
     public func fetchCountries() throws -> [CountryDetail] {
-        let dto: CountryResponseDTO =
-            try JSONLoader.load(filename: "country", as: CountryResponseDTO.self)
-
-        let all = dto.data.countries.map { $0.toDomain() }
+        let all = try loadAllCountries()
 
         return all
             .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
@@ -24,15 +21,24 @@ public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
     }
 
     public func fetchCountry(countryCode: String) throws -> CountryDetail {
-        let countries = try fetchCountries()
+        let all = try loadAllCountries()
 
-        guard let country = countries.first(where: {
+        guard let country = all.first(where: {
             $0.code.caseInsensitiveCompare(countryCode) == .orderedSame
         }) else {
             throw CountryError.notFound
         }
 
         return country
+    }
+
+    // MARK: - Private
+
+    private func loadAllCountries() throws -> [CountryDetail] {
+        let dto: CountryResponseDTO =
+            try JSONLoader.load(filename: "country", as: CountryResponseDTO.self)
+
+        return dto.data.countries.map { $0.toDomain() }
     }
 }
 

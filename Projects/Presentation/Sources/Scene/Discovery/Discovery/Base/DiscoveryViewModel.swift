@@ -217,11 +217,13 @@ final class DiscoveryViewModel: BaseViewModel<
     private func fetchTop10ByCountry(countryCode: String) async throws -> [SouvenirCardItem] {
         let souvenirs = try await discoveryRepo.getTop10SouvenirsByCountry(countryCode: countryCode)
         return souvenirs.map {
-            SouvenirCardItem(
+            let category = koreanTitle(from: $0.category)
+
+            return SouvenirCardItem(
                 id: $0.id,
                 imageURL: $0.thumbnailUrl,
                 title: $0.name,
-                category: $0.category
+                category: category
             )
         }
     }
@@ -229,11 +231,13 @@ final class DiscoveryViewModel: BaseViewModel<
     private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirCardItem] {
         let souvenirs = try await discoveryRepo.getTop10SouvenirsByCategory(category: category)
         return souvenirs.map {
-            SouvenirCardItem(
+            let category = koreanTitle(from: $0.category)
+
+            return SouvenirCardItem(
                 id: $0.id,
                 imageURL: $0.thumbnailUrl,
                 title: $0.name,
-                category: $0.category
+                category: category
             )
         }
     }
@@ -249,6 +253,23 @@ final class DiscoveryViewModel: BaseViewModel<
                 count: "\(item.souvenirCount)",
                 rank: index + 1
             )
+        }
+    }
+
+    private func koreanTitle(from serverCode: String) -> String {
+        switch serverCode {
+        case "FOOD_SNACK": "먹거리·간식"
+        case "BEAUTY_HEALTH": "뷰티·헬스"
+        case "FASHION_ACCESSORY": "패션·악세서리"
+        case "CULTURE_TRADITION": "문화·전통"
+        case "TOY_KIDS": "장난감·키즈"
+        case "SOUVENIR_BASIC": "기념품 기본템"
+        case "HOME_LIFESTYLE": "홈·라이프스타일"
+        case "STATIONERY_ART": "문구·아트"
+        case "TRAVEL_PRACTICAL": "여행·실용템"
+        case "TECH_GADGET": "테크·전자제품"
+        default:
+            serverCode // 혹은 ""
         }
     }
 }

@@ -30,10 +30,10 @@ enum SettingItemType: Hashable {
 extension SettingItemType {
     var url: String {
         switch self {
-        case .termsOfService: ""
-        case .privacyPolicy: ""
-        case .locationTerms: ""
-        case .marketingConsentInfo: ""
+        case .termsOfService: "https://www.souzip.com/terms"
+        case .privacyPolicy: "https://www.souzip.com/privacy"
+        case .locationTerms: "https://www.souzip.com/location-terms"
+        case .marketingConsentInfo: "https://www.souzip.com/marketing-terms"
         case .feedback:
             "https://docs.google.com/forms/d/e/1FAIpQLSe9uOrj9bjyrqtMWKCWcXduYgmrmTqKyGt94YwPKiAMvjqj2w/viewform"
         default: ""

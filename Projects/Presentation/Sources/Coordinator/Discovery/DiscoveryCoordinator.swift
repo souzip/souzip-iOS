@@ -41,6 +41,7 @@ private extension DiscoveryCoordinator {
 
     func showRecommend() {
         let scene = factory.makeRecommendScene()
+        scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         nav.pushViewController(scene.vc, animated: true)
     }

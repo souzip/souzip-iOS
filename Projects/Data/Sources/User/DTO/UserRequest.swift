@@ -4,7 +4,7 @@ public struct SouvenirListRequest {
     public let page: Int
     public let size: Int
 
-    public init(page: Int = 1, size: Int = 12) {
+    public init(page: Int = 0, size: Int = 12) {
         self.page = page
         self.size = size
     }

@@ -78,7 +78,9 @@ final class TermsViewModel: BaseViewModel<
     }
 
     private func handleTermDetail(_ type: TermsType) {
-        guard let _ = type.detailURL else { return }
+        guard let url = type.detailURL else { return }
+
+        emit(.showSFView(url))
     }
 
     private func handleAgreeButton() {

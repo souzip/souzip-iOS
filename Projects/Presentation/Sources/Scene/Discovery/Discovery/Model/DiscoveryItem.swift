@@ -7,6 +7,7 @@ enum DiscoveryItem: Hashable {
     case moreButton(String)
     case statCountryChip([StatCountryChipItem])
 
+    case empty(id: String, text: String)
     case spacer
 }
 

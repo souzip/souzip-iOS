@@ -25,19 +25,15 @@ public enum UserDTOMapper {
 
     // MARK: - 기념품 목록 매핑 (API 응답)
 
-    public static func toDomain(
-        _ dto: UserSouvenirsResponse
-    ) -> [SouvenirThumbnail] {
-        dto.souvenirs.map { toDomain($0) }
+    public static func toDomain(_ dto: UserSouvenirsResponse) -> [SouvenirThumbnail] {
+        dto.content.map { toDomain($0) }
     }
 
-    public static func toDomain(
-        _ dto: SouvenirItemResponse
-    ) -> SouvenirThumbnail {
+    public static func toDomain(_ dto: SouvenirItemResponse) -> SouvenirThumbnail {
         SouvenirThumbnail(
             id: dto.id,
             thumbnailUrl: dto.thumbnailUrl,
-            country: dto.country,
+            country: dto.countryCode,
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt
         )

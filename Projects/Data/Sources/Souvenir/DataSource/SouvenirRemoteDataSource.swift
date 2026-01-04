@@ -29,7 +29,7 @@ public final class DefaultSouvenirRemoteDataSource: SouvenirRemoteDataSource {
 
     public func getSouvenir(id: Int) async throws -> SouvenirDetailResponse {
         let endpoint = SouvenirEndpoint.getSouvenir(id: id)
-        let response: APIResponse<SouvenirDetailResponse> = try await plain.request(endpoint)
+        let response: APIResponse<SouvenirDetailResponse> = try await authed.request(endpoint)
 
         guard let data = response.data else {
             throw NetworkError.noData
