@@ -100,7 +100,7 @@ final class PriceFieldView: UIView {
         if !price.isEmpty { setUnknownPrice(false) }
 
         isProgrammaticTextUpdate = true
-        priceTextField.setText(price.comma)
+        priceTextField.setText(price)
         isProgrammaticTextUpdate = false
 
         if currencySymbol == "₩" {

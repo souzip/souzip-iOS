@@ -368,7 +368,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
            let symbol = detail.currencySymbol,
            let krwPrice = detail.krwPrice {
             priceContainerStack.isHidden = false
-            localPriceLabel.text = "\(symbol) \(localPrice)"
+            localPriceLabel.text = "\(symbol) \(formatKRW(localPrice))"
             krwPriceLabel.text = "\(formatKRW(krwPrice))원"
         } else {
             priceContainerStack.isHidden = true
