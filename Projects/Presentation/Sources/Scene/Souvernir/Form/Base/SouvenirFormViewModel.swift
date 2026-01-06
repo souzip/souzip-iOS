@@ -155,6 +155,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             mutate {
                 $0.address = address.formattedAddress
                 $0.currencySymbol = country.currency.symbol
+                $0.countryCode = address.countryCode
             }
         } catch {
             emit(.showError(error.localizedDescription))
@@ -216,7 +217,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             coordinate: coordinate,
             category: category,
             purpose: currentState.purpose,
-            countryCode: "KR"
+            countryCode: currentState.countryCode
         )
     }
 

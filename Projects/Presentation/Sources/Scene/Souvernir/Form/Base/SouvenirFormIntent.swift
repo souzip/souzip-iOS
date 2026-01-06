@@ -44,6 +44,7 @@ struct SouvenirFormState {
     var coordinate: Coordinate?
     var address: String = ""
     var locationDetail: String = ""
+    var countryCode: String = ""
 
     // 가격
     var localPrice: String = ""
