@@ -62,6 +62,11 @@ public final class ReportActionSheetViewController: UIViewController {
         presentAnimation()
     }
 
+    override public func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        updateContainerHeight()
+    }
+
     // MARK: - Setup
 
     private func setup() {
@@ -72,12 +77,14 @@ public final class ReportActionSheetViewController: UIViewController {
 
         dimmingView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
+        let totalHeight = Metric.sheetHeight + view.safeAreaInsets.bottom
+
         containerView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(Metric.sheetHeight)
+            make.height.equalTo(totalHeight)
             containerBottomConstraint = make.bottom
                 .equalToSuperview()
-                .offset(Metric.sheetHeight)
+                .offset(totalHeight)
                 .constraint
         }
 
@@ -94,7 +101,6 @@ public final class ReportActionSheetViewController: UIViewController {
             make.top.equalTo(reportButton.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(48)
-            make.bottom.equalToSuperview().inset(24 + view.safeAreaInsets.bottom)
         }
     }
 
@@ -106,6 +112,16 @@ public final class ReportActionSheetViewController: UIViewController {
         closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
     }
 
+    private func updateContainerHeight() {
+        let totalHeight = Metric.sheetHeight + view.safeAreaInsets.bottom
+
+        containerView.snp.updateConstraints { make in
+            make.height.equalTo(totalHeight)
+        }
+
+        containerBottomConstraint?.update(offset: totalHeight)
+    }
+
     // MARK: - Actions
 
     @objc private func didTapDimming() {
@@ -115,14 +131,17 @@ public final class ReportActionSheetViewController: UIViewController {
     }
 
     @objc private func didTapReport() {
+        let urlString = "https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform"
+        guard let url = URL(string: urlString),
+              let presentingVC = presentingViewController
+        else { return }
+
         dismissAnimation { [weak self] in
-            let urlString = "https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform"
-
-            guard let url = URL(string: urlString) else { return }
-
-            let vc = SFSafariViewController(url: url)
-            vc.modalPresentationStyle = .pageSheet
-            self?.present(vc, animated: true)
+            self?.dismiss(animated: false) {
+                let vc = SFSafariViewController(url: url)
+                vc.modalPresentationStyle = .pageSheet
+                presentingVC.present(vc, animated: true)
+            }
         }
     }
 
@@ -144,7 +163,8 @@ public final class ReportActionSheetViewController: UIViewController {
     }
 
     private func dismissAnimation(completion: @escaping () -> Void) {
-        containerBottomConstraint?.update(offset: Metric.sheetHeight + 12)
+        let totalHeight = Metric.sheetHeight + view.safeAreaInsets.bottom
+        containerBottomConstraint?.update(offset: totalHeight + 12)
 
         UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
             self.dimmingView.alpha = 0

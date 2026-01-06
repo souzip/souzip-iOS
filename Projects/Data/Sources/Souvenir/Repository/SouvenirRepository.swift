@@ -72,6 +72,7 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
     public func deleteSouvenir(id: Int) async throws {
         do {
             try await souvenirRemote.deleteSouvenir(id: id)
+            needsMyPageRefresh = true
         } catch {
             throw mapToDomainError(error)
         }

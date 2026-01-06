@@ -207,7 +207,7 @@ private extension SouvenirCarouselCell {
             infoStackView,
             localPriceLabel,
             krwPriceLabel,
-            infoButton,
+//            infoButton,
             addressLabel,
         ].forEach { containerView.addSubview($0) }
 
@@ -252,11 +252,11 @@ private extension SouvenirCarouselCell {
             make.centerY.equalTo(localPriceLabel)
         }
 
-        infoButton.snp.makeConstraints { make in
-            make.leading.equalTo(krwPriceLabel.snp.trailing).offset(15)
-            make.centerY.equalTo(localPriceLabel)
-            make.size.equalTo(18)
-        }
+//        infoButton.snp.makeConstraints { make in
+//            make.leading.equalTo(krwPriceLabel.snp.trailing).offset(15)
+//            make.centerY.equalTo(localPriceLabel)
+//            make.size.equalTo(18)
+//        }
 
         addressLabel.snp.makeConstraints { make in
             make.top.equalTo(localPriceLabel.snp.bottom).offset(8)

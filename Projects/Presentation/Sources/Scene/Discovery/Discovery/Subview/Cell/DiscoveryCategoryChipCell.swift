@@ -1,4 +1,5 @@
 import DesignSystem
+import Kingfisher
 import SnapKit
 import UIKit
 
@@ -40,6 +41,7 @@ final class DiscoveryCategoryChipCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        iconImageView.kf.cancelDownloadTask()
         iconImageView.image = nil
     }
 

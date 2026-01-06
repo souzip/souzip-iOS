@@ -41,6 +41,12 @@ final class CountryChipCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        flagImageView.kf.cancelDownloadTask()
+        flagImageView.image = nil
+    }
+
     // MARK: - Public
 
     func render(item: CountryChipItem) {
@@ -52,12 +58,6 @@ final class CountryChipCell: UICollectionViewCell {
         } else {
             applyDeselectedStyle()
         }
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        flagImageView.image = nil
-        flagImageView.kf.cancelDownloadTask()
     }
 
     // MARK: - Private

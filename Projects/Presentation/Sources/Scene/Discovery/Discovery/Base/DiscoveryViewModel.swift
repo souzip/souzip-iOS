@@ -50,6 +50,8 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private func loadInitialData() async {
         do {
+            emit(.loading(true))
+
             let topCountryCodes = ["JP", "HK", "TW"]
 
             // 0) 기본 카테고리 + 첫번째 선택
@@ -101,6 +103,8 @@ final class DiscoveryViewModel: BaseViewModel<
                 statsTask
             )
 
+            emit(.loading(false))
+
             mutate { state in
                 state.countries = countries.enumerated().map { idx, chip in
                     CountryChipItem(
@@ -118,6 +122,7 @@ final class DiscoveryViewModel: BaseViewModel<
                 state.statCountry = stats
             }
         } catch {
+            emit(.loading(false))
             emit(.showErrorAlert(error.localizedDescription))
         }
     }

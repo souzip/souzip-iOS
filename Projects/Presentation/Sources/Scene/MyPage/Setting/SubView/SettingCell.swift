@@ -89,7 +89,7 @@ final class SettingCell: UITableViewCell {
     }
 
     private func applyCorner(position: Position) {
-        cardView.layer.cornerRadius = 16
+        cardView.layer.cornerRadius = 8
 
         switch position {
         case .single:

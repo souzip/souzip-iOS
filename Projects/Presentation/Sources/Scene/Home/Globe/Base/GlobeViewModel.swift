@@ -48,7 +48,7 @@ final class GlobeViewModel: BaseViewModel<
             handleBackButtonTap()
 
         case .tapClose:
-            handleBackButtonTap()
+            handleCloseButtonTap()
 
         case .taplocationButton:
             handleLocationButtonTap()
@@ -227,6 +227,7 @@ private extension GlobeViewModel {
 
         switch entrySource {
         case .search:
+            mutate { $0.mapEntrySource = .other }
             navigate(
                 to: .souvenirRoute(
                     .search { [weak self] item in
@@ -244,6 +245,18 @@ private extension GlobeViewModel {
 
             moveCameraToCoordinate(lastPosition, mode: .globe)
         }
+    }
+
+    func handleCloseButtonTap() {
+        let lastPosition = state.value.lastGlobeCenter
+
+        mutate {
+            $0.mapMode = .globe
+            $0.sheetViewMode = .hide
+            $0.shouldShowSearchInLocationButton = false
+        }
+
+        moveCameraToCoordinate(lastPosition, mode: .globe)
     }
 }
 

@@ -11,7 +11,7 @@ extension UIImageView {
             options: [
                 .processor(DownsamplingImageProcessor(size: bounds.size)),
                 .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage, // 여러 크기로 재사용
+                .cacheSerializer(FormatIndicatedCacheSerializer.png),
                 .transition(.fade(0.2)),
             ]
         )
@@ -28,22 +28,22 @@ extension UIImageView {
                     DownsamplingImageProcessor(size: bounds.size)
                         |> RoundCornerImageProcessor(cornerRadius: bounds.width / 2)
                 ),
-                .cacheOriginalImage,
-                .diskCacheExpiration(.days(30)), // 오래 캐싱
+                .diskCacheExpiration(.days(30)),
                 .transition(.fade(0.2)),
             ]
         )
     }
 
-    // 상세 이미지 (큰 용량, 자주 안 봄)
+    // 상세 이미지
     func setDetailImage(_ urlString: String?) {
         guard let url = urlString, let imageURL = URL(string: url) else { return }
 
         kf.setImage(
             with: imageURL,
             options: [
-                .cacheOriginalImage,
-                .diskCacheExpiration(.days(3)), // 짧게 캐싱
+                .processor(DownsamplingImageProcessor(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))),
+                .scaleFactor(UIScreen.main.scale),
+                .diskCacheExpiration(.days(3)),
                 .transition(.fade(0.2)),
             ]
         )
@@ -57,8 +57,8 @@ extension UIImageView {
             with: imageURL,
             options: [
                 .processor(DownsamplingImageProcessor(size: bounds.size)),
-                .memoryCacheExpiration(.seconds(300)), // 메모리만 5분
-                .diskCacheExpiration(.seconds(3600)), // 디스크 1시간
+                .memoryCacheExpiration(.seconds(300)),
+                .diskCacheExpiration(.seconds(3600)),
                 .transition(.fade(0.2)),
             ]
         )
@@ -71,8 +71,8 @@ extension UIImageView {
         kf.setImage(
             with: imageURL,
             options: [
-                .cacheOriginalImage,
-                .diskCacheExpiration(.never), // 영구 보관
+                .processor(DownsamplingImageProcessor(size: bounds.size)),
+                .diskCacheExpiration(.never),
                 .transition(.fade(0.2)),
             ]
         )

@@ -53,11 +53,6 @@ final class SearchCountryViewModel: BaseViewModel<
             state.isEmpty = text.isEmpty ? true : false
         }
 
-//        if text.isEmpty {
-//            emit(.loading(false))
-//        } else {
-//            emit(.loading(true))
-//        }
     }
 
     private func handleSearchTextChangedAPI(_ text: String) {
