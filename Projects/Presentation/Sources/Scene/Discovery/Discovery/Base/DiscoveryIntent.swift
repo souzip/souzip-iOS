@@ -101,5 +101,6 @@ struct DiscoveryState {
 }
 
 enum DiscoveryEvent {
+    case loading(Bool)
     case showErrorAlert(_ message: String)
 }

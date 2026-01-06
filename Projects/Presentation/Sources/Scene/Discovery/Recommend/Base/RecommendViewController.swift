@@ -15,6 +15,7 @@ final class RecommendViewController: BaseViewController<
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLoadingIndicator()
         viewModel.action.accept(.viewDidLoad)
     }
 

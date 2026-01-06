@@ -69,7 +69,6 @@ private extension RecommendState {
                 items: [.empty(id: "preferred-empty", text: "비어있습니다")]
             ))
         } else {
-            let preferredNeedsMore = preferredSouvenirs.count > 4
             let preferredVisible = isPreferredExpanded
                 ? preferredSouvenirs
                 : Array(preferredSouvenirs.prefix(4))
