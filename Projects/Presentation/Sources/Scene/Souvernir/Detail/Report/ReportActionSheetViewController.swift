@@ -131,14 +131,17 @@ public final class ReportActionSheetViewController: UIViewController {
     }
 
     @objc private func didTapReport() {
+        let urlString = "https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform"
+        guard let url = URL(string: urlString),
+              let presentingVC = presentingViewController
+        else { return }
+
         dismissAnimation { [weak self] in
-            let urlString = "https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform"
-
-            guard let url = URL(string: urlString) else { return }
-
-            let vc = SFSafariViewController(url: url)
-            vc.modalPresentationStyle = .pageSheet
-            self?.present(vc, animated: true)
+            self?.dismiss(animated: false) {
+                let vc = SFSafariViewController(url: url)
+                vc.modalPresentationStyle = .pageSheet
+                presentingVC.present(vc, animated: true)
+            }
         }
     }
 
