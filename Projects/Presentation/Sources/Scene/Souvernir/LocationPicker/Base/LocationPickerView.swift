@@ -43,6 +43,7 @@ final class LocationPickerView: BaseView<LocationPickerAction> {
     override func setAttributes() {
         backgroundColor = .dsBackground
         setupKeyboardObservers()
+        hideKeyboardWhenTappedAround()
     }
 
     override func setHierarchy() {
@@ -107,18 +108,46 @@ final class LocationPickerView: BaseView<LocationPickerAction> {
                 let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect) ?? .zero
                 let keyboardHeight = max(0, frame.height - safeAreaInsets.bottom)
 
-                detailBottomConstraint?.update(offset: -12.5 - keyboardHeight)
+                // 애니메이션 정보 추출
+                let duration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double) ?? 0.25
+                let curve = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt) ?? 0
 
-                mapView.updateCameraPadding(bottom: keyboardHeight)
+                let completeButtonBottom: CGFloat = 20 + 50
+
+                let offset = -(keyboardHeight - completeButtonBottom + 12.5)
+
+                detailBottomConstraint?.update(offset: offset)
+
+                UIView.animate(
+                    withDuration: duration,
+                    delay: 0,
+                    options: UIView.AnimationOptions(rawValue: curve << 16),
+                    animations: {
+                        self.layoutIfNeeded()
+                    }
+                )
             }
             .disposed(by: disposeBag)
 
         NotificationCenter.default.rx
             .notification(UIResponder.keyboardWillHideNotification)
-            .bind { [weak self] _ in
+            .compactMap(\.userInfo)
+            .bind { [weak self] userInfo in
                 guard let self else { return }
+
+                let duration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double) ?? 0.25
+                let curve = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt) ?? 0
+
                 detailBottomConstraint?.update(offset: -12.5)
-                mapView.updateCameraPadding(bottom: 0)
+
+                UIView.animate(
+                    withDuration: duration,
+                    delay: 0,
+                    options: UIView.AnimationOptions(rawValue: curve << 16),
+                    animations: {
+                        self.layoutIfNeeded()
+                    }
+                )
             }
             .disposed(by: disposeBag)
     }
