@@ -1,4 +1,4 @@
 [tools]
 tuist = "4.109.2"
 swiftlint = "0.62.2"
-
+swiftformat = "0.55.3"

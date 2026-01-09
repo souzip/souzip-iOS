@@ -8,8 +8,10 @@ public enum ModuleDependencies {
                 .module(.presentation),
                 .module(.domain),
                 .module(.data),
+                .module(.networking),
                 .module(.logger),
-                .module(.designSystem)
+                .module(.keychain),
+                .module(.utils),
             ]
             
         case .presentation:
@@ -18,10 +20,13 @@ public enum ModuleDependencies {
                 .module(.logger),
                 .module(.designSystem),
                 .module(.utils),
+
                 .external(.rxSwift),
+                .external(.rxRelay),
                 .external(.rxCocoa),
-                .external(.snapKit),
-                .external(.kingfisher)
+                .external(.kingfisher),
+                .external(.swiftSVG),
+                .external(.mapboxMaps)
             ]
             
         case .domain:
@@ -35,20 +40,40 @@ public enum ModuleDependencies {
                 .module(.domain),
                 .module(.networking),
                 .module(.logger),
-                .module(.utils)
+                .module(.keychain),
+                .module(.userDefaults),
+                .module(.utils),
+
+                .external(.kakaoSDKCommon),
+                .external(.kakaoSDKAuth),
+                .external(.kakaoSDKUser),
             ]
             
         case .networking:
             return [
                 .module(.logger)
             ]
-            
+
         case .logger:
             return []
-            
+
+        case .keychain:
+            return [
+                .module(.logger),
+                .module(.utils)
+            ]
+
+        case .userDefaults:
+            return [
+                .module(.logger),
+                .module(.utils)
+            ]
+
         case .designSystem:
             return [
-                .module(.utils)
+                .module(.logger),
+                .module(.utils),
+                .external(.snapKit)
             ]
             
         case .utils:

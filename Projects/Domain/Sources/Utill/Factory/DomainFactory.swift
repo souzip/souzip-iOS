@@ -1,0 +1,16 @@
+public protocol DomainFactory:
+    AnyObject,
+    DomainAuthFactory,
+    DomainOnboardingFactory,
+    DomainCountryFactory,
+    DomainSouvenirFactory,
+    DomainDiscoveryFactory,
+    DomainUserFactory {}
+
+public final class DefaultDomainFactory: DomainFactory {
+    let factory: DataFactory
+
+    public init(factory: DataFactory) {
+        self.factory = factory
+    }
+}

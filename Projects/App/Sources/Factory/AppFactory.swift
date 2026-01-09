@@ -1,0 +1,51 @@
+import Data
+import Domain
+import Keychain
+import Networking
+import UserDefaults
+import Utils
+
+final class AppFactory {
+    let keychainFactory: KeychainFactory
+    let networkFactory: NetworkFactory
+    let dataFactory: DataFactory
+    let domainFactory: DomainFactory
+
+    init(config: AppConfiguration) {
+        // keyChain
+        let keychainFactory = DefaultKeychainFactory(bundleID: AppInfo.bundleID)
+
+        // UserDefaults
+        let userDefualtsFactory = DefaultsUDFactory()
+
+        // Network
+        let networkConfig = NetworkConfiguration(
+            baseURL: config.apiBaseURL,
+            timeout: 30
+        )
+        let networkFactory = DefaultNetworkFactory(config: networkConfig)
+
+        // Data
+        let oauthConfig = OAuthConfiguration(
+            kakaoAppKey: config.kakaoAppKey,
+            googleClientID: config.googleClientID
+        )
+
+        let oauthServiceFactory = DefaultOAuthServiceFactory(configuration: oauthConfig)
+
+        let dataFactory = DefaultDataFactory(
+            networkFactory: networkFactory,
+            oauthServiceFactory: oauthServiceFactory,
+            keychainFactory: keychainFactory,
+            userDefaultsFactory: userDefualtsFactory
+        )
+
+        // Domain
+        let domainFactory = DefaultDomainFactory(factory: dataFactory)
+
+        self.keychainFactory = keychainFactory
+        self.networkFactory = networkFactory
+        self.dataFactory = dataFactory
+        self.domainFactory = domainFactory
+    }
+}

@@ -41,7 +41,7 @@ public extension Project {
             organizationName: Environment.organizationName,
             settings: .settings(
                 base: DefaultSettings.base,
-                configurations: DefaultSettings.configurations
+                configurations: DefaultSettings.configurations()
             ),
             targets: targets
         )
