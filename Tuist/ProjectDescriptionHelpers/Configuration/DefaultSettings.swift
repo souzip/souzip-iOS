@@ -9,6 +9,10 @@ public enum DefaultSettings {
         "SWIFT_VERSION": .string(Environment.swiftVersion),
         "IPHONEOS_DEPLOYMENT_TARGET": "16.0",
 
+        "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES": "YES",
+        "EMBEDDED_CONTENT_CONTAINS_SWIFT": "YES",
+        "OTHER_LDFLAGS": "$(inherited) -ObjC",
+
         // Versioning
         "MARKETING_VERSION": .string(Environment.appVersion),
         "CURRENT_PROJECT_VERSION": .string(Environment.appBuildVersion),

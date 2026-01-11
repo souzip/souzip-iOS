@@ -26,9 +26,9 @@ public enum ExternalLibrary: String, CaseIterable {
 
     case mapboxMaps = "MapboxMaps"
 
-//    // MARK: - Google Sign In
-//
-//    case googleSignIn = "GoogleSignIn"
+    // MARK: - Google Sign In
+
+    case googleSignIn = "GoogleSignIn"
 }
 
 public extension ExternalLibrary {
