@@ -142,8 +142,8 @@ final class LoginView: BaseView<LoginAction> {
 
         lbStackView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(116)
-            make.height.equalTo(116)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(102)
+            make.height.equalTo(182)
         }
     }
 
@@ -181,8 +181,6 @@ final class LoginView: BaseView<LoginAction> {
 
     private func makeLoginButtons() {
         for provider in AuthProvider.allCases {
-            guard provider != .google else { continue }
-
             let button = makeLoginButton(provider)
 
             if provider == .apple {
