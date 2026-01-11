@@ -81,7 +81,7 @@ final class PhotoCell: UICollectionViewCell {
         setMain(isMain)
         setDeleteVisible(showDelete)
 
-        imageView.setFeedImage(file.url)
+        imageView.setMyFeedImage(file.url)
     }
 }
 

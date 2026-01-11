@@ -430,11 +430,14 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     // MARK: - Private
 
     private func setupDataSource() {
-        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewCell, String> { cell, _, imageUrl in
+        let cellRegistration = UICollectionView.CellRegistration<
+            UICollectionViewCell,
+            String
+        > { cell, _, imageUrl in
             let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
-            imageView.kf.setImage(with: URL(string: imageUrl))
+            imageView.setDetailImage(imageUrl)
 
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             cell.contentView.addSubview(imageView)
