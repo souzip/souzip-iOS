@@ -24,7 +24,6 @@ public final class GoogleOAuthService: OAuthService {
             )
 
             return result.user.accessToken.tokenString
-
         } catch is CancellationError {
             throw OAuthServiceError.cancelled
         } catch {
