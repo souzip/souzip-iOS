@@ -25,6 +25,10 @@ struct SouvenirCardItem: Hashable {
     let imageURL: String
     let title: String
     let category: String
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 /// 통계 국가 칩 아이템
