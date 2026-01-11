@@ -36,7 +36,11 @@ struct DiscoveryState {
         if !countries.isEmpty {
             let items: [DiscoveryItem] = countrySouvenirs.isEmpty
                 ? [.empty(id: "top10Cards-empty", text: "비어있습니다")]
-                : countrySouvenirs.map { .souvenirCard($0) }
+                : countrySouvenirs.map {
+                    var item = $0
+                    item.section = "discovery-country"
+                    return .souvenirCard(item)
+                }
 
             models.append(.init(
                 section: .top10Cards,
@@ -66,7 +70,11 @@ struct DiscoveryState {
 
                 models.append(.init(
                     section: .categoryCards,
-                    items: visible.map { .souvenirCard($0) }
+                    items: visible.map {
+                        var item = $0
+                        item.section = "discovery-category"
+                        return .souvenirCard(item)
+                    }
                 ))
 
                 if !isCategoryExpanded, categorySouvenirs.count > 4 {

@@ -25,6 +25,17 @@ struct SouvenirCardItem: Hashable {
     let imageURL: String
     let title: String
     let category: String
+    var section: String?
+
+    // id와 section으로 유니크성 판단
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(section)
+    }
+
+    public static func == (lhs: SouvenirCardItem, rhs: SouvenirCardItem) -> Bool {
+        lhs.id == rhs.id && lhs.section == rhs.section
+    }
 }
 
 /// 통계 국가 칩 아이템

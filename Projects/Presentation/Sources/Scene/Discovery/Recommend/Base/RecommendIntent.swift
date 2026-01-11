@@ -75,7 +75,11 @@ private extension RecommendState {
 
             models.append(.init(
                 section: .preferredCategoryCards,
-                items: preferredVisible.map { .souvenirCard($0) }
+                items: preferredVisible.map {
+                    var item = $0
+                    item.section = "recommend-preferred"
+                    return .souvenirCard(item)
+                }
             ))
 
             // 3) 더보기(4개 초과일 때만)
@@ -106,7 +110,11 @@ private extension RecommendState {
 
             models.append(.init(
                 section: .uploadBasedCards(country: country),
-                items: uploadVisible.map { .souvenirCard($0) }
+                items: uploadVisible.map {
+                    var item = $0
+                    item.section = "recommend-upload"
+                    return .souvenirCard(item)
+                }
             ))
 
             if uploadNeedsMore {

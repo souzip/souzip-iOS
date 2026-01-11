@@ -1,80 +1,103 @@
 import Kingfisher
+import Logger
 import UIKit
 
 extension UIImageView {
     // 피드/목록 이미지
     func setFeedImage(_ urlString: String?) {
-        guard let url = urlString, let imageURL = URL(string: url) else { return }
+        guard let url = urlString, let imageURL = URL(string: url) else {
+            return
+        }
+
+        let cacheKey = extractCacheKey(from: imageURL)
+        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 400, height: 400)
+
+        let source = Source.network(KF.ImageResource(
+            downloadURL: imageURL,
+            cacheKey: cacheKey
+        ))
 
         kf.setImage(
-            with: imageURL,
+            with: source,
             options: [
-                .processor(DownsamplingImageProcessor(size: bounds.size)),
+                .processor(DownsamplingImageProcessor(size: targetSize)),
                 .scaleFactor(UIScreen.main.scale),
-                .cacheSerializer(FormatIndicatedCacheSerializer.png),
+                .diskCacheExpiration(.days(7)),
                 .transition(.fade(0.2)),
+                .cacheOriginalImage,
             ]
         )
     }
 
-    // 프로필 이미지
-    func setProfileImage(_ urlString: String?) {
-        guard let url = urlString, let imageURL = URL(string: url) else { return }
+    func setMyFeedImage(_ urlString: String?) {
+        guard let url = urlString, let imageURL = URL(string: url) else {
+            return
+        }
+
+        let cacheKey = extractCacheKey(from: imageURL)
+        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 400, height: 400)
+
+        let source = Source.network(KF.ImageResource(
+            downloadURL: imageURL,
+            cacheKey: cacheKey
+        ))
 
         kf.setImage(
-            with: imageURL,
+            with: source,
             options: [
-                .processor(
-                    DownsamplingImageProcessor(size: bounds.size)
-                        |> RoundCornerImageProcessor(cornerRadius: bounds.width / 2)
-                ),
-                .diskCacheExpiration(.days(30)),
+                .processor(DownsamplingImageProcessor(size: targetSize)),
+                .scaleFactor(UIScreen.main.scale),
                 .transition(.fade(0.2)),
+                .diskCacheExpiration(.days(30)),
+                .cacheOriginalImage,
             ]
         )
     }
 
     // 상세 이미지
     func setDetailImage(_ urlString: String?) {
-        guard let url = urlString, let imageURL = URL(string: url) else { return }
+        guard let url = urlString, let imageURL = URL(string: url) else {
+            return
+        }
+
+        let cacheKey = extractCacheKey(from: imageURL)
+        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 800, height: 800)
+
+        let source = Source.network(KF.ImageResource(
+            downloadURL: imageURL,
+            cacheKey: cacheKey
+        ))
 
         kf.setImage(
-            with: imageURL,
+            with: source,
             options: [
-                .processor(DownsamplingImageProcessor(size: CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))),
+                .processor(DownsamplingImageProcessor(size: targetSize)),
                 .scaleFactor(UIScreen.main.scale),
                 .diskCacheExpiration(.days(3)),
                 .transition(.fade(0.2)),
-            ]
-        )
-    }
-
-    // 임시/일회성 이미지
-    func setTemporaryImage(_ urlString: String?) {
-        guard let url = urlString, let imageURL = URL(string: url) else { return }
-
-        kf.setImage(
-            with: imageURL,
-            options: [
-                .processor(DownsamplingImageProcessor(size: bounds.size)),
-                .memoryCacheExpiration(.seconds(300)),
-                .diskCacheExpiration(.seconds(3600)),
-                .transition(.fade(0.2)),
+                .cacheOriginalImage,
             ]
         )
     }
 
     // 정적 에셋
     func setStaticAsset(_ urlString: String?) {
-        guard let url = urlString, let imageURL = URL(string: url) else { return }
+        guard let url = urlString, let imageURL = URL(string: url) else {
+            return
+        }
 
         kf.setImage(
             with: imageURL,
             options: [
-                .processor(DownsamplingImageProcessor(size: bounds.size)),
                 .diskCacheExpiration(.never),
                 .transition(.fade(0.2)),
             ]
         )
+    }
+
+    // MARK: - Private Helpers
+
+    private func extractCacheKey(from url: URL) -> String {
+        url.absoluteString.components(separatedBy: "?").first ?? url.absoluteString
     }
 }

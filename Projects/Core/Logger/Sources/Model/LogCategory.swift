@@ -4,5 +4,6 @@ public enum LogCategory: String {
     case network = "Network"
     case database = "Database"
     case auth = "Auth"
+    case cache = "Cache"
     case general = "General"
 }
