@@ -246,13 +246,16 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleCreate(input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let imageData = try convertPhotosToData(state.value.localPhotos)
                 _ = try await souvenirRepo.createSouvenir(
                     input: input,
                     images: imageData
                 )
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
@@ -261,10 +264,13 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleUpdate(id: Int, input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
                 onResult?(souvenirDetail)
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
