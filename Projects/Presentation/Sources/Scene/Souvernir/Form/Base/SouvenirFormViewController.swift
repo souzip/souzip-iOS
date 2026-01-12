@@ -8,11 +8,21 @@ final class SouvenirFormViewController: BaseViewController<
     SouvenirFormViewModel,
     SouvenirFormView
 > {
+    // MARK: - Indicator
+
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.style = .large
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
+
     // MARK: - Life Cytle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupKeyboardHandling()
+        setupLoadingIndicator()
     }
 
     // MARK: - Bind
@@ -70,6 +80,9 @@ final class SouvenirFormViewController: BaseViewController<
 
     override func handleEvent(_ event: Event) {
         switch event {
+        case let .loading(isLoading):
+            handleLoading(isLoading)
+
         case .showImagePicker:
             presentImagePicker()
 
@@ -217,8 +230,28 @@ extension SouvenirFormViewController: PHPickerViewControllerDelegate {
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir.appendingPathComponent("\(UUID().uuidString).\(ext)")
     }
-}
 
-enum PhotoCacheError: Error {
-    case cachesDirectoryNotFound
+    enum PhotoCacheError: Error {
+        case cachesDirectoryNotFound
+    }
+
+    // MARK: - Setup
+
+    private func setupLoadingIndicator() {
+        view.addSubview(loadingIndicator)
+
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
+
+    private func handleLoading(_ isLoading: Bool) {
+        if isLoading {
+            loadingIndicator.startAnimating()
+            view.isUserInteractionEnabled = false
+        } else {
+            loadingIndicator.stopAnimating()
+            view.isUserInteractionEnabled = true
+        }
+    }
 }

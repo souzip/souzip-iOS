@@ -110,6 +110,7 @@ struct LocalPhoto: Hashable {
 }
 
 enum SouvenirFormEvent {
+    case loading(Bool)
     case showImagePicker
     case showError(String)
 }
