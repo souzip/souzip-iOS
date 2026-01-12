@@ -7,7 +7,7 @@ import UIKit
 final class SouvenirSheetView: UIView {
     // MARK: - Types
 
-    typealias Level = BottomSheetLevel
+    typealias Level = SheetLevel
 
     // MARK: - UI
 

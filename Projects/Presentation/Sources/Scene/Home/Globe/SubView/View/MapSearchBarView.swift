@@ -5,38 +5,11 @@ import UIKit
 final class MapSearchBarView: UIView {
     // MARK: - Types
 
-    struct Configuration {
-        let showBackButton: Bool
-        let text: String
-        let textColor: UIColor
-        let showCloseButton: Bool
-        let showSearchIcon: Bool
-
-        static let globe = Configuration(
-            showBackButton: false,
-            text: "✈️  어디로 떠나시나요?",
-            textColor: .dsGreyWhite,
-            showCloseButton: false,
-            showSearchIcon: true
-        )
-
-        static let globeBack = Configuration(
-            showBackButton: true,
-            text: "✈️  어디로 떠나시나요?",
-            textColor: .dsGreyWhite,
-            showCloseButton: false,
-            showSearchIcon: false
-        )
-
-        static func map(locationName: String) -> Configuration {
-            Configuration(
-                showBackButton: true,
-                text: locationName,
-                textColor: .dsGrey80,
-                showCloseButton: true,
-                showSearchIcon: false
-            )
-        }
+    enum Mode {
+        case globe // Globe Scene
+        case mapEmpty // Map Exploring (검색어 없음)
+        case mapWithQuery(String) // Map with Sheet (검색어 있음)
+        case carousel // Carousel Scene
     }
 
     // MARK: - UI
@@ -115,21 +88,69 @@ final class MapSearchBarView: UIView {
 
     // MARK: - Public
 
-    func render(with config: Configuration) {
-        backButton.isHidden = !config.showBackButton
-        titleLabel.text = config.text
-        titleLabel.textColor = config.textColor
-        closeButton.isHidden = !config.showCloseButton
-        searchIconImageView.isHidden = !config.showSearchIcon
+    func render(mode: Mode) {
+        switch mode {
+        case .globe:
+            renderGlobeMode()
 
-        updateConstraints(config: config)
+        case .mapEmpty:
+            renderMapEmptyMode()
+
+        case let .mapWithQuery(query):
+            renderMapWithQueryMode(query: query)
+
+        case .carousel:
+            renderCarouselMode()
+        }
     }
 
-    // MARK: - Private
+    // MARK: - Private Rendering
 
-    private func updateConstraints(config: Configuration) {
+    private func renderGlobeMode() {
+        backButton.isHidden = true
+        titleLabel.text = "✈️  어디로 떠나시나요?"
+        titleLabel.textColor = .dsGreyWhite
+        closeButton.isHidden = true
+        searchIconImageView.isHidden = false
+
+        updateConstraints(showBack: false, showClose: false, showSearch: true)
+    }
+
+    private func renderMapEmptyMode() {
+        backButton.isHidden = false
+        titleLabel.text = "✈️  어디로 떠나시나요?"
+        titleLabel.textColor = .dsGreyWhite
+        closeButton.isHidden = true
+        searchIconImageView.isHidden = true
+
+        updateConstraints(showBack: true, showClose: false, showSearch: false)
+    }
+
+    private func renderMapWithQueryMode(query: String) {
+        backButton.isHidden = false
+        titleLabel.text = query
+        titleLabel.textColor = .dsGrey80
+        closeButton.isHidden = false
+        searchIconImageView.isHidden = true
+
+        updateConstraints(showBack: true, showClose: true, showSearch: false)
+    }
+
+    private func renderCarouselMode() {
+        backButton.isHidden = false
+        titleLabel.text = "✈️  어디로 떠나시나요?"
+        titleLabel.textColor = .dsGreyWhite
+        closeButton.isHidden = true
+        searchIconImageView.isHidden = true
+
+        updateConstraints(showBack: true, showClose: false, showSearch: false)
+    }
+
+    // MARK: - Private Helpers
+
+    private func updateConstraints(showBack: Bool, showClose: Bool, showSearch: Bool) {
         titleLabel.snp.remakeConstraints {
-            if config.showBackButton {
+            if showBack {
                 $0.leading.equalTo(backButton.snp.trailing).offset(8)
             } else {
                 $0.leading.equalToSuperview().inset(12)
@@ -137,9 +158,9 @@ final class MapSearchBarView: UIView {
 
             $0.centerY.equalToSuperview()
 
-            if config.showCloseButton {
+            if showClose {
                 $0.trailing.lessThanOrEqualTo(closeButton.snp.leading).offset(-8)
-            } else if config.showSearchIcon {
+            } else if showSearch {
                 $0.trailing.lessThanOrEqualTo(searchIconImageView.snp.leading).offset(-8)
             } else {
                 $0.trailing.lessThanOrEqualToSuperview().inset(12)

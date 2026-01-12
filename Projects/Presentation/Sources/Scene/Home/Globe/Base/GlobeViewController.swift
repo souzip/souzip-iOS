@@ -1,4 +1,3 @@
-import CoreLocation
 import UIKit
 
 final class GlobeViewController: BaseViewController<
@@ -8,54 +7,39 @@ final class GlobeViewController: BaseViewController<
     // MARK: - Bind State
 
     override func bindState() {
-        observe(\.mapMode)
-            .distinct()
-            .onNext(contentView.renderMapMode)
-
+        // CountryBadges만 State에서 observe
         observe(\.countryBadges)
             .distinct()
             .onNext(contentView.renderCountryBadges)
-
-        observe(\.sheetViewMode)
-            .distinct()
-            .onNext(contentView.renderSheetViewMode)
-
-        observe(\.souvenirs)
-            .distinct()
-            .onNext(contentView.renderSouvenirPins)
-
-        observe(\.searchResult)
-            .distinct()
-            .onNext(contentView.renderSearchView)
-
-        observe(\.shouldShowSearchInLocationButton)
-            .distinct()
-            .onNext(contentView.renderSearchInLocation)
     }
 
     // MARK: - Event
 
     override func handleEvent(_ event: Event) {
         switch event {
-        case let .moveCamera(coordinate, zoom, animated, extraLift):
-            contentView.moveCamera(
-                coordinate: coordinate,
-                zoom: zoom,
-                animated: animated,
-                extraLift: extraLift
-            )
+        case let .renderScene(scene):
+            contentView.render(scene: scene, animated: true)
 
-        case .locationPermissionDenied:
+        case let .transitionToSheetWithoutCamera(context):
+            contentView.transitionToSheetWithoutCamera(context)
+
+        case let .scrollCarouselToItem(item):
+            contentView.scrollCarouselToItem(item)
+
+        case let .moveCameraAndSelectPin(item):
+            contentView.moveCameraAndSelectPin(item)
+
+        case let .updateSouvenirsAndPinsOnly(souvenirs):
+            contentView.updateSouvenirsAndPinsOnly(souvenirs)
+
+        case let .showSearchButton(show):
+            contentView.showSearchButton(show)
+
+        case .showLocationPermissionAlert:
             showLocationPermissionAlert()
 
-        case let .locationError(message):
+        case let .showError(message):
             showDSAlert(message: message)
-
-        case let .moveCarouselCenter(initial):
-            contentView.moveCarouselCenter(initial)
-
-        case let .moveBottomSheetHeight(level):
-            contentView.moveBottomSheetHeight(level)
         }
     }
 

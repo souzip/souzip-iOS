@@ -100,6 +100,7 @@ extension MapboxView {
         try? mapboxMapView.mapboxMap.setCameraBounds(
             with: CameraBoundsOptions(maxZoom: 4.0, minZoom: 1.5)
         )
+        mapboxMapView.gestures.options.panDecelerationFactor = 1
 
         setPlaceLabelsVisible(false)
     }
@@ -109,6 +110,7 @@ extension MapboxView {
         try? mapboxMapView.mapboxMap.setCameraBounds(
             with: CameraBoundsOptions(maxZoom: 20.0, minZoom: 5.0)
         )
+        mapboxMapView.gestures.options.panDecelerationFactor = 0
 
         setPlaceLabelsVisible(true)
     }

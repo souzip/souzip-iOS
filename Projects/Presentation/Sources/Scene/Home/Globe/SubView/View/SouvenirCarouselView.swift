@@ -21,6 +21,8 @@ final class SouvenirCarouselView: UIView {
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
 
+    private var isProgrammaticScroll = false
+
     // MARK: - Constants
 
     enum Metric {
@@ -198,6 +200,8 @@ private extension SouvenirCarouselView {
 extension SouvenirCarouselView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        itemTapped.accept(item)
+        if !isProgrammaticScroll {
+            itemTapped.accept(item)
+        }
     }
 }
