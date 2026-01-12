@@ -153,13 +153,12 @@ private extension GlobeViewModel {
 
     func showCarouselScene(
         souvenirs: [SouvenirListItem],
+        selectedItem: SouvenirListItem,
         searchQuery: String?
     ) {
-        // Scene만 전환 (selectedItem은 없음)
-        let dummyItem = souvenirs.first!
         let context = CarouselContext(
             souvenirs: souvenirs,
-            selectedItem: dummyItem,
+            selectedItem: selectedItem,
             searchQuery: searchQuery
         )
 
@@ -425,7 +424,11 @@ private extension GlobeViewModel {
         switch state.value.scene {
         case .mapWithSheet:
             // Sheet → Carousel로 전환
-            showCarouselScene(souvenirs: souvenirs, searchQuery: searchQuery)
+            showCarouselScene(
+                souvenirs: souvenirs,
+                selectedItem: item,
+                searchQuery: searchQuery
+            )
 
         case .mapWithCarousel:
             // 이미 Carousel이면 아무것도 안 함 (scrollToItem만 호출)
