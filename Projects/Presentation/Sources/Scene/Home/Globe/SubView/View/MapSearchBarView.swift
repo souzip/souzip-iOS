@@ -34,9 +34,8 @@ final class MapSearchBarView: UIView {
     private let backButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = .dsIconArrowLeft
-        config.contentInsets = .zero
-
         let button = UIButton(configuration: config)
+        button.contentHorizontalAlignment = .leading
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
@@ -53,9 +52,8 @@ final class MapSearchBarView: UIView {
     private let closeButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.image = .dsIconCancel
-        config.contentInsets = .zero
-
         let button = UIButton(configuration: config)
+        button.contentHorizontalAlignment = .trailing
         button.setContentHuggingPriority(.required, for: .horizontal)
         button.setContentCompressionResistancePriority(.required, for: .horizontal)
         return button
@@ -205,9 +203,9 @@ private extension MapSearchBarView {
         }
 
         backButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(12)
-            $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.leading.equalToSuperview()
+            $0.verticalEdges.equalToSuperview()
+            $0.width.equalTo(36)
         }
 
         titleLabel.snp.makeConstraints {
@@ -216,9 +214,9 @@ private extension MapSearchBarView {
         }
 
         closeButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(12)
-            $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.trailing.equalToSuperview()
+            $0.verticalEdges.equalToSuperview()
+            $0.width.equalTo(36)
         }
 
         searchIconImageView.snp.makeConstraints {
