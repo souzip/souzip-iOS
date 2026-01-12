@@ -178,8 +178,6 @@ final class SouvenirFormViewModel: BaseViewModel<
     }
 
     private func handleSubmit() {
-        guard state.value.isSubmitEnabled else { return }
-
         guard let input = makeSubmitInput() else {
             emit(.showError("필수 정보를 모두 입력해주세요."))
             return
@@ -246,13 +244,16 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleCreate(input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let imageData = try convertPhotosToData(state.value.localPhotos)
                 _ = try await souvenirRepo.createSouvenir(
                     input: input,
                     images: imageData
                 )
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
@@ -261,29 +262,45 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleUpdate(id: Int, input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
                 onResult?(souvenirDetail)
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
     }
 
     private func convertPhotosToData(_ photos: [LocalPhoto]) throws -> [Data] {
-        try photos.map { photo in
-            guard let image = UIImage(contentsOfFile: photo.url.path) else {
-                throw ImageProcessingError.invalidSource
+        var results: [Data] = []
+        results.reserveCapacity(photos.count)
+
+        for photo in photos {
+            try autoreleasepool {
+                guard FileManager.default.fileExists(atPath: photo.url.path) else {
+                    throw ImageProcessingError.invalidSource
+                }
+
+                guard let image = UIImage(contentsOfFile: photo.url.path) else {
+                    throw ImageProcessingError.invalidSource
+                }
+
+                // 2000px로 축소
+                let resized = resizeImage(image, maxDimension: 2000)
+
+                // 압축률 0.75로 축소
+                guard let jpegData = resized.jpegData(compressionQuality: 0.75) else {
+                    throw ImageProcessingError.jpegConversionFailed
+                }
+
+                results.append(jpegData)
             }
-
-            let resized = resizeImage(image, maxDimension: 3000)
-
-            guard let jpegData = resized.jpegData(compressionQuality: 0.8) else {
-                throw ImageProcessingError.jpegConversionFailed
-            }
-
-            return jpegData
         }
+
+        return results
     }
 
     private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
@@ -300,10 +317,33 @@ final class SouvenirFormViewModel: BaseViewModel<
             CGSize(width: maxDimension * aspectRatio, height: maxDimension)
         }
 
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
+        // Core Graphics 직접 사용 (메모리 효율적)
+        guard let cgImage = image.cgImage else { return image }
+
+        let bitsPerComponent = 8
+        let bytesPerRow = Int(newSize.width) * 4
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+
+        guard let context = CGContext(
+            data: nil,
+            width: Int(newSize.width),
+            height: Int(newSize.height),
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: bytesPerRow,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else {
+            return image
         }
+
+        context.interpolationQuality = .high
+        context.draw(cgImage, in: CGRect(origin: .zero, size: newSize))
+
+        guard let resizedCGImage = context.makeImage() else {
+            return image
+        }
+
+        return UIImage(cgImage: resizedCGImage)
     }
 }
 
