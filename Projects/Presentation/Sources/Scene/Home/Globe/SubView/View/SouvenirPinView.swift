@@ -144,7 +144,7 @@ final class SouvenirPinView: UIView {
         }
 
         if animated {
-            UIView.animate(withDuration: 0.2, animations: animations)
+            UIView.animate(withDuration: 0.3, animations: animations)
         } else {
             animations()
         }
