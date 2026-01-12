@@ -189,10 +189,16 @@ final class SouvenirSheetView: UIView {
 
     private func recalculateHeights(in parentView: UIView) {
         let fullHeight = parentView.bounds.height
-        let safeAreaHeight = parentView.safeAreaLayoutGuide.layoutFrame.height
+        let safeAreaTop = parentView.safeAreaInsets.top
+        let safeAreaBottom = parentView.safeAreaInsets.bottom
+        let safeAreaHeight = fullHeight - safeAreaTop - safeAreaBottom
+
+        // 서치바: top 12pt + height 51pt + 간격 22pt = 85pt
+        let searchBarBottomOffset: CGFloat = 12 + 51 + 22
+        let availableHeight = safeAreaHeight - searchBarBottomOffset
 
         let newMid = max(minHeight, fullHeight * 0.5)
-        let newMax = max(minHeight, safeAreaHeight)
+        let newMax = max(minHeight, availableHeight)
 
         if abs(newMax - maxHeight) < 0.5,
            abs(newMid - midHeight) < 0.5 {
