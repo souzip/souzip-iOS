@@ -25,6 +25,7 @@ final class RecommendView: BaseView<RecommendAction> {
         view.showsVerticalScrollIndicator = false
         view.delegate = self
         view.refreshControl = refreshContorl
+        view.contentInset.top = 18
         return view
     }()
 
