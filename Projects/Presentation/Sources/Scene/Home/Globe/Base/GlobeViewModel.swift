@@ -200,15 +200,17 @@ private extension GlobeViewModel {
 private extension GlobeViewModel {
     func handleCountrySelection(_ badge: CountryBadge) {
         Task {
+            let roundedCoordinate = badge.coordinate.rounded(toDecimalPlaces: 2)
+
             let souvenirs = try await loadSouvenirs(
-                near: badge.coordinate,
-                radius: 500
+                near: roundedCoordinate,
+                radius: 5000
             )
 
             transitionToMapWithSheet(
                 souvenirs: souvenirs,
                 sheetLevel: .mid,
-                center: badge.coordinate,
+                center: roundedCoordinate,
                 searchQuery: badge.countryName
             )
         }
@@ -233,7 +235,7 @@ private extension GlobeViewModel {
         Task {
             let souvenirs = try await loadSouvenirs(
                 near: item.coordinate,
-                radius: 500
+                radius: 5000
             )
 
             transitionToMapWithSheet(

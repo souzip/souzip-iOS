@@ -134,9 +134,9 @@ final class GlobeView: BaseView<GlobeAction> {
         bind(mapContainerView.mapReady.asObservable())
             .to(.mapReady)
 
-        // 카메라 이동 시 debounce 적용 (0.5초 동안 멈췄을 때만)
+        // 카메라 이동 시 debounce 적용 (0.3초 동안 멈췄을 때만)
         mapContainerView.cameraDidMove
-            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .map { .userMovedMap($0) }
             .bind(to: action)
             .disposed(by: disposeBag)
@@ -328,7 +328,7 @@ extension GlobeView {
         let extraLift: CGFloat = context.sheetLevel == .mid ? 150 : 0
         mapContainerView.moveCamera(
             to: context.center,
-            zoom: 15,
+            zoom: 10.5,
             animated: animated,
             duration: 0.5,
             extraLift: extraLift
