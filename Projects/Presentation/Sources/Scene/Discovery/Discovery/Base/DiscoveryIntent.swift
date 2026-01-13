@@ -3,6 +3,7 @@ import Foundation
 
 enum DiscoveryAction {
     case viewDidLoad
+    case refresh
 
     case countryChipTap(CountryChipItem)
     case categoryChipTap(CategoryItem)
@@ -111,4 +112,5 @@ struct DiscoveryState {
 enum DiscoveryEvent {
     case loading(Bool)
     case showErrorAlert(_ message: String)
+    case endRefreshing
 }
