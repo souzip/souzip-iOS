@@ -191,10 +191,6 @@ final class GlobeView: BaseView<GlobeAction> {
             self?.action.accept(.wantToSearchLocation)
         }
 
-        searchBarView.onBackTapped = { [weak self] in
-            self?.action.accept(.wantToGoBack)
-        }
-
         searchBarView.onCloseTapped = { [weak self] in
             self?.action.accept(.wantToClose)
         }
@@ -349,7 +345,7 @@ extension GlobeView {
         if let query = context.searchQuery, !query.isEmpty {
             searchBarView.render(mode: .mapWithQuery(query))
         } else {
-            searchBarView.render(mode: .carousel)
+            searchBarView.render(mode: .mapEmpty)
         }
 
         mapContainerView.configureAsMap()
