@@ -288,8 +288,8 @@ final class SouvenirFormViewModel: BaseViewModel<
                     throw ImageProcessingError.invalidSource
                 }
 
-                // 2000px로 축소
-                let resized = resizeImage(image, maxDimension: 2000)
+                // 3000px로 축소
+                let resized = resizeImage(image, maxDimension: 3000)
 
                 // 압축률 0.75로 축소
                 guard let jpegData = resized.jpegData(compressionQuality: 0.75) else {
@@ -310,40 +310,35 @@ final class SouvenirFormViewModel: BaseViewModel<
             return image
         }
 
-        let aspectRatio = size.width / size.height
-        let newSize = if size.width > size.height {
-            CGSize(width: maxDimension, height: maxDimension / aspectRatio)
-        } else {
-            CGSize(width: maxDimension * aspectRatio, height: maxDimension)
-        }
-
-        // Core Graphics 직접 사용 (메모리 효율적)
         guard let cgImage = image.cgImage else { return image }
 
-        let bitsPerComponent = 8
-        let bytesPerRow = Int(newSize.width) * 4
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimension,
+        ]
 
-        guard let context = CGContext(
-            data: nil,
-            width: Int(newSize.width),
-            height: Int(newSize.height),
-            bitsPerComponent: bitsPerComponent,
-            bytesPerRow: bytesPerRow,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        let data = NSMutableData()
+        guard let imageDestination = CGImageDestinationCreateWithData(
+            data,
+            UTType.png.identifier as CFString,
+            1,
+            nil
         ) else {
             return image
         }
 
-        context.interpolationQuality = .high
-        context.draw(cgImage, in: CGRect(origin: .zero, size: newSize))
-
-        guard let resizedCGImage = context.makeImage() else {
+        CGImageDestinationAddImage(imageDestination, cgImage, nil)
+        guard CGImageDestinationFinalize(imageDestination) else {
             return image
         }
 
-        return UIImage(cgImage: resizedCGImage)
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+              let resizedImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+            return image
+        }
+
+        return UIImage(cgImage: resizedImage)
     }
 }
 
