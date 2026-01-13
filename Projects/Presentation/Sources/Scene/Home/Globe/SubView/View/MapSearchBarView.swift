@@ -175,7 +175,7 @@ private extension MapSearchBarView {
         closeButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.verticalEdges.equalToSuperview()
-            $0.width.equalTo(36)
+            $0.width.equalTo(closeButton.snp.height)
         }
 
         searchIconImageView.snp.makeConstraints {
