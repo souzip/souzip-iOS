@@ -24,8 +24,12 @@ final class RecommendView: BaseView<RecommendAction> {
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
         view.delegate = self
+        view.refreshControl = refreshContorl
+        view.contentInset.top = 18
         return view
     }()
+
+    private let refreshContorl = UIRefreshControl()
 
     // MARK: - Data
 
@@ -59,6 +63,7 @@ final class RecommendView: BaseView<RecommendAction> {
 
     override func setBindings() {
         bind(naviBar.onLeftTap).to(.back)
+        bind(refreshContorl.rx.controlEvent(.valueChanged)).to(.refresh)
     }
 
     // MARK: - Public
@@ -76,6 +81,10 @@ final class RecommendView: BaseView<RecommendAction> {
         }
 
         dataSource?.apply(snapshot, animatingDifferences: true)
+    }
+
+    func endRefreshing() {
+        refreshContorl.endRefreshing()
     }
 }
 

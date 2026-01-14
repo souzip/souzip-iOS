@@ -43,6 +43,8 @@ final class DiscoveryViewController: BaseViewController<
             showDSAlert(message: message)
         case let .loading(isLoading):
             handleLoading(isLoading)
+        case .endRefreshing:
+            contentView.endRefreshing()
         }
     }
 

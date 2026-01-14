@@ -9,7 +9,6 @@ final class MapSearchBarView: UIView {
         case globe // Globe Scene
         case mapEmpty // Map Exploring (검색어 없음)
         case mapWithQuery(String) // Map with Sheet (검색어 있음)
-        case carousel // Carousel Scene
     }
 
     // MARK: - UI
@@ -31,18 +30,9 @@ final class MapSearchBarView: UIView {
         return view
     }()
 
-    private let backButton: UIButton = {
-        var config = UIButton.Configuration.plain()
-        config.image = .dsIconArrowLeft
-        let button = UIButton(configuration: config)
-        button.contentHorizontalAlignment = .leading
-        button.setContentHuggingPriority(.required, for: .horizontal)
-        button.setContentCompressionResistancePriority(.required, for: .horizontal)
-        return button
-    }()
-
     private let titleLabel: TypographyLabel = {
         let label = TypographyLabel()
+        label.textColor = .dsGreyWhite
         label.setTypography(.body1R)
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -70,7 +60,6 @@ final class MapSearchBarView: UIView {
 
     // MARK: - Callbacks
 
-    var onBackTapped: (() -> Void)?
     var onCloseTapped: (() -> Void)?
     var onSearchTapped: (() -> Void)?
 
@@ -96,64 +85,40 @@ final class MapSearchBarView: UIView {
 
         case let .mapWithQuery(query):
             renderMapWithQueryMode(query: query)
-
-        case .carousel:
-            renderCarouselMode()
         }
     }
 
     // MARK: - Private Rendering
 
     private func renderGlobeMode() {
-        backButton.isHidden = true
         titleLabel.text = "✈️  어디로 떠나시나요?"
-        titleLabel.textColor = .dsGreyWhite
         closeButton.isHidden = true
         searchIconImageView.isHidden = false
 
-        updateConstraints(showBack: false, showClose: false, showSearch: true)
+        updateConstraints(showClose: false, showSearch: true)
     }
 
     private func renderMapEmptyMode() {
-        backButton.isHidden = false
         titleLabel.text = "✈️  어디로 떠나시나요?"
-        titleLabel.textColor = .dsGreyWhite
         closeButton.isHidden = true
         searchIconImageView.isHidden = true
 
-        updateConstraints(showBack: true, showClose: false, showSearch: false)
+        updateConstraints(showClose: false, showSearch: false)
     }
 
     private func renderMapWithQueryMode(query: String) {
-        backButton.isHidden = false
         titleLabel.text = query
-        titleLabel.textColor = .dsGrey80
         closeButton.isHidden = false
         searchIconImageView.isHidden = true
 
-        updateConstraints(showBack: true, showClose: true, showSearch: false)
-    }
-
-    private func renderCarouselMode() {
-        backButton.isHidden = false
-        titleLabel.text = "✈️  어디로 떠나시나요?"
-        titleLabel.textColor = .dsGreyWhite
-        closeButton.isHidden = true
-        searchIconImageView.isHidden = true
-
-        updateConstraints(showBack: true, showClose: false, showSearch: false)
+        updateConstraints(showClose: true, showSearch: false)
     }
 
     // MARK: - Private Helpers
 
-    private func updateConstraints(showBack: Bool, showClose: Bool, showSearch: Bool) {
+    private func updateConstraints(showClose: Bool, showSearch: Bool) {
         titleLabel.snp.remakeConstraints {
-            if showBack {
-                $0.leading.equalTo(backButton.snp.trailing).offset(8)
-            } else {
-                $0.leading.equalToSuperview().inset(12)
-            }
-
+            $0.leading.equalToSuperview().inset(12)
             $0.centerY.equalToSuperview()
 
             if showClose {
@@ -188,7 +153,7 @@ private extension MapSearchBarView {
         addSubview(containerView)
         containerView.addSubview(blurView)
 
-        for item in [backButton, titleLabel, closeButton, searchIconImageView] {
+        for item in [titleLabel, closeButton, searchIconImageView] {
             containerView.addSubview(item)
         }
     }
@@ -202,12 +167,6 @@ private extension MapSearchBarView {
             $0.edges.equalToSuperview()
         }
 
-        backButton.snp.makeConstraints {
-            $0.leading.equalToSuperview()
-            $0.verticalEdges.equalToSuperview()
-            $0.width.equalTo(36)
-        }
-
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.centerY.equalToSuperview()
@@ -216,7 +175,7 @@ private extension MapSearchBarView {
         closeButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.verticalEdges.equalToSuperview()
-            $0.width.equalTo(36)
+            $0.width.equalTo(closeButton.snp.height)
         }
 
         searchIconImageView.snp.makeConstraints {
@@ -227,12 +186,7 @@ private extension MapSearchBarView {
     }
 
     func setActions() {
-        backButton.addTarget(self, action: #selector(handleBackTap), for: .touchUpInside)
         closeButton.addTarget(self, action: #selector(handleCloseTap), for: .touchUpInside)
-    }
-
-    @objc private func handleBackTap() {
-        onBackTapped?()
     }
 
     @objc private func handleCloseTap() {

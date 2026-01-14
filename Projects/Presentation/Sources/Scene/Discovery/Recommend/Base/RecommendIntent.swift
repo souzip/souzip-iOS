@@ -5,6 +5,7 @@ import Domain
 enum RecommendAction {
     case back
     case viewDidLoad
+    case refresh
 
     case countryChipTap(CountryChipItem)
     case souvenirCardTap(SouvenirCardItem)
@@ -17,6 +18,7 @@ enum RecommendAction {
 enum RecommendEvent {
     case showErrorAlert(message: String)
     case loading(Bool)
+    case endRefreshing
 }
 
 // MARK: - State

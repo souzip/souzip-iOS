@@ -346,21 +346,18 @@ extension MapboxView {
 
     /// 현재 화면의 조회 반경 계산 (최대 5km)
     func getCurrentSearchRadius() -> Double {
-        let screenWidth = bounds.width
-        let halfWidth = screenWidth / 2
-
         // 화면 중심 좌표
         let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
 
-        // 화면 중심에서 오른쪽 절반 지점의 좌표
-        let rightPoint = CGPoint(x: bounds.midX + halfWidth, y: bounds.midY)
+        // 화면 오른쪽 상단 모서리 좌표
+        let cornerPoint = CGPoint(x: bounds.maxX, y: bounds.minY)
 
         // 각 포인트의 실제 지리 좌표 가져오기
         let centerCoordinate = mapboxMapView.mapboxMap.coordinate(for: centerPoint)
-        let rightCoordinate = mapboxMapView.mapboxMap.coordinate(for: rightPoint)
+        let cornerCoordinate = mapboxMapView.mapboxMap.coordinate(for: cornerPoint)
 
         // 두 좌표 간의 거리 계산 (미터)
-        let distance = calculateDistance(from: centerCoordinate, to: rightCoordinate)
+        let distance = calculateDistance(from: centerCoordinate, to: cornerCoordinate)
 
         // 최대 5km로 제한
         return min(distance, 5000)
