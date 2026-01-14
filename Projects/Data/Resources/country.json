@@ -1047,7 +1047,7 @@
         },{
             "nameEn":"United States","nameKr":"미국","code":"US","region":{
                 "englishName":"Americas","koreanName":"아메리카"
-            },"capital":"Washington, D.C.","imageUrl":"https://flagcdn.com/w320/us.png","latitude":38.89000000,"longitude":-77.05000000,"currency":{
+            },"capital":"New York","imageUrl":"https://flagcdn.com/w320/us.png","latitude":40.75,"longitude":-73.98,"currency":{
                 "code":"USD","symbol":"$"
             }
         },{

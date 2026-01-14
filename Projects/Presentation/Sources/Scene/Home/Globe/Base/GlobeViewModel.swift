@@ -65,9 +65,6 @@ final class GlobeViewModel: BaseViewModel<
         case .wantToUploadSouvenir:
             navigate(to: .souvenirRoute(.create))
 
-        case .wantToGoBack:
-            handleBackTap()
-
         case .wantToClose:
             handleCloseTap()
 
@@ -120,7 +117,6 @@ private extension GlobeViewModel {
 
         mutate {
             $0.scene = .globe
-            $0.isFromSearch = false
         }
 
         emit(.renderScene(.globe))
@@ -200,15 +196,17 @@ private extension GlobeViewModel {
 private extension GlobeViewModel {
     func handleCountrySelection(_ badge: CountryBadge) {
         Task {
+            let roundedCoordinate = badge.coordinate.rounded(toDecimalPlaces: 2)
+
             let souvenirs = try await loadSouvenirs(
-                near: badge.coordinate,
-                radius: 500
+                near: roundedCoordinate,
+                radius: 5000
             )
 
             transitionToMapWithSheet(
                 souvenirs: souvenirs,
                 sheetLevel: .mid,
-                center: badge.coordinate,
+                center: roundedCoordinate,
                 searchQuery: badge.countryName
             )
         }
@@ -233,7 +231,7 @@ private extension GlobeViewModel {
         Task {
             let souvenirs = try await loadSouvenirs(
                 near: item.coordinate,
-                radius: 500
+                radius: 5000
             )
 
             transitionToMapWithSheet(
@@ -242,10 +240,6 @@ private extension GlobeViewModel {
                 center: item.coordinate,
                 searchQuery: item.name
             )
-
-            mutate {
-                $0.isFromSearch = true
-            }
         }
     }
 
@@ -451,18 +445,6 @@ private extension GlobeViewModel {
 // MARK: - Navigation
 
 private extension GlobeViewModel {
-    func handleBackTap() {
-        if state.value.isFromSearch {
-            mutate {
-                $0.isFromSearch = false
-            }
-            handleSearchTap()
-            return
-        }
-
-        transitionToGlobe()
-    }
-
     func handleCloseTap() {
         transitionToGlobe()
     }

@@ -27,7 +27,18 @@ final class DiscoveryViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .viewDidLoad:
-            Task { await loadInitialData() }
+            Task {
+                emit(.loading(true))
+                await loadInitialData()
+                emit(.loading(false))
+            }
+
+        case .refresh:
+            Task {
+                try? await Task.sleep(for: .seconds(1))
+                await loadInitialData()
+                emit(.endRefreshing)
+            }
 
         case let .countryChipTap(item):
             Task { await handleCountryChipTap(item) }
@@ -50,8 +61,6 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private func loadInitialData() async {
         do {
-            emit(.loading(true))
-
             let topCountryCodes = ["JP", "HK", "TW"]
 
             // 0) 기본 카테고리 + 첫번째 선택
@@ -103,8 +112,6 @@ final class DiscoveryViewModel: BaseViewModel<
                 statsTask
             )
 
-            emit(.loading(false))
-
             mutate { state in
                 state.countries = countries.enumerated().map { idx, chip in
                     CountryChipItem(
@@ -122,7 +129,6 @@ final class DiscoveryViewModel: BaseViewModel<
                 state.statCountry = stats
             }
         } catch {
-            emit(.loading(false))
             emit(.showErrorAlert(error.localizedDescription))
         }
     }

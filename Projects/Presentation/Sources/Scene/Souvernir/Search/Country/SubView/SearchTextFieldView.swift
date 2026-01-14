@@ -97,19 +97,19 @@ final class SearchTextFieldView: UIView {
         }
 
         searchIconView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(12)
-            make.centerY.equalToSuperview()
-            make.size.equalTo(24)
-        }
-
-        clearButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
             make.size.equalTo(24)
         }
 
+        clearButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.verticalEdges.equalToSuperview()
+            make.width.equalTo(clearButton.snp.height)
+        }
+
         textField.snp.makeConstraints { make in
-            make.leading.equalTo(searchIconView.snp.trailing).offset(8)
+            make.leading.equalToSuperview().inset(12)
             make.trailing.equalTo(clearButton.snp.leading).offset(-8)
             make.top.bottom.equalToSuperview().inset(12)
         }
@@ -120,6 +120,7 @@ final class SearchTextFieldView: UIView {
             .distinctUntilChanged()
             .do { [weak self] text in
                 self?.clearButton.isHidden = text.isEmpty
+                self?.searchIconView.isHidden = !text.isEmpty
             }
             .bind(to: textChanged)
             .disposed(by: disposeBag)

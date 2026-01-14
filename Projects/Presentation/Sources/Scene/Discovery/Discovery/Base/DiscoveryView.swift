@@ -25,8 +25,12 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
         view.delegate = self
+        view.refreshControl = refreshContorl
+        view.contentInset.top = 18
         return view
     }()
+
+    private let refreshContorl = UIRefreshControl()
 
     private let faButton = DSFAButton(image: .dsIconStar)
 
@@ -68,6 +72,7 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
     override func setBindings() {
         bind(faButton.rx.tap).to(.tapFAB)
+        bind(refreshContorl.rx.controlEvent(.valueChanged)).to(.refresh)
     }
 
     // MARK: - Public
@@ -85,6 +90,10 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
         }
 
         dataSource?.apply(snapshot, animatingDifferences: true)
+    }
+
+    func endRefreshing() {
+        refreshContorl.endRefreshing()
     }
 }
 
