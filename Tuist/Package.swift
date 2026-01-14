@@ -18,5 +18,6 @@ let package = Package(
         .package(url: "https://github.com/mapbox/mapbox-maps-ios", from: "11.17.0"),
         .package(url: "https://github.com/mchoe/SwiftSVG", from: "2.3.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "9.1.0"),
+        .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.16.5"),
     ]
 )

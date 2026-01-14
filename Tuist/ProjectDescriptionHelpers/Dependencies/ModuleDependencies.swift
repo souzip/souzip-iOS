@@ -56,7 +56,9 @@ public enum ModuleDependencies {
             ]
 
         case .logger:
-            return []
+            return [
+                .external(.amplitudeSwift)
+            ]
 
         case .keychain:
             return [
