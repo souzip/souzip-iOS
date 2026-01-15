@@ -257,7 +257,7 @@ extension GlobeView {
             to: item.coordinate.toCLLocationCoordinate2D,
             zoom: nil,
             animated: false,
-            duration: 0.3,
+            duration: 0.6,
             extraLift: 150
         )
         mapContainerView.selectSouvenirPin(item: item)
@@ -291,7 +291,7 @@ extension GlobeView {
             to: currentCenter,
             zoom: 1.5,
             animated: animated,
-            duration: 0.5,
+            duration: 0.6,
             extraLift: 0
         )
     }
@@ -326,7 +326,7 @@ extension GlobeView {
             to: context.center,
             zoom: 10.5,
             animated: animated,
-            duration: 0.5,
+            duration: 0.6,
             extraLift: extraLift
         )
     }
@@ -368,7 +368,7 @@ extension GlobeView {
         mapContainerView.moveCamera(
             to: .init(latitude: 37.5, longitude: 127.0),
             animated: false,
-            duration: 0.3
+            duration: 0.6
         )
     }
 }

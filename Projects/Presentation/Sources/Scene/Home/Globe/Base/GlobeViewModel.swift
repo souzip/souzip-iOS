@@ -282,7 +282,7 @@ private extension GlobeViewModel {
         Task {
             let souvenirs = try await loadSouvenirs(
                 near: userLocation,
-                radius: 500
+                radius: 5000
             )
 
             switch state.value.scene {
