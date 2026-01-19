@@ -47,6 +47,7 @@ public enum ModuleDependencies {
                 .external(.kakaoSDKCommon),
                 .external(.kakaoSDKAuth),
                 .external(.kakaoSDKUser),
+                .external(.googleSignIn),
             ]
             
         case .networking:
@@ -55,7 +56,9 @@ public enum ModuleDependencies {
             ]
 
         case .logger:
-            return []
+            return [
+                .external(.amplitudeSwift)
+            ]
 
         case .keychain:
             return [

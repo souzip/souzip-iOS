@@ -102,11 +102,10 @@ final class SettingView: BaseView<SettingAction>, UITableViewDataSource, UITable
         }
     }
 
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat { 0.01 }
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? { nil }
-
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat { 12 }
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? { UIView() }
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        UIView()
+    }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)

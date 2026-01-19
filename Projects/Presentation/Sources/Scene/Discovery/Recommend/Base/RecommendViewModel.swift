@@ -30,7 +30,17 @@ final class RecommendViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .viewDidLoad:
-            Task { await loadInitialData() }
+            Task {
+                emit(.loading(true))
+                await loadInitialData()
+                emit(.loading(false))
+            }
+
+        case .refresh:
+            Task {
+                await loadInitialData()
+                emit(.endRefreshing)
+            }
 
         case .back:
             navigate(to: .pop)
@@ -58,7 +68,6 @@ final class RecommendViewModel: BaseViewModel<
 private extension RecommendViewModel {
     func loadInitialData() async {
         do {
-            emit(.loading(true))
             let (preferred, upload) = try await fetchAIRecommendations()
 
             preferredAll = preferred
@@ -76,8 +85,6 @@ private extension RecommendViewModel {
             let uploadCardsAll = mapToCards(uploadAll)
             let uploadCountryName = await resolveUploadCountryName(from: uploadAll)
 
-            emit(.loading(false))
-
             mutate { state in
                 state.countries = selectedCountries
                 state.preferredSouvenirs = preferredCardsAll
@@ -89,7 +96,6 @@ private extension RecommendViewModel {
                 state.isUploadExpanded = false
             }
         } catch {
-            emit(.loading(false))
             emit(.showErrorAlert(message: error.localizedDescription))
         }
     }

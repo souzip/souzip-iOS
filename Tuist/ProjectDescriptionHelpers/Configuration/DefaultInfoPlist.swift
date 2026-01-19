@@ -25,6 +25,7 @@ public enum DefaultInfoPlist {
         "KAKAO_APP_KEY": "$(KAKAO_APP_KEY)",
         "GOOGLE_CLIENT_ID": "$(GOOGLE_CLIENT_ID)",
         "MBXAccessToken": "$(MAPBOX_ACCESS_TOKEN)",
+        "AMPLITUDE_API_KEY": "$(AMPLITUDE_API_KEY)",
 
         // UI Configuration
         "UILaunchStoryboardName": "LaunchScreen",

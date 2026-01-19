@@ -52,7 +52,9 @@ final class SettingViewModel: BaseViewModel<
              .privacyPolicy,
              .locationTerms,
              .marketingConsentInfo,
-             .feedback:
+             .notice,
+             .feedback,
+             .faq:
             guard let url = URL(string: type.url) else { return }
             emit(.showSFView(url))
 

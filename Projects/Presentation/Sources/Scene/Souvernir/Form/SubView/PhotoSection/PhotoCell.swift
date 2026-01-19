@@ -1,5 +1,6 @@
 import DesignSystem
 import Domain
+import ImageIO
 import SnapKit
 import UIKit
 
@@ -74,14 +75,31 @@ final class PhotoCell: UICollectionViewCell {
         setMain(isMain)
         setDeleteVisible(showDelete)
 
-        imageView.image = UIImage(contentsOfFile: url.path)
+        // 썸네일 생성으로 메모리 절약
+        imageView.image = createThumbnail(from: url, size: 336)
+    }
+
+    private func createThumbnail(from url: URL, size: CGFloat) -> UIImage? {
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: size,
+        ]
+
+        guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary)
+        else {
+            return nil
+        }
+
+        return UIImage(cgImage: cgImage)
     }
 
     func renderRemote(file: SouvenirFile, isMain: Bool, showDelete: Bool) {
         setMain(isMain)
         setDeleteVisible(showDelete)
 
-        imageView.setFeedImage(file.url)
+        imageView.setMyFeedImage(file.url)
     }
 }
 

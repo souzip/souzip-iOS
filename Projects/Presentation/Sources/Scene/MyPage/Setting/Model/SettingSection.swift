@@ -27,7 +27,7 @@ extension SettingSection {
                 .item(.init(
                     type: .appVersion,
                     title: "버전 정보",
-                    trailingText: "v 1.0.0",
+                    trailingText: appVersion,
                     showsChevron: false
                 )),
                 .spacer(12),
@@ -69,8 +69,20 @@ extension SettingSection {
                 .spacer(12),
                 .title("고객 지원"),
                 .item(.init(
+                    type: .notice,
+                    title: "공지사항",
+                    trailingText: nil,
+                    showsChevron: true
+                )),
+                .item(.init(
                     type: .feedback,
                     title: "피드백 하기",
+                    trailingText: nil,
+                    showsChevron: true
+                )),
+                .item(.init(
+                    type: .faq,
+                    title: "FAQ",
                     trailingText: nil,
                     showsChevron: true
                 )),
@@ -96,5 +108,10 @@ extension SettingSection {
                 .spacer(12),
             ]
         }
+    }
+
+    private var appVersion: String {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+        return "v \(version)"
     }
 }

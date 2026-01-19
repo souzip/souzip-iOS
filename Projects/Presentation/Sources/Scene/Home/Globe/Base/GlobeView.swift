@@ -12,7 +12,7 @@ final class GlobeView: BaseView<GlobeAction> {
 
     private let searchBarView: MapSearchBarView = {
         let view = MapSearchBarView()
-        view.render(with: .globe)
+        view.render(mode: .globe)
         return view
     }()
 
@@ -43,7 +43,6 @@ final class GlobeView: BaseView<GlobeAction> {
         config.imagePadding = 10
         config.imagePlacement = .leading
 
-        var titleAttr = AttributedString("현 지도에서 검색")
         config.setTypography(.body2R, title: "현 지도에서 검색")
         config.contentInsets = .init(top: 10, leading: 20, bottom: 10, trailing: 20)
 
@@ -68,7 +67,6 @@ final class GlobeView: BaseView<GlobeAction> {
 
     private var currentLocationButtonBottomConstraint: Constraint?
     private var searchInLocationButtonBottomConstraint: Constraint?
-    private var mapViewTopConstraint: Constraint?
 
     // MARK: - Override
 
@@ -89,20 +87,20 @@ final class GlobeView: BaseView<GlobeAction> {
 
     override func setConstraints() {
         mapContainerView.snp.makeConstraints { make in
-            mapViewTopConstraint = make.top.equalToSuperview().constraint
+            make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
 
         currentLocationButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
-            self.currentLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
+            currentLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
             make.size.equalTo(42)
         }
 
         searchInLocationButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            self.searchInLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
+            searchInLocationButtonBottomConstraint = make.bottom.equalToSuperview().inset(12).constraint
             make.height.equalTo(44)
         }
 
@@ -127,209 +125,266 @@ final class GlobeView: BaseView<GlobeAction> {
     override func setBindings() {
         bindMapContainer()
         bindCarousel()
-        bindSearch()
-
-        bind(currentLocationButton.rx.tap).to(.taplocationButton)
-
-        // 현 지도에서 검색: center + radius 전달
-        searchInLocationButton.rx.tap
-            .bind { [weak self] in
-                guard let self else { return }
-
-                let mapArea = getCurrentMapArea()
-                action.accept(.tapSearchInLocation(
-                    center: mapArea.center,
-                    radius: mapArea.radius
-                ))
-            }
-            .disposed(by: disposeBag)
-
-        souvenirSheetView.heightRelay
-            .bind { [weak self] height in
-                guard let self, !souvenirSheetView.isHidden else { return }
-
-                let bottomInset = 12 + height
-                updateLocationButtonPosition(bottomInset: bottomInset)
-                updateSearchInLocationButtonPosition(bottomInset: bottomInset)
-                updateCameraForSheet(height: height)
-            }
-            .disposed(by: disposeBag)
-
-        souvenirSheetView.tapSouvenirItem
-            .map { .tapSouvenirItem($0) }
-            .bind(to: action)
-            .disposed(by: disposeBag)
-
-        souvenirSheetView.tapUpload
-            .map { .tapUpload }
-            .bind(to: action)
-            .disposed(by: disposeBag)
+        bindSheet()
+        bindSearchBar()
+        bindButtons()
     }
 
     private func bindMapContainer() {
         bind(mapContainerView.mapReady.asObservable())
             .to(.mapReady)
 
-        bind(
-            mapContainerView.cameraDidMove.asObservable()
-//                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-        )
-        .map { Action.cameraDidMove($0) }
+        // 카메라 이동 시 debounce 적용 (0.3초 동안 멈췄을 때만)
+        mapContainerView.cameraDidMove
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .map { .userMovedMap($0) }
+            .bind(to: action)
+            .disposed(by: disposeBag)
 
         bind(mapContainerView.tapCountrybadge.asObservable())
-            .map { Action.tapCountryBadge($0) }
+            .map { .wantToSeeCountry($0) }
 
+        // 핀 탭 → 캐러셀 센터 변경
         bind(mapContainerView.tapSouvenirPin.asObservable())
-            .map { Action.tapSouvenirPin($0) }
+            .map { .wantToSeeSouvenirPin($0) }
     }
 
     private func bindCarousel() {
+        // 캐러셀 아이템 탭 → 상세
         bind(souvenirCarouselView.itemTapped.asObservable())
-            .map { Action.tapSouvenirItem($0) }
+            .map { .wantToSeeSouvenirDetail($0) }
 
         bind(souvenirCarouselView.closeButtonTapped.asObservable())
-            .map { Action.tapCarouselClose }
+            .map { .userClosedCarousel }
 
+        // 캐러셀 센터 변경 (프로그래밍/사용자 모두)
         souvenirCarouselView.centerItemChanged
-            .distinctUntilChanged()
+            .distinctUntilChanged { $0.id == $1.id }
             .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
             .bind { [weak self] item in
-                guard let self else { return }
-
-                moveCamera(
-                    coordinate: item.coordinate.toCLLocationCoordinate2D,
-                    zoom: nil,
-                    animated: false,
-                    extraLift: 150
-                )
-                mapContainerView.selectSouvenirPin(item: item)
+                self?.action.accept(.carouselCenterChanged(item))
             }
             .disposed(by: disposeBag)
     }
 
-    private func bindSearch() {
-        searchBarView.onSearchTapped = { [weak self] in
-            self?.action.accept(.tapSearch)
-        }
+    private func bindSheet() {
+        // 시트 그리드 아이템 탭 → 상세
+        souvenirSheetView.tapSouvenirItem
+            .map { .wantToSeeSouvenirDetail($0) }
+            .bind(to: action)
+            .disposed(by: disposeBag)
 
-        searchBarView.onBackTapped = { [weak self] in
-            self?.action.accept(.tapBack)
+        souvenirSheetView.tapUpload
+            .map { .wantToUploadSouvenir }
+            .bind(to: action)
+            .disposed(by: disposeBag)
+
+        souvenirSheetView.heightRelay
+            .bind { [weak self] height in
+                self?.updateForSheetHeight(height)
+            }
+            .disposed(by: disposeBag)
+    }
+
+    private func bindSearchBar() {
+        searchBarView.onSearchTapped = { [weak self] in
+            self?.action.accept(.wantToSearchLocation)
         }
 
         searchBarView.onCloseTapped = { [weak self] in
-            self?.action.accept(.tapClose)
+            self?.action.accept(.wantToClose)
         }
     }
 
-    // MARK: - Render
+    private func bindButtons() {
+        bind(currentLocationButton.rx.tap)
+            .to(.wantToGoMyLocation)
 
+        searchInLocationButton.rx.tap
+            .bind { [weak self] in
+                guard let self else { return }
+                let center = mapContainerView.getCurrentCenter()
+                let radius = mapContainerView.getCurrentSearchRadius()
+                action.accept(.userTappedSearchInArea(center: center, radius: radius))
+            }
+            .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Scene Rendering
+
+extension GlobeView {
+    func render(scene: GlobeScene, animated: Bool) {
+        switch scene {
+        case .globe:
+            renderGlobeScene(animated: animated)
+
+        case let .mapWithSheet(context):
+            renderMapSheetScene(context, animated: animated)
+
+        case let .mapWithCarousel(context):
+            renderCarouselScene(context, animated: animated)
+        }
+    }
+
+    // Sheet 전환 (카메라 이동 없음)
+    func transitionToSheetWithoutCamera(_ context: MapSheetContext) {
+        souvenirCarouselView.isHidden = true
+        souvenirSheetView.isHidden = false
+        searchInLocationButton.isHidden = !context.showSearchButton
+        updateLocationButtonPosition(bottomInset: 12)
+
+        if let query = context.searchQuery, !query.isEmpty {
+            searchBarView.render(mode: .mapWithQuery(query))
+        } else {
+            searchBarView.render(mode: .mapEmpty)
+        }
+
+        mapContainerView.deselectAllSouvenirPins()
+        souvenirSheetView.renderGrid(context.souvenirs)
+        souvenirSheetView.setLevel(context.sheetLevel, animated: true)
+    }
+
+    // 캐러셀 스크롤 (프로그래밍 방식)
+    func scrollCarouselToItem(_ item: SouvenirListItem) {
+        souvenirCarouselView.scrollToItem(item)
+        mapContainerView.selectSouvenirPin(item: item)
+    }
+
+    // 카메라 이동 & 핀 선택
+    func moveCameraAndSelectPin(_ item: SouvenirListItem) {
+        mapContainerView.moveCamera(
+            to: item.coordinate.toCLLocationCoordinate2D,
+            zoom: nil,
+            animated: false,
+            duration: 0.6,
+            extraLift: 150
+        )
+        mapContainerView.selectSouvenirPin(item: item)
+    }
+
+    // 검색 버튼만 표시/숨김
+    func showSearchButton(_ show: Bool) {
+        searchInLocationButton.isHidden = !show
+    }
+
+    // 기념품과 핀만 업데이트
+    func updateSouvenirsAndPinsOnly(_ souvenirs: [SouvenirListItem]) {
+        mapContainerView.setSouvenirPins(souvenirs)
+        souvenirSheetView.renderGrid(souvenirs)
+        searchInLocationButton.isHidden = true
+    }
+
+    private func renderGlobeScene(animated: Bool) {
+        hideAllSheets()
+        searchInLocationButton.isHidden = true
+        updateLocationButtonPosition(bottomInset: 12)
+        searchBarView.render(mode: .globe)
+
+        mapContainerView.configureAsGlobe()
+        mapContainerView.showCountryBadges(isHidden: false)
+        mapContainerView.showUserLocation(isHidden: true)
+        mapContainerView.showSouvenirPins(isHidden: true)
+
+        let currentCenter = mapContainerView.getCurrentCenter()
+        mapContainerView.moveCamera(
+            to: currentCenter,
+            zoom: 1.5,
+            animated: animated,
+            duration: 0.6,
+            extraLift: 0
+        )
+    }
+
+    private func renderMapSheetScene(
+        _ context: MapSheetContext,
+        animated: Bool
+    ) {
+        souvenirCarouselView.isHidden = true
+        souvenirSheetView.isHidden = false
+        searchInLocationButton.isHidden = !context.showSearchButton
+        updateLocationButtonPosition(bottomInset: 12)
+
+        if let query = context.searchQuery, !query.isEmpty {
+            searchBarView.render(mode: .mapWithQuery(query))
+        } else {
+            searchBarView.render(mode: .mapEmpty)
+        }
+
+        mapContainerView.configureAsMap()
+        mapContainerView.showCountryBadges(isHidden: true)
+        mapContainerView.showUserLocation(isHidden: false)
+        mapContainerView.showSouvenirPins(isHidden: false)
+        mapContainerView.setSouvenirPins(context.souvenirs)
+        mapContainerView.deselectAllSouvenirPins()
+
+        souvenirSheetView.renderGrid(context.souvenirs)
+        souvenirSheetView.setLevel(context.sheetLevel, animated: animated)
+
+        let extraLift: CGFloat = context.sheetLevel == .mid ? 150 : 0
+        mapContainerView.moveCamera(
+            to: context.center,
+            zoom: 10.5,
+            animated: animated,
+            duration: 0.6,
+            extraLift: extraLift
+        )
+    }
+
+    private func renderCarouselScene(
+        _ context: CarouselContext,
+        animated: Bool
+    ) {
+        souvenirSheetView.isHidden = true
+        souvenirCarouselView.isHidden = false
+        searchInLocationButton.isHidden = true
+
+        let bottomInset: CGFloat = 12 + SouvenirCarouselView.Metric.height + 9
+        updateLocationButtonPosition(bottomInset: bottomInset)
+
+        if let query = context.searchQuery, !query.isEmpty {
+            searchBarView.render(mode: .mapWithQuery(query))
+        } else {
+            searchBarView.render(mode: .mapEmpty)
+        }
+
+        mapContainerView.configureAsMap()
+        mapContainerView.showCountryBadges(isHidden: true)
+        mapContainerView.showUserLocation(isHidden: false)
+        mapContainerView.showSouvenirPins(isHidden: false)
+        mapContainerView.setSouvenirPins(context.souvenirs)
+
+        souvenirCarouselView.render(items: context.souvenirs)
+        // scrollToItem은 별도 이벤트로 처리
+    }
+}
+
+// MARK: - Public Render Methods
+
+extension GlobeView {
     func renderCountryBadges(_ badges: [CountryBadge]) {
         mapContainerView.setCountryBadges(badges)
-    }
-
-    func renderSouvenirPins(_ souvenirs: [SouvenirListItem]) {
-        mapContainerView.setSouvenirPins(souvenirs)
-    }
-
-    func renderMapMode(_ mode: MapMode) {
-        switch mode {
-        case .globe:
-            mapContainerView.configureAsGlobe()
-            mapContainerView.showCountryBadges(isHidden: false)
-            mapContainerView.showUserLocation(isHidden: true)
-            mapContainerView.showSouvenirPins(isHidden: true)
-            searchBarView.render(with: .globe)
-
-        case .map:
-            mapContainerView.configureAsMap()
-            mapContainerView.showCountryBadges(isHidden: true)
-            mapContainerView.showUserLocation(isHidden: false)
-            mapContainerView.showSouvenirPins(isHidden: false)
-        }
-    }
-
-    func renderSheetViewMode(_ mode: SheetViewMode) {
-        switch mode {
-        case let .bottomSheet(items):
-            souvenirSheetView.renderGrid(items)
-        case let .carousel(items):
-            souvenirCarouselView.render(items: items)
-        case .hide:
-            hideAllSheet()
-        }
-    }
-
-    func renderSearchInLocation(isVisible: Bool) {
-        searchInLocationButton.isHidden = !isVisible
-    }
-
-    func renderCarouselView(_ items: [SouvenirListItem]) {
-        souvenirCarouselView.render(items: items)
-    }
-
-    func renderSearchView(_ name: String?) {
-        guard let name else {
-            searchBarView.render(with: .globe)
-            return
-        }
-
-        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            searchBarView.render(with: .globeBack)
-            return
-        }
-
-        searchBarView.render(with: .map(locationName: name))
-    }
-
-    // MARK: - Event
-
-    func moveCarouselCenter(_ item: SouvenirListItem) {
-        hideAllSheet()
-
-        updateLocationButtonPosition(
-            bottomInset: 12 + SouvenirCarouselView.Metric.height + 9
+        renderGlobeScene(animated: true)
+        mapContainerView.moveCamera(
+            to: .init(latitude: 37.5, longitude: 127.0),
+            animated: false,
+            duration: 0.6
         )
-        souvenirCarouselView.scrollToItem(item)
-        souvenirCarouselView.isHidden = false
     }
+}
 
-    func moveBottomSheetHeight(_ level: BottomSheetLevel) {
-        hideAllSheet()
+// MARK: - Private Helpers
 
-        updateLocationButtonPosition(bottomInset: 21)
-        souvenirSheetView.isHidden = false
-        souvenirSheetView.setLevel(level)
-    }
-
-    func hideAllSheet() {
-        updateLocationButtonPosition(bottomInset: 12)
+private extension GlobeView {
+    func hideAllSheets() {
         souvenirCarouselView.isHidden = true
         souvenirSheetView.isHidden = true
         mapContainerView.deselectAllSouvenirPins()
     }
 
-    func moveCamera(
-        coordinate: CLLocationCoordinate2D? = nil,
-        zoom: CGFloat? = nil,
-        animated: Bool,
-        duration: TimeInterval = 0.5,
-        extraLift: CGFloat = 0
-    ) {
-        mapContainerView.moveCamera(
-            to: coordinate,
-            zoom: zoom,
-            animated: animated,
-            duration: duration,
-            extraLift: extraLift
-        )
-    }
-
-    // MARK: - Private
-
-    private func updateLocationButtonPosition(bottomInset: CGFloat) {
+    func updateLocationButtonPosition(bottomInset: CGFloat) {
         currentLocationButtonBottomConstraint?.update(inset: bottomInset)
 
-        // 일정 높이 기준으로 숨김/표시
         let threshold = max(bounds.height * 0.6, 200)
         let shouldHide = bottomInset > threshold
 
@@ -337,7 +392,7 @@ final class GlobeView: BaseView<GlobeAction> {
         layoutIfNeeded()
     }
 
-    private func updateSearchInLocationButtonPosition(bottomInset: CGFloat) {
+    func updateSearchInLocationButtonPosition(bottomInset: CGFloat) {
         searchInLocationButtonBottomConstraint?.update(inset: bottomInset)
 
         let threshold = max(bounds.height * 0.6, 200)
@@ -347,25 +402,17 @@ final class GlobeView: BaseView<GlobeAction> {
         layoutIfNeeded()
     }
 
-    private func updateCameraForSheet(height: CGFloat) {
+    func updateForSheetHeight(_ height: CGFloat) {
+        guard !souvenirSheetView.isHidden else { return }
+
+        let bottomInset = 12 + height
+        updateLocationButtonPosition(bottomInset: bottomInset)
+        updateSearchInLocationButtonPosition(bottomInset: bottomInset)
+
         let screenHeight = UIScreen.main.bounds.height
         let halfHeight = screenHeight * 0.5
         let lift = min(height / halfHeight * 150, 150)
 
-        UIView.animate(withDuration: 0.3) {
-            self.mapContainerView.updateCameraPadding(extraLift: lift)
-        }
-    }
-
-    // 현재 지도 영역 정보 가져오기
-    private func getCurrentMapArea() -> (center: CLLocationCoordinate2D, radius: Double) {
-        let center = mapContainerView.getCurrentCenter()
-        let radius = mapContainerView.getCurrentSearchRadius()
-        return (center, radius)
-    }
-
-    // 조회반경만 가져오기
-    private func getCurrentSearchRadius() -> Double {
-        mapContainerView.getCurrentSearchRadius()
+        mapContainerView.updateCameraPadding(extraLift: lift)
     }
 }

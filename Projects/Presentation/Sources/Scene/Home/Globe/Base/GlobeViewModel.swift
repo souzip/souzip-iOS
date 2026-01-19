@@ -17,6 +17,15 @@ final class GlobeViewModel: BaseViewModel<
 
     private let locationManager = CLLocationManager()
 
+    // 카메라 이동 추적
+    private var lastKnownCenter: CLLocationCoordinate2D?
+
+    // 현재 기념품 리스트 캐시 (State 업데이트 없이도 유지)
+    private var currentSouvenirs: [SouvenirListItem] = []
+
+    // 캐러셀 닫을 때 현재 카메라 위치 저장
+    private var lastCarouselCameraCenter: CLLocationCoordinate2D?
+
     // MARK: - Init
 
     init(
@@ -32,52 +41,60 @@ final class GlobeViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewReady:
+            break
+
         case .mapReady:
             handleMapReady()
 
-        case let .cameraDidMove(coordinate):
-            handleCameraMove(coordinate)
+        case let .wantToSeeCountry(badge):
+            handleCountrySelection(badge)
 
-        case let .tapCountryBadge(badge):
-            handleCountryBadgeTap(badge)
-
-        case .tapSearch:
+        case .wantToSearchLocation:
             handleSearchTap()
 
-        case .tapBack:
-            handleBackButtonTap()
+        case .wantToGoMyLocation:
+            handleMyLocationTap()
 
-        case .tapClose:
-            handleCloseButtonTap()
+        case let .wantToSeeSouvenirPin(item):
+            handleSouvenirPinSelection(item)
 
-        case .taplocationButton:
-            handleLocationButtonTap()
+        case let .wantToSeeSouvenirDetail(item):
+            handleSouvenirDetailSelection(item)
 
-        case let .tapSearchInLocation(center, radius):
-            handleSearchInLocationTap(center: center, radius: radius)
+        case .wantToUploadSouvenir:
+            navigate(to: .souvenirRoute(.create))
 
-        case let .tapSouvenirPin(item):
-            handleSouvenirPinTap(item)
+        case .wantToClose:
+            handleCloseTap()
 
-        case .tapCarouselClose:
+        case let .userMovedMap(coordinate):
+            handleMapMove(coordinate)
+
+        case let .userTappedSearchInArea(center, radius):
+            handleSearchInArea(center: center, radius: radius)
+
+        case let .userChangedSheetLevel(level):
+            handleSheetLevelChange(level)
+
+        case let .carouselCenterChanged(item):
+            handleCarouselCenterChanged(item)
+
+        case .userClosedCarousel:
             handleCarouselClose()
 
-        case let .tapSouvenirItem(item):
-            handleSouvenirItemTap(item)
-
-        case .tapUpload:
-            navigate(to: .souvenirRoute(.create))
+        case let .didSelectSearchResult(item):
+            handleSearchResultSelection(item)
         }
     }
 }
 
-// MARK: - Map Lifecycle
+// MARK: - Lifecycle
 
 private extension GlobeViewModel {
     func handleMapReady() {
         Task {
             await loadCountryBadges()
-            moveToInitialLocation()
         }
     }
 
@@ -87,188 +104,166 @@ private extension GlobeViewModel {
 
         mutate {
             $0.countryBadges = badges ?? []
-            $0.mapMode = .globe
         }
-    }
-
-    func moveToInitialLocation() {
-        let initialCoordinate = CLLocationCoordinate2D(latitude: 37.5, longitude: 127.0)
-        moveCameraToCoordinate(initialCoordinate)
     }
 }
 
-// MARK: - Camera Control
+// MARK: - Scene Transitions
 
 private extension GlobeViewModel {
-    func handleCameraMove(_ coordinate: CLLocationCoordinate2D) {
-        guard case .map = state.value.mapMode,
-              state.value.shouldShowSearchInLocationButton == false
-        else { return }
-
-        let hasMovedFromInitialPosition = !isSameCoordinate(
-            coordinate,
-            state.value.lastGlobeCenter
-        )
+    func transitionToGlobe() {
+        lastKnownCenter = nil
+        currentSouvenirs = []
 
         mutate {
-            $0.lastGlobeCenter = coordinate
-            $0.shouldShowSearchInLocationButton = hasMovedFromInitialPosition
+            $0.scene = .globe
         }
+
+        emit(.renderScene(.globe))
     }
 
-    func isSameCoordinate(_ coord1: CLLocationCoordinate2D, _ coord2: CLLocationCoordinate2D) -> Bool {
-        let threshold = 0.01
-        return abs(coord1.latitude - coord2.latitude) < threshold &&
-            abs(coord1.longitude - coord2.longitude) < threshold
-    }
-
-    func moveCameraToCoordinate(
-        _ coordinate: CLLocationCoordinate2D,
-        mode: MapMode? = nil,
-        animated: Bool = false,
-        extraLift: CGFloat = 0
+    func transitionToMapWithSheet(
+        souvenirs: [SouvenirListItem],
+        sheetLevel: SheetLevel,
+        center: CLLocationCoordinate2D,
+        searchQuery: String?,
+        showSearchButton: Bool = false
     ) {
-        let targetMode = mode ?? state.value.mapMode // nil이면 현재 state 사용
-        let zoom = zoomLevel(for: targetMode)
-        emit(
-            .moveCamera(
-                coordinate: coordinate,
-                zoom: zoom,
-                animated: animated,
-                extraLift: extraLift
-            )
+        let context = MapSheetContext(
+            souvenirs: souvenirs,
+            sheetLevel: sheetLevel,
+            center: center,
+            searchQuery: searchQuery,
+            showSearchButton: showSearchButton
         )
-    }
 
-    func zoomLevel(for mode: MapMode) -> CGFloat {
-        switch mode {
-        case .globe:
-            1.5
-        case .map:
-            15
+        lastKnownCenter = center
+        currentSouvenirs = souvenirs
+
+        mutate {
+            $0.scene = .mapWithSheet(context)
         }
+
+        emit(.renderScene(.mapWithSheet(context)))
     }
-}
 
-// MARK: - Search In Location
-
-private extension GlobeViewModel {
-    func handleSearchInLocationTap(center: CLLocationCoordinate2D, radius: Double) {
-        mutate { $0.shouldShowSearchInLocationButton = false }
-
-        Task {
-            let results = try await souvenirRepo.getNearbySouvenirs(
-                latitude: center.latitude,
-                longitude: center.longitude,
-                radiusMeter: Int(radius)
-            )
-
-            mutate {
-                $0.souvenirs = results
-                $0.shouldShowSearchInLocationButton = false
-            }
-        }
-    }
-}
-
-// MARK: - Map Mode Transition
-
-private extension GlobeViewModel {
-    func transitionToMapMode(
-        coordinate: CLLocationCoordinate2D,
-        animated: Bool = true,
-        extraLift: CGFloat = 0
+    func showCarouselScene(
+        souvenirs: [SouvenirListItem],
+        selectedItem: SouvenirListItem,
+        searchQuery: String?
     ) {
-        let fixedRadius: Double = 500
-        Task {
-            let results = try await souvenirRepo.getNearbySouvenirs(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude,
-                radiusMeter: Int(fixedRadius)
-            )
-
-            mutate {
-                $0.souvenirs = results
-                $0.sheetViewMode = .bottomSheet(results)
-            }
-        }
+        let context = CarouselContext(
+            souvenirs: souvenirs,
+            selectedItem: selectedItem,
+            searchQuery: searchQuery
+        )
 
         mutate {
-            $0.mapMode = .map
+            $0.scene = .mapWithCarousel(context)
         }
-        moveCameraToCoordinate(
-            coordinate,
-            mode: .map,
-            animated: animated,
-            extraLift: extraLift
+
+        emit(.renderScene(.mapWithCarousel(context)))
+    }
+
+    func updateCarouselSelectedItem(_ item: SouvenirListItem) {
+        guard case let .mapWithCarousel(context) = state.value.scene else { return }
+
+        let newContext = CarouselContext(
+            souvenirs: context.souvenirs,
+            selectedItem: item,
+            searchQuery: context.searchQuery
+        )
+
+        mutate {
+            $0.scene = .mapWithCarousel(newContext)
+        }
+    }
+
+    // 기념품과 핀만 업데이트 (State 업데이트 X, 이벤트만!)
+    func updateSouvenirsAndPinsOnly(_ souvenirs: [SouvenirListItem]) {
+        currentSouvenirs = souvenirs
+        emit(.updateSouvenirsAndPinsOnly(souvenirs))
+    }
+
+    // 검색 버튼만 표시 (State 업데이트 X, 이벤트만)
+    func showSearchButtonOnly() {
+        emit(.showSearchButton(true))
+    }
+}
+
+// MARK: - Country Selection
+
+private extension GlobeViewModel {
+    func handleCountrySelection(_ badge: CountryBadge) {
+        Task {
+            let roundedCoordinate = badge.coordinate.rounded(toDecimalPlaces: 2)
+
+            let souvenirs = try await loadSouvenirs(
+                near: roundedCoordinate,
+                radius: 5000
+            )
+
+            transitionToMapWithSheet(
+                souvenirs: souvenirs,
+                sheetLevel: .mid,
+                center: roundedCoordinate,
+                searchQuery: badge.countryName
+            )
+        }
+    }
+}
+
+// MARK: - Search
+
+private extension GlobeViewModel {
+    func handleSearchTap() {
+        navigate(
+            to: .souvenirRoute(
+                .search { [weak self] item in
+                    self?.navigate(to: .pop)
+                    self?.handleAction(.didSelectSearchResult(item))
+                }
+            )
         )
     }
-}
 
-// MARK: - Badge Interaction
-
-private extension GlobeViewModel {
-    func handleCountryBadgeTap(_ badge: CountryBadge) {
-        mutate {
-            $0.searchResult = badge.countryName
-            $0.mapEntrySource = .other
-        }
-        transitionToMapMode(coordinate: badge.coordinate, animated: true)
-        emit(.moveBottomSheetHeight(.mid))
-    }
-}
-
-// MARK: - Navigation
-
-private extension GlobeViewModel {
-    func handleBackButtonTap() {
-        let lastPosition = state.value.lastGlobeCenter
-        let entrySource = state.value.mapEntrySource
-
-        switch entrySource {
-        case .search:
-            mutate { $0.mapEntrySource = .other }
-            navigate(
-                to: .souvenirRoute(
-                    .search { [weak self] item in
-                        self?.handleCountrySelected(item)
-                    }
-                )
+    func handleSearchResultSelection(_ item: SearchResultItem) {
+        Task {
+            let souvenirs = try await loadSouvenirs(
+                near: item.coordinate,
+                radius: 5000
             )
 
-        case .other:
-            mutate {
-                $0.mapMode = .globe
-                $0.sheetViewMode = .hide
-                $0.shouldShowSearchInLocationButton = false
-            }
-
-            moveCameraToCoordinate(lastPosition, mode: .globe)
+            transitionToMapWithSheet(
+                souvenirs: souvenirs,
+                sheetLevel: .mid,
+                center: item.coordinate,
+                searchQuery: item.name
+            )
         }
     }
 
-    func handleCloseButtonTap() {
-        let lastPosition = state.value.lastGlobeCenter
+    func handleSearchInArea(center: CLLocationCoordinate2D, radius: Double) {
+        Task {
+            let souvenirs = try await loadSouvenirs(
+                near: center,
+                radius: Int(radius)
+            )
 
-        mutate {
-            $0.mapMode = .globe
-            $0.sheetViewMode = .hide
-            $0.shouldShowSearchInLocationButton = false
+            updateSouvenirsAndPinsOnly(souvenirs)
         }
-
-        moveCameraToCoordinate(lastPosition, mode: .globe)
     }
 }
 
-// MARK: - Location Services
+// MARK: - My Location
 
 private extension GlobeViewModel {
-    func handleLocationButtonTap() {
+    func handleMyLocationTap() {
         let status = locationManager.authorizationStatus
 
         switch status {
         case .denied, .restricted:
-            emit(.locationPermissionDenied)
+            emit(.showLocationPermissionAlert)
 
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -284,102 +279,188 @@ private extension GlobeViewModel {
     func moveToUserLocation() {
         guard let userLocation = locationManager.location?.coordinate else { return }
 
-        switch state.value.mapMode {
-        case .globe:
-            mutate {
-                $0.mapEntrySource = .other
-                $0.searchResult = ""
-            }
-
-            transitionToMapMode(
-                coordinate: userLocation,
-                animated: false,
-                extraLift: 150
+        Task {
+            let souvenirs = try await loadSouvenirs(
+                near: userLocation,
+                radius: 5000
             )
-            emit(.moveBottomSheetHeight(.mid))
 
-        case .map:
-            emit(
-                .moveCamera(
-                    coordinate: userLocation,
-                    zoom: nil,
-                    animated: true,
-                    extraLift: 150
+            switch state.value.scene {
+            case .globe:
+                transitionToMapWithSheet(
+                    souvenirs: souvenirs,
+                    sheetLevel: .mid,
+                    center: userLocation,
+                    searchQuery: nil
                 )
-            )
+
+            case let .mapWithSheet(context):
+                transitionToMapWithSheet(
+                    souvenirs: souvenirs,
+                    sheetLevel: context.sheetLevel,
+                    center: userLocation,
+                    searchQuery: context.searchQuery,
+                    showSearchButton: false
+                )
+
+            case let .mapWithCarousel(context):
+                transitionToMapWithSheet(
+                    souvenirs: souvenirs,
+                    sheetLevel: .mid,
+                    center: userLocation,
+                    searchQuery: context.searchQuery
+                )
+            }
         }
     }
 }
 
-// MARK: - Souvenir Interaction
+// MARK: - Map Interaction
 
 private extension GlobeViewModel {
-    func handleSouvenirPinTap(_ item: SouvenirListItem) {
-        let items = state.value.souvenirs
-        mutate {
-            $0.sheetViewMode = .carousel(items)
+    func handleMapMove(_ coordinate: CLLocationCoordinate2D) {
+        guard state.value.mapMode == .map else {
+            return
         }
 
-        emit(.moveCarouselCenter(item))
+        // 캐러셀 모드일 때 카메라 위치 저장
+        if case .mapWithCarousel = state.value.scene {
+            lastCarouselCameraCenter = coordinate
+        }
+
+        guard let lastCenter = lastKnownCenter else {
+            lastKnownCenter = coordinate
+            return
+        }
+
+        // x축(경도)만 비교
+        let hasMoved = coordinate.longitude != lastCenter.longitude
+
+        if hasMoved {
+            if case let .mapWithSheet(context) = state.value.scene {
+                if !context.showSearchButton {
+                    showSearchButtonOnly()
+                }
+            }
+
+            lastKnownCenter = coordinate
+        }
+    }
+}
+
+// MARK: - Sheet Interaction
+
+private extension GlobeViewModel {
+    func handleSheetLevelChange(_ level: SheetLevel) {
+        guard case let .mapWithSheet(context) = state.value.scene else { return }
+
+        transitionToMapWithSheet(
+            souvenirs: context.souvenirs,
+            sheetLevel: level,
+            center: context.center,
+            searchQuery: context.searchQuery,
+            showSearchButton: context.showSearchButton
+        )
+    }
+}
+
+// MARK: - Carousel
+
+private extension GlobeViewModel {
+    // 캐러셀 센터 변경 (프로그래밍/사용자 모두)
+    func handleCarouselCenterChanged(_ item: SouvenirListItem) {
+        guard case .mapWithCarousel = state.value.scene else { return }
+
+        // State 업데이트
+        updateCarouselSelectedItem(item)
+
+        // 카메라 이동 & 핀 선택
+        emit(.moveCameraAndSelectPin(item))
     }
 
     func handleCarouselClose() {
-        let items = state.value.souvenirs
+        guard case let .mapWithCarousel(context) = state.value.scene else { return }
+
+        // 현재 카메라 위치 사용
+        let center = lastCarouselCameraCenter ?? context.selectedItem.coordinate.toCLLocationCoordinate2D
+
+        let sheetContext = MapSheetContext(
+            souvenirs: context.souvenirs,
+            sheetLevel: .min,
+            center: center,
+            searchQuery: context.searchQuery,
+            showSearchButton: false
+        )
+
         mutate {
-            $0.sheetViewMode = .bottomSheet(items)
+            $0.scene = .mapWithSheet(sheetContext)
         }
 
-        emit(.moveBottomSheetHeight(.min))
+        // 카메라 이동 없이 Scene만 전환 ⭐
+        emit(.transitionToSheetWithoutCamera(sheetContext))
+
+        // 저장된 위치 초기화
+        lastCarouselCameraCenter = nil
+    }
+}
+
+// MARK: - Souvenir Selection
+
+private extension GlobeViewModel {
+    // 핀 탭 → 캐러셀 센터만 변경
+    func handleSouvenirPinSelection(_ item: SouvenirListItem) {
+        let souvenirs = currentSouvenirs
+        guard !souvenirs.isEmpty else { return }
+
+        let searchQuery = state.value.searchQuery
+
+        // 현재 Scene에 따라 처리
+        switch state.value.scene {
+        case .mapWithSheet:
+            // Sheet → Carousel로 전환
+            showCarouselScene(
+                souvenirs: souvenirs,
+                selectedItem: item,
+                searchQuery: searchQuery
+            )
+
+        case .mapWithCarousel:
+            // 이미 Carousel이면 아무것도 안 함 (scrollToItem만 호출)
+            break
+
+        default:
+            break
+        }
+
+        // 캐러셀 센터 변경 (scrollToItem 호출 → centerChanged 발생)
+        emit(.scrollCarouselToItem(item))
     }
 
-    func handleSouvenirItemTap(_ item: SouvenirListItem) {
+    // 그리드/캐러셀 아이템 탭 → 상세
+    func handleSouvenirDetailSelection(_ item: SouvenirListItem) {
         navigate(to: .souvenirRoute(.detail(id: item.id)))
     }
 }
 
-// MARK: - Search
+// MARK: - Navigation
 
 private extension GlobeViewModel {
-    private func handleSearchTap() {
-        navigate(
-            to: .souvenirRoute(
-                .search { [weak self] item in
-                    self?.navigate(to: .pop)
-                    self?.handleCountrySelected(item)
-                }
-            )
-        )
+    func handleCloseTap() {
+        transitionToGlobe()
     }
+}
 
-    private func handleCountrySelected(_ item: SearchResultItem) {
-        mutate {
-            $0.searchResult = item.name
-            $0.mapEntrySource = .search
-        }
+// MARK: - Data Loading
 
-        let isAlreadyMapMode = state.value.mapMode == .map
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            guard let self else { return }
-
-            if isAlreadyMapMode {
-                // 이미 지도 모드 → 카메라만 이동
-                moveCameraToCoordinate(
-                    item.coordinate,
-                    mode: .map, // zoom 15로 이동
-                    animated: true,
-                    extraLift: 150
-                )
-            } else {
-                // Globe 모드 → 지도 모드로 전환
-                transitionToMapMode(
-                    coordinate: item.coordinate,
-                    animated: false,
-                    extraLift: 150
-                )
-            }
-
-            emit(.moveBottomSheetHeight(.mid))
-        }
+private extension GlobeViewModel {
+    func loadSouvenirs(
+        near coordinate: CLLocationCoordinate2D,
+        radius: Int
+    ) async throws -> [SouvenirListItem] {
+        try await souvenirRepo.getNearbySouvenirs(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+            radiusMeter: radius
+        )
     }
 }

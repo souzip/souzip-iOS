@@ -178,8 +178,6 @@ final class SouvenirFormViewModel: BaseViewModel<
     }
 
     private func handleSubmit() {
-        guard state.value.isSubmitEnabled else { return }
-
         guard let input = makeSubmitInput() else {
             emit(.showError("필수 정보를 모두 입력해주세요."))
             return
@@ -246,13 +244,16 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleCreate(input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let imageData = try convertPhotosToData(state.value.localPhotos)
                 _ = try await souvenirRepo.createSouvenir(
                     input: input,
                     images: imageData
                 )
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
@@ -261,29 +262,45 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleUpdate(id: Int, input: SouvenirInput) {
         Task {
             do {
+                emit(.loading(true))
                 let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
                 onResult?(souvenirDetail)
+                emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
+                emit(.loading(false))
                 emit(.showError(error.localizedDescription))
             }
         }
     }
 
     private func convertPhotosToData(_ photos: [LocalPhoto]) throws -> [Data] {
-        try photos.map { photo in
-            guard let image = UIImage(contentsOfFile: photo.url.path) else {
-                throw ImageProcessingError.invalidSource
+        var results: [Data] = []
+        results.reserveCapacity(photos.count)
+
+        for photo in photos {
+            try autoreleasepool {
+                guard FileManager.default.fileExists(atPath: photo.url.path) else {
+                    throw ImageProcessingError.invalidSource
+                }
+
+                guard let image = UIImage(contentsOfFile: photo.url.path) else {
+                    throw ImageProcessingError.invalidSource
+                }
+
+                // 3000px로 축소
+                let resized = resizeImage(image, maxDimension: 3000)
+
+                // 압축률 0.75로 축소
+                guard let jpegData = resized.jpegData(compressionQuality: 0.75) else {
+                    throw ImageProcessingError.jpegConversionFailed
+                }
+
+                results.append(jpegData)
             }
-
-            let resized = resizeImage(image, maxDimension: 3000)
-
-            guard let jpegData = resized.jpegData(compressionQuality: 0.8) else {
-                throw ImageProcessingError.jpegConversionFailed
-            }
-
-            return jpegData
         }
+
+        return results
     }
 
     private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
@@ -293,17 +310,35 @@ final class SouvenirFormViewModel: BaseViewModel<
             return image
         }
 
-        let aspectRatio = size.width / size.height
-        let newSize = if size.width > size.height {
-            CGSize(width: maxDimension, height: maxDimension / aspectRatio)
-        } else {
-            CGSize(width: maxDimension * aspectRatio, height: maxDimension)
+        guard let cgImage = image.cgImage else { return image }
+
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimension,
+        ]
+
+        let data = NSMutableData()
+        guard let imageDestination = CGImageDestinationCreateWithData(
+            data,
+            UTType.png.identifier as CFString,
+            1,
+            nil
+        ) else {
+            return image
         }
 
-        let renderer = UIGraphicsImageRenderer(size: newSize)
-        return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: newSize))
+        CGImageDestinationAddImage(imageDestination, cgImage, nil)
+        guard CGImageDestinationFinalize(imageDestination) else {
+            return image
         }
+
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
+              let resizedImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+            return image
+        }
+
+        return UIImage(cgImage: resizedImage)
     }
 }
 

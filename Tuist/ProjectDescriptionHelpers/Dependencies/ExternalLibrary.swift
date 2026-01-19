@@ -26,9 +26,13 @@ public enum ExternalLibrary: String, CaseIterable {
 
     case mapboxMaps = "MapboxMaps"
 
-//    // MARK: - Google Sign In
-//
-//    case googleSignIn = "GoogleSignIn"
+    // MARK: - Google Sign In
+
+    case googleSignIn = "GoogleSignIn"
+    
+    // MARK: - Analytics
+    
+    case amplitudeSwift = "AmplitudeSwift"
 }
 
 public extension ExternalLibrary {
@@ -38,6 +42,7 @@ public extension ExternalLibrary {
         switch self {
         case .mapboxMaps: .framework
         case .rxSwift, .rxRelay, .rxCocoa: .framework
+        case .amplitudeSwift: .framework
         default: .staticFramework
         }
     }
