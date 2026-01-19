@@ -100,10 +100,10 @@ final class MapSearchBarView: UIView {
 
     private func renderMapEmptyMode() {
         titleLabel.text = "✈️  어디로 떠나시나요?"
-        closeButton.isHidden = true
+        closeButton.isHidden = false
         searchIconImageView.isHidden = true
 
-        updateConstraints(showClose: false, showSearch: false)
+        updateConstraints(showClose: true, showSearch: false)
     }
 
     private func renderMapWithQueryMode(query: String) {
