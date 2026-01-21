@@ -150,10 +150,13 @@ extension SouvenirFormViewController: PHPickerViewControllerDelegate {
             guard let self else { return }
 
             do {
+                handleEvent(.loading(true))
                 let photos = try await savePickedResultsToLocalPhotos(results)
                 guard !photos.isEmpty else { return }
                 viewModel.action.accept(.addLocalPhotos(photos))
+                handleEvent(.loading(false))
             } catch {
+                handleEvent(.loading(false))
                 viewModel.event.accept(.showError("사진을 불러오는데 실패했어요. 다시 시도해주세요."))
             }
         }
