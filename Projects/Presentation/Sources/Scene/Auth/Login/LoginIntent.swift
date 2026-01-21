@@ -8,7 +8,7 @@ enum LoginAction {
 
 struct LoginState {
     var isLoading: Bool = false
-    var recentAuthProvider: AuthProvider? = .apple
+    var recentAuthProvider: AuthProvider?
 }
 
 enum LoginEvent {
