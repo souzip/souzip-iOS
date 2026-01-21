@@ -163,9 +163,9 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
     }
 
     func renderPhotos(
-        mode: SouvenirFormMode,
-        localPhotos: [LocalPhoto],
-        existingFiles: [SouvenirFile]
+        _ mode: SouvenirFormMode,
+        _ localPhotos: [LocalPhoto],
+        _ existingFiles: [SouvenirFile]
     ) {
         switch mode {
         case .create:
@@ -203,7 +203,7 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         descriptionFieldView.updateUI(text: description)
     }
 
-    func renderSubmitButton(title: String, isEnabled: Bool) {
+    func renderSubmitButton(_ title: String, _ isEnabled: Bool) {
         submitButton.setTitle(title)
         submitButton.setEnabled(isEnabled)
     }
