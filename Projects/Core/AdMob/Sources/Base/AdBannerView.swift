@@ -7,7 +7,6 @@ public final class AdBannerView: UIView {
     // MARK: - Properties
 
     private let bannerView: BannerView
-    public weak var delegate: BannerViewDelegate?
 
     // MARK: - Initializer
 

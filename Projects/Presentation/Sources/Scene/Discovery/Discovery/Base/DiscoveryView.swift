@@ -376,13 +376,13 @@ private extension DiscoveryView {
     func makeBannerSectionLayout() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106)
+            heightDimension: .estimated(60)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106)
+            heightDimension: .estimated(60)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,

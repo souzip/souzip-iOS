@@ -1,7 +1,6 @@
 import GoogleMobileAds
 
 public final class AdMobManager {
-
     public static let shared = AdMobManager()
 
     private init() {}
