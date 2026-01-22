@@ -1,3 +1,5 @@
+import AdSupport
+import AppTrackingTransparency
 import GoogleMobileAds
 
 public final class AdMobManager {
@@ -5,7 +7,12 @@ public final class AdMobManager {
 
     private init() {}
 
+    @MainActor
     public func initialize() {
-        MobileAds.shared.start(completionHandler: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            ATTrackingManager.requestTrackingAuthorization { _ in
+                MobileAds.shared.start(completionHandler: nil)
+            }
+        }
     }
 }
