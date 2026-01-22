@@ -22,7 +22,7 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
             showEditSouvenir(detail, onResult)
 
         case let .detail(id):
-            AnalyticsManager.shared.track(event: .clickSouvenirDetail(id: id.description))
+            AnalyticsManager.shared.track(event: .tapSouvenirDetail(id: id.description))
             showDetailSouvenir(id)
 
         case let .search(onResult):

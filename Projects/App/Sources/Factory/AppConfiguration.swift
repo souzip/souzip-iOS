@@ -1,3 +1,4 @@
+import AdMob
 import DesignSystem
 import Logger
 import Presentation
@@ -14,5 +15,6 @@ struct AppConfiguration {
         ImageCacheConfiguration.shared.setup()
         AnalyticsManager.shared.configure(apiKey: amplitudeAPIKey)
         AnalyticsManager.shared.track(event: .appOpened)
+        AdMobManager.shared.initialize()
     }
 }

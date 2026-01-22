@@ -49,6 +49,13 @@ struct DiscoveryState {
             ))
         }
 
+        if !countries.isEmpty {
+            models.append(.init(
+                section: .banner,
+                items: [.banner]
+            ))
+        }
+
         // 3) 카테고리 칩
         if !categories.isEmpty {
             models.append(.init(
