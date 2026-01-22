@@ -8,6 +8,7 @@ struct DiscoverySectionModel {
 enum DiscoverySection: Hashable {
     case top10CountryChips
     case top10Cards
+    case banner
     case categoryChips
     case categoryCards
     case categoryMore

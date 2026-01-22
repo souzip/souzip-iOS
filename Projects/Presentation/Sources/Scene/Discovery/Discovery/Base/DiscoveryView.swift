@@ -148,6 +148,14 @@ private extension DiscoveryView {
             Void
         > { _, _, _ in }
 
+        let bannerRegistration = UICollectionView.CellRegistration<
+            BannerCell,
+            Void
+        > { [weak self] cell, _, _ in
+            guard let vc = self?.window?.rootViewController else { return }
+            cell.configure(rootViewController: vc)
+        }
+
         let headerRegistration = UICollectionView.SupplementaryRegistration<
             DiscoverySectionHeaderView
         >(
@@ -206,6 +214,13 @@ private extension DiscoveryView {
                     item: text
                 )
 
+            case .banner:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: bannerRegistration,
+                    for: indexPath,
+                    item: ()
+                )
+
             case .spacer:
                 collectionView.dequeueConfiguredReusableCell(
                     using: spacerRegistration,
@@ -257,6 +272,8 @@ private extension DiscoveryView {
                 makeTop10ChipsSectionLayout()
             case .top10Cards:
                 isEmptySection ? makeEmptyFullWidthSectionLayout(height: 219) : makeTop10CardsSectionLayout()
+            case .banner:
+                makeBannerSectionLayout()
             case .categoryChips:
                 makeCategoryChipsSectionLayout()
             case .categoryCards:
@@ -273,7 +290,7 @@ private extension DiscoveryView {
             section.contentInsets.bottom = bottomSpacing(for: kind)
 
             switch kind {
-            case .statisticsChips:
+            case .banner, .statisticsChips:
                 section.contentInsets.leading = 0
                 section.contentInsets.trailing = 0
             default:
@@ -291,6 +308,8 @@ private extension DiscoveryView {
             Space.headerToContent
         case .top10Cards:
             Space.sameMeaning
+        case .banner:
+            Space.differentMeaning
         case .categoryChips:
             Space.headerToContent
         case .categoryCards:
@@ -308,7 +327,7 @@ private extension DiscoveryView {
         switch kind {
         case .statisticsChips:
             68
-        case .top10Cards:
+        case .banner:
             40
         default:
             0
@@ -350,6 +369,27 @@ private extension DiscoveryView {
         )
         section.boundarySupplementaryItems = [header]
 
+        return section
+    }
+
+    // 배너 섹션
+    func makeBannerSectionLayout() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(106)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(106)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
         return section
     }
 
