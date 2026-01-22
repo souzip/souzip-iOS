@@ -73,6 +73,7 @@ public enum DefaultInfoPlist {
         with: base
             .merging(privacy)
             .merging(appSpecific)
+            .merging(AdMobInfoPlist.configuration)
     )
 
     public static let framework: InfoPlist = .default
