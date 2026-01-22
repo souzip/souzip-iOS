@@ -31,26 +31,19 @@ final class SouvenirFormViewController: BaseViewController<
         observeState()
             .map(\.navigationTitle)
             .distinct()
-            .onNext { [weak self] in self?.contentView.renderTitle($0) }
+            .onNext(contentView.renderTitle)
 
         observeState()
             .map { ($0.mode, $0.localPhotos, $0.existingFiles) }
-            .onNext { [weak self] mode, localPhotos, existingFiles in
-                self?.contentView.renderPhotos(
-                    mode: mode,
-                    localPhotos: localPhotos,
-                    existingFiles: existingFiles
-                )
-            }
+            .onNext(contentView.renderPhotos)
 
-        observeState()
-            .map(\.name)
+        observe(\.name)
             .distinct()
-            .onNext { [weak self] in self?.contentView.renderName($0) }
+            .onNext(contentView.renderName)
 
         observeState()
             .map { ($0.address, $0.locationDetail) }
-            .onNext { [weak self] in self?.contentView.renderAddress($0, $1) }
+            .onNext(contentView.renderAddress)
 
         observeState()
             .map { ($0.localPrice, $0.currencySymbol) }
@@ -63,7 +56,7 @@ final class SouvenirFormViewController: BaseViewController<
         observeState()
             .map(\.category)
             .distinct()
-            .onNext { [weak self] in self?.contentView.renderCategory($0) }
+            .onNext(contentView.renderCategory)
 
         observe(\.description)
             .distinct()
@@ -71,9 +64,7 @@ final class SouvenirFormViewController: BaseViewController<
 
         observeState()
             .map { ($0.submitButtonTitle, $0.isSubmitEnabled) }
-            .onNext { [weak self] title, isEnabled in
-                self?.contentView.renderSubmitButton(title: title, isEnabled: isEnabled)
-            }
+            .onNext(contentView.renderSubmitButton)
     }
 
     // MARK: - Event
@@ -150,10 +141,13 @@ extension SouvenirFormViewController: PHPickerViewControllerDelegate {
             guard let self else { return }
 
             do {
+                handleEvent(.loading(true))
                 let photos = try await savePickedResultsToLocalPhotos(results)
                 guard !photos.isEmpty else { return }
                 viewModel.action.accept(.addLocalPhotos(photos))
+                handleEvent(.loading(false))
             } catch {
+                handleEvent(.loading(false))
                 viewModel.event.accept(.showError("사진을 불러오는데 실패했어요. 다시 시도해주세요."))
             }
         }

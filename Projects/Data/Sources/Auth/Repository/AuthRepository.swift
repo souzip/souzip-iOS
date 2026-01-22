@@ -29,6 +29,7 @@ public final class DefaultAuthRepository: AuthRepository {
 
             userLocal.saveUserId(dto.user.userId)
             userLocal.saveUserNickname(dto.user.nickname)
+            userLocal.saveNeedsOnboarding(dto.needsOnboarding)
 
             return AuthDTOMapper.toDomain(dto)
         } catch {
