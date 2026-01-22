@@ -23,6 +23,7 @@ final class RecommendViewController: BaseViewController<
 
     override func bindState() {
         observe(\.sectionModels)
+            .skip(1)
             .onNext(contentView.render)
     }
 
