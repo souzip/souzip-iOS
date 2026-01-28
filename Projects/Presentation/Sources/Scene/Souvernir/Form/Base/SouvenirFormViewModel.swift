@@ -284,15 +284,7 @@ final class SouvenirFormViewModel: BaseViewModel<
                     throw ImageProcessingError.invalidSource
                 }
 
-                guard let image = UIImage(contentsOfFile: photo.url.path) else {
-                    throw ImageProcessingError.invalidSource
-                }
-
-                // 3000px로 축소
-                let resized = resizeImage(image, maxDimension: 3000)
-
-                // 압축률 0.75로 축소
-                guard let jpegData = resized.jpegData(compressionQuality: 0.75) else {
+                guard let jpegData = resizeImageFromFile(at: photo.url, maxDimension: 3000, compressionQuality: 0.75) else {
                     throw ImageProcessingError.jpegConversionFailed
                 }
 
@@ -303,42 +295,49 @@ final class SouvenirFormViewModel: BaseViewModel<
         return results
     }
 
-    private func resizeImage(_ image: UIImage, maxDimension: CGFloat) -> UIImage {
-        let size = image.size
-
-        if size.width <= maxDimension, size.height <= maxDimension {
-            return image
+    private func resizeImageFromFile(
+        at url: URL,
+        maxDimension: CGFloat,
+        compressionQuality: CGFloat
+    ) -> Data? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+            return nil
         }
 
-        guard let cgImage = image.cgImage else { return image }
-
-        let options: [CFString: Any] = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxDimension,
-        ]
-
-        let data = NSMutableData()
-        guard let imageDestination = CGImageDestinationCreateWithData(
-            data,
-            UTType.png.identifier as CFString,
-            1,
-            nil
-        ) else {
-            return image
+        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              let pixelWidth = properties[kCGImagePropertyPixelWidth] as? Int,
+              let pixelHeight = properties[kCGImagePropertyPixelHeight] as? Int else {
+            return nil
         }
 
-        CGImageDestinationAddImage(imageDestination, cgImage, nil)
-        guard CGImageDestinationFinalize(imageDestination) else {
-            return image
+        let needsResize = pixelWidth > Int(maxDimension) || pixelHeight > Int(maxDimension)
+
+        let cgImage: CGImage?
+
+        if needsResize {
+            let options: [CFString: Any] = [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceThumbnailMaxPixelSize: maxDimension,
+                kCGImageSourceShouldCacheImmediately: true,
+            ]
+            cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
+        } else {
+            let options: [CFString: Any] = [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceThumbnailMaxPixelSize: max(pixelWidth, pixelHeight),
+                kCGImageSourceShouldCacheImmediately: true,
+            ]
+            cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
         }
 
-        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
-              let resizedImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
-            return image
+        guard let finalCGImage = cgImage else {
+            return nil
         }
 
-        return UIImage(cgImage: resizedImage)
+        let uiImage = UIImage(cgImage: finalCGImage)
+        return uiImage.jpegData(compressionQuality: compressionQuality)
     }
 }
 

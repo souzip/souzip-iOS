@@ -8,10 +8,6 @@ public enum ModuleDependencies {
                 .module(.presentation),
                 .module(.domain),
                 .module(.data),
-                .module(.networking),
-                .module(.logger),
-                .module(.keychain),
-                .module(.utils),
             ]
             
         case .presentation:
@@ -20,6 +16,7 @@ public enum ModuleDependencies {
                 .module(.logger),
                 .module(.designSystem),
                 .module(.utils),
+                .module(.adMob),
 
                 .external(.rxSwift),
                 .external(.rxRelay),
@@ -70,6 +67,14 @@ public enum ModuleDependencies {
             return [
                 .module(.logger),
                 .module(.utils)
+            ]
+            
+        case .adMob:
+            return [
+                .module(.logger),
+                .module(.utils),
+                
+                .external(.googleMobileAds)
             ]
 
         case .designSystem:

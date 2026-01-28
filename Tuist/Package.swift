@@ -19,5 +19,6 @@ let package = Package(
         .package(url: "https://github.com/mchoe/SwiftSVG", from: "2.3.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "9.1.0"),
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.16.5"),
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "12.14.0")
     ]
 )

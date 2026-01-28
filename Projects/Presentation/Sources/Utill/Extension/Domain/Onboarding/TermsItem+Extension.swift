@@ -12,6 +12,6 @@ extension TermsItem {
     }
 
     var hasDetailPage: Bool {
-        type.detailURL != nil
+        type.urlString != nil
     }
 }

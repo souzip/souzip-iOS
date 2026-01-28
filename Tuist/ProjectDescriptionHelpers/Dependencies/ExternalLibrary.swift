@@ -33,6 +33,10 @@ public enum ExternalLibrary: String, CaseIterable {
     // MARK: - Analytics
     
     case amplitudeSwift = "AmplitudeSwift"
+    
+    // MARK: - Google Mobile Ads
+    
+    case googleMobileAds = "GoogleMobileAds"
 }
 
 public extension ExternalLibrary {
@@ -42,7 +46,7 @@ public extension ExternalLibrary {
         switch self {
         case .mapboxMaps: .framework
         case .rxSwift, .rxRelay, .rxCocoa: .framework
-        case .amplitudeSwift: .framework
+        case .amplitudeSwift, .googleMobileAds: .framework
         default: .staticFramework
         }
     }

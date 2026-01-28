@@ -2,26 +2,28 @@ import Foundation
 
 public enum AnalyticsEvent {
     case appOpened
-    case clickSouvenirDetail(id: String)
+    case tapSouvenirDetail(id: String)
+    case tapBanner
 
     // 이벤트 타입 문자열
     public var eventType: String {
         switch self {
         case .appOpened:
             "app_opened"
-        case .clickSouvenirDetail:
+        case .tapSouvenirDetail:
             "click_SOUVENIR DETAIL"
+        case .tapBanner:
+            "click_AD_BANNER"
         }
     }
 
     // 이벤트 프로퍼티
     public var properties: [String: Any]? {
         switch self {
-        case .appOpened:
-            nil
-
-        case let .clickSouvenirDetail(id):
+        case let .tapSouvenirDetail(id):
             ["souvenir_id": id]
+        default:
+            nil
         }
     }
 }

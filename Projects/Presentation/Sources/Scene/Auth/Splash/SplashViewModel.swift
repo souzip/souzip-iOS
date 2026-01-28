@@ -1,3 +1,4 @@
+import AdMob
 import Domain
 
 final class SplashViewModel: BaseViewModel<
@@ -21,6 +22,8 @@ final class SplashViewModel: BaseViewModel<
     // MARK: - Private Logic
 
     private func checkStatus() async {
+        await AdMobManager.shared.initialize()
+
         async let loginTask = autoLogin.execute()
         async let delay: Void = Task.sleep(for: state.value.minDisplayTime)
 

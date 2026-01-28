@@ -17,17 +17,17 @@ extension TermsType {
         }
     }
 
-    var detailURL: URL? {
+    var urlString: String? {
         switch self {
         case .age14: nil
         case .service:
-            URL(string: "https://www.souzip.com/terms")
+            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5801885cfc72d69e16a34"
         case .privacy:
-            URL(string: "https://www.souzip.com/privacy")
+            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5802499befa952e59529e"
         case .location:
-            URL(string: "https://www.souzip.com/location-terms")
+            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580db899bcb4bd78c8012"
         case .marketing:
-            URL(string: "https://www.souzip.com/marketing-terms")
+            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580cdbe77dce440e8e85f"
         }
     }
 }

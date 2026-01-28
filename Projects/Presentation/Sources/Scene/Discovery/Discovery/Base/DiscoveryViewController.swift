@@ -32,6 +32,7 @@ final class DiscoveryViewController: BaseViewController<
     override func bindState() {
         observeState()
             .map(\.sectionModels)
+            .skip(1)
             .onNext(contentView.render)
     }
 

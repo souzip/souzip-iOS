@@ -1,4 +1,5 @@
 import Domain
+import Foundation
 
 final class TermsViewModel: BaseViewModel<
     TermsState,
@@ -78,7 +79,7 @@ final class TermsViewModel: BaseViewModel<
     }
 
     private func handleTermDetail(_ type: TermsType) {
-        guard let url = type.detailURL else { return }
+        guard let url = URL(string: type.urlString ?? "") else { return }
 
         emit(.showSFView(url))
     }

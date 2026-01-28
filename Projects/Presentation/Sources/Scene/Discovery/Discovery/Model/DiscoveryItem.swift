@@ -3,6 +3,7 @@ import UIKit
 enum DiscoveryItem: Hashable {
     case countryChip(CountryChipItem)
     case souvenirCard(SouvenirCardItem)
+    case banner
     case categoryChip(CategoryItem)
     case moreButton(String)
     case statCountryChip([StatCountryChipItem])
