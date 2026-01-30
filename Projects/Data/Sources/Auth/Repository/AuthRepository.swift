@@ -121,10 +121,14 @@ private extension DefaultAuthRepository {
             case .unauthorized:
                 return .expired
 
-            case .noData, .invalidURL, .unknown,
-                 .serverError,
-                 .encodingError, .decodingError:
+            case .noData:
+                return .invalidUser
+
+            case .decodingError, .encodingError, .serverError:
                 return .loginFailed
+
+            case .invalidURL, .invalidResponse, .invalidEndpointType, .unknown:
+                return .networkError
             }
         }
 

@@ -66,7 +66,8 @@ private extension DefaultUserRepository {
             case .noData:
                 return .noData
 
-            case .invalidURL, .unknown, .serverError, .encodingError, .decodingError:
+            case .invalidURL, .invalidResponse, .invalidEndpointType,
+                 .unknown, .serverError, .encodingError, .decodingError:
                 return .fetchFailed
             }
         }
