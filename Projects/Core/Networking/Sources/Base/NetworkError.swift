@@ -1,7 +1,9 @@
 import Foundation
 
-public enum NetworkError: Error {
+public enum NetworkError: LocalizedError {
     case invalidURL
+    case invalidResponse
+    case invalidEndpointType
     case noData
     case decodingError(Error)
     case encodingError(Error)
@@ -9,10 +11,14 @@ public enum NetworkError: Error {
     case unauthorized
     case unknown(Error)
 
-    public var localizedDescription: String {
+    public var errorDescription: String {
         switch self {
         case .invalidURL:
             "유효하지 않은 URL입니다."
+        case .invalidResponse:
+            "응답 형식이 올바르지 않습니다."
+        case .invalidEndpointType:
+            "엔드포인트 타입이 올바르지 않습니다."
         case .noData:
             "데이터가 없습니다."
         case let .decodingError(error):
