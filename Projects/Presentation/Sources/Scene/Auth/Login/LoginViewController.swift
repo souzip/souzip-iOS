@@ -40,7 +40,6 @@ final class LoginViewController: BaseViewController<
 
     override func bindState() {
         observe(\.recentAuthProvider)
-            .unwrapped()
             .onNext(contentView.render)
     }
 
