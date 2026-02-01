@@ -8,12 +8,12 @@ public final class DefaultTokenRefresher: TokenRefresher {
     private let synchronizer = RefreshSynchronizer()
 
     public init(
-        local: AuthLocalDataSource,
-        remote: AuthRemoteDataSource,
+        authLocal: AuthLocalDataSource,
+        authRemote: AuthRemoteDataSource,
         userLocal: UserLocalDataSource
     ) {
-        authLocal = local
-        authRemote = remote
+        self.authLocal = authLocal
+        self.authRemote = authRemote
         self.userLocal = userLocal
     }
 

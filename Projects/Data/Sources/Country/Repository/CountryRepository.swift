@@ -65,7 +65,7 @@ private extension DefaultCountryRepository {
                 return .serverError
             case .noData:
                 return .notFound
-            case .invalidURL, .unknown, .encodingError, .decodingError:
+            case .invalidURL, .invalidResponse, .invalidEndpointType, .unknown, .encodingError, .decodingError:
                 return .networkError
             }
         }

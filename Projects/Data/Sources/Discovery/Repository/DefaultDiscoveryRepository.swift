@@ -101,7 +101,7 @@ private extension DefaultDiscoveryRepository {
                 return .serverError
             case .noData:
                 return .notFound
-            case .invalidURL, .unknown, .encodingError, .decodingError:
+            case .invalidURL, .invalidResponse, .invalidEndpointType, .unknown, .encodingError, .decodingError:
                 return .networkError
             }
         }

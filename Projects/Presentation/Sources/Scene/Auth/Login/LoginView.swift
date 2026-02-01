@@ -3,15 +3,60 @@ import Domain
 import RxCocoa
 import SnapKit
 import UIKit
+import Utils
 
 final class LoginView: BaseView<LoginAction> {
+    // MARK: - Constants
+
+    private enum Metric {
+        static let horizontalInset: CGFloat = LayoutConstants.Inset.horizontal
+        
+        // 그라데이션
+        static let gradientTopInset: CGFloat = 278
+        static let gradientStartLocation: NSNumber = 0.0
+        static let gradientEndLocation: NSNumber = 0.26
+
+        // 수집 로고
+        static let logoImageWidth: CGFloat = 100
+        static let logoImageHeight: CGFloat = 60
+        static let logoBottomSpacing: CGFloat = LayoutConstants.Spacing.xSmall
+
+        // 환영 라벨
+        static let welcomeBottomSpacing: CGFloat = LayoutConstants.Spacing.xxLarge
+
+        // 로그인 버튼 스택뷰
+        static let buttonStackSpacing: CGFloat = LayoutConstants.Spacing.standard
+        static let buttonStackHeight: CGFloat = 182
+        static let buttonStackBottomInset: CGFloat = 102
+        static let buttonCornerRadius: CGFloat = LayoutConstants.CornerRadius.button
+        static let buttonBorderWidth: CGFloat = LayoutConstants.BorderWidth.standard
+
+        static let backgroundImageRatio: CGFloat = 1.42
+
+        // 로그인 버튼
+        static let loginButtonImagePadding: CGFloat = 12
+        static let loginButtonImageSize: CGFloat = 24
+        
+        // 최근 로그인 뱃지
+        static let badgeTopOffset: CGFloat = 9 + (badgeShadowWidth / 2)
+        static let badgeTrailingOffset: CGFloat = 20 - (badgeShadowHeight / 2)
+        static let badgeWidth: CGFloat = 86 + badgeShadowWidth
+        static let badgeHeight: CGFloat = 24 + badgeShadowHeight
+        static let badgeShadowWidth: CGFloat = 17
+        static let badgeShadowHeight: CGFloat = 15
+    }
+
+    private enum Strings {
+        static let welcomeMessage = "지금 내 주변, 기념품 모음집\n수집에 오신 걸 환영합니다!"
+        static let guestButtonTitle = "둘러보기"
+    }
+
     // MARK: - UI
 
     private let bgImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .dsLoginBackground
         imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
         return imageView
     }()
 
@@ -22,7 +67,7 @@ final class LoginView: BaseView<LoginAction> {
             UIColor.dsBackground.withAlphaComponent(0).cgColor,
             UIColor.dsBackground.withAlphaComponent(1).cgColor,
         ]
-        gradientLayer.locations = [0.0, 0.26]
+        gradientLayer.locations = [Metric.gradientStartLocation, Metric.gradientEndLocation]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.0)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientLayer.frame = .zero
@@ -39,7 +84,7 @@ final class LoginView: BaseView<LoginAction> {
 
     private let welcomeLabel: TypographyLabel = {
         let label = TypographyLabel()
-        label.text = "지금 내 주변, 기념품 모음집\n수집에 오신 걸 환영합니다!"
+        label.text = Strings.welcomeMessage
         label.numberOfLines = 2
         label.textColor = .dsGreyWhite
         label.textAlignment = .center
@@ -52,29 +97,9 @@ final class LoginView: BaseView<LoginAction> {
     private let lbStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 16
+        stackView.spacing = Metric.buttonStackSpacing
         stackView.distribution = .fillEqually
         return stackView
-    }()
-
-    private let guestButton: UIButton = {
-        var config = UIButton.Configuration.plain()
-
-        let font = UIFont.pretendard(size: 13, weight: .regular)
-        let color = UIColor.dsGrey80
-
-        config.attributedTitle = AttributedString(
-            NSAttributedString(
-                string: "둘러보기",
-                attributes: [
-                    .font: font,
-                    .foregroundColor: color,
-                    .underlineStyle: NSUnderlineStyle.single.rawValue,
-                    .underlineColor: color,
-                ]
-            )
-        )
-        return UIButton(configuration: config)
     }()
 
     private let recentLoginBadgeView: UIImageView = {
@@ -99,8 +124,6 @@ final class LoginView: BaseView<LoginAction> {
     override func setAttributes() {
         backgroundColor = .dsBackground
         makeLoginButtons()
-
-        guestButton.isHidden = true
     }
 
     override func setHierarchy() {
@@ -110,7 +133,6 @@ final class LoginView: BaseView<LoginAction> {
             logoImageView,
             welcomeLabel,
             lbStackView,
-            guestButton,
             recentLoginBadgeView,
         ].forEach(addSubview)
     }
@@ -118,32 +140,32 @@ final class LoginView: BaseView<LoginAction> {
     override func setConstraints() {
         bgImageView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(bgImageView.snp.width).multipliedBy(1.42)
+            make.horizontalEdges.equalToSuperview().inset(Metric.horizontalInset)
+            make.height.equalTo(bgImageView.snp.width).multipliedBy(Metric.backgroundImageRatio)
         }
 
         gradientView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(278)
+            make.top.equalToSuperview().inset(Metric.gradientTopInset)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
 
         logoImageView.snp.makeConstraints { make in
-            make.bottom.equalTo(welcomeLabel.snp.top).offset(-8)
-            make.width.equalTo(100)
-            make.height.equalTo(60)
+            make.bottom.equalTo(welcomeLabel.snp.top).offset(-Metric.logoBottomSpacing)
+            make.width.equalTo(Metric.logoImageWidth)
+            make.height.equalTo(Metric.logoImageHeight)
             make.centerX.equalToSuperview()
         }
 
         welcomeLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(lbStackView.snp.top).offset(-48)
+            make.bottom.equalTo(lbStackView.snp.top).offset(-Metric.welcomeBottomSpacing)
             make.centerX.equalToSuperview()
         }
 
         lbStackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(102)
-            make.height.equalTo(182)
+            make.horizontalEdges.equalToSuperview().inset(Metric.horizontalInset)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(Metric.buttonStackBottomInset)
+            make.height.equalTo(Metric.buttonStackHeight)
         }
     }
 
@@ -151,8 +173,6 @@ final class LoginView: BaseView<LoginAction> {
         for (provider, button) in loginButtons {
             bind(button.rx.tap).to(.tapLogin(provider))
         }
-
-        bind(guestButton.rx.tap).to(.tapGuest)
     }
 
     // MARK: - Render
@@ -165,15 +185,12 @@ final class LoginView: BaseView<LoginAction> {
             return
         }
 
-        let shadowWidth = 17
-        let shadowHeight = 15
-
         recentLoginBadgeView.isHidden = false
         recentLoginBadgeView.snp.remakeConstraints { make in
-            make.top.equalTo(button.snp.top).offset(-9 - (shadowWidth / 2))
-            make.trailing.equalTo(button.snp.trailing).offset(-20 + (shadowWidth / 2))
-            make.width.equalTo(86 + shadowWidth)
-            make.height.equalTo(24 + shadowHeight)
+            make.top.equalTo(button.snp.top).offset(-Metric.badgeTopOffset)
+            make.trailing.equalTo(button.snp.trailing).offset(-Metric.badgeTrailingOffset)
+            make.width.equalTo(Metric.badgeWidth)
+            make.height.equalTo(Metric.badgeHeight)
         }
     }
 
@@ -182,13 +199,17 @@ final class LoginView: BaseView<LoginAction> {
     private func makeLoginButtons() {
         for provider in AuthProvider.allCases {
             let button = makeLoginButton(provider)
-
-            if provider == .apple {
+            
+            switch provider {
+            case .apple:
                 button.layer.borderColor = UIColor.dsGrey900.cgColor
-                button.layer.borderWidth = 1
+                button.layer.borderWidth = Metric.buttonBorderWidth
+            default:
+                button.layer.borderColor = nil
+                button.layer.borderWidth = 0
             }
 
-            button.layer.cornerRadius = 10
+            button.layer.cornerRadius = Metric.buttonCornerRadius
             button.clipsToBounds = true
             loginButtons[provider] = button
             lbStackView.addArrangedSubview(button)
@@ -200,9 +221,9 @@ final class LoginView: BaseView<LoginAction> {
 
         var config = UIButton.Configuration.plain()
         config.imagePlacement = .leading
-        config.imagePadding = 12
+        config.imagePadding = Metric.loginButtonImagePadding
 
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: 24)
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: Metric.loginButtonImageSize)
         config.image = provider.image.withConfiguration(symbolConfig)
 
         config.baseForegroundColor = provider.titleColor

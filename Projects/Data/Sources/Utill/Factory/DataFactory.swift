@@ -42,8 +42,8 @@ public final class DefaultDataFactory: DataFactory {
         )
 
         return DefaultTokenRefresher(
-            local: localDataSource,
-            remote: remoteDataSource,
+            authLocal: localDataSource,
+            authRemote: remoteDataSource,
             userLocal: userLocalDataSource
         )
     }()

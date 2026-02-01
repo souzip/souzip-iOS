@@ -25,23 +25,20 @@ final class LoginViewModel: BaseViewModel<
         bindState()
     }
 
-    // MARK: - Override
-
-    override func bindState() {
-        observe(\.isLoading)
-            .skip(1)
-            .map { .loading($0) }
-            .onNext(emit)
-    }
-
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
         case .viewWillAppear:
             Task { await loadRecentProvider() }
+
         case let .tapLogin(provider):
-            Task { await Login(provider) }
+            Task {
+                emit(.loading(true))
+                await Login(provider)
+                emit(.loading(false))
+            }
+
         case .tapGuest:
             navigate(to: .main)
         }
@@ -55,16 +52,13 @@ final class LoginViewModel: BaseViewModel<
     }
 
     private func Login(_ provider: AuthProvider) async {
-        guard !state.value.isLoading else { return }
-
-        mutate { $0.isLoading = true }
-        defer { mutate { $0.isLoading = false } }
-
         do {
             let result = try await login.execute(provider: provider)
             switch result {
-            case .ready: navigate(to: .main)
-            case .shouldOnboarding: navigate(to: .terms)
+            case .ready:
+                navigate(to: .main)
+            case .shouldOnboarding:
+                navigate(to: .terms)
             }
         } catch {
             emit(.errorAlert(error.localizedDescription))
