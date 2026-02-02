@@ -106,22 +106,24 @@ final class TermsView: BaseView<TermsAction> {
         bind(agreeButton.rx.tap).to(.tapAgreeButton)
     }
 
-    // MARK: - Public
+    // MARK: - Render
 
-    func render(items: [TermsItem]) {
+    func renderItems(_ items: [TermsItem]) {
         let isAllAgreed = items.isAllAgreed
         applySnapshot(items: items, isAllAgreed: isAllAgreed)
     }
 
-    func render(isEnabled: Bool) {
+    func renderAgreeButtonEnabled(_ isEnabled: Bool) {
         agreeButton.setEnabled(isEnabled)
     }
 
     // MARK: - Private
 
     private func createCVLayout() -> UICollectionViewCompositionalLayout {
-        UICollectionViewCompositionalLayout { sectionIndex, _ in
-            guard let sectionKind = Section(rawValue: sectionIndex) else { return nil }
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let self,
+                  let sectionKind = dataSource?.sectionIdentifier(for: sectionIndex)
+            else { return nil }
 
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),

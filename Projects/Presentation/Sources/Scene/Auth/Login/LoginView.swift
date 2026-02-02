@@ -10,7 +10,7 @@ final class LoginView: BaseView<LoginAction> {
 
     private enum Metric {
         static let horizontalInset: CGFloat = LayoutConstants.Inset.horizontal
-        
+
         // 그라데이션
         static let gradientTopInset: CGFloat = 278
         static let gradientStartLocation: NSNumber = 0.0
@@ -36,7 +36,7 @@ final class LoginView: BaseView<LoginAction> {
         // 로그인 버튼
         static let loginButtonImagePadding: CGFloat = 12
         static let loginButtonImageSize: CGFloat = 24
-        
+
         // 최근 로그인 뱃지
         static let badgeTopOffset: CGFloat = 9 + (badgeShadowWidth / 2)
         static let badgeTrailingOffset: CGFloat = 20 - (badgeShadowHeight / 2)
@@ -199,7 +199,7 @@ final class LoginView: BaseView<LoginAction> {
     private func makeLoginButtons() {
         for provider in AuthProvider.allCases {
             let button = makeLoginButton(provider)
-            
+
             switch provider {
             case .apple:
                 button.layer.borderColor = UIColor.dsGrey900.cgColor

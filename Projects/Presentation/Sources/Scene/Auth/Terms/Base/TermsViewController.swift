@@ -9,10 +9,10 @@ final class TermsViewController: BaseViewController<
 
     override func bindState() {
         observe(\.items)
-            .onNext(contentView.render)
+            .onNext(contentView.renderItems)
 
         observe(\.items.isRequiredAllAgreed)
-            .onNext(contentView.render)
+            .onNext(contentView.renderAgreeButtonEnabled)
     }
 
     // MARK: - Event

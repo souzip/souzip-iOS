@@ -24,11 +24,8 @@ final class TermsViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewWillAppear:
-            break
-
         case .tapback:
-            navigate(to: .login)
+            navigate(to: .back)
 
         case .tapAllAgree:
             handleAllAgree()
