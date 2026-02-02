@@ -6,7 +6,7 @@ final class TermsViewController: BaseViewController<
     TermsView
 > {
     // MARK: - Constants
-    
+
     private typealias Strings = TermsConstants.Strings
 
     // MARK: - Bind
