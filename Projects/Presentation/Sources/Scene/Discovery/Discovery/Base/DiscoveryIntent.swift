@@ -98,7 +98,7 @@ struct DiscoveryState {
         models.append(.init(section: .spacer, items: [.spacer]))
 
         // stats
-        if !statCountry.isEmpty {
+        if statCountry.count == 3 {
             let date = Date()
             let calendar = Calendar.current
             let year = calendar.component(.year, from: date) % 100
