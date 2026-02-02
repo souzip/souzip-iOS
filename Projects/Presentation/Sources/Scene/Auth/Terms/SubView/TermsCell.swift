@@ -13,6 +13,8 @@ final class TermsCell: UICollectionViewCell, ActionBindable {
     let action = PublishRelay<Action>()
     var disposeBag = DisposeBag()
 
+    private typealias Metric = TermsConstants
+
     // MARK: - UI
 
     private let checkImageView: UIImageView = {
@@ -82,21 +84,21 @@ private extension TermsCell {
 
     func setConstraints() {
         checkImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Metric.checkboxLeadingOffset)
             $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.size.equalTo(Metric.checkboxSize)
         }
 
         titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(checkImageView.snp.trailing).offset(8)
+            $0.leading.equalTo(checkImageView.snp.trailing).offset(Metric.titleLeadingOffset)
             $0.trailing.equalTo(detailButton.snp.leading)
             $0.centerY.equalToSuperview()
         }
 
         detailButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-Metric.detailButtonTrailingOffset)
             $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.size.equalTo(Metric.detailButtonSize)
         }
     }
 

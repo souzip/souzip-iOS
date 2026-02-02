@@ -5,6 +5,10 @@ final class TermsViewController: BaseViewController<
     TermsViewModel,
     TermsView
 > {
+    // MARK: - Constants
+    
+    private typealias Strings = TermsConstants.Strings
+
     // MARK: - Bind
 
     override func bindState() {
@@ -19,11 +23,11 @@ final class TermsViewController: BaseViewController<
 
     override func handleEvent(_ event: Event) {
         switch event {
-        case let .showMarketingConfirm(message):
+        case .showMarketingConfirmAlert:
             showDSConfirmAlert(
-                message: message,
-                confirmTitle: "동의",
-                cancelTitle: "미동의"
+                message: Strings.marketingConfirmMessage,
+                confirmTitle: Strings.marketingConfirmTitle,
+                cancelTitle: Strings.marketingCancelTitle
             ) {
                 self.viewModel.action.accept(.confirmMarketing(true))
             } cancelHandler: {

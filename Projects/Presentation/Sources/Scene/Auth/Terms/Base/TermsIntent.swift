@@ -27,6 +27,6 @@ struct TermsState {
 }
 
 enum TermsEvent {
-    case showMarketingConfirm(String)
+    case showMarketingConfirmAlert
     case showSFView(URL)
 }

@@ -7,6 +7,8 @@ final class TermsViewModel: BaseViewModel<
     TermsEvent,
     AuthRoute
 > {
+    private typealias Strings = TermsConstants.Strings
+
     // MARK: - UseCase
 
     private let saveMarketingConsent: SaveMarketingConsentUseCase
@@ -87,8 +89,7 @@ final class TermsViewModel: BaseViewModel<
         if state.value.marketing.isAgreed {
             navigate(to: .profile)
         } else {
-            let message = "마케팅 수신에 미동의 시,\n이벤트/혜택 알림을 받을 수 없어요."
-            emit(.showMarketingConfirm(message))
+            emit(.showMarketingConfirmAlert)
         }
     }
 
