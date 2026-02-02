@@ -35,6 +35,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             initialState.name = detail.name
             initialState.address = detail.address
             initialState.locationDetail = detail.locationDetail ?? ""
+            initialState.countryCode = detail.countryCode
             initialState.localPrice = detail.localPrice?.formatted() ?? ""
             initialState.currencySymbol = detail.currencySymbol ?? ""
             initialState.purpose = detail.purpose
