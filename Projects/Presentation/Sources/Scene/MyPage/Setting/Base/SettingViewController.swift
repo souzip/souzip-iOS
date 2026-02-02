@@ -10,9 +10,9 @@ final class SettingViewController: BaseViewController<
         case .showLogoutAlert:
             showDSConfirmAlert(
                 message: "로그아웃 하시겠습니까?",
-                confirmTitle: "아니요",
-                cancelTitle: "로그아웃",
-                cancelHandler: { [weak self] in
+                confirmTitle: "로그아웃",
+                cancelTitle: "아니요",
+                confirmHandler: { [weak self] in
                     self?.viewModel.action.accept(.logout)
                 }
             )
