@@ -3,6 +3,9 @@ import SnapKit
 import UIKit
 
 final class TermsAllAgreeCell: UICollectionViewCell {
+    private typealias Metric = TermsConstants
+    private typealias Strings = TermsConstants.Strings
+
     private let checkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -11,7 +14,7 @@ final class TermsAllAgreeCell: UICollectionViewCell {
 
     private let titleLabel: TypographyLabel = {
         let label = TypographyLabel()
-        label.text = "모두 동의합니다"
+        label.text = Strings.allAgree
         label.textColor = .dsGreyWhite
         label.setTypography(.body2SB)
         return label
@@ -49,13 +52,13 @@ private extension TermsAllAgreeCell {
 
     func setConstraints() {
         checkImageView.snp.makeConstraints {
-            $0.leading.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Metric.checkboxLeadingOffset)
             $0.centerY.equalToSuperview()
-            $0.size.equalTo(24)
+            $0.size.equalTo(Metric.checkboxSize)
         }
 
         titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(checkImageView.snp.trailing).offset(8)
+            $0.leading.equalTo(checkImageView.snp.trailing).offset(Metric.titleLeadingOffset)
             $0.centerY.equalToSuperview()
             $0.trailing.lessThanOrEqualToSuperview()
         }

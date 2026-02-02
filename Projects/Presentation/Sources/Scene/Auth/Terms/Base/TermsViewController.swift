@@ -5,25 +5,29 @@ final class TermsViewController: BaseViewController<
     TermsViewModel,
     TermsView
 > {
+    // MARK: - Constants
+    
+    private typealias Strings = TermsConstants.Strings
+
     // MARK: - Bind
 
     override func bindState() {
         observe(\.items)
-            .onNext(contentView.render)
+            .onNext(contentView.renderItems)
 
         observe(\.items.isRequiredAllAgreed)
-            .onNext(contentView.render)
+            .onNext(contentView.renderAgreeButtonEnabled)
     }
 
     // MARK: - Event
 
     override func handleEvent(_ event: Event) {
         switch event {
-        case let .showMarketingConfirm(message):
+        case .showMarketingConfirmAlert:
             showDSConfirmAlert(
-                message: message,
-                confirmTitle: "동의",
-                cancelTitle: "미동의"
+                message: Strings.marketingConfirmMessage,
+                confirmTitle: Strings.marketingConfirmTitle,
+                cancelTitle: Strings.marketingCancelTitle
             ) {
                 self.viewModel.action.accept(.confirmMarketing(true))
             } cancelHandler: {

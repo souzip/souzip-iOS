@@ -7,8 +7,8 @@ extension TermsItem {
     }
 
     var displayTitle: String {
-        let prefix = isRequired ? "[필수]" : "[선택]"
-        return "\(prefix) \(type.baseTitle)"
+        let prefix = type.isRequired ? "[필수]" : "[선택]"
+        return "\(prefix) \(type.title)"
     }
 
     var hasDetailPage: Bool {
