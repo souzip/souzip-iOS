@@ -7,8 +7,6 @@ final class TermsViewModel: BaseViewModel<
     TermsEvent,
     AuthRoute
 > {
-    private typealias Strings = TermsConstants.Strings
-
     // MARK: - UseCase
 
     private let saveMarketingConsent: SaveMarketingConsentUseCase
