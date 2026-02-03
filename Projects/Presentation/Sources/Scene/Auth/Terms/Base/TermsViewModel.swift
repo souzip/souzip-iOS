@@ -24,11 +24,8 @@ final class TermsViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewWillAppear:
-            break
-
         case .tapback:
-            navigate(to: .login)
+            navigate(to: .back)
 
         case .tapAllAgree:
             handleAllAgree()
@@ -90,8 +87,7 @@ final class TermsViewModel: BaseViewModel<
         if state.value.marketing.isAgreed {
             navigate(to: .profile)
         } else {
-            let message = "마케팅 수신에 미동의 시,\n이벤트/혜택 알림을 받을 수 없어요."
-            emit(.showMarketingConfirm(message))
+            emit(.showMarketingConfirmAlert)
         }
     }
 

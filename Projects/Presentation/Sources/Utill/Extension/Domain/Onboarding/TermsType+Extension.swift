@@ -2,7 +2,7 @@ import Domain
 import Foundation
 
 extension TermsType {
-    var baseTitle: String {
+    var title: String {
         switch self {
         case .age14:
             "만 14세 이상입니다"

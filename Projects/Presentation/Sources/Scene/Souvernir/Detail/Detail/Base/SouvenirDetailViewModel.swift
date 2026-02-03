@@ -36,10 +36,27 @@ final class SouvenirDetailViewModel: BaseViewModel<
             guard let detail = state.value.detail else { return }
 
             navigate(
-                to: .edit(
-                    detail: detail) { [weak self] detail in
-                        self?.mutate { $0.detail = detail }
-                    }
+                to: .edit(detail: detail) { [weak self] editedDetail in
+                    let newDetail = SouvenirDetail(
+                        id: editedDetail.id,
+                        name: editedDetail.name,
+                        localPrice: editedDetail.localPrice,
+                        currencySymbol: editedDetail.currencySymbol,
+                        krwPrice: editedDetail.krwPrice,
+                        description: editedDetail.description,
+                        address: editedDetail.address,
+                        locationDetail: editedDetail.locationDetail,
+                        coordinate: editedDetail.coordinate,
+                        category: editedDetail.category,
+                        purpose: editedDetail.purpose,
+                        countryCode: editedDetail.countryCode,
+                        isOwned: editedDetail.isOwned,
+                        owner: editedDetail.owner,
+                        files: detail.files
+                    )
+
+                    self?.mutate { $0.detail = newDetail }
+                }
             )
 
         case .delete:

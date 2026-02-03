@@ -5,3 +5,12 @@ public enum TermsType: Equatable {
     case location
     case marketing
 }
+
+public extension TermsType {
+    var isRequired: Bool {
+        switch self {
+        case .marketing: false
+        default: true
+        }
+    }
+}

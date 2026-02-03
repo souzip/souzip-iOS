@@ -31,9 +31,12 @@ final class SplashViewModel: BaseViewModel<
         try? await delay
 
         switch result {
-        case .ready: navigate(to: .main)
-        case .shouldLogin: navigate(to: .login)
-        case .shouldOnboarding: navigate(to: .terms)
+        case .ready:
+            navigate(to: .main)
+        case .shouldLogin:
+            navigate(to: .login)
+        case .shouldOnboarding:
+            navigate(to: .terms)
         }
     }
 }

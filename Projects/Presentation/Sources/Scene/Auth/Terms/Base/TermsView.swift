@@ -5,6 +5,11 @@ import SnapKit
 import UIKit
 
 final class TermsView: BaseView<TermsAction> {
+    // MARK: - Constants
+
+    private typealias Metric = TermsConstants
+    private typealias Strings = TermsConstants.Strings
+
     // MARK: - Types
 
     private enum Section: Int, CaseIterable {
@@ -27,13 +32,13 @@ final class TermsView: BaseView<TermsAction> {
     // MARK: - UI
 
     private let naviBar = DSNavigationBar(
-        title: "이용약관",
+        title: Strings.navigationTitle,
         style: .back
     )
 
     private let titleLabel: TypographyLabel = {
         let label = TypographyLabel()
-        label.text = "이용약관 동의가 필요해요"
+        label.text = Strings.title
         label.textColor = .dsGreyWhite
         label.numberOfLines = 0
         label.setTypography(.subhead24SB)
@@ -55,7 +60,7 @@ final class TermsView: BaseView<TermsAction> {
 
     private let agreeButton: DSButton = {
         let button = DSButton()
-        button.setTitle("동의하기")
+        button.setTitle(Strings.agreeButton)
         button.setEnabled(false)
         return button
     }()
@@ -78,26 +83,26 @@ final class TermsView: BaseView<TermsAction> {
 
     override func setConstraints() {
         naviBar.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
+            make.top.equalTo(safeAreaLayoutGuide).offset(Metric.naviBarTopOffset)
             make.horizontalEdges.equalToSuperview()
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(naviBar.snp.bottom).offset(12)
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(36)
+            make.top.equalTo(naviBar.snp.bottom).offset(Metric.titleTopOffset)
+            make.horizontalEdges.equalToSuperview().inset(Metric.titleHorizontalInset)
+            make.height.equalTo(Metric.titleHeight)
         }
 
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(46)
+            make.top.equalTo(titleLabel.snp.bottom).offset(Metric.collectionViewTopOffset)
             make.horizontalEdges.equalToSuperview()
-            make.bottom.equalTo(agreeButton.snp.top).offset(-12)
+            make.bottom.equalTo(agreeButton.snp.top).offset(Metric.collectionViewBottomOffset)
         }
 
         agreeButton.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(20)
-            make.height.equalTo(50)
+            make.horizontalEdges.equalToSuperview().inset(Metric.agreeButtonHorizontalInset)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(Metric.agreeButtonBottomInset)
+            make.height.equalTo(Metric.agreeButtonHeight)
         }
     }
 
@@ -106,32 +111,34 @@ final class TermsView: BaseView<TermsAction> {
         bind(agreeButton.rx.tap).to(.tapAgreeButton)
     }
 
-    // MARK: - Public
+    // MARK: - Render
 
-    func render(items: [TermsItem]) {
+    func renderItems(_ items: [TermsItem]) {
         let isAllAgreed = items.isAllAgreed
         applySnapshot(items: items, isAllAgreed: isAllAgreed)
     }
 
-    func render(isEnabled: Bool) {
+    func renderAgreeButtonEnabled(_ isEnabled: Bool) {
         agreeButton.setEnabled(isEnabled)
     }
 
     // MARK: - Private
 
     private func createCVLayout() -> UICollectionViewCompositionalLayout {
-        UICollectionViewCompositionalLayout { sectionIndex, _ in
-            guard let sectionKind = Section(rawValue: sectionIndex) else { return nil }
+        UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
+            guard let self,
+                  let sectionKind = dataSource?.sectionIdentifier(for: sectionIndex)
+            else { return nil }
 
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(48)
+                heightDimension: .absolute(Metric.itemHeight)
             )
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(48)
+                heightDimension: .estimated(Metric.itemHeight)
             )
             let group = NSCollectionLayoutGroup.vertical(
                 layoutSize: groupSize,
@@ -140,13 +147,13 @@ final class TermsView: BaseView<TermsAction> {
 
             let section = NSCollectionLayoutSection(group: group)
 
-            let topInset: CGFloat = (sectionKind == .terms) ? 8 : 0
+            let topInset: CGFloat = (sectionKind == .terms) ? Metric.termsTopInset : 0
 
             section.contentInsets = .init(
                 top: topInset,
-                leading: 20,
+                leading: Metric.horizontalInset,
                 bottom: 0,
-                trailing: 20
+                trailing: Metric.horizontalInset
             )
             section.interGroupSpacing = 0
 
@@ -169,7 +176,6 @@ final class TermsView: BaseView<TermsAction> {
             guard let self else { return }
 
             cell.render(item)
-
             cell.action
                 .bind { [weak self] action in
                     switch action {

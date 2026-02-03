@@ -118,7 +118,8 @@ private extension DefaultSouvenirRepository {
             case .noData:
                 return .notFound
 
-            case .invalidURL, .unknown, .encodingError, .decodingError:
+            case .invalidURL, .invalidResponse, .invalidEndpointType,
+                 .unknown, .encodingError, .decodingError:
                 return .networkError
             }
         }

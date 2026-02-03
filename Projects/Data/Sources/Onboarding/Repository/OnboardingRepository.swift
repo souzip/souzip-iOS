@@ -79,8 +79,8 @@ private extension DefaultOnboardingRepository {
     func mapToDomainError(_ error: Error) -> OnboardingError {
         if let networkError = error as? NetworkError {
             switch networkError {
-            case .noData, .invalidURL, .unknown,
-                 .serverError, .unauthorized,
+            case .noData, .invalidURL, .invalidResponse, .invalidEndpointType,
+                 .unknown, .serverError, .unauthorized,
                  .encodingError, .decodingError:
                 return .networkFailed
             }

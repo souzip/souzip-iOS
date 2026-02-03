@@ -272,7 +272,6 @@ final class PriceFieldView: UIView {
     // MARK: - Toggle
 
     private func setSelection(_ selection: CurrencySelection, animated: Bool, emit: Bool) {
-        guard currentSelection != selection else { return }
         currentSelection = selection
 
         applyCurrencyButtonStyle(selected: selection)
