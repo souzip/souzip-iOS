@@ -1,3 +1,5 @@
+import DesignSystem
+import SafariServices
 import UIKit
 
 final class SouvenirDetailViewController: BaseViewController<
@@ -59,9 +61,7 @@ final class SouvenirDetailViewController: BaseViewController<
             }
 
         case .showReport:
-            let sheet = ReportActionSheetViewController()
-            sheet.modalPresentationStyle = .overFullScreen
-            present(sheet, animated: false)
+            showReportBottomSheet()
 
         case let .copy(address):
             UIPasteboard.general.string = address
@@ -79,5 +79,31 @@ final class SouvenirDetailViewController: BaseViewController<
             loadingIndicator.stopAnimating()
             view.isUserInteractionEnabled = true
         }
+    }
+
+    private func showReportBottomSheet() {
+        let contentView = ReportBottomSheetView()
+        let vc = presentBottomSheet(contentView: contentView)
+
+        contentView.action
+            .bind { [weak self, weak vc] action in
+                switch action {
+                case .report:
+                    let urlString = """
+                    https://docs.google.com/forms/d/e/1FAIpQLSeI3EI2-KKDzv5fCpfOuGdrjDjHxKN212SFNym0exyNVoLgHg/viewform
+                    """
+                    guard let url = URL(string: urlString) else { return }
+
+                    vc?.dismissSheet { [weak self] in
+                        let safariVC = SFSafariViewController(url: url)
+                        safariVC.modalPresentationStyle = .pageSheet
+                        self?.present(safariVC, animated: true)
+                    }
+
+                case .close:
+                    vc?.dismissSheet()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }

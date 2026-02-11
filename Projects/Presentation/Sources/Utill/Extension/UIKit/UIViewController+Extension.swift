@@ -37,6 +37,25 @@ extension UIViewController {
     }
 }
 
+// MARK: - BottomSheet
+
+extension UIViewController {
+    @discardableResult
+    func presentBottomSheet(
+        contentView: UIView,
+        onDismiss: (() -> Void)? = nil
+    ) -> DSBottomSheetViewController {
+        let vc = DSBottomSheetViewController(contentView: contentView)
+
+        if let onDismiss {
+            _ = vc.onDismiss(onDismiss)
+        }
+
+        present(vc, animated: false)
+        return vc
+    }
+}
+
 // MARK: - Toast
 
 extension UIViewController {

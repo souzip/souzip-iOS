@@ -81,9 +81,11 @@ public final class DSBottomSheetView: UIView {
         view.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+
+        containerView.transform = CGAffineTransform(translationX: 0, y: UIScreen.main.bounds.height)
     }
 
-    // MARK: - Animation (Internal - ViewController에서만 호출)
+    // MARK: - Animation
 
     func animateIn(completion: (() -> Void)? = nil) {
         layoutIfNeeded()

@@ -50,18 +50,20 @@ final class ProfileViewController: BaseViewController<
     // MARK: - Private
 
     private func showImagePicker() {
-        let imagePickerVC = ProfileImagePickerViewController()
-        imagePickerVC.onImageSelected = { [weak self] type in
-            self?.viewModel.action.accept(.selectProfileImage(type))
-        }
+        let contentView = ProfileImagePickerView()
+        let vc = presentBottomSheet(contentView: contentView)
 
-        imagePickerVC.modalPresentationStyle = .pageSheet
-        if let sheet = imagePickerVC.sheetPresentationController {
-            sheet.detents = [.custom { _ in 371 }]
-            sheet.prefersGrabberVisible = false
-            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-        }
+        contentView.action
+            .bind { [weak self, weak vc] (action: ProfileImagePickerView.Action) in
+                switch action {
+                case .close:
+                    vc?.dismissSheet()
 
-        present(imagePickerVC, animated: true)
+                case let .selectImage(type):
+                    vc?.dismissSheet()
+                    self?.viewModel.action.accept(.selectProfileImage(type))
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
