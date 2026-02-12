@@ -1,5 +1,5 @@
 public protocol LoginUseCase {
-    func execute(provider: AuthProvider) async throws -> LoginResult
+    func execute(provider: AuthProvider?) async throws -> LoginResult
 }
 
 public final class DefaultLoginUseCase: LoginUseCase {
@@ -9,7 +9,12 @@ public final class DefaultLoginUseCase: LoginUseCase {
         self.authRepo = authRepo
     }
 
-    public func execute(provider: AuthProvider) async throws -> LoginResult {
+    public func execute(provider: AuthProvider?) async throws -> LoginResult {
+        guard let provider else {
+            await authRepo.deleteAllTokens()
+            return .guest
+        }
+
         let user = try await authRepo.login(provider: provider)
 
         if user.needsOnboarding {

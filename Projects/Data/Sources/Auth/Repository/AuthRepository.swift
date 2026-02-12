@@ -94,6 +94,10 @@ public final class DefaultAuthRepository: AuthRepository {
         guard let platform else { return nil }
         return mapToProvider(platform)
     }
+
+    public func deleteAllTokens() async {
+        await authLocal.deleteAllTokens()
+    }
 }
 
 // MARK: - Mapper

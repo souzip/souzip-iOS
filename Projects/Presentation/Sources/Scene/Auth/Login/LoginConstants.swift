@@ -29,7 +29,7 @@ enum LoginConstants {
     // 로그인 버튼 스택뷰
     static let buttonStackSpacing: CGFloat = LayoutConstants.Spacing.standard
     static let buttonStackHeight: CGFloat = 182
-    static let buttonStackBottomInset: CGFloat = 102
+    static let buttonStackBottomSpacing: CGFloat = 42
     static let buttonCornerRadius: CGFloat = LayoutConstants.CornerRadius.button
     static let buttonBorderWidth: CGFloat = LayoutConstants.BorderWidth.standard
 
@@ -38,6 +38,10 @@ enum LoginConstants {
     // 로그인 버튼
     static let loginButtonImagePadding: CGFloat = 12
     static let loginButtonImageSize: CGFloat = 24
+
+    // 게스트 버튼
+    static let guestButtonBottomInset: CGFloat = 24
+    static let guestButtonHeight = 16
 
     // 최근 로그인 뱃지
     static let badgeTopOffset: CGFloat = 9 + (badgeShadowWidth / 2)
