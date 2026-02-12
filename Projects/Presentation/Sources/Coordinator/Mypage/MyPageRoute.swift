@@ -3,7 +3,7 @@ enum MyPageRoute {
     case setting
 
     case login
-    case loginModal
+    case loginBottomSheet
 
     case souvenirRoute(SouvenirRoute)
 

@@ -58,7 +58,7 @@ final class MyPageViewModel: BaseViewModel<
             navigate(to: .souvenirRoute(.detail(id: souvenir.id)))
 
         case .tapLogin:
-            navigate(to: .loginModal)
+            navigate(to: .loginBottomSheet)
 
         case .tapCreateSouvenir:
             navigate(to: .souvenirRoute(.create))

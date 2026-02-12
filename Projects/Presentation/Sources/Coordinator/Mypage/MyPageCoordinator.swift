@@ -26,8 +26,8 @@ final class MyPageCoordinator: BaseCoordinator<MyPageRoute, TabRoute> {
         case .login:
             navigateToParent(.login)
 
-        case .loginModal:
-            showLoginModal()
+        case .loginBottomSheet:
+            showLoginBottomSheet()
 
         case .pop:
             nav.popViewController(animated: true)
@@ -70,7 +70,7 @@ private extension MyPageCoordinator {
         coordinator.navigate(route)
     }
 
-    func showLoginModal() {
+    func showLoginBottomSheet() {
         let coordinator = LoginBottomSheetCoordinator(
             nav: nav,
             factory: factory

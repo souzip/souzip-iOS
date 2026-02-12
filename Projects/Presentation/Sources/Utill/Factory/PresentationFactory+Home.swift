@@ -6,7 +6,8 @@ extension DefaultPresentationFactory {
     func makeGlobeScene() -> RoutedScene<HomeRoute> {
         let vm = GlobeViewModel(
             countryRepo: domainFactory.makeCountryRepository(),
-            souvenirRepo: domainFactory.makeSouvenirRepository()
+            souvenirRepo: domainFactory.makeSouvenirRepository(),
+            authRepo: domainFactory.makeAuthRepository()
         )
         let view = GlobeView()
         let vc = GlobeViewController(viewModel: vm, contentView: view)
