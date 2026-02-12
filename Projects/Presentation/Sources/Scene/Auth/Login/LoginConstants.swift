@@ -41,7 +41,7 @@ enum LoginConstants {
 
     // 게스트 버튼
     static let guestButtonBottomInset: CGFloat = 24
-    static let guestButtonHeight = 16
+    static let guestButtonHeight: CGFloat = 16
 
     // 최근 로그인 뱃지
     static let badgeTopOffset: CGFloat = 9 + (badgeShadowWidth / 2)
