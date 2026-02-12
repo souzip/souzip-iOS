@@ -38,7 +38,7 @@ final class TabBarCoordinator: BaseCoordinator<TabRoute, RootRoute> {
             tabController.setSelectedIndex(route.rawValue)
             tabController.showContent(myPageNav)
 
-        case .showLogin:
+        case .login:
             navigateToParent(.login)
         }
     }

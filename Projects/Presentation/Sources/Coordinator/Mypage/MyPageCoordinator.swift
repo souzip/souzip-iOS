@@ -24,7 +24,10 @@ final class MyPageCoordinator: BaseCoordinator<MyPageRoute, TabRoute> {
             handleSouvenirRoute(sovenirRoute)
 
         case .login:
-            navigateToParent(.showLogin)
+            navigateToParent(.login)
+
+        case .loginModal:
+            showLoginModal()
 
         case .pop:
             nav.popViewController(animated: true)
@@ -48,6 +51,12 @@ private extension MyPageCoordinator {
         bindRoute(scene)
         nav.pushViewController(scene.vc, animated: true)
     }
+
+    func refreshMyPage() {
+        let scene = factory.makeMyPageScene()
+        bindRoute(scene)
+        nav.setViewControllers([scene.vc], animated: false)
+    }
 }
 
 private extension MyPageCoordinator {
@@ -59,5 +68,17 @@ private extension MyPageCoordinator {
 
         addTemporaryChild(coordinator)
         coordinator.navigate(route)
+    }
+
+    func showLoginModal() {
+        let coordinator = LoginBottomSheetCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        coordinator.onFinish = { [weak self] in
+            self?.refreshMyPage()
+        }
+        addTemporaryChild(coordinator)
+        coordinator.start()
     }
 }

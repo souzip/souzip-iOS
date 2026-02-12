@@ -33,10 +33,8 @@ public extension Coordinator {
         child.parent = self
 
         // BaseCoordinator의 completion 설정
-        if let baseChild = child as? BaseCoordinator<C.Route, C.ParentRoute> {
-            baseChild.onFinish = { [weak self] in
-                self?.removeChild(child)
-            }
+        if child is BaseCoordinator<C.Route, C.ParentRoute> {
+            removeChild(child)
         }
 
         children.append(child)
@@ -50,6 +48,8 @@ public extension Coordinator {
         children.removeAll()
     }
 }
+
+// MARK: - RoutedScene Binding
 
 public extension Coordinator {
     func bindRoute(_ scene: RoutedScene<Route>) {

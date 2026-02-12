@@ -4,6 +4,8 @@ protocol PresentationAuthFactory: AnyObject {
     func makeTermsScene() -> RoutedScene<AuthRoute>
     func makeProfileScene() -> RoutedScene<AuthRoute>
     func makeCategoryScene() -> RoutedScene<AuthRoute>
+
+    func makeLoginBottomSheetScene() -> RoutedScene<LoginBottomSheetRoute>
 }
 
 extension DefaultPresentationFactory {
@@ -77,6 +79,22 @@ extension DefaultPresentationFactory {
         return .init(
             vc: vc,
             route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    // MARK: - LoginBottomSheet
+
+    func makeLoginBottomSheetScene() -> RoutedScene<LoginBottomSheetRoute> {
+        let viewModel = LoginBottomSheetViewModel(
+            login: domainFactory.makeLoginUseCase()
+        )
+        let contentView = LoginBottomSheetView()
+        let vc = LoginBottomSheetViewController(viewModel: viewModel, contentView: contentView)
+
+        return RoutedScene(
+            vc: vc,
+            route: viewModel.route,
             disposeBag: vc.disposeBag
         )
     }
