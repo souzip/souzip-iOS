@@ -27,8 +27,11 @@ final class ReportBottomSheetView: BaseView<ReportBottomSheetView.Action> {
         config.baseForegroundColor = .dsGreyWhite
         config.baseBackgroundColor = .dsGrey700
         config.background.cornerRadius = LayoutConstants.CornerRadius.small
+
+        var titleAttr = AttributedString("닫기")
+        titleAttr.font = .pretendard(size: 17, weight: .medium)
+        config.attributedTitle = titleAttr
         let button = UIButton(configuration: config)
-        button.titleLabel?.font = .pretendard(size: 17, weight: .medium)
         return button
     }()
 
