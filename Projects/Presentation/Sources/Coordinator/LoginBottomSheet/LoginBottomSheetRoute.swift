@@ -7,5 +7,4 @@ public enum LoginBottomSheetRoute {
     case complete
 
     case back
-    case pop
 }

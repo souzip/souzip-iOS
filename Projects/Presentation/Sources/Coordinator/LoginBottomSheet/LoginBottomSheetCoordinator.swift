@@ -42,9 +42,6 @@ final class LoginBottomSheetCoordinator: BaseCoordinator<LoginBottomSheetRoute, 
 
         case .back:
             nav.popViewController(animated: true)
-
-        case .pop:
-            nav.dismiss(animated: false)
         }
     }
 }
