@@ -1,9 +1,7 @@
 import DesignSystem
 import Domain
-import RxCocoa
 import SnapKit
 import UIKit
-import Utils
 
 final class LoginView: BaseView<LoginAction> {
     // MARK: - Constants
@@ -52,14 +50,25 @@ final class LoginView: BaseView<LoginAction> {
         return label
     }()
 
-    private var loginButtons: [AuthProvider: UIButton] = [:]
+    private let loginButtonStackView = LoginButtonStackView()
 
-    private let lbStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = Metric.buttonStackSpacing
-        stackView.distribution = .fillEqually
-        return stackView
+    private let guestButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        let font = UIFont.pretendard(size: 13, weight: .regular)
+        let color = UIColor.dsGrey80
+
+        config.attributedTitle = AttributedString(
+            NSAttributedString(
+                string: "둘러보기",
+                attributes: [
+                    .font: font,
+                    .foregroundColor: color,
+                    .underlineStyle: NSUnderlineStyle.single.rawValue,
+                    .underlineColor: color,
+                ]
+            )
+        )
+        return UIButton(configuration: config)
     }()
 
     private let recentLoginBadgeView: UIImageView = {
@@ -83,7 +92,6 @@ final class LoginView: BaseView<LoginAction> {
 
     override func setAttributes() {
         backgroundColor = .dsBackground
-        makeLoginButtons()
     }
 
     override func setHierarchy() {
@@ -92,7 +100,8 @@ final class LoginView: BaseView<LoginAction> {
             gradientView,
             logoImageView,
             welcomeLabel,
-            lbStackView,
+            loginButtonStackView,
+            guestButton,
             recentLoginBadgeView,
         ].forEach(addSubview)
     }
@@ -118,28 +127,33 @@ final class LoginView: BaseView<LoginAction> {
         }
 
         welcomeLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(lbStackView.snp.top).offset(-Metric.welcomeBottomSpacing)
+            make.bottom.equalTo(loginButtonStackView.snp.top).offset(-Metric.welcomeBottomSpacing)
             make.centerX.equalToSuperview()
         }
 
-        lbStackView.snp.makeConstraints { make in
+        loginButtonStackView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(Metric.horizontalInset)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(Metric.buttonStackBottomInset)
-            make.height.equalTo(Metric.buttonStackHeight)
+            make.bottom.equalTo(guestButton.snp.top).offset(-Metric.buttonStackBottomSpacing)
+            make.height.equalTo(loginButtonStackView.totalHeight)
+        }
+
+        guestButton.snp.makeConstraints { make in
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(Metric.guestButtonBottomInset)
+            make.height.equalTo(Metric.guestButtonHeight)
+            make.centerX.equalToSuperview()
         }
     }
 
     override func setBindings() {
-        for (provider, button) in loginButtons {
-            bind(button.rx.tap).to(.tapLogin(provider))
-        }
+        bind(loginButtonStackView.action).map { .tapLogin($0) }
+        bind(guestButton.rx.tap).to(.tapGuest)
     }
 
     // MARK: - Render
 
     func render(_ provider: AuthProvider?) {
         guard let provider,
-              let button = loginButtons[provider]
+              let button = loginButtonStackView.button(for: provider)
         else {
             recentLoginBadgeView.isHidden = true
             return
@@ -152,45 +166,5 @@ final class LoginView: BaseView<LoginAction> {
             make.width.equalTo(Metric.badgeWidth)
             make.height.equalTo(Metric.badgeHeight)
         }
-    }
-
-    // MARK: - Private Logic
-
-    private func makeLoginButtons() {
-        for provider in AuthProvider.allCases {
-            let button = makeLoginButton(provider)
-
-            switch provider {
-            case .apple:
-                button.layer.borderColor = UIColor.dsGrey900.cgColor
-                button.layer.borderWidth = Metric.buttonBorderWidth
-            default:
-                button.layer.borderColor = nil
-                button.layer.borderWidth = 0
-            }
-
-            button.layer.cornerRadius = Metric.buttonCornerRadius
-            button.clipsToBounds = true
-            loginButtons[provider] = button
-            lbStackView.addArrangedSubview(button)
-        }
-    }
-
-    private func makeLoginButton(_ provider: AuthProvider) -> UIButton {
-        let button = UIButton(type: .system)
-
-        var config = UIButton.Configuration.plain()
-        config.imagePlacement = .leading
-        config.imagePadding = Metric.loginButtonImagePadding
-
-        let symbolConfig = UIImage.SymbolConfiguration(pointSize: Metric.loginButtonImageSize)
-        config.image = provider.image.withConfiguration(symbolConfig)
-
-        config.baseForegroundColor = provider.titleColor
-        config.background.backgroundColor = provider.backgroundColor
-
-        config.setTypography(.body2M, title: provider.title)
-        button.configuration = config
-        return button
     }
 }
