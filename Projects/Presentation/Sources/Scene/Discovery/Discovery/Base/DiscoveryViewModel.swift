@@ -31,7 +31,7 @@ final class DiscoveryViewModel: BaseViewModel<
         switch action {
         case .viewWillAppear:
             Task {
-                let isLogin = await authRepo.checkLoginStatus()
+                let isLogin = await authRepo.isFullyAuthenticated()
                 mutate { $0.isGuest = !isLogin }
             }
 

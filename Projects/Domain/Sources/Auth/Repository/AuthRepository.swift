@@ -6,4 +6,5 @@ public protocol AuthRepository {
     func refreshToken() async throws -> LoginUser
     func loadRecentLoginProvider() -> AuthProvider?
     func deleteAllTokens() async
+    func isFullyAuthenticated() async -> Bool
 }

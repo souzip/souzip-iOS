@@ -67,7 +67,7 @@ final class GlobeViewModel: BaseViewModel<
 
         case .wantToUploadSouvenir:
             Task {
-                let isLogin = await authRepo.checkLoginStatus()
+                let isLogin = await authRepo.isFullyAuthenticated()
                 if isLogin {
                     navigate(to: .souvenirRoute(.create))
                 } else {

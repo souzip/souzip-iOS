@@ -98,6 +98,12 @@ public final class DefaultAuthRepository: AuthRepository {
     public func deleteAllTokens() async {
         await authLocal.deleteAllTokens()
     }
+
+    public func isFullyAuthenticated() async -> Bool {
+        let hasTokens = await checkLoginStatus()
+        guard hasTokens else { return false }
+        return !userLocal.getNeedsOnboarding()
+    }
 }
 
 // MARK: - Mapper
