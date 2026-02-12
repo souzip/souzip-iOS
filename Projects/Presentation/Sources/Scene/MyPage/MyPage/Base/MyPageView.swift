@@ -39,6 +39,8 @@ final class MyPageView: BaseView<MyPageAction> {
 
     private let faButton = DSFAButton(image: .dsIconEditContained)
 
+    private let guestLoginView = GuestLoginView()
+
     // MARK: - Override
 
     override func setAttributes() {
@@ -52,6 +54,7 @@ final class MyPageView: BaseView<MyPageAction> {
             collectionEmptyView,
             likedEmptyView,
             faButton,
+            guestLoginView,
         ].forEach(addSubview)
 
         scrollView.addSubview(contentView)
@@ -111,6 +114,12 @@ final class MyPageView: BaseView<MyPageAction> {
             make.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(20)
         }
+
+        guestLoginView.snp.makeConstraints { make in
+            make.top.equalTo(navigationBar.snp.bottom)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
     }
 
     override func setBindings() {
@@ -139,6 +148,8 @@ final class MyPageView: BaseView<MyPageAction> {
             .map { .tapCreateSouvenir }
 
         bind(faButton.rx.tap).to(.tapCreateSouvenir)
+
+        bind(guestLoginView.action).to(.tapLogin)
     }
 
     // MARK: - Public
@@ -171,5 +182,13 @@ final class MyPageView: BaseView<MyPageAction> {
 
     func renderCollection(_ data: MyCollectionData) {
         collectionView.render(data: data)
+    }
+
+    func renderisGeust(_ isGeust: Bool) {
+        guestLoginView.isHidden = !isGeust
+
+        scrollView.isHidden = isGeust
+        collectionEmptyView.isHidden = isGeust
+        faButton.isHidden = isGeust
     }
 }

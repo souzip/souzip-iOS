@@ -11,17 +11,20 @@ final class MyPageViewModel: BaseViewModel<
     private let userRepo: UserRepository
     private let souvenirRepo: SouvenirRepository
     private let countryRepo: CountryRepository
+    private let authRepo: AuthRepository
 
     // MARK: - Init
 
     init(
         userRepo: UserRepository,
         souvenirRepo: SouvenirRepository,
-        countryRepo: CountryRepository
+        countryRepo: CountryRepository,
+        authRepo: AuthRepository
     ) {
         self.userRepo = userRepo
         self.souvenirRepo = souvenirRepo
         self.countryRepo = countryRepo
+        self.authRepo = authRepo
         super.init(initialState: State())
     }
 
@@ -31,13 +34,16 @@ final class MyPageViewModel: BaseViewModel<
         switch action {
         case .viewWillAppear:
             Task {
+                let isLogin = await authRepo.checkLoginStatus()
+                if isLogin, state.value.isGeust == false {
+                    mutate { $0.isGeust = !isLogin }
+                    await loadInitialData()
+                    return
+                }
                 let needs = await souvenirRepo.consumeMyPageNeedsRefresh()
                 guard needs else { return }
                 await loadInitialData()
             }
-
-        case .viewDidLoad:
-            Task { await loadInitialData() }
 
         case .tapSetting:
             navigate(to: .setting)
@@ -50,6 +56,9 @@ final class MyPageViewModel: BaseViewModel<
 
         case let .tapSouvenir(souvenir):
             navigate(to: .souvenirRoute(.detail(id: souvenir.id)))
+
+        case .tapLogin:
+            navigate(to: .loginModal)
 
         case .tapCreateSouvenir:
             navigate(to: .souvenirRoute(.create))

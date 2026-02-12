@@ -2,12 +2,13 @@ import Domain
 
 enum MyPageAction {
     case viewWillAppear
-    case viewDidLoad
     case tapSetting
     case tapSegmentTab(CollectionTab)
 
     case tapCountry(CountryItem)
     case tapSouvenir(SouvenirThumbnailItem)
+
+    case tapLogin
 
     case tapCreateSouvenir
 }
@@ -17,6 +18,7 @@ struct MyPageState {
     var selectedTab: CollectionTab = .collection
     var selectedCountry: String?
     var collectionSouvenirs: [SouvenirThumbnail] = []
+    var isGeust: Bool = true
 
     var allCountries: [String] {
         Array(Set(collectionSouvenirs.map(\.country))).sorted()
