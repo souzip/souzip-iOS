@@ -33,9 +33,16 @@ extension AuthProvider {
 
     var backgroundColor: UIColor {
         switch self {
-        case .kakao: .yellow
+        case .kakao: #colorLiteral(red: 0.9983025193, green: 0.9065476656, blue: 0, alpha: 1)
         case .google: .dsGreyWhite
-        case .apple: .black
+        case .apple: .dsBackground
+        }
+    }
+
+    var borderColor: UIColor? {
+        switch self {
+        case .apple: .dsGrey900
+        default: nil
         }
     }
 }
