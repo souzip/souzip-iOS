@@ -34,7 +34,7 @@ final class MyPageViewController: BaseViewController<
 
         observe(\.isGeust)
             .distinct()
-            .onNext(contentView.renderisGeust)
+            .onNext(contentView.renderIsGeust)
     }
 
     override func handleEvent(_ event: Event) {
