@@ -28,15 +28,16 @@ public extension Coordinator {
     }
 
     func addTemporaryChild<C: Coordinator>(
-        _ child: C,
+        _ child: C
     ) {
         child.parent = self
-
-        // BaseCoordinator의 completion 설정
-        if child is BaseCoordinator<C.Route, C.ParentRoute> {
-            removeChild(child)
+        if let baseChild = child as? BaseCoordinator<C.Route, C.ParentRoute> {
+            let existingOnFinish = baseChild.onFinish
+            baseChild.onFinish = { [weak self] in
+                self?.removeChild(child)
+                existingOnFinish?()
+            }
         }
-
         children.append(child)
     }
 
