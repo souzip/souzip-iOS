@@ -18,7 +18,7 @@ struct MyPageState {
     var selectedTab: CollectionTab = .collection
     var selectedCountry: String?
     var collectionSouvenirs: [SouvenirThumbnail] = []
-    var isGeust: Bool = true
+    var isGuest: Bool = true
 
     var allCountries: [String] {
         Array(Set(collectionSouvenirs.map(\.country))).sorted()

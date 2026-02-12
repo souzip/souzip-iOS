@@ -184,11 +184,11 @@ final class MyPageView: BaseView<MyPageAction> {
         collectionView.render(data: data)
     }
 
-    func renderIsGeust(_ isGeust: Bool) {
-        guestLoginView.isHidden = !isGeust
+    func renderIsGuest(_ isGuest: Bool) {
+        guestLoginView.isHidden = !isGuest
 
-        scrollView.isHidden = isGeust
-        collectionEmptyView.isHidden = isGeust
-        faButton.isHidden = isGeust
+        scrollView.isHidden = isGuest
+        collectionEmptyView.isHidden = isGuest
+        faButton.isHidden = isGuest
     }
 }
