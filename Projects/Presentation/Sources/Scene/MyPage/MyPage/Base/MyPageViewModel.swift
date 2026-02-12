@@ -36,7 +36,7 @@ final class MyPageViewModel: BaseViewModel<
             Task {
                 let isLogin = await authRepo.isFullyAuthenticated()
                 if isLogin, state.value.isGuest == true {
-                    mutate { $0.isGuest = !isLogin }
+                    mutate { $0.isGuest = false }
                     await loadInitialData()
                     return
                 }
