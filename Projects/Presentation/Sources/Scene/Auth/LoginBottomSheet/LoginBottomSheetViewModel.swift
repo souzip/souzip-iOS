@@ -30,7 +30,7 @@ final class LoginBottomSheetViewModel: BaseViewModel<
             }
 
         case .close:
-            navigate(to: .pop)
+            emit(.dismiss)
         }
     }
 

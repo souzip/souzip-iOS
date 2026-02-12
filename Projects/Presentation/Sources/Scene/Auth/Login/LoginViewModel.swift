@@ -40,7 +40,7 @@ final class LoginViewModel: BaseViewModel<
             }
 
         case .tapGuest:
-            navigate(to: .main)
+            Task { await Login(nil) }
         }
     }
 
@@ -51,11 +51,11 @@ final class LoginViewModel: BaseViewModel<
         mutate { $0.recentAuthProvider = provider }
     }
 
-    private func Login(_ provider: AuthProvider) async {
+    private func Login(_ provider: AuthProvider?) async {
         do {
             let result = try await login.execute(provider: provider)
             switch result {
-            case .ready:
+            case .ready, .guest:
                 navigate(to: .main)
             case .shouldOnboarding:
                 navigate(to: .terms)

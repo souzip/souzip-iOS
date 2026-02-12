@@ -28,17 +28,16 @@ public extension Coordinator {
     }
 
     func addTemporaryChild<C: Coordinator>(
-        _ child: C,
+        _ child: C
     ) {
         child.parent = self
-
-        // BaseCoordinator의 completion 설정
         if let baseChild = child as? BaseCoordinator<C.Route, C.ParentRoute> {
+            let existingOnFinish = baseChild.onFinish
             baseChild.onFinish = { [weak self] in
                 self?.removeChild(child)
+                existingOnFinish?()
             }
         }
-
         children.append(child)
     }
 
@@ -50,6 +49,8 @@ public extension Coordinator {
         children.removeAll()
     }
 }
+
+// MARK: - RoutedScene Binding
 
 public extension Coordinator {
     func bindRoute(_ scene: RoutedScene<Route>) {

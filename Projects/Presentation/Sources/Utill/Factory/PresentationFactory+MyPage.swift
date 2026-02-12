@@ -8,7 +8,8 @@ extension DefaultPresentationFactory {
         let vm = MyPageViewModel(
             userRepo: domainFactory.makeUserRepository(),
             souvenirRepo: domainFactory.makeSouvenirRepository(),
-            countryRepo: domainFactory.makeCountryRepository()
+            countryRepo: domainFactory.makeCountryRepository(),
+            authRepo: domainFactory.makeAuthRepository()
         )
         let view = MyPageView()
         let vc = MyPageViewController(viewModel: vm, contentView: view)

@@ -20,6 +20,9 @@ final class HomeCoordinator: BaseCoordinator<HomeRoute, TabRoute> {
         case let .souvenirRoute(souvenirRoute):
             handleSouvenirRoute(souvenirRoute)
 
+        case .loginBottomSheet:
+            showLoginBottomSheet()
+
         case .pop:
             nav.popViewController(animated: true)
 
@@ -66,5 +69,14 @@ private extension HomeCoordinator {
 
         addTemporaryChild(coordinator)
         coordinator.navigate(route)
+    }
+
+    func showLoginBottomSheet() {
+        let coordinator = LoginBottomSheetCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        addTemporaryChild(coordinator)
+        coordinator.start()
     }
 }

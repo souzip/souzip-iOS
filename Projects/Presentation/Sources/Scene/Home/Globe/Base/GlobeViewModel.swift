@@ -12,6 +12,7 @@ final class GlobeViewModel: BaseViewModel<
 
     private let countryRepo: CountryRepository
     private let souvenirRepo: SouvenirRepository
+    private let authRepo: AuthRepository
 
     // MARK: - Properties
 
@@ -30,10 +31,12 @@ final class GlobeViewModel: BaseViewModel<
 
     init(
         countryRepo: CountryRepository,
-        souvenirRepo: SouvenirRepository
+        souvenirRepo: SouvenirRepository,
+        authRepo: AuthRepository,
     ) {
         self.countryRepo = countryRepo
         self.souvenirRepo = souvenirRepo
+        self.authRepo = authRepo
         super.init(initialState: State())
     }
 
@@ -63,7 +66,14 @@ final class GlobeViewModel: BaseViewModel<
             handleSouvenirDetailSelection(item)
 
         case .wantToUploadSouvenir:
-            navigate(to: .souvenirRoute(.create))
+            Task {
+                let isLogin = await authRepo.isFullyAuthenticated()
+                if isLogin {
+                    navigate(to: .souvenirRoute(.create))
+                } else {
+                    navigate(to: .loginBottomSheet)
+                }
+            }
 
         case .wantToClose:
             handleCloseTap()
