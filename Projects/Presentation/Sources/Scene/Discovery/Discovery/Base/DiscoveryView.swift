@@ -77,7 +77,7 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
     // MARK: - Public
 
-    func render(_ sectionModels: [DiscoverySectionModel]) {
+    func renderSectionModels(_ sectionModels: [DiscoverySectionModel]) {
         var snapshot = Snapshot()
         var appended = Set<Section>()
 
@@ -90,6 +90,10 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
         }
 
         dataSource?.apply(snapshot, animatingDifferences: true)
+    }
+
+    func renderIsGuest(_ isGuest: Bool) {
+        faButton.isHidden = isGuest
     }
 
     func endRefreshing() {

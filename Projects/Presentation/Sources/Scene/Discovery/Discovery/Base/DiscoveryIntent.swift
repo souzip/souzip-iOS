@@ -3,6 +3,7 @@ import Foundation
 
 enum DiscoveryAction {
     case viewDidLoad
+    case viewWillAppear
     case refresh
 
     case countryChipTap(CountryChipItem)
@@ -14,6 +15,8 @@ enum DiscoveryAction {
 }
 
 struct DiscoveryState {
+    var isGuest: Bool = true
+
     var countries: [CountryChipItem] = []
     var countrySouvenirs: [SouvenirCardItem] = []
     var categories: [CategoryItem] = []

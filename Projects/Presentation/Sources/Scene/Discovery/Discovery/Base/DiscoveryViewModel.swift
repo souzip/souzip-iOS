@@ -10,15 +10,18 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private let discoveryRepo: DiscoveryRepository
     private let countryRepo: CountryRepository
+    private let authRepo: AuthRepository
 
     // MARK: - Init
 
     init(
         discoveryRepo: DiscoveryRepository,
-        countryRepo: CountryRepository
+        countryRepo: CountryRepository,
+        authRepo: AuthRepository
     ) {
         self.discoveryRepo = discoveryRepo
         self.countryRepo = countryRepo
+        self.authRepo = authRepo
         super.init(initialState: State())
     }
 
@@ -26,6 +29,12 @@ final class DiscoveryViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewWillAppear:
+            Task {
+                let isLogin = await authRepo.checkLoginStatus()
+                mutate { $0.isGuest = !isLogin }
+            }
+
         case .viewDidLoad:
             Task {
                 emit(.loading(true))
