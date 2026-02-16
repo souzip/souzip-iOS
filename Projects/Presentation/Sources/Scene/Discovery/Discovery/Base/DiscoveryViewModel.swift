@@ -118,7 +118,8 @@ final class DiscoveryViewModel: BaseViewModel<
 
             mutate { state in
                 state.countryTopSouvenirs = Dictionary(
-                    uniqueKeysWithValues: allCountrySouvenirs.map { ($0.countryCode, $0) }
+                    allCountrySouvenirs.map { ($0.countryCode, $0) },
+                    uniquingKeysWith: { first, _ in first }
                 )
                 state.countries = countryChips
                 state.countrySouvenirs = firstCountrySouvenirs
