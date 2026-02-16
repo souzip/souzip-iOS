@@ -347,7 +347,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             profileImageView.isHidden = true
             usernameLabel.isHidden = true
         } else {
-            profileImageView.setSVG(detail.owner.profileImageUrl)
+            profileImageView.setStaticAsset(detail.owner.profileImageUrl)
             usernameLabel.text = detail.owner.nickname
         }
 
@@ -437,7 +437,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
-            imageView.setDetailImage(imageUrl)
 
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             cell.contentView.addSubview(imageView)
@@ -445,6 +444,8 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             imageView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
+
+            imageView.setDetailImage(imageUrl)
         }
 
         dataSource = UICollectionViewDiffableDataSource<Section, String>(

@@ -9,8 +9,9 @@ extension UIImageView {
             return
         }
 
+        layoutIfNeeded()
+
         let cacheKey = extractCacheKey(from: imageURL)
-        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 400, height: 400)
 
         let source = Source.network(KF.ImageResource(
             downloadURL: imageURL,
@@ -20,7 +21,7 @@ extension UIImageView {
         kf.setImage(
             with: source,
             options: [
-                .processor(DownsamplingImageProcessor(size: targetSize)),
+                .processor(DownsamplingImageProcessor(size: downsampleSize)),
                 .scaleFactor(UIScreen.main.scale),
                 .diskCacheExpiration(.days(7)),
                 .transition(.fade(0.2)),
@@ -34,8 +35,9 @@ extension UIImageView {
             return
         }
 
+        layoutIfNeeded()
+
         let cacheKey = extractCacheKey(from: imageURL)
-        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 400, height: 400)
 
         let source = Source.network(KF.ImageResource(
             downloadURL: imageURL,
@@ -45,7 +47,7 @@ extension UIImageView {
         kf.setImage(
             with: source,
             options: [
-                .processor(DownsamplingImageProcessor(size: targetSize)),
+                .processor(DownsamplingImageProcessor(size: downsampleSize)),
                 .scaleFactor(UIScreen.main.scale),
                 .transition(.fade(0.2)),
                 .diskCacheExpiration(.days(30)),
@@ -60,8 +62,9 @@ extension UIImageView {
             return
         }
 
+        layoutIfNeeded()
+
         let cacheKey = extractCacheKey(from: imageURL)
-        let targetSize = bounds.size != .zero ? bounds.size : CGSize(width: 800, height: 800)
 
         let source = Source.network(KF.ImageResource(
             downloadURL: imageURL,
@@ -71,7 +74,7 @@ extension UIImageView {
         kf.setImage(
             with: source,
             options: [
-                .processor(DownsamplingImageProcessor(size: targetSize)),
+                .processor(DownsamplingImageProcessor(size: downsampleSize)),
                 .scaleFactor(UIScreen.main.scale),
                 .diskCacheExpiration(.days(3)),
                 .transition(.fade(0.2)),
@@ -86,16 +89,25 @@ extension UIImageView {
             return
         }
 
+        layoutIfNeeded()
+
         kf.setImage(
             with: imageURL,
             options: [
+                .processor(DownsamplingImageProcessor(size: downsampleSize)),
+                .scaleFactor(UIScreen.main.scale),
                 .diskCacheExpiration(.never),
                 .transition(.fade(0.2)),
+                .cacheOriginalImage,
             ]
         )
     }
 
     // MARK: - Private Helpers
+
+    private var downsampleSize: CGSize {
+        bounds.size != .zero ? bounds.size : CGSize(width: 400, height: 400)
+    }
 
     private func extractCacheKey(from url: URL) -> String {
         url.absoluteString.components(separatedBy: "?").first ?? url.absoluteString
