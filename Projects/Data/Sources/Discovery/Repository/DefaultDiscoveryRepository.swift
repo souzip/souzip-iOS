@@ -16,10 +16,18 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - Public
 
-    public func getTop10SouvenirsByCountry(countryCode: String) async throws -> [DiscoverySouvenir] {
+    public func getCountrySouvenirs() async throws -> [CountryTopSouvenir] {
         do {
-            let dto = try await discoveryRemote.getTop10ByCountry(countryCode: countryCode)
-            return mapSouvenirs(dto)
+            let dtos = try await discoveryRemote.getTop10CountrySouvenirs()
+
+            return dtos.map { dto in
+                CountryTopSouvenir(
+                    countryCode: dto.countryCode,
+                    countryNameKr: dto.countryNameKr,
+                    souvenirCount: dto.souvenirCount,
+                    souvenirs: mapSouvenirs(dto.souvenirs)
+                )
+            }
         } catch {
             throw mapToDomainError(error)
         }
@@ -32,25 +40,6 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
             let categoryName = OnboardingDTOMapper.toDTO(category)
             let dto = try await discoveryRemote.getTop10ByCategory(categoryName: categoryName)
             return mapSouvenirs(dto)
-        } catch {
-            throw mapToDomainError(error)
-        }
-    }
-
-    public func getTop3CountryStats() async throws -> [DiscoveryCountryStat] {
-        do {
-            let dto = try await discoveryRemote.getTop3CountryStats()
-
-            return try dto.map { item in
-                let country = try countryLocal.fetchCountry(countryCode: item.countryCode)
-
-                return DiscoveryCountryStat(
-                    countryCode: item.countryCode,
-                    countryNameKr: item.countryNameKr,
-                    souvenirCount: item.souvenirCount,
-                    imageUrl: country.flagImageURL
-                )
-            }
         } catch {
             throw mapToDomainError(error)
         }
@@ -85,7 +74,7 @@ private extension DefaultDiscoveryRepository {
             DiscoverySouvenir(
                 id: $0.id,
                 name: $0.name,
-                category: $0.category,
+                category: SouvenirDTOMapper.mapToCategory($0.category),
                 countryCode: $0.countryCode,
                 thumbnailUrl: $0.thumbnailUrl
             )
