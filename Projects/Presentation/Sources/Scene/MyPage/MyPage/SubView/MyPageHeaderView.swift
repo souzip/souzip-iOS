@@ -55,7 +55,7 @@ final class MyPageHeaderView: UIView {
     // MARK: - Configure
 
     func render(_ data: ProfileData) {
-        profileImageView.setSVG(data.profileImageUrl)
+        profileImageView.setStaticAsset(data.profileImageUrl)
         nicknameLabel.text = data.nickname
 
         if data.email.isEmpty {
