@@ -24,6 +24,9 @@ final class SettingViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewDidLoad:
+            Task { await handleViewDidLoad() }
+
         case .back:
             navigate(to: .pop)
 
@@ -45,6 +48,11 @@ final class SettingViewModel: BaseViewModel<
     }
 
     // MARK: - Private Logic
+
+    private func handleViewDidLoad() async {
+        let isLogin = await authRepo.isFullyAuthenticated()
+        mutate { $0.isGuest = !isLogin }
+    }
 
     private func handleType(_ type: SettingItemType) {
         switch type {

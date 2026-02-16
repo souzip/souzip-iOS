@@ -25,7 +25,7 @@ final class SettingView: BaseView<SettingAction>, UITableViewDataSource, UITable
         return tv
     }()
 
-    private let sections: [SettingSection] = SettingSection.allCases
+    private var sections: [SettingSection] = []
 
     override func setAttributes() {
         backgroundColor = .dsBackground
@@ -49,6 +49,11 @@ final class SettingView: BaseView<SettingAction>, UITableViewDataSource, UITable
         bind(naviBar.onLeftTap).to(.back)
 
         tableView.register(SettingCell.self, forCellReuseIdentifier: "SettingCell")
+    }
+
+    func renderSections(_ sections: [SettingSection]) {
+        self.sections = sections
+        tableView.reloadData()
     }
 
     // MARK: - UITableViewDataSource
