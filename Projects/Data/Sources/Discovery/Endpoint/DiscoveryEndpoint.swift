@@ -3,11 +3,10 @@ import Networking
 
 public enum DiscoveryEndpoint {
     // Public
-    case top10ByCountry(countryCode: String)
+    case top10CountrySouvenirs
     case top10ByCategory(categoryName: String)
-    case top3CountryStats
 
-    // AI (Authed)
+    // Authed
     case aiPreferenceCategory
     case aiPreferenceUpload
 }
@@ -15,14 +14,11 @@ public enum DiscoveryEndpoint {
 extension DiscoveryEndpoint: APIEndpoint {
     public var path: String {
         switch self {
-        case let .top10ByCountry(countryCode):
-            "/api/discovery/general/country/\(countryCode)"
+        case .top10CountrySouvenirs:
+            "/api/countries/souvenirs"
 
         case let .top10ByCategory(categoryName):
             "/api/discovery/general/category/\(categoryName)"
-
-        case .top3CountryStats:
-            "/api/discovery/general/stats"
 
         case .aiPreferenceCategory:
             "/api/discovery/ai/preference-category"

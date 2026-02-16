@@ -79,7 +79,7 @@ public enum SouvenirDTOMapper {
 
 // MARK: - Private Mapper (String ↔ Enum)
 
-private extension SouvenirDTOMapper {
+extension SouvenirDTOMapper {
     // API String → Domain Enum
     static func mapToCategory(_ category: String) -> SouvenirCategory {
         switch category {

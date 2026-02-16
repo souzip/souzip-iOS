@@ -6,10 +6,11 @@ public struct DiscoverySouvenirResponse: Decodable {
     public let thumbnailUrl: String
 }
 
-public struct DiscoveryCountryStatResponse: Decodable {
+public struct Top10CountrySouvenirResponse: Decodable {
     public let countryCode: String
     public let countryNameKr: String
     public let souvenirCount: Int
+    public let souvenirs: [DiscoverySouvenirResponse]
 }
 
 public struct AIRecommendationResponse: Decodable {
