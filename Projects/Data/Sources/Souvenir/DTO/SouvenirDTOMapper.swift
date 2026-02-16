@@ -5,16 +5,41 @@ public enum SouvenirDTOMapper {
     // MARK: - Detail Response to Domain
 
     public static func toDomain(_ dto: SouvenirDetailResponse) -> SouvenirDetail {
-        SouvenirDetail(
+
+        var localPrice: Int? = nil
+        var currencySymbol: String? = nil
+        var krwPrice: Int? = nil
+
+        if let price = dto.price {
+            let original = price.original
+            let converted = price.converted
+
+            if original.symbol == "₩" {
+                // original이 원화
+                krwPrice = original.amount
+                localPrice = converted.amount
+                currencySymbol = converted.symbol
+            } else {
+                // original이 현지 통화
+                localPrice = original.amount
+                currencySymbol = original.symbol
+                krwPrice = converted.amount
+            }
+        }
+
+        return SouvenirDetail(
             id: dto.id,
             name: dto.name,
-            localPrice: dto.localPrice,
-            currencySymbol: dto.currencySymbol,
-            krwPrice: dto.krwPrice,
+            localPrice: localPrice,
+            currencySymbol: currencySymbol,
+            krwPrice: krwPrice,
             description: dto.description,
             address: dto.address,
             locationDetail: dto.locationDetail,
-            coordinate: Coordinate(latitude: dto.latitude, longitude: dto.longitude),
+            coordinate: Coordinate(
+                latitude: dto.latitude,
+                longitude: dto.longitude
+            ),
             category: mapToCategory(dto.category),
             purpose: mapToPurpose(dto.purpose),
             countryCode: dto.countryCode,
