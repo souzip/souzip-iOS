@@ -1,18 +1,18 @@
-public struct DiscoveryCountryStat: Equatable {
+public struct CountryTopSouvenir: Equatable {
     public let countryCode: String
     public let countryNameKr: String
     public let souvenirCount: Int
-    public let imageUrl: String
+    public let souvenirs: [DiscoverySouvenir]
 
     public init(
         countryCode: String,
         countryNameKr: String,
         souvenirCount: Int,
-        imageUrl: String
+        souvenirs: [DiscoverySouvenir]
     ) {
         self.countryCode = countryCode
         self.countryNameKr = countryNameKr
         self.souvenirCount = souvenirCount
-        self.imageUrl = imageUrl
+        self.souvenirs = souvenirs
     }
 }
