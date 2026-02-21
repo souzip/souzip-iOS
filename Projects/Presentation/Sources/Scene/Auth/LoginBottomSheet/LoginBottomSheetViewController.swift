@@ -1,9 +1,11 @@
 import UIKit
 
-final class DiscoveryViewController: BaseViewController<
-    DiscoveryViewModel,
-    DiscoveryView
+final class LoginBottomSheetViewController: BaseBottomSheetViewController<
+    LoginBottomSheetViewModel,
+    LoginBottomSheetView
 > {
+    // MARK: - Indicator
+
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.style = .large
@@ -11,18 +13,14 @@ final class DiscoveryViewController: BaseViewController<
         return indicator
     }()
 
-    // MARK: - Life Cycle
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLoadingIndicator()
-        viewModel.action.accept(.viewDidLoad)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.action.accept(.viewWillAppear)
-    }
+    // MARK: - Setup
 
     private func setupLoadingIndicator() {
         view.addSubview(loadingIndicator)
@@ -32,36 +30,30 @@ final class DiscoveryViewController: BaseViewController<
         }
     }
 
-    // MARK: - Bind
-
-    override func bindState() {
-        observe(\.sectionModels)
-            .skip(1)
-            .onNext(contentView.renderSectionModels)
-
-        observe(\.isGuest)
-            .distinct()
-            .onNext(contentView.renderIsGuest)
-    }
-
     // MARK: - Event
 
     override func handleEvent(_ event: Event) {
         switch event {
-        case let .showErrorAlert(message):
-            showDSAlert(message: message)
         case let .loading(isLoading):
             handleLoading(isLoading)
-        case .endRefreshing:
-            contentView.endRefreshing()
+
+        case let .errorAlert(message):
+            showDSAlert(message: message)
+
+        case .dismiss:
+            dismissSheet()
         }
     }
+
+    // MARK: - Private
 
     private func handleLoading(_ isLoading: Bool) {
         if isLoading {
             loadingIndicator.startAnimating()
+            view.isUserInteractionEnabled = false
         } else {
             loadingIndicator.stopAnimating()
+            view.isUserInteractionEnabled = true
         }
     }
 }

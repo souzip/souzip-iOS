@@ -3,6 +3,7 @@ import Foundation
 
 enum DiscoveryAction {
     case viewDidLoad
+    case viewWillAppear
     case refresh
 
     case countryChipTap(CountryChipItem)
@@ -14,6 +15,10 @@ enum DiscoveryAction {
 }
 
 struct DiscoveryState {
+    var isGuest: Bool = true
+
+    var countryTopSouvenirs: [String: CountryTopSouvenir] = [:]
+
     var countries: [CountryChipItem] = []
     var countrySouvenirs: [SouvenirCardItem] = []
     var categories: [CategoryItem] = []
@@ -98,7 +103,7 @@ struct DiscoveryState {
         models.append(.init(section: .spacer, items: [.spacer]))
 
         // stats
-        if statCountry.count == 3 {
+        if !statCountry.isEmpty {
             let date = Date()
             let calendar = Calendar.current
             let year = calendar.component(.year, from: date) % 100

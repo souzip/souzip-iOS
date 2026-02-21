@@ -6,7 +6,7 @@ public enum TabRoute: Int, CaseIterable {
     case home
     case myPage
 
-    case showLogin
+    case login
 
     public var item: DSTabBarItem? {
         switch self {

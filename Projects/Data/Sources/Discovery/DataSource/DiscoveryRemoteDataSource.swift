@@ -3,9 +3,8 @@ import Networking
 
 public protocol DiscoveryRemoteDataSource {
     // Public
-    func getTop10ByCountry(countryCode: String) async throws -> [DiscoverySouvenirResponse]
+    func getTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse]
     func getTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse]
-    func getTop3CountryStats() async throws -> [DiscoveryCountryStatResponse]
 
     // AI (Authed)
     func getAIPreferenceCategory() async throws -> AIRecommendationResponse
@@ -26,9 +25,9 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
 
     // MARK: - Public
 
-    public func getTop10ByCountry(countryCode: String) async throws -> [DiscoverySouvenirResponse] {
-        let endpoint = DiscoveryEndpoint.top10ByCountry(countryCode: countryCode)
-        let response: APIResponse<[DiscoverySouvenirResponse]> = try await plain.request(endpoint)
+    public func getTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse] {
+        let endpoint = DiscoveryEndpoint.top10CountrySouvenirs
+        let response: APIResponse<[Top10CountrySouvenirResponse]> = try await plain.request(endpoint)
 
         guard let data = response.data else {
             throw NetworkError.noData
@@ -39,16 +38,6 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
     public func getTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse] {
         let endpoint = DiscoveryEndpoint.top10ByCategory(categoryName: categoryName)
         let response: APIResponse<[DiscoverySouvenirResponse]> = try await plain.request(endpoint)
-
-        guard let data = response.data else {
-            throw NetworkError.noData
-        }
-        return data
-    }
-
-    public func getTop3CountryStats() async throws -> [DiscoveryCountryStatResponse] {
-        let endpoint = DiscoveryEndpoint.top3CountryStats
-        let response: APIResponse<[DiscoveryCountryStatResponse]> = try await plain.request(endpoint)
 
         guard let data = response.data else {
             throw NetworkError.noData

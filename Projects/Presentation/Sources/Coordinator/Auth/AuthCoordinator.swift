@@ -24,6 +24,7 @@ final class AuthCoordinator: BaseCoordinator<AuthRoute, RootRoute> {
             showLogin()
 
         case .terms:
+            showLogin()
             showTerms()
 
         case .profile:

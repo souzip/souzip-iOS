@@ -7,7 +7,8 @@ extension DefaultPresentationFactory {
     func makeDiscoveryScene() -> RoutedScene<DiscoveryRoute> {
         let vm = DiscoveryViewModel(
             discoveryRepo: domainFactory.makeDiscoveryRepository(),
-            countryRepo: domainFactory.makeCountryRepository()
+            countryRepo: domainFactory.makeCountryRepository(),
+            authRepo: domainFactory.makeAuthRepository()
         )
         let view = DiscoveryView()
         let vc = DiscoveryViewController(viewModel: vm, contentView: view)

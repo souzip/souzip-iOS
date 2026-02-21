@@ -10,15 +10,18 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private let discoveryRepo: DiscoveryRepository
     private let countryRepo: CountryRepository
+    private let authRepo: AuthRepository
 
     // MARK: - Init
 
     init(
         discoveryRepo: DiscoveryRepository,
-        countryRepo: CountryRepository
+        countryRepo: CountryRepository,
+        authRepo: AuthRepository
     ) {
         self.discoveryRepo = discoveryRepo
         self.countryRepo = countryRepo
+        self.authRepo = authRepo
         super.init(initialState: State())
     }
 
@@ -26,6 +29,12 @@ final class DiscoveryViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .viewWillAppear:
+            Task {
+                let isLogin = await authRepo.isFullyAuthenticated()
+                mutate { $0.isGuest = !isLogin }
+            }
+
         case .viewDidLoad:
             Task {
                 emit(.loading(true))
@@ -41,7 +50,7 @@ final class DiscoveryViewModel: BaseViewModel<
             }
 
         case let .countryChipTap(item):
-            Task { await handleCountryChipTap(item) }
+            handleCountryChipTap(item)
 
         case let .categoryChipTap(item):
             Task { await handleCategoryChipTap(item) }
@@ -61,68 +70,59 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private func loadInitialData() async {
         do {
-            let topCountryCodes = ["JP", "HK", "TW"]
-
             // 0) 기본 카테고리 + 첫번째 선택
             let defaultCategories = CategoryItem.defaultItems
-            guard let firstCategory = defaultCategories.first?.category else {
-                mutate { state in
-                    state.countries = []
-                    state.countrySouvenirs = []
-                    state.categories = []
-                    state.categorySouvenirs = []
-                    state.isCategoryExpanded = false
-                    state.statCountry = []
-                }
-                return
-            }
+            guard let firstCategory = defaultCategories.first?.category else { return }
 
             let selectedCategories = defaultCategories.map {
                 CategoryItem(category: $0.category, isSelected: $0.category == firstCategory)
             }
 
-            async let countriesTask: [CountryChipItem] = fetchTopCountries(codes: topCountryCodes)
-
+            // 1) 국가별 기념품 + 카테고리별 기념품 동시 호출
+            async let countrySouvenirsTask = discoveryRepo.getCountrySouvenirs()
             async let categorySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCategory(category: firstCategory)
 
-            async let statsTask: [StatCountryChipItem] = fetchDiscoveryStats()
-
-            let countries = try await countriesTask
-            guard let firstCountryCode = countries.first?.countryCode else {
-                mutate { state in
-                    state.countries = []
-                    state.countrySouvenirs = []
-                    state.categories = selectedCategories
-                    state.categorySouvenirs = []
-                    state.isCategoryExpanded = false
-                    state.statCountry = []
-                }
-                return
-            }
-
-            async let countrySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCountry(countryCode: firstCountryCode)
-
-            let (
-                countrySouvenirs,
-                categorySouvenirs,
-                stats
-            ) = try await (
+            let (allCountrySouvenirs, categorySouvenirs) = try await (
                 countrySouvenirsTask,
-                categorySouvenirsTask,
-                statsTask
+                categorySouvenirsTask
             )
 
-            mutate { state in
-                state.countries = countries.enumerated().map { idx, chip in
-                    CountryChipItem(
-                        countryCode: chip.countryCode,
-                        title: chip.title,
-                        flagImage: chip.flagImage,
-                        isSelected: idx == 0
-                    )
-                }
+            // 2) 국가 칩 구성 (전체, 첫번째 선택)
+            let countryChips: [CountryChipItem] = allCountrySouvenirs.enumerated().map { idx, item in
+                let flagImage = (try? countryRepo.fetchCountry(countryCode: item.countryCode))?.flagImageURL ?? ""
 
-                state.countrySouvenirs = countrySouvenirs
+                return CountryChipItem(
+                    countryCode: item.countryCode,
+                    title: item.countryNameKr,
+                    flagImage: flagImage,
+                    isSelected: idx == 0
+                )
+            }
+
+            // 3) 첫번째 국가의 기념품
+            let firstCountrySouvenirs: [SouvenirCardItem] = allCountrySouvenirs.first.map {
+                mapToSouvenirCardItems($0.souvenirs)
+            } ?? []
+
+            // 4) 통계 (상위 3개)
+            let stats: [StatCountryChipItem] = allCountrySouvenirs.prefix(3).enumerated().map { index, item in
+                let flagImage = (try? countryRepo.fetchCountry(countryCode: item.countryCode))?.flagImageURL ?? ""
+
+                return StatCountryChipItem(
+                    flagImage: flagImage,
+                    title: item.countryNameKr,
+                    count: "\(item.souvenirCount)",
+                    rank: index + 1
+                )
+            }
+
+            mutate { state in
+                state.countryTopSouvenirs = Dictionary(
+                    allCountrySouvenirs.map { ($0.countryCode, $0) },
+                    uniquingKeysWith: { first, _ in first }
+                )
+                state.countries = countryChips
+                state.countrySouvenirs = firstCountrySouvenirs
                 state.categories = selectedCategories
                 state.categorySouvenirs = categorySouvenirs
                 state.isCategoryExpanded = false
@@ -135,19 +135,17 @@ final class DiscoveryViewModel: BaseViewModel<
 
     // MARK: - Country Tap
 
-    private func handleCountryChipTap(_ item: CountryChipItem) async {
+    private func handleCountryChipTap(_ item: CountryChipItem) {
         guard state.value.countries.contains(where: { $0.countryCode == item.countryCode && $0.isSelected }) == false else {
             return
         }
 
         setSelectedCountry(code: item.countryCode)
 
-        do {
-            let souvenirs = try await fetchTop10ByCountry(countryCode: item.countryCode)
-            setCountrySouvenirs(souvenirs)
-        } catch {
-            emit(.showErrorAlert(error.localizedDescription))
-        }
+        guard let cached = state.value.countryTopSouvenirs[item.countryCode] else { return }
+
+        let souvenirs = mapToSouvenirCardItems(cached.souvenirs)
+        setCountrySouvenirs(souvenirs)
     }
 
     private func setSelectedCountry(code: String) {
@@ -210,77 +208,19 @@ final class DiscoveryViewModel: BaseViewModel<
 
     // MARK: - Fetch Helpers
 
-    private func fetchTopCountries(codes: [String]) throws -> [CountryChipItem] {
-        codes.compactMap { code -> CountryChipItem? in
-            guard let country = try? countryRepo.fetchCountry(
-                countryCode: code
-            ) else { return nil }
-
-            return CountryChipItem(
-                countryCode: country.code,
-                title: country.nameKorean,
-                flagImage: country.flagImageURL,
-                isSelected: false
-            )
-        }
-    }
-
-    private func fetchTop10ByCountry(countryCode: String) async throws -> [SouvenirCardItem] {
-        let souvenirs = try await discoveryRepo.getTop10SouvenirsByCountry(countryCode: countryCode)
-        return souvenirs.map {
-            let category = koreanTitle(from: $0.category)
-
-            return SouvenirCardItem(
-                id: $0.id,
-                imageURL: $0.thumbnailUrl,
-                title: $0.name,
-                category: category
-            )
-        }
-    }
-
     private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirCardItem] {
         let souvenirs = try await discoveryRepo.getTop10SouvenirsByCategory(category: category)
-        return souvenirs.map {
-            let category = koreanTitle(from: $0.category)
+        return mapToSouvenirCardItems(souvenirs)
+    }
 
-            return SouvenirCardItem(
+    private func mapToSouvenirCardItems(_ souvenirs: [DiscoverySouvenir]) -> [SouvenirCardItem] {
+        souvenirs.map {
+            SouvenirCardItem(
                 id: $0.id,
                 imageURL: $0.thumbnailUrl,
                 title: $0.name,
-                category: category
+                category: $0.category.title
             )
-        }
-    }
-
-    private func fetchDiscoveryStats() async throws -> [StatCountryChipItem] {
-        let stats = try await discoveryRepo.getTop3CountryStats()
-
-        // rank: 1~3
-        return stats.enumerated().map { index, item in
-            StatCountryChipItem(
-                flagImage: item.imageUrl,
-                title: item.countryNameKr,
-                count: "\(item.souvenirCount)",
-                rank: index + 1
-            )
-        }
-    }
-
-    private func koreanTitle(from serverCode: String) -> String {
-        switch serverCode {
-        case "FOOD_SNACK": "먹거리·간식"
-        case "BEAUTY_HEALTH": "뷰티·헬스"
-        case "FASHION_ACCESSORY": "패션·악세서리"
-        case "CULTURE_TRADITION": "문화·전통"
-        case "TOY_KIDS": "장난감·키즈"
-        case "SOUVENIR_BASIC": "기념품 기본템"
-        case "HOME_LIFESTYLE": "홈·라이프스타일"
-        case "STATIONERY_ART": "문구·아트"
-        case "TRAVEL_PRACTICAL": "여행·실용템"
-        case "TECH_GADGET": "테크·전자제품"
-        default:
-            serverCode // 혹은 ""
         }
     }
 }

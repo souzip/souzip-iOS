@@ -54,4 +54,22 @@ public final class ActionBinder<Input, Action> {
             .bind(to: sink)
             .disposed(by: disposeBag)
     }
+
+    @discardableResult
+    public func withLatestFrom<T>(_ relay: BehaviorRelay<T>) -> ActionBinder<T, Action> {
+        ActionBinder<T, Action>(
+            source: source.withLatestFrom(relay),
+            sink: sink,
+            disposeBag: disposeBag
+        )
+    }
+
+    @discardableResult
+    public func compactMap<T>(_ transform: @escaping (Input) -> T?) -> ActionBinder<T, Action> {
+        ActionBinder<T, Action>(
+            source: source.compactMap(transform),
+            sink: sink,
+            disposeBag: disposeBag
+        )
+    }
 }

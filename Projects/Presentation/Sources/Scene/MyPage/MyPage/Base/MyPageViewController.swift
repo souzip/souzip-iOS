@@ -7,11 +7,6 @@ final class MyPageViewController: BaseViewController<
 > {
     // MARK: - Lifecycle
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        viewModel.action.accept(.viewDidLoad)
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.action.accept(.viewWillAppear)
@@ -36,6 +31,10 @@ final class MyPageViewController: BaseViewController<
         observe(\.collectionData)
             .distinct()
             .onNext(contentView.renderCollection)
+
+        observe(\.isGuest)
+            .distinct()
+            .onNext(contentView.renderIsGuest)
     }
 
     override func handleEvent(_ event: Event) {
