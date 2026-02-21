@@ -40,13 +40,12 @@ final class ProfileViewModel: BaseViewModel<
             emit(.showImagePicker)
 
         case let .selectProfileImage(type):
-            mutate {
-                $0.isCompleteButtonEnabled = true
-                $0.selectedImageType = type
-            }
+            mutate { $0.selectedImageType = type }
 
         case let .updateNickname(nickname):
-            let limited = String(nickname.prefix(state.value.nicknameMaxLength))
+            let filtered = nickname.filter { !$0.isWhitespace }
+            let limited = String(filtered.prefix(state.value.nicknameMaxLength))
+            
             mutate {
                 $0.nickname = limited
                 $0.nicknameErrorMessage = nil
@@ -76,7 +75,7 @@ final class ProfileViewModel: BaseViewModel<
             }
 
             if result.isValid {
-                saveNickname.execute(nickname: nickname)
+                saveNickname.execute(nickname: result.nickname)
                 saveProfileImageColor.execute(color: profileColor)
                 navigate(to: .category)
             }
