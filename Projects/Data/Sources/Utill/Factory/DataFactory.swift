@@ -95,10 +95,13 @@ public final class DefaultDataFactory: DataFactory {
             storage: userDefaultsFactory.makeUDStorage()
         )
 
+        let badWordsLocalDataSource = DefaultBadWordsLocalDataSource()
+
         return DefaultOnboardingRepository(
             onboardingRemote: onboardingRemoteDataSource,
             onboardingLocal: onboardingLocalDataSource,
-            userLocal: userLocalDataSource
+            userLocal: userLocalDataSource,
+            badWordsLocal: badWordsLocalDataSource
         )
     }()
 
