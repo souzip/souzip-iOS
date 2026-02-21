@@ -5,6 +5,21 @@ final class SettingViewController: BaseViewController<
     SettingViewModel,
     SettingView
 > {
+    // MARK: - Life Cycle
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.action.accept(.viewDidLoad)
+    }
+
+    // MARK: - Bind
+
+    override func bindState() {
+        observe(\.sections)
+            .distinct()
+            .onNext(contentView.renderSections)
+    }
+
     override func handleEvent(_ event: Event) {
         switch event {
         case .showLogoutAlert:

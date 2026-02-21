@@ -6,12 +6,12 @@ public enum Environment {
 
     public static let appName = "수집"
     public static let bundlePrefix = "com.swyp.souzip"
-    public static let organizationName = "SWYP"
-    public static let organizationTeamId = "3PVV8DQPL6"
+    public static let organizationName = "Souzip"
+    public static let organizationTeamId = "DZAU4TTS8S"
 
     // MARK: - Version
 
-    public static let appVersion = "1.0.3"
+    public static let appVersion = "1.1.0"
     public static let appBuildVersion = "1"
     public static let swiftVersion = "5.9"
 
