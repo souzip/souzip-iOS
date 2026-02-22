@@ -1,9 +1,7 @@
 import Foundation
 
 enum JSONLoader {
-    static func load<T: Decodable>(
-        filename: String,
-    ) throws -> T {
+    static func load<T: Decodable>(filename: String) throws -> T {
         guard let url = Bundle.module.url(
             forResource: filename,
             withExtension: "json"
