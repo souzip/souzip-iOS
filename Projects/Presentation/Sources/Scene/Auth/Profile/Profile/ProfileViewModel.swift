@@ -45,7 +45,7 @@ final class ProfileViewModel: BaseViewModel<
         case let .updateNickname(nickname):
             let filtered = nickname.filter { !$0.isWhitespace }
             let limited = String(filtered.prefix(state.value.nicknameMaxLength))
-            
+
             mutate {
                 $0.nickname = limited
                 $0.nicknameErrorMessage = nil

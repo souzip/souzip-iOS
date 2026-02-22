@@ -1,7 +1,5 @@
-import Foundation
-
 public protocol BadWordsLocalDataSource {
-    func fetchBadWords() -> Set<String>
+    func fetchBadWords() throws -> Set<String>
 }
 
 public final class DefaultBadWordsLocalDataSource: BadWordsLocalDataSource {
@@ -9,22 +7,11 @@ public final class DefaultBadWordsLocalDataSource: BadWordsLocalDataSource {
 
     public init() {}
 
-    public func fetchBadWords() -> Set<String> {
+    public func fetchBadWords() throws -> Set<String> {
         if let cached = cachedBadWords { return cached }
 
-        let words = loadFromBundle()
+        let words: Set<String> = try JSONLoader.load(filename: "bad_words")
         cachedBadWords = words
         return words
-    }
-
-    // MARK: - Private
-
-    private func loadFromBundle() -> Set<String> {
-        guard let url = Bundle.module.url(forResource: "bad_words", withExtension: "json"),
-              let data = try? Data(contentsOf: url),
-              let words = try? JSONDecoder().decode([String].self, from: data)
-        else { return [] }
-
-        return Set(words.map { $0.lowercased() })
     }
 }

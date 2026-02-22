@@ -78,7 +78,7 @@ public final class DefaultOnboardingRepository: OnboardingRepository {
     // MARK: - Bad Words
 
     public func fetchBadWords() -> Set<String> {
-        badWordsLocal.fetchBadWords()
+        (try? badWordsLocal.fetchBadWords()) ?? []
     }
 }
 
