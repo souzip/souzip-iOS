@@ -15,7 +15,7 @@ final class DefaultCountryRepository: CountryRepository {
     }
 
     func fetchTop30Countries() throws -> [CountryDetail] {
-        let dtos = try countryLocal.fetchCountries()
+        let dtos = countryLocal.fetchCountries()
 
         return dtos
             .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
@@ -27,7 +27,7 @@ final class DefaultCountryRepository: CountryRepository {
     }
 
     func fetchCountry(countryCode: String) throws -> CountryDetail {
-        guard let dto = try countryLocal.fetchCountry(countryCode: countryCode) else {
+        guard let dto = countryLocal.fetchCountry(countryCode: countryCode) else {
             throw CountryError.notFound
         }
         return dto.toDomain()

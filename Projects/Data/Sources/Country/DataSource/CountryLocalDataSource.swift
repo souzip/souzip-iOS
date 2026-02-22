@@ -1,38 +1,30 @@
 import Foundation
 
 public protocol CountryLocalDataSource {
-    func fetchCountries() throws -> [CountryDTO]
-    func fetchCountry(countryCode: String) throws -> CountryDTO?
+    func fetchCountries() -> [CountryDTO]
+    func fetchCountry(countryCode: String) -> CountryDTO?
 }
 
 public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
-    private var cachedCountries: [String: CountryDTO]?
+    private let cachedCountries: [String: CountryDTO]
 
-    public init() {}
-
-    public func fetchCountries() throws -> [CountryDTO] {
-        try Array(loadCache().values)
+    public init() {
+        do {
+            let response: CountryResponseDTO = try JSONLoader.load(filename: "country")
+            cachedCountries = Dictionary(
+                response.data.countries.map { ($0.code.uppercased(), $0) },
+                uniquingKeysWith: { first, _ in first }
+            )
+        } catch {
+            fatalError("Failed to load country.json from bundle: \(error)")
+        }
     }
 
-    public func fetchCountry(countryCode: String) throws -> CountryDTO? {
-        let cache = try loadCache()
-        let key = countryCode.uppercased()
-        return cache[key]
+    public func fetchCountries() -> [CountryDTO] {
+        Array(cachedCountries.values)
     }
 
-    // MARK: - Private
-
-    private func loadCache() throws -> [String: CountryDTO] {
-        if let cached = cachedCountries { return cached }
-
-        let response: CountryResponseDTO =
-            try JSONLoader.load(filename: "country")
-
-        let dict = Dictionary(
-            response.data.countries.map { ($0.code.uppercased(), $0) },
-            uniquingKeysWith: { first, _ in first }
-        )
-        cachedCountries = dict
-        return dict
+    public func fetchCountry(countryCode: String) -> CountryDTO? {
+        cachedCountries[countryCode.uppercased()]
     }
 }

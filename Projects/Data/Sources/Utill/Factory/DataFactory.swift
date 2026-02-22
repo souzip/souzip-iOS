@@ -107,6 +107,8 @@ public final class DefaultDataFactory: DataFactory {
 
     // MARK: - Country
 
+    private lazy var cachedCountryLocalDataSource: CountryLocalDataSource = DefaultCountryLocalDataSource()
+
     private lazy var cachedCountryRepository: CountryRepository = {
         let plainClient = networkFactory.makePlainClient()
         let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
@@ -116,11 +118,9 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
-        let countryLocalDataSource = DefaultCountryLocalDataSource()
-
         return DefaultCountryRepository(
             countryRemote: countryRemoteDataSource,
-            countryLocal: countryLocalDataSource
+            countryLocal: cachedCountryLocalDataSource
         )
     }()
 
@@ -149,11 +149,9 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
-        let countryLocalDataSource = DefaultCountryLocalDataSource()
-
         return DefaultDiscoveryRepository(
             discoveryRemote: discoveryRemoteDataSource,
-            countryLocal: countryLocalDataSource
+            countryLocal: cachedCountryLocalDataSource
         )
     }()
 

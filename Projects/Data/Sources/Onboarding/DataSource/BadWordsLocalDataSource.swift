@@ -1,17 +1,19 @@
 public protocol BadWordsLocalDataSource {
-    func fetchBadWords() throws -> Set<String>
+    func fetchBadWords() -> Set<String>
 }
 
 public final class DefaultBadWordsLocalDataSource: BadWordsLocalDataSource {
-    private var cachedBadWords: Set<String>?
+    private let cachedBadWords: Set<String>
 
-    public init() {}
+    public init() {
+        do {
+            cachedBadWords = try JSONLoader.load(filename: "bad_words")
+        } catch {
+            fatalError("Failed to load bad_words.json from bundle: \(error)")
+        }
+    }
 
-    public func fetchBadWords() throws -> Set<String> {
-        if let cached = cachedBadWords { return cached }
-
-        let words: Set<String> = try JSONLoader.load(filename: "bad_words")
-        cachedBadWords = words
-        return words
+    public func fetchBadWords() -> Set<String> {
+        cachedBadWords
     }
 }
