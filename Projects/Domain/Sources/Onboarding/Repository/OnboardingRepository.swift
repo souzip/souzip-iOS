@@ -6,4 +6,5 @@ public protocol OnboardingRepository {
 
     func completeOnboarding() async throws -> LoginUser
     func checkNickname(_ nickname: String) async throws -> Bool
+    func fetchBadWords() -> Set<String>
 }

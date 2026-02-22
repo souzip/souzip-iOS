@@ -14,12 +14,23 @@ final class DefaultCountryRepository: CountryRepository {
         self.countryLocal = countryLocal
     }
 
-    func fetchCountries() throws -> [CountryDetail] {
-        try countryLocal.fetchCountries()
+    func fetchTop30Countries() throws -> [CountryDetail] {
+        let dtos = countryLocal.fetchCountries()
+
+        return dtos
+            .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
+            .sorted {
+                PopularDestinationsKR.orderIndex[$0.code, default: .max]
+                    < PopularDestinationsKR.orderIndex[$1.code, default: .max]
+            }
+            .map { $0.toDomain() }
     }
 
     func fetchCountry(countryCode: String) throws -> CountryDetail {
-        try countryLocal.fetchCountry(countryCode: countryCode)
+        guard let dto = countryLocal.fetchCountry(countryCode: countryCode) else {
+            throw CountryError.notFound
+        }
+        return dto.toDomain()
     }
 
     // MARK: - Address
@@ -73,6 +84,8 @@ private extension DefaultCountryRepository {
         return .unknown
     }
 }
+
+// MARK: - Popular Destinations
 
 private enum PopularDestinationsKR {
     static let top30Codes: [String] = [

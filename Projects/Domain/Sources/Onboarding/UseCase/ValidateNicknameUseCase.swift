@@ -58,6 +58,15 @@ private extension DefaultValidateNicknameUseCase {
             )
         }
 
+        // 비속어 검사
+        let badWords = onboardingRepo.fetchBadWords()
+        if badWords.contains(limited.lowercased()) {
+            return .invalid(
+                nickname: limited,
+                error: .profanity
+            )
+        }
+
         // 최소 길이만 에러
         if limited.count < min {
             return .invalid(

@@ -1,5 +1,5 @@
 public protocol CountryRepository {
-    func fetchCountries() throws -> [CountryDetail]
+    func fetchTop30Countries() throws -> [CountryDetail]
     func fetchCountry(countryCode: String) throws -> CountryDetail
 
     func getAddress(
