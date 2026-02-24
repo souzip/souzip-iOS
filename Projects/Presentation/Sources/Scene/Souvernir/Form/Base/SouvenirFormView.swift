@@ -191,6 +191,10 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         priceFieldView.render(price: price, currencySymbol: currencySymbol)
     }
 
+    func updateLocalCurrencySymbol(_ symbol: String) {
+        priceFieldView.updateLocalCurrencySymbol(symbol, keepSelection: true, emit: false)
+    }
+
     func renderPurpose(_ purpose: SouvenirPurpose) {
         purposeToggleView.render(purpose)
     }

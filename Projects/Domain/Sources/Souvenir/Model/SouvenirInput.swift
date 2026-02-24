@@ -1,8 +1,7 @@
 public struct SouvenirInput {
     public let name: String
-    public let localPrice: Int?
-    public let currencySymbol: String?
-    public let krwPrice: Int?
+    public let price: Int?
+    public let currencyCode: String?
     public let description: String
     public let address: String
     public let locationDetail: String?
@@ -13,8 +12,8 @@ public struct SouvenirInput {
 
     public init(
         name: String,
-        localPrice: Int? = nil,
-        currencySymbol: String? = nil,
+        price: Int? = nil,
+        currencyCode: String? = nil,
         krwPrice: Int? = nil,
         description: String,
         address: String,
@@ -25,9 +24,8 @@ public struct SouvenirInput {
         countryCode: String
     ) {
         self.name = name
-        self.localPrice = localPrice
-        self.currencySymbol = currencySymbol
-        self.krwPrice = krwPrice
+        self.price = price
+        self.currencyCode = currencyCode
         self.description = description
         self.address = address
         self.locationDetail = locationDetail

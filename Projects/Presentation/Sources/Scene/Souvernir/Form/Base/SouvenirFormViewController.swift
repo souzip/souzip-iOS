@@ -46,8 +46,12 @@ final class SouvenirFormViewController: BaseViewController<
             .onNext(contentView.renderAddress)
 
         observeState()
-            .map { ($0.localPrice, $0.currencySymbol) }
+            .map { ($0.price, $0.currencySymbol) }
             .onNext(contentView.renderPrice)
+
+        observe(\.localCurrencySymbol)
+            .distinct()
+            .onNext(contentView.updateLocalCurrencySymbol)
 
         observe(\.purpose)
             .distinct()

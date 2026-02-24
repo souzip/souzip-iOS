@@ -47,8 +47,9 @@ struct SouvenirFormState {
     var countryCode: String = ""
 
     // 가격
-    var localPrice: String = ""
+    var price: String = ""
     var currencySymbol: String = "₩"
+    var localCurrencySymbol: String = "$"
 
     // 분류
     var purpose: SouvenirPurpose = .personal
@@ -57,7 +58,31 @@ struct SouvenirFormState {
     // 설명
     var description: String = ""
 
-    // Computed properties
+    // MARK: - Init
+
+    init(mode: SouvenirFormMode) {
+        self.mode = mode
+        guard case let .edit(detail) = mode else { return }
+        existingFiles = detail.files
+        name = detail.name
+        coordinate = detail.coordinate
+        address = detail.address
+        countryCode = detail.countryCode
+        locationDetail = detail.locationDetail ?? ""
+        let symbol = detail.currencySymbol ?? "₩"
+        currencySymbol = symbol
+        if symbol == "₩" {
+            price = detail.krwPrice.map { String($0) } ?? ""
+        } else {
+            price = detail.localPrice.map { String($0) } ?? ""
+        }
+        purpose = detail.purpose
+        category = detail.category
+        description = detail.description
+    }
+
+    // MARK: - Computed properties
+
     var isEditMode: Bool {
         if case .edit = mode {
             return true
