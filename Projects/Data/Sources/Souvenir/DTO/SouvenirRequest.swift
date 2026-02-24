@@ -4,9 +4,8 @@ import Foundation
 
 public struct SouvenirRequest: Encodable {
     public let name: String
-    public let localPrice: Int?
-    public let currencySymbol: String?
-    public let krwPrice: Int?
+    public let price: Int?
+    public let currency: String?
     public let description: String
     public let address: String
     public let locationDetail: String?
@@ -19,9 +18,8 @@ public struct SouvenirRequest: Encodable {
 
     public init(
         name: String,
-        localPrice: Int? = nil,
-        currencySymbol: String? = nil,
-        krwPrice: Int? = nil,
+        price: Int? = nil,
+        currency: String? = nil,
         description: String,
         address: String,
         locationDetail: String? = nil,
@@ -32,9 +30,8 @@ public struct SouvenirRequest: Encodable {
         countryCode: String
     ) {
         self.name = name
-        self.localPrice = localPrice
-        self.currencySymbol = currencySymbol
-        self.krwPrice = krwPrice
+        self.price = price
+        self.currency = currency
         self.description = description
         self.address = address
         self.locationDetail = locationDetail

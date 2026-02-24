@@ -15,9 +15,9 @@ extension SouvenirEndpoint: APIEndpoint {
         case let .getSouvenir(id):
             "/api/souvenirs/\(id)"
         case .createSouvenir:
-            "/api/souvenirs"
+            "/api/v2/souvenirs"
         case let .updateSouvenir(id, _):
-            "/api/souvenirs/\(id)"
+            "/api/v2/souvenirs/\(id)"
         case let .deleteSouvenir(id):
             "/api/souvenirs/\(id)"
         case .getNearbySouvenirs:

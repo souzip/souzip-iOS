@@ -87,9 +87,8 @@ public enum SouvenirDTOMapper {
     public static func toRequest(_ input: SouvenirInput) -> SouvenirRequest {
         SouvenirRequest(
             name: input.name,
-            localPrice: input.localPrice,
-            currencySymbol: input.currencySymbol,
-            krwPrice: input.krwPrice,
+            price: input.price,
+            currency: input.currencyCode,
             description: input.description,
             address: input.address,
             locationDetail: input.locationDetail,
