@@ -50,7 +50,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
                         category: editedDetail.category,
                         purpose: editedDetail.purpose,
                         countryCode: editedDetail.countryCode,
-                        isOwned: editedDetail.isOwned,
+                        isOwned: true,
                         owner: editedDetail.owner,
                         files: detail.files
                     )

@@ -16,7 +16,7 @@ public struct SouvenirDetailResponse: Decodable {
     public let countryCode: String
     public let userNickname: String
     public let userProfileImageUrl: String
-    public let isOwned: Bool
+    public let isOwned: Bool?
     public let files: [SouvenirFileResponse]
 }
 

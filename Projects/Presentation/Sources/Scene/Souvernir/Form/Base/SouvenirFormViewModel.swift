@@ -27,24 +27,14 @@ final class SouvenirFormViewModel: BaseViewModel<
         self.onResult = onResult
         self.countryRepo = countryRepo
         self.souvenirRepo = souvenirRepo
-        var initialState = SouvenirFormState(mode: mode)
 
-        // 수정 모드인 경우 기존 데이터 로드
-        if case let .edit(detail) = mode {
-            initialState.existingFiles = detail.files
-            initialState.name = detail.name
-            initialState.address = detail.address
-            initialState.locationDetail = detail.locationDetail ?? ""
-            initialState.countryCode = detail.countryCode
-            initialState.localPrice = detail.localPrice?.formatted() ?? ""
-            initialState.currencySymbol = detail.currencySymbol ?? ""
-            initialState.purpose = detail.purpose
-            initialState.category = detail.category
-            initialState.description = detail.description
-            initialState.coordinate = detail.coordinate
-        }
-
+        let initialState = SouvenirFormState(mode: mode)
         super.init(initialState: initialState)
+
+        if !initialState.countryCode.isEmpty,
+           let country = try? countryRepo.fetchCountry(countryCode: initialState.countryCode) {
+            mutate { $0.localCurrencySymbol = country.currency.symbol }
+        }
     }
 
     // MARK: - Action Handling
@@ -156,6 +146,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             mutate {
                 $0.address = address.formattedAddress
                 $0.currencySymbol = country.currency.symbol
+                $0.localCurrencySymbol = country.currency.symbol
                 $0.countryCode = address.countryCode
             }
         } catch {
@@ -166,7 +157,7 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func handleUpdatePrice(_ text: String) {
         let filtered = text.filter(\.isNumber)
         mutate { state in
-            state.localPrice = filtered
+            state.price = filtered
         }
     }
 
@@ -197,19 +188,24 @@ final class SouvenirFormViewModel: BaseViewModel<
     private func makeSubmitInput() -> SouvenirInput? {
         let currentState = state.value
 
-        guard let coordinate = currentState.coordinate else { return nil }
-        guard let category = currentState.category else { return nil }
+        guard let coordinate = currentState.coordinate,
+              let category = currentState.category
+        else { return nil }
 
-        let (localPrice, currencySymbol, krwPrice) = calculatePriceFields(
-            localPrice: currentState.localPrice,
-            currencySymbol: currentState.currencySymbol
-        )
+        let price: Int? = currentState.price.isEmpty ? nil : Int(currentState.price)
+        let currencyCode: String? = if currentState.currencySymbol == "₩" {
+            "KRW"
+        } else {
+            try? countryRepo
+                .fetchCountry(countryCode: currentState.countryCode)
+                .currency
+                .code
+        }
 
         return SouvenirInput(
             name: currentState.name,
-            localPrice: localPrice,
-            currencySymbol: currencySymbol,
-            krwPrice: krwPrice,
+            price: price,
+            currencyCode: currencyCode,
             description: currentState.description,
             address: currentState.address,
             locationDetail: currentState.locationDetail.isEmpty ? nil : currentState.locationDetail,
@@ -218,28 +214,6 @@ final class SouvenirFormViewModel: BaseViewModel<
             purpose: currentState.purpose,
             countryCode: currentState.countryCode
         )
-    }
-
-    private func calculatePriceFields(
-        localPrice: String,
-        currencySymbol: String
-    ) -> (localPrice: Int?, currencySymbol: String?, krwPrice: Int?) {
-        guard !localPrice.isEmpty else {
-            return (nil, nil, nil)
-        }
-
-        let parsedPrice = parsePrice(localPrice)
-
-        if currencySymbol == "₩" {
-            return (nil, currencySymbol, parsedPrice)
-        } else {
-            return (parsedPrice, currencySymbol, nil)
-        }
-    }
-
-    private func parsePrice(_ price: String) -> Int? {
-        let cleanedPrice = price.filter(\.isNumber)
-        return Int(cleanedPrice)
     }
 
     private func handleCreate(input: SouvenirInput) {
