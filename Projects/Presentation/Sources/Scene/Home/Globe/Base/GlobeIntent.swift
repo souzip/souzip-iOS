@@ -140,4 +140,5 @@ enum GlobeEvent {
     case showSearchButton(Bool) // 검색 버튼만 표시/숨김
     case showLocationPermissionAlert
     case showError(String)
+    case showGlobeGuideToast
 }

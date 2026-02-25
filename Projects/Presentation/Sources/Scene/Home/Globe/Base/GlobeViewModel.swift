@@ -103,6 +103,8 @@ final class GlobeViewModel: BaseViewModel<
 
 private extension GlobeViewModel {
     func handleMapReady() {
+        emit(.showGlobeGuideToast)
+
         Task {
             await loadCountryBadges()
         }

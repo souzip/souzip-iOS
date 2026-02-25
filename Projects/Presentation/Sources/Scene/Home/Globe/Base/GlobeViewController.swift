@@ -4,6 +4,10 @@ final class GlobeViewController: BaseViewController<
     GlobeViewModel,
     GlobeView
 > {
+    // MARK: - Properties
+
+    private var guideToastTask: Task<Void, Never>?
+
     // MARK: - Bind State
 
     override func bindState() {
@@ -18,6 +22,7 @@ final class GlobeViewController: BaseViewController<
     override func handleEvent(_ event: Event) {
         switch event {
         case let .renderScene(scene):
+            if scene != .globe { dismissGuideToast() }
             contentView.render(scene: scene, animated: true)
 
         case let .transitionToSheetWithoutCamera(context):
@@ -40,10 +45,29 @@ final class GlobeViewController: BaseViewController<
 
         case let .showError(message):
             showDSAlert(message: message)
+
+        case .showGlobeGuideToast:
+            showGuideToast()
         }
     }
 
     // MARK: - Private
+
+    private func showGuideToast() {
+        showToast("지구본을 돌려보세요!", bottomInset: 28, duration: 3.0)
+
+        guideToastTask = Task {
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            showToast("나라를 누르시면 대표 여행지로 이동해요", bottomInset: 28, duration: 999)
+        }
+    }
+
+    private func dismissGuideToast() {
+        guideToastTask?.cancel()
+        guideToastTask = nil
+        hideToast()
+    }
 
     private func showLocationPermissionAlert() {
         showDSConfirmAlert(
