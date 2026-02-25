@@ -1,127 +1,101 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+이 파일은 Claude Code(claude.ai/code)가 이 저장소에서 작업할 때 참고하는 가이드입니다.
 
-## Build & Development
+## 프로젝트 개요
 
-This is an iOS project managed with **Tuist**. Swift 5.9, iOS 16.0+ deployment target.
+**수집(Souzip)**은 여행 기념품을 기록하고 공유하는 iOS 앱입니다.
+주요 도메인: 기념품(Souvenir), 인증(Auth), 국가(Country), 사용자(User), 탐색(Discovery), 위치(Location)
+
+## 빌드 환경
+
+**Tuist**로 관리되는 iOS 프로젝트입니다. Swift 5.9, iOS 16.0+ 배포 타겟.
 
 ```bash
-# Generate Xcode project from Tuist manifests
-tuist install    # fetch external dependencies
-tuist generate   # generate xcworkspace and xcodeproj files
-
-# Format code
-swiftformat .
-
-# Lint
-swiftlint
+tuist install    # 외부 의존성 다운로드
+tuist generate   # xcworkspace, xcodeproj 파일 생성
+swiftformat .    # 코드 포맷
 ```
 
-Build and run via Xcode after `tuist generate`. No CLI build command — the project uses xcworkspace.
+`tuist generate` 후 Xcode에서 빌드 및 실행. CLI 빌드 명령 없음 — xcworkspace를 사용.
 
-## Architecture
+## 아키텍처
 
-**Clean Architecture + MVVM-C (Coordinator)** with Tuist multi-module structure.
+**Clean Architecture + MVVM-C(Coordinator)** 기반의 Tuist 멀티모듈 구조.
 
-### Layer Dependency Flow
+### 레이어 의존성 흐름
 ```
 App → Presentation → Domain ← Data → Core
 ```
-- **Domain** has no external dependencies (pure business logic)
-- **Data** implements Domain's repository protocols
-- **Presentation** depends on Domain only (not Data)
-- **App** bootstraps DI via factory chain
+- **Domain**: 외부 의존성 없음 (순수 비즈니스 로직)
+- **Data**: Domain의 Repository 프로토콜 구현
+- **Presentation**: Domain에만 의존 (Data 직접 참조 불가)
+- **App**: Factory 체인으로 DI 부트스트랩
 
-### Module Map (`Projects/`)
+### 모듈 구조 (`Projects/`)
 
-| Layer | Module | Path |
-|-------|--------|------|
-| App | App (entry point, DI) | `Projects/App/` |
+| 레이어 | 모듈 | 경로 |
+|--------|------|------|
+| App | App (진입점, DI) | `Projects/App/` |
 | Presentation | Presentation | `Projects/Presentation/` |
 | Domain | Domain | `Projects/Domain/` |
 | Data | Data | `Projects/Data/` |
 | Core | Networking, Logger, Keychain, UserDefaults, AdMob | `Projects/Core/{module}/` |
 | Shared | DesignSystem, Utils | `Projects/Shared/{module}/` |
 
-### Tuist Configuration
-- Module definitions: `Tuist/ProjectDescriptionHelpers/Core/Module.swift`
-- Dependency graph: `Tuist/ProjectDescriptionHelpers/Dependencies/ModuleDependencies.swift`
-- Project templates: `Tuist/ProjectDescriptionHelpers/Templates/Project+App.swift`, `Project+Framework.swift`
-- Environment config: `Tuist/ProjectDescriptionHelpers/Core/Environment.swift` (bundle: `com.swyp.souzip`, app name: "수집")
-- Build configs loaded from `Config/Debug.xcconfig` and `Config/Release.xcconfig`
+상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조.
 
-### DI / Factory Chain
-Bootstrap in `SceneDelegate` → `AppConfiguration` → `AppFactory`:
+## 금지 사항 (DO NOT)
+
+- `force_unwrapping` (`!`) 사용 금지
+- `implicitly_unwrapped_optional` 사용 금지
+- Storyboard/XIB 사용 금지 — 모든 UI는 SnapKit 코드로 작성
+- Domain 레이어에 외부 의존성 추가 금지 — 순수 비즈니스 로직만
+- Data 레이어를 Presentation에서 직접 참조 금지
+- `Config/*.xcconfig` 파일 커밋 금지 (`.gitignore`에 포함됨, API 키/시크릿 포함)
+- `tuist generate`로 생성되는 `*.xcodeproj`, `*.xcworkspace`, `Derived/` 커밋 금지
+- `Combine` 사용 금지 — 프로젝트는 RxSwift 사용
+
+## 컨벤션
+
+- 한국어 커밋 메시지 & 코드 주석
+- SnapKit으로 프로그래매틱 UI (스토리보드 사용 안 함)
+- RxSwift/RxRelay/RxCocoa로 리액티브 바인딩
+- BaseViewModel 4타입 패턴 준수 (State, Action, Event, Route)
+- DTO → Domain 변환은 **Mapper** 사용 (`toDomain()` 직접 구현 금지)
+- Repository는 Domain에 프로토콜, Data에 구현체
+- DI는 Factory 패턴으로 (직접 init 주입 대신 Factory 체인)
+- `import` 정렬: testable을 맨 아래로 (SwiftFormat `testable-bottom`)
+
+## Git 컨벤션
+
+**커밋 메시지**:
 ```
-AppFactory
-├── KeychainFactory
-├── NetworkFactory (plain + authed clients)
-├── DataFactory (lazy-cached repositories)
-├── DomainFactory (protocol composition of per-feature factories)
-└── PresentationFactory (scene + coordinator creation)
-```
-- Factories use **protocol composition** (`DomainFactory: DomainAuthFactory & DomainSouvenirFactory & ...`)
-- Repositories are **lazy var cached** in DataFactory (single instance)
-- Key file: `Projects/App/Sources/Factory/AppFactory.swift`
-
-### Presentation Pattern
-**BaseViewModel<State, Action, Event, Route>** — generic base with 4 type params:
-- `state: BehaviorRelay<State>` — single source of truth for UI
-- `action: PublishRelay<Action>` — user input
-- `event: PublishRelay<Event>` — side effects (toasts, alerts)
-- `route: PublishRelay<Route>` — navigation intent
-- `mutate()` for state changes, `emit()` for events, `navigate(to:)` for routing
-
-**BaseCoordinator<Route, ParentRoute>** — navigation hierarchy:
-- `navigate(_ route:)` — handle local routes
-- `navigateToParent(_ route:)` — delegate to parent coordinator
-- `children` array + `parent` weak reference
-
-**BaseViewController<ViewModel>** binds via `bindState()`, `bindRoute()`, `bindViewModel()`.
-
-### Domain Structure (per feature)
-Each domain (Auth, Souvenir, Country, Onboarding, Discovery, User, Location) follows:
-```
-{Feature}/
-├── Model/       # Domain entities
-├── UseCase/     # Business logic
-├── Repository/  # Protocol (implemented in Data layer)
-└── Error/       # Domain-specific errors
+<type>: <한국어 설명>
 ```
 
-### Data Structure (per feature)
+| 타입 | 설명 |
+|------|------|
+| `feat` | 새로운 기능 추가 |
+| `fix` | 버그 수정 |
+| `refactor` | 리팩토링 (기능 변경 없이 구조 개선) |
+| `style` | 코드 포맷, 네이밍, 세미콜론 등 스타일 수정 |
+| `docs` | 문서 수정 (README, 주석 등) |
+| `test` | 테스트 코드 추가 또는 수정 |
+| `chore` | 빌드 설정, 패키지 설치 등 기타 잡일 |
+
+**브랜치 네이밍**:
 ```
-{Feature}/
-├── Remote/      # API data source
-├── Local/       # Keychain/UserDefaults data source
-├── DTO/         # Request/Response DTOs with toDomain() mapping
-├── Endpoint/    # APIEndpoint conforming types
-└── Repository/  # Protocol implementation
+<type>/<JIRA-ID>/<설명>
 ```
+예시: `feat/SOU-398/nickname-policy`, `fix/SOU-380/profile-image-downsampling`, `refactor/SOU-422/souvenirs-api-v2`
 
-### Networking
-- `APIEndpoint` protocol: defines path, method, headers, parameters, body
-- `NetworkClient` protocol with `DefaultNetworkClient` implementation
-- `DefaultNetworkClient.authed()` — auto token refresh via `TokenRefresher`
-- `DefaultNetworkClient.plain()` — no auth (login endpoints)
-- Multipart upload via `MultipartEndpoint`
-- API responses wrapped in `APIResponse<T: Decodable>`
+**기본 브랜치**: `develop` (PR 타겟)
 
-## Code Style
+## 새 기능 추가 절차
 
-**SwiftFormat** (`.swiftformat`): 4-space indent, `before-first` wrapping for args/params/collections, `balanced` closing paren.
-
-**SwiftLint** (`.swiftlint.yml`):
-- `force_unwrapping` and `implicitly_unwrapped_optional` are opt-in (enforced)
-- Disabled: `line_length`, `file_length`, `function_body_length`, `type_body_length`, `identifier_name`, `type_name`, `trailing_comma`
-- UI layout uses **SnapKit** (programmatic, no storyboards)
-- Reactive binding uses **RxSwift/RxRelay/RxCocoa**
-
-## Adding a New Feature
-
-1. **Domain**: Add Model, UseCase, Repository protocol, Error in `Projects/Domain/Sources/{Feature}/`
-2. **Data**: Add DTO, Endpoint, DataSource, Repository implementation in `Projects/Data/Sources/{Feature}/`
-3. **Presentation**: Add ViewModel (extending BaseViewModel), ViewController, Coordinator route in `Projects/Presentation/Sources/`
-4. **Factory wiring**: Add factory protocol methods in Domain/Data/Presentation factories, wire in `AppFactory`
-5. **Dependencies**: If new external lib needed, update `Tuist/Package.swift` and `ModuleDependencies.swift`
+1. **Domain**: `Projects/Domain/Sources/{Feature}/`에 Model, UseCase, Repository 프로토콜, Error 추가
+2. **Data**: `Projects/Data/Sources/{Feature}/`에 DTO, Endpoint, DataSource, Repository 구현체 추가
+3. **Presentation**: `Projects/Presentation/Sources/`에 ViewModel(BaseViewModel 상속), ViewController, Coordinator 라우트 추가
+4. **Factory 연결**: Domain/Data/Presentation Factory 프로토콜 메서드 추가 후 `AppFactory`에서 연결
+5. **의존성**: 새 외부 라이브러리가 필요한 경우 `Tuist/Package.swift`와 `ModuleDependencies.swift` 업데이트
