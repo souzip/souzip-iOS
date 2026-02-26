@@ -116,6 +116,16 @@ final class SearchTextFieldView: UIView {
         }
     }
 
+    // MARK: - Public
+
+    func setText(_ text: String) {
+        textField.text = text
+        clearButton.isHidden = text.isEmpty
+        searchIconView.isHidden = !text.isEmpty
+    }
+
+    // MARK: - Private
+
     private func setBindings() {
         textField.rx.text.orEmpty
             .distinctUntilChanged()

@@ -18,12 +18,17 @@ final class SearchCountryViewModel: BaseViewModel<
     // MARK: - Init
 
     init(
+        initialSearchText: String = "",
         onResult: @escaping (SearchResultItem) -> Void,
         countryRepo: CountryRepository
     ) {
         self.onResult = onResult
         self.countryRepo = countryRepo
-        super.init(initialState: State())
+        super.init(initialState: State(initialSearchText: initialSearchText))
+
+        if !initialSearchText.isEmpty {
+            handleSearchTextChangedAPI(initialSearchText)
+        }
     }
 
     // MARK: - Action Handling

@@ -38,6 +38,10 @@ final class SearchCountryViewController: BaseViewController<
         observe(\.isEmpty)
             .distinct()
             .onNext(contentView.render(isEmpty:))
+
+        observe(\.searchText)
+            .take(1)
+            .onNext(contentView.setInitialSearchText(_:))
     }
 
     // MARK: - Event

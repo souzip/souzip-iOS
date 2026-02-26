@@ -115,6 +115,10 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         searchTextFieldView.textField.becomeFirstResponder()
     }
 
+    func setInitialSearchText(_ text: String) {
+        searchTextFieldView.setText(text)
+    }
+
     // MARK: - Private
 
     private func createLayout() -> UICollectionViewLayout {
