@@ -25,6 +25,7 @@ final class MapboxView: UIView {
 
     let tapCountrybadge = PublishRelay<CountryBadge>()
     let tapSouvenirPin = PublishRelay<SouvenirListItem>()
+    let userDidPinch = PublishRelay<Void>()
 
     private let disposeBag = DisposeBag()
 
@@ -79,6 +80,8 @@ final class MapboxView: UIView {
     }
 
     private func setbinding() {
+        mapboxMapView.gestures.delegate = self
+
         mapboxMapView.rx.mapLoaded
             .bind(to: mapReady)
             .disposed(by: disposeBag)
@@ -374,6 +377,24 @@ extension MapboxView {
         // CLLocation의 distance 메서드 사용 (미터 단위)
         return location1.distance(from: location2)
     }
+}
+
+// MARK: - GestureManagerDelegate
+
+extension MapboxView: GestureManagerDelegate {
+    func gestureManager(_ gestureManager: GestureManager, didBegin gestureType: GestureType) {
+        if gestureType == .pinch {
+            userDidPinch.accept(())
+        }
+    }
+
+    func gestureManager(
+        _ gestureManager: GestureManager,
+        didEnd gestureType: GestureType,
+        willAnimate: Bool
+    ) {}
+
+    func gestureManager(_ gestureManager: GestureManager, didEndAnimatingFor gestureType: GestureType) {}
 }
 
 // MARK: - Helper Extension

@@ -147,6 +147,17 @@ final class GlobeView: BaseView<GlobeAction> {
         // 핀 탭 → 캐러셀 센터 변경
         bind(mapContainerView.tapSouvenirPin.asObservable())
             .map { .wantToSeeSouvenirPin($0) }
+
+        // 핀치(확대/축소) 시 시트 닫기
+        mapContainerView.userDidPinch
+            .filter { [weak self] _ in
+                guard let self else { return false }
+                return !souvenirSheetView.isHidden
+            }
+            .bind { [weak self] in
+                self?.souvenirSheetView.setLevel(.min, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     private func bindCarousel() {
@@ -294,6 +305,7 @@ extension GlobeView {
             duration: 0.6,
             extraLift: 0
         )
+        layoutIfNeeded()
     }
 
     private func renderMapSheetScene(
@@ -356,6 +368,7 @@ extension GlobeView {
 
         souvenirCarouselView.render(items: context.souvenirs)
         // scrollToItem은 별도 이벤트로 처리
+        layoutIfNeeded()
     }
 }
 
@@ -389,7 +402,6 @@ private extension GlobeView {
         let shouldHide = bottomInset > threshold
 
         currentLocationButton.alpha = shouldHide ? 0 : 1
-        layoutIfNeeded()
     }
 
     func updateSearchInLocationButtonPosition(bottomInset: CGFloat) {
@@ -399,7 +411,6 @@ private extension GlobeView {
         let shouldHide = bottomInset > threshold
 
         searchInLocationButton.alpha = shouldHide ? 0 : 1
-        layoutIfNeeded()
     }
 
     func updateForSheetHeight(_ height: CGFloat) {
