@@ -25,8 +25,8 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
             AnalyticsManager.shared.track(event: .tapSouvenirDetail(id: id.description))
             showDetailSouvenir(id)
 
-        case let .search(onResult):
-            showSearch(onResult: onResult)
+        case let .search(context):
+            showSearch(context: context)
 
         case let .locationPicker(initial, onComplete):
             showLocationPicker(
@@ -95,8 +95,8 @@ private extension SouvenirCoordinator {
         nav.pushViewController(scene.vc, animated: true)
     }
 
-    func showSearch(onResult: @escaping (SearchResultItem) -> Void) {
-        let scene = factory.makeSearchScene(onResult: onResult)
+    func showSearch(context: SearchCountryContext) {
+        let scene = factory.makeSearchScene(context: context)
         scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         activeNav().pushViewController(scene.vc, animated: true)

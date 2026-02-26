@@ -3,9 +3,14 @@ import Domain
 // MARK: - State
 
 struct SearchCountryState {
-    var searchText: String = ""
+    var searchText: String
     var items: [SearchResultItem] = []
-    var isEmpty: Bool = true
+    var isEmpty: Bool
+
+    init(initialSearchText: String = "") {
+        searchText = initialSearchText
+        isEmpty = initialSearchText.isEmpty
+    }
 }
 
 // MARK: - Action
@@ -16,6 +21,7 @@ enum SearchCountryAction {
     case searchTextChangedAPI(String)
     case clearSearch
     case selectItem(SearchResultItem)
+    case returnKeyTapped
 }
 
 // MARK: - Event

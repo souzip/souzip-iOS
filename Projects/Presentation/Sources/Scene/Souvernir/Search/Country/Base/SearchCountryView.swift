@@ -85,11 +85,14 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             .map { .searchTextChangedUI($0) }
 
         bind(searchTextFieldView.textChanged.asObservable())
-            .debounce(.seconds(2))
+            .debounce(.milliseconds(500))
             .map { .searchTextChangedAPI($0) }
 
         bind(searchTextFieldView.clearButtonTapped.asObservable())
             .to(.clearSearch)
+
+        bind(searchTextFieldView.returnKeyTapped.asObservable())
+            .to(.returnKeyTapped)
     }
 
     // MARK: - Public
@@ -109,7 +112,20 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
     }
 
     func focusSearchField() {
-        searchTextFieldView.textField.becomeFirstResponder()
+        searchTextFieldView.focus()
+    }
+
+    func setInitialSearchText(_ text: String) {
+        searchTextFieldView.setText(text)
+    }
+
+    func render(mode: SearchCountryMode) {
+        switch mode {
+        case .country:
+            searchTextFieldView.setPlaceholder("어디로 떠나시나요?")
+        case .store:
+            searchTextFieldView.setPlaceholder("어디에서 구매하셨나요?")
+        }
     }
 
     // MARK: - Private
