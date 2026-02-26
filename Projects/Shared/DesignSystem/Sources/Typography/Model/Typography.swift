@@ -16,7 +16,7 @@ public struct Typography {
     }
 
     public var actualLineHeight: CGFloat? {
-        lineHeightMultiple.map { font.lineHeight * $0 }
+        lineHeightMultiple.map { font.pointSize * $0 }
     }
 
     public func toAttributes() -> [NSAttributedString.Key: Any] {
