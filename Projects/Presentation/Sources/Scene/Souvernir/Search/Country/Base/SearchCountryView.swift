@@ -85,7 +85,7 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             .map { .searchTextChangedUI($0) }
 
         bind(searchTextFieldView.textChanged.asObservable())
-            .debounce(.seconds(2))
+            .debounce(.milliseconds(500))
             .map { .searchTextChangedAPI($0) }
 
         bind(searchTextFieldView.clearButtonTapped.asObservable())
