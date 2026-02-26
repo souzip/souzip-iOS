@@ -18,17 +18,15 @@ final class SouvenirCarouselView: UIView {
     typealias Section = Int
     typealias Item = SouvenirListItem
 
-    typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
+    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
 
     // MARK: - Constants
 
     enum Metric {
         static let height: CGFloat = 280
-        static let cellWidth: CGFloat = 320
         static let cellHeight: CGFloat = 280
         static let cellSpacing: CGFloat = 8
-        static let sideInset: CGFloat = 320
     }
 
     // MARK: - UI
