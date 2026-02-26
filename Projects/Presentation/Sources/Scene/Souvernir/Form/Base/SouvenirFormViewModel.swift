@@ -67,6 +67,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         case .tapAddress:
             navigate(to: .search(.init(
                 initialQuery: locationSearchQuery,
+                mode: .store,
                 onResult: { [weak self] searchResult in
                     self?.locationSearchQuery = searchResult.name
                     self?.navigate(

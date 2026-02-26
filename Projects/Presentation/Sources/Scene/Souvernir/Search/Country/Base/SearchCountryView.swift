@@ -112,11 +112,20 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
     }
 
     func focusSearchField() {
-        searchTextFieldView.textField.becomeFirstResponder()
+        searchTextFieldView.focus()
     }
 
     func setInitialSearchText(_ text: String) {
         searchTextFieldView.setText(text)
+    }
+
+    func render(mode: SearchCountryMode) {
+        switch mode {
+        case .country:
+            searchTextFieldView.setPlaceholder("어디로 떠나시나요?")
+        case .store:
+            searchTextFieldView.setPlaceholder("어디에서 구매하셨나요?")
+        }
     }
 
     // MARK: - Private

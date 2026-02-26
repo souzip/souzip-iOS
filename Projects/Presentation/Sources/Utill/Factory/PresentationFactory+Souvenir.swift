@@ -62,6 +62,7 @@ extension DefaultPresentationFactory {
             countryRepo: domainFactory.makeCountryRepository()
         )
         let view = SearchCountryView()
+        view.render(mode: context.mode)
         let vc = SearchCountryViewController(viewModel: vm, contentView: view)
 
         return .init(

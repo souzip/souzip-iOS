@@ -38,16 +38,6 @@ private extension HomeCoordinator {
         bindRoute(scene)
         nav.setViewControllers([scene.vc], animated: true)
     }
-
-    func showCreateSouvenir() {
-        let coordinator = SouvenirCoordinator(
-            nav: nav,
-            factory: factory
-        )
-
-        addTemporaryChild(coordinator)
-        coordinator.navigate(.create)
-    }
 }
 
 private extension HomeCoordinator {
