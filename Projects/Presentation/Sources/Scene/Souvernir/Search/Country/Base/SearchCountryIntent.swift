@@ -16,6 +16,7 @@ enum SearchCountryAction {
     case searchTextChangedAPI(String)
     case clearSearch
     case selectItem(SearchResultItem)
+    case returnKeyTapped
 }
 
 // MARK: - Event

@@ -12,6 +12,9 @@ final class SearchCountryViewModel: BaseViewModel<
 
     private let countryRepo: CountryRepository
 
+    /// 엔터 입력 후 API 결과를 기다리는 중인지 여부
+    private var pendingReturnKey = false
+
     // MARK: - Init
 
     init(
@@ -41,18 +44,21 @@ final class SearchCountryViewModel: BaseViewModel<
 
         case let .selectItem(item):
             handleSelectItem(item)
+
+        case .returnKeyTapped:
+            handleReturnKeyTapped()
         }
     }
 
     // MARK: - Private Logic
 
     private func handleSearchTextChangedUI(_ text: String) {
+        pendingReturnKey = false
         mutate { state in
             state.searchText = text
             state.items = []
             state.isEmpty = text.isEmpty ? true : false
         }
-
     }
 
     private func handleSearchTextChangedAPI(_ text: String) {
@@ -68,9 +74,11 @@ final class SearchCountryViewModel: BaseViewModel<
                     state.isEmpty = items.isEmpty
                 }
                 emit(.loading(false))
+                handlePendingReturnKeyIfNeeded(items: items)
             } catch {
                 emit(.showAlert(message: error.localizedDescription))
                 emit(.loading(false))
+                handlePendingReturnKeyIfNeeded(items: [])
             }
         }
     }
@@ -106,10 +114,35 @@ final class SearchCountryViewModel: BaseViewModel<
     }
 
     private func handleClearSearch() {
+        pendingReturnKey = false
         mutate { state in
             state.searchText = ""
             state.items = []
             state.isEmpty = true
+        }
+    }
+
+    private func handleReturnKeyTapped() {
+        let currentState = state.value
+        // 이미 결과가 있으면 즉시 첫 번째 아이템 선택
+        if let firstItem = currentState.items.first {
+            handleSelectItem(firstItem)
+            return
+        }
+
+        // 검색어가 없으면 Return 버튼으로 이미 키보드가 내려간 상태
+        guard !currentState.searchText.isEmpty else { return }
+
+        // 검색어는 있지만 아직 API 결과 대기 중 → 완료 후 처리
+        pendingReturnKey = true
+    }
+
+    private func handlePendingReturnKeyIfNeeded(items: [SearchResultItem]) {
+        guard pendingReturnKey else { return }
+        pendingReturnKey = false
+
+        if let firstItem = items.first {
+            handleSelectItem(firstItem)
         }
     }
 

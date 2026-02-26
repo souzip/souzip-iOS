@@ -90,6 +90,9 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
 
         bind(searchTextFieldView.clearButtonTapped.asObservable())
             .to(.clearSearch)
+
+        bind(searchTextFieldView.returnKeyTapped.asObservable())
+            .to(.returnKeyTapped)
     }
 
     // MARK: - Public

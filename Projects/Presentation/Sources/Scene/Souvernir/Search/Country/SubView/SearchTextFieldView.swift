@@ -9,6 +9,7 @@ final class SearchTextFieldView: UIView {
 
     let textChanged = PublishRelay<String>()
     let clearButtonTapped = PublishRelay<Void>()
+    let returnKeyTapped = PublishRelay<Void>()
 
     // MARK: - UI
 
@@ -132,6 +133,10 @@ final class SearchTextFieldView: UIView {
                 self?.clearButton.isHidden = true
             })
             .bind(to: clearButtonTapped)
+            .disposed(by: disposeBag)
+
+        textField.rx.controlEvent(.editingDidEndOnExit)
+            .bind(to: returnKeyTapped)
             .disposed(by: disposeBag)
     }
 }
