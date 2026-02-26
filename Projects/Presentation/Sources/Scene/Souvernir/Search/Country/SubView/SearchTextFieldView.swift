@@ -27,14 +27,9 @@ final class SearchTextFieldView: UIView {
         return imageView
     }()
 
-    let textField: TypographyTextField = {
+    private let textField: TypographyTextField = {
         let textField = TypographyTextField()
         textField.setTypography(.body1R)
-        textField.setPlaceholderTypography(
-            .body1R,
-            text: "어디로 떠나시나요?",
-            color: .dsGrey500
-        )
         textField.textColor = .dsGreyWhite
         textField.returnKeyType = .search
         return textField
@@ -118,10 +113,18 @@ final class SearchTextFieldView: UIView {
 
     // MARK: - Public
 
+    func focus() {
+        textField.becomeFirstResponder()
+    }
+
     func setText(_ text: String) {
         textField.text = text
         clearButton.isHidden = text.isEmpty
         searchIconView.isHidden = !text.isEmpty
+    }
+
+    func setPlaceholder(_ text: String) {
+        textField.setPlaceholderTypography(.body1R, text: text, color: .dsGrey500)
     }
 
     // MARK: - Private
