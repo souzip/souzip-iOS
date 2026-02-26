@@ -16,6 +16,9 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private let onResult: ((SouvenirDetail) -> Void)?
 
+    /// 검색화면 재진입 시 유지할 마지막 검색어
+    private var locationSearchQuery: String = ""
+
     // MARK: - Life Cycle
 
     init(
@@ -62,18 +65,22 @@ final class SouvenirFormViewModel: BaseViewModel<
 
         // 주소 입력 탭 처리
         case .tapAddress:
-            navigate(to: .search { [weak self] searchResult in
-                self?.navigate(
-                    to: .locationPicker(
-                        initialCoordinate: searchResult.coordinate
-                    ) { [weak self] coordinate, detail in
-                        self?.handleAction(.updateAddress(
-                            coordinate.toCoordinate,
-                            detail
-                        ))
-                    }
-                )
-            })
+            navigate(to: .search(.init(
+                initialQuery: locationSearchQuery,
+                onResult: { [weak self] searchResult in
+                    self?.locationSearchQuery = searchResult.name
+                    self?.navigate(
+                        to: .locationPicker(
+                            initialCoordinate: searchResult.coordinate
+                        ) { [weak self] coordinate, detail in
+                            self?.handleAction(.updateAddress(
+                                coordinate.toCoordinate,
+                                detail
+                            ))
+                        }
+                    )
+                }
+            )))
 
         case let .updateAddress(coordinate, detail):
             mutate { state in

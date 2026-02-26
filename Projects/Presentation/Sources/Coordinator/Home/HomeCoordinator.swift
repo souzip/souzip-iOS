@@ -48,16 +48,6 @@ private extension HomeCoordinator {
         addTemporaryChild(coordinator)
         coordinator.navigate(.create)
     }
-
-    func showSearchCountry(_ onResult: @escaping (SearchResultItem) -> Void) {
-        let coordinator = SouvenirCoordinator(
-            nav: nav,
-            factory: factory
-        )
-
-        addTemporaryChild(coordinator)
-        coordinator.navigate(.search(onResult: onResult))
-    }
 }
 
 private extension HomeCoordinator {

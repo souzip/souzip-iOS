@@ -227,12 +227,13 @@ private extension GlobeViewModel {
 
 private extension GlobeViewModel {
     func handleSearchTap() {
+        let currentQuery = state.value.searchQuery ?? ""
         navigate(
             to: .souvenirRoute(
-                .search { [weak self] item in
+                .search(.init(initialQuery: currentQuery) { [weak self] item in
                     self?.navigate(to: .pop)
                     self?.handleAction(.didSelectSearchResult(item))
-                }
+                })
             )
         )
     }
