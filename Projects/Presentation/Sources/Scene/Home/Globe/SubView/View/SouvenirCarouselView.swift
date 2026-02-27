@@ -4,6 +4,15 @@ import RxSwift
 import SnapKit
 import UIKit
 
+// MARK: - CarouselItem
+
+private struct CarouselItem: Hashable {
+    let index: Int
+    let souvenir: SouvenirListItem
+}
+
+// MARK: - SouvenirCarouselView
+
 final class SouvenirCarouselView: UIView {
     // MARK: - Action
 
@@ -16,19 +25,16 @@ final class SouvenirCarouselView: UIView {
     // MARK: - Types
 
     typealias Section = Int
-    typealias Item = SouvenirListItem
-
-    typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
+    private typealias Item = CarouselItem
+    private typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
 
     // MARK: - Constants
 
     enum Metric {
         static let height: CGFloat = 280
-        static let cellWidth: CGFloat = 320
         static let cellHeight: CGFloat = 280
         static let cellSpacing: CGFloat = 8
-        static let sideInset: CGFloat = 320
     }
 
     // MARK: - UI
@@ -48,6 +54,7 @@ final class SouvenirCarouselView: UIView {
     // MARK: - Data
 
     private var dataSource: DataSource?
+    private var sourceItems: [SouvenirListItem] = []
 
     // MARK: - Init
 
@@ -61,22 +68,43 @@ final class SouvenirCarouselView: UIView {
 
     // MARK: - Public
 
-    func render(items: [Item]) {
+    func render(items: [SouvenirListItem]) {
+        sourceItems = items
+        guard !items.isEmpty else { return }
+
+        let count = items.count
+        let copies = 100
+
+        var allItems: [Item] = []
+        for copy in 0 ..< copies {
+            for (i, souvenir) in items.enumerated() {
+                allItems.append(Item(index: copy * count + i, souvenir: souvenir))
+            }
+        }
+
         var snapshot = Snapshot()
         snapshot.appendSections([0])
-        snapshot.appendItems(items, toSection: 0)
+        snapshot.appendItems(allItems, toSection: 0)
 
-        dataSource?.apply(snapshot, animatingDifferences: false)
+        dataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
+            guard let self else { return }
+            let startIndex = (copies / 2) * count
+            collectionView.scrollToItem(
+                at: IndexPath(item: startIndex, section: 0),
+                at: .centeredHorizontally,
+                animated: false
+            )
+        }
     }
 
-    func scrollToItem(_ item: Item, animated: Bool = true) {
-        guard let indexPath = dataSource?.indexPath(for: item) else { return }
+    func scrollToItem(_ item: SouvenirListItem, animated: Bool = true) {
+        guard let sourceIndex = sourceItems.firstIndex(where: { $0.id == item.id }) else { return }
 
-        collectionView.scrollToItem(
-            at: indexPath,
-            at: .centeredHorizontally,
-            animated: animated
-        )
+        let count = sourceItems.count
+        let total = collectionView.numberOfItems(inSection: 0)
+        let midCopy = (total / count) / 2
+        let targetIndexPath = IndexPath(item: midCopy * count + sourceIndex, section: 0)
+        collectionView.scrollToItem(at: targetIndexPath, at: .centeredHorizontally, animated: animated)
     }
 }
 
@@ -116,7 +144,7 @@ private extension SouvenirCarouselView {
         > { [weak self] cell, _, item in
             guard let self else { return }
 
-            cell.render(item: item)
+            cell.render(item: item.souvenir)
             cell.closeButtonTapped
                 .bind(to: closeButtonTapped)
                 .disposed(by: cell.disposeBag)
@@ -182,10 +210,10 @@ private extension SouvenirCarouselView {
                     }
                 }
 
-                if let closestItem,
-                   let item = dataSource?.itemIdentifier(for: closestItem.indexPath) {
-                    centerItemChanged.accept(item)
-                }
+                guard let closestItem,
+                      let carouselItem = dataSource?.itemIdentifier(for: closestItem.indexPath) else { return }
+
+                centerItemChanged.accept(carouselItem.souvenir)
             }
 
             return section
@@ -198,6 +226,6 @@ private extension SouvenirCarouselView {
 extension SouvenirCarouselView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        itemTapped.accept(item)
+        itemTapped.accept(item.souvenir)
     }
 }

@@ -89,9 +89,27 @@ extension UIViewController {
                 options: [.curveEaseIn, .allowUserInteraction]
             ) {
                 toast.alpha = 0
-            } completion: { _ in
+            } completion: { finished in
+                guard finished else { return }
                 toast.removeFromSuperview()
             }
         }
+    }
+
+    func hideToast() {
+        view.subviews
+            .compactMap { $0 as? DSToastView }
+            .forEach { toast in
+                toast.layer.removeAllAnimations()
+                UIView.animate(
+                    withDuration: 0.2,
+                    delay: 0,
+                    options: [.curveEaseIn, .allowUserInteraction]
+                ) {
+                    toast.alpha = 0
+                } completion: { _ in
+                    toast.removeFromSuperview()
+                }
+            }
     }
 }

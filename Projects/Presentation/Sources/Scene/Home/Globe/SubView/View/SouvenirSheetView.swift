@@ -228,7 +228,7 @@ final class SouvenirSheetView: UIView {
 
         guard let superview else { return }
         if animated {
-            UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut]) {
+            UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
                 superview.layoutIfNeeded()
             }
         } else {
