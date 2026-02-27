@@ -4,7 +4,6 @@ public extension UIImage {
     // MARK: - Login
 
     static let dsLoginBackground: UIImage = .loginBackground
-    static let dsLoginRecent: UIImage = .loginRecent
 
     // MARK: - Profile
 
