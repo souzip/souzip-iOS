@@ -1,4 +1,5 @@
 import DesignSystem
+import Domain
 import SnapKit
 import UIKit
 
@@ -16,11 +17,28 @@ final class CommonTabbarController: UIViewController {
     private var currentVC: UIViewController?
     private var isTabBarHidden = false
 
+    // MARK: - Dependencies
+
+    private let uploadPromptBubbleUseCase: UploadPromptBubbleUseCase
+
+    // MARK: - Init
+
+    init(uploadPromptBubbleUseCase: UploadPromptBubbleUseCase) {
+        self.uploadPromptBubbleUseCase = uploadPromptBubbleUseCase
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - LifeCycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        tabBarView.setUploadBubbleVisible(uploadPromptBubbleUseCase.shouldShowBubble())
     }
 
     // MARK: - Internal Methods
@@ -171,8 +189,14 @@ private extension CommonTabbarController {
 
     func setBindings() {
         tabBarView.onSelect = { [weak self] index in
-            guard let route = TabRoute(rawValue: index) else { return }
-            self?.onTabTapped?(route)
+            guard let self, let route = TabRoute(rawValue: index) else { return }
+
+            if route == .myPage, uploadPromptBubbleUseCase.shouldShowBubble() {
+                uploadPromptBubbleUseCase.markViewed()
+                tabBarView.setUploadBubbleVisible(false)
+            }
+
+            onTabTapped?(route)
         }
     }
 }

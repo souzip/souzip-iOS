@@ -4,4 +4,7 @@ public protocol UserRepository {
     func getLocalUser() -> LoginUser?
     func saveLocalUser(userId: String, nickname: String, needsOnboarding: Bool)
     func deleteLocalUser()
+
+    func getHasVisitedMyPage() -> Bool
+    func markMyPageVisited()
 }
