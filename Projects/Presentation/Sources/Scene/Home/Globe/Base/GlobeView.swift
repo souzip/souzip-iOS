@@ -366,8 +366,7 @@ extension GlobeView {
         mapContainerView.showSouvenirPins(isHidden: false)
         mapContainerView.setSouvenirPins(context.souvenirs)
 
-        souvenirCarouselView.render(items: context.souvenirs)
-        // scrollToItem은 별도 이벤트로 처리
+        souvenirCarouselView.render(items: context.souvenirs, selectedItem: context.selectedItem)
         layoutIfNeeded()
     }
 }
