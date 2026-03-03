@@ -80,6 +80,7 @@ public final class DSTabBarView: UIView {
     }
 
     public func setUploadBubbleVisible(_ isVisible: Bool) {
+        guard itemViews.count >= 3 else { return }
         uploadBubbleView.isHidden = !isVisible
     }
 }

@@ -79,6 +79,7 @@ public final class DSSpeechBubbleView: UIView {
 
     override public func layoutSubviews() {
         super.layoutSubviews()
+        guard bounds.height > Metric.tailHeight else { return }
         let path = makeBubblePath(in: bounds)
         bubbleLayer.frame = bounds
         bubbleLayer.path = path.cgPath
