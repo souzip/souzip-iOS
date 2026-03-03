@@ -52,6 +52,14 @@ public final class DefaultUserRepository: UserRepository {
     public func deleteLocalUser() {
         userLocal.deleteUser()
     }
+
+    public func getHasVisitedMyPage() -> Bool {
+        userLocal.getHasVisitedMyPage()
+    }
+
+    public func markMyPageVisited() {
+        userLocal.markMyPageVisited()
+    }
 }
 
 // MARK: - Mapper

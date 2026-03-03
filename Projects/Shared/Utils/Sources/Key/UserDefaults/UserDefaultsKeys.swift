@@ -7,4 +7,7 @@ public enum UserDefaultsKeys {
 
     public static let needsOnboarding =
         DefaultsKey<Bool>("needs_onboarding", default: false)
+
+    public static let hasVisitedMyPage =
+        DefaultsKey<Bool>("has_visited_my_page", default: false)
 }
