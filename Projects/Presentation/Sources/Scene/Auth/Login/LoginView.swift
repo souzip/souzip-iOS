@@ -47,6 +47,8 @@ final class LoginView: BaseView<LoginAction> {
         label.textColor = .dsGreyWhite
         label.textAlignment = .center
         label.setTypography(.body1SB)
+        // 2줄(27pt × 2 = 54pt)이 62pt 컨테이너를 채우도록 줄 사이에 8pt 간격 배치
+        label.paragraphSpacing = 8
         return label
     }()
 
@@ -131,6 +133,7 @@ final class LoginView: BaseView<LoginAction> {
 
         welcomeLabel.snp.makeConstraints { make in
             make.bottom.equalTo(loginButtonStackView.snp.top).offset(-Metric.welcomeBottomSpacing)
+            make.height.equalTo(Metric.welcomeLabelHeight)
             make.centerX.equalToSuperview()
         }
 
