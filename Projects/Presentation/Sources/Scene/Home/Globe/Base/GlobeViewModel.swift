@@ -420,33 +420,32 @@ private extension GlobeViewModel {
 // MARK: - Souvenir Selection
 
 private extension GlobeViewModel {
-    // 핀 탭 → 캐러셀 센터만 변경
+    // 핀 탭 → 캐러셀 전환/스크롤 + 카메라 이동 직접 처리
     func handleSouvenirPinSelection(_ item: SouvenirListItem) {
         let souvenirs = currentSouvenirs
         guard !souvenirs.isEmpty else { return }
 
         let searchQuery = state.value.searchQuery
 
-        // 현재 Scene에 따라 처리
         switch state.value.scene {
         case .mapWithSheet:
-            // Sheet → Carousel로 전환
+            // Sheet → Carousel 전환 (render에서 selectedItem 위치로 직접 스크롤)
             showCarouselScene(
                 souvenirs: souvenirs,
                 selectedItem: item,
                 searchQuery: searchQuery
             )
+            emit(.moveCameraAndSelectPin(item))
 
         case .mapWithCarousel:
-            // 이미 Carousel이면 아무것도 안 함 (scrollToItem만 호출)
-            break
+            // 상태 업데이트 + 스크롤 + 카메라 이동 직접 처리
+            updateCarouselSelectedItem(item)
+            emit(.scrollCarouselToItem(item))
+            emit(.moveCameraAndSelectPin(item))
 
         default:
             break
         }
-
-        // 캐러셀 센터 변경 (scrollToItem 호출 → centerChanged 발생)
-        emit(.scrollCarouselToItem(item))
     }
 
     // 그리드/캐러셀 아이템 탭 → 상세

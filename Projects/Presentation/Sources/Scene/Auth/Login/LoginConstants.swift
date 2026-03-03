@@ -22,9 +22,10 @@ enum LoginConstants {
     // 수집 로고
     static let logoImageWidth: CGFloat = 100
     static let logoImageHeight: CGFloat = 60
-    static let logoBottomSpacing: CGFloat = LayoutConstants.Spacing.xSmall
+    static let logoBottomSpacing: CGFloat = 10
 
     // 환영 라벨
+    static let welcomeLabelHeight: CGFloat = 62
     static let welcomeBottomSpacing: CGFloat = LayoutConstants.Spacing.xxLarge
 
     // 로그인 버튼 스택뷰

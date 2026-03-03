@@ -49,15 +49,8 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         return button
     }()
 
-    // purpose + name + category를 담는 스택뷰
-    private let infoStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-        stackView.alignment = .center
-        stackView.distribution = .fill
-        return stackView
-    }()
+    // purpose + name + category를 담는 컨테이너 (좌측정렬 + nameLabel truncation)
+    private let infoContainerView = UIView()
 
     // "기념품 목적" (예: 선물용)
     private let purposeLabel: TypographyLabel = {
@@ -124,6 +117,9 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         return button
     }()
 
+    // localPriceLabel + krwPriceLabel을 묶는 컨테이너
+    private let priceContainerView = UIView()
+
     // 주소 정보 (예: "617 N MAIN FALLBROOK CA 92028-1934 USA")
     private let addressLabel: TypographyLabel = {
         let label = TypographyLabel()
@@ -137,6 +133,8 @@ final class SouvenirCarouselCell: UICollectionViewCell {
 
     let closeButtonTapped = PublishRelay<Void>()
     var disposeBag = DisposeBag()
+    private var priceHeightConstraint: Constraint?
+    private var addressTopConstraint: Constraint?
 
     // MARK: - Init
 
@@ -170,7 +168,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
             image: item.category.selectedImage
         )
 
-        let hasPrice = (item.localPrice != nil || item.krwPrice != nil)
+        let hasPrice = item.currencySymbol != nil
         if hasPrice {
             localPriceLabel.text = item.formattedLocalPrice
             krwPriceLabel.text = item.formattedKrwPrice
@@ -183,9 +181,10 @@ final class SouvenirCarouselCell: UICollectionViewCell {
     // MARK: - Private
 
     private func setPriceVisibility(isHidden: Bool) {
-        localPriceLabel.isHidden = isHidden
-        krwPriceLabel.isHidden = isHidden
+        priceContainerView.isHidden = isHidden
         infoButton.isHidden = isHidden
+        priceHeightConstraint?.update(offset: isHidden ? 0 : 24)
+//        addressTopConstraint?.update(offset: isHidden ? 0 : 8)
     }
 }
 
@@ -204,18 +203,22 @@ private extension SouvenirCarouselCell {
         [
             imageView,
             closeButton,
-            infoStackView,
-            localPriceLabel,
-            krwPriceLabel,
+            infoContainerView,
+            priceContainerView,
 //            infoButton,
             addressLabel,
         ].forEach { containerView.addSubview($0) }
 
         [
+            localPriceLabel,
+            krwPriceLabel,
+        ].forEach { priceContainerView.addSubview($0) }
+
+        [
             purposeLabel,
             nameLabel,
             categoryIconView,
-        ].forEach { infoStackView.addArrangedSubview($0) }
+        ].forEach { infoContainerView.addSubview($0) }
     }
 
     func setConstraints() {
@@ -235,21 +238,40 @@ private extension SouvenirCarouselCell {
             make.size.equalTo(Metric.closeButtonSize)
         }
 
-        infoStackView.snp.makeConstraints { make in
+        infoContainerView.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview().inset(Metric.contentPadding)
             make.height.equalTo(30)
         }
 
-        localPriceLabel.snp.makeConstraints { make in
-            make.top.equalTo(infoStackView.snp.bottom)
+        purposeLabel.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalTo(purposeLabel.snp.trailing).offset(8)
+            make.centerY.equalToSuperview()
+        }
+
+        categoryIconView.snp.makeConstraints { make in
+            make.leading.equalTo(nameLabel.snp.trailing).offset(8)
+            make.trailing.lessThanOrEqualTo(infoContainerView.snp.trailing)
+            make.centerY.equalToSuperview()
+        }
+
+        priceContainerView.snp.makeConstraints { make in
+            make.top.equalTo(infoContainerView.snp.bottom)
             make.leading.equalToSuperview().inset(20)
-            make.height.equalTo(24)
+            priceHeightConstraint = make.height.equalTo(24).constraint
+        }
+
+        localPriceLabel.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
         }
 
         krwPriceLabel.snp.makeConstraints { make in
             make.leading.equalTo(localPriceLabel.snp.trailing).offset(8)
-            make.centerY.equalTo(localPriceLabel)
+            make.centerY.equalToSuperview()
         }
 
 //        infoButton.snp.makeConstraints { make in
@@ -259,7 +281,7 @@ private extension SouvenirCarouselCell {
 //        }
 
         addressLabel.snp.makeConstraints { make in
-            make.top.equalTo(localPriceLabel.snp.bottom).offset(8)
+            addressTopConstraint = make.top.equalTo(priceContainerView.snp.bottom).offset(8).constraint
             make.leading.equalToSuperview().inset(Metric.contentPadding)
             make.trailing.equalToSuperview().inset(59)
         }

@@ -55,6 +55,7 @@ final class SouvenirCarouselView: UIView {
 
     private var dataSource: DataSource?
     private var sourceItems: [SouvenirListItem] = []
+    private var isScrollingProgrammatically = false
 
     // MARK: - Init
 
@@ -68,7 +69,7 @@ final class SouvenirCarouselView: UIView {
 
     // MARK: - Public
 
-    func render(items: [SouvenirListItem]) {
+    func render(items: [SouvenirListItem], selectedItem: SouvenirListItem? = nil) {
         sourceItems = items
         guard !items.isEmpty else { return }
 
@@ -86,14 +87,18 @@ final class SouvenirCarouselView: UIView {
         snapshot.appendSections([0])
         snapshot.appendItems(allItems, toSection: 0)
 
+        isScrollingProgrammatically = true
         dataSource?.apply(snapshot, animatingDifferences: false) { [weak self] in
             guard let self else { return }
-            let startIndex = (copies / 2) * count
+            let startCopy = copies / 2
+            let itemIndex = selectedItem.flatMap { sel in items.firstIndex(where: { $0.id == sel.id }) } ?? 0
+            let startIndex = startCopy * count + itemIndex
             collectionView.scrollToItem(
                 at: IndexPath(item: startIndex, section: 0),
                 at: .centeredHorizontally,
                 animated: false
             )
+            DispatchQueue.main.async { self.isScrollingProgrammatically = false }
         }
     }
 
@@ -104,7 +109,19 @@ final class SouvenirCarouselView: UIView {
         let total = collectionView.numberOfItems(inSection: 0)
         let midCopy = (total / count) / 2
         let targetIndexPath = IndexPath(item: midCopy * count + sourceIndex, section: 0)
+
+        isScrollingProgrammatically = true
         collectionView.scrollToItem(at: targetIndexPath, at: .centeredHorizontally, animated: animated)
+
+        if animated {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+                self?.isScrollingProgrammatically = false
+            }
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.isScrollingProgrammatically = false
+            }
+        }
     }
 }
 
@@ -193,7 +210,7 @@ private extension SouvenirCarouselView {
             section.interGroupSpacing = Metric.cellSpacing
 
             section.visibleItemsInvalidationHandler = { [weak self] visibleItems, point, environment in
-                guard let self else { return }
+                guard let self, !isScrollingProgrammatically else { return }
 
                 // 중앙에 가장 가까운 아이템 찾기
                 let containerWidth = environment.container.effectiveContentSize.width

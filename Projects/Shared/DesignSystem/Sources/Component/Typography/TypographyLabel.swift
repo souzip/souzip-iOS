@@ -5,6 +5,11 @@ public final class TypographyLabel: UILabel {
 
     private var typography: Typography?
 
+    // paragraph 사이 추가 간격 (줄 간격 재배치 등에 활용)
+    public var paragraphSpacing: CGFloat? {
+        didSet { applyTypography() }
+    }
+
     // MARK: - Overrides
 
     override public var textAlignment: NSTextAlignment {
@@ -35,12 +40,16 @@ public final class TypographyLabel: UILabel {
 
         var attributes = typography.toAttributes()
 
-        if let paragraphStyle = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
-            paragraphStyle.alignment = textAlignment
+        let paragraphStyle: NSMutableParagraphStyle
+        if let existing = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
+            paragraphStyle = existing
         } else {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = textAlignment
+            paragraphStyle = NSMutableParagraphStyle()
             attributes[.paragraphStyle] = paragraphStyle
+        }
+        paragraphStyle.alignment = textAlignment
+        if let spacing = paragraphSpacing {
+            paragraphStyle.paragraphSpacing = spacing
         }
 
         attributedText = NSAttributedString(
