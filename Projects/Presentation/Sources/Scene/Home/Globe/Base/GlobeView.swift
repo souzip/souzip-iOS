@@ -67,6 +67,7 @@ final class GlobeView: BaseView<GlobeAction> {
 
     private var currentLocationButtonBottomConstraint: Constraint?
     private var searchInLocationButtonBottomConstraint: Constraint?
+    private var isTransitioningFromCarousel = false
 
     // MARK: - Override
 
@@ -238,7 +239,7 @@ extension GlobeView {
         }
     }
 
-    // Sheet 전환 (카메라 이동 없음)
+    // Sheet 전환 (카메라 패딩만 부드럽게 전환)
     func transitionToSheetWithoutCamera(_ context: MapSheetContext) {
         souvenirCarouselView.isHidden = true
         souvenirSheetView.isHidden = false
@@ -251,9 +252,27 @@ extension GlobeView {
             searchBarView.render(mode: .mapEmpty)
         }
 
+        // 캐러셀→시트 전환 시 카메라 패딩을 부드럽게 전환
+        isTransitioningFromCarousel = true
+
         mapContainerView.deselectAllSouvenirPins()
         souvenirSheetView.renderGrid(context.souvenirs)
+
+        // 목표 extraLift 계산 (시트 target 높이 기반)
+        let targetHeight = souvenirSheetView.targetHeight(for: context.sheetLevel)
+        let screenHeight = UIScreen.main.bounds.height
+        let halfHeight = screenHeight * 0.5
+        let targetLift = min(targetHeight / halfHeight * 150, 150)
+
+        // ease 애니메이션으로 카메라 패딩 부드럽게 전환
+        mapContainerView.moveCamera(animated: false, duration: 0.3, extraLift: targetLift)
+
         souvenirSheetView.setLevel(context.sheetLevel, animated: true)
+
+        // 애니메이션 완료 후 플래그 해제
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.isTransitioningFromCarousel = false
+        }
     }
 
     // 캐러셀 스크롤 (프로그래밍 방식)
@@ -418,6 +437,9 @@ private extension GlobeView {
         let bottomInset = 12 + height
         updateLocationButtonPosition(bottomInset: bottomInset)
         updateSearchInLocationButtonPosition(bottomInset: bottomInset)
+
+        // 캐러셀→시트 전환 중에는 moveCamera가 패딩 애니메이션을 처리
+        guard !isTransitioningFromCarousel else { return }
 
         let screenHeight = UIScreen.main.bounds.height
         let halfHeight = screenHeight * 0.5
