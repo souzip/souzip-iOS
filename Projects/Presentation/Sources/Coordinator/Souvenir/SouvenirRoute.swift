@@ -8,7 +8,7 @@ enum SouvenirRoute {
         onResult: (SouvenirDetail) -> Void
     )
     case detail(id: Int)
-    case search(onResult: (SearchResultItem) -> Void)
+    case search(SearchCountryContext)
     case locationPicker(
         initialCoordinate: CLLocationCoordinate2D,
         onComplete: (CLLocationCoordinate2D, String) -> Void

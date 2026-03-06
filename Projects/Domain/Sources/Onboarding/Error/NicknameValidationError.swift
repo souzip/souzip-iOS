@@ -4,6 +4,7 @@ public enum NicknameValidationError: LocalizedError {
     case invalidCharacters
     case tooShort(min: Int)
     case duplicated
+    case profanity
 
     public var errorDescription: String? {
         switch self {
@@ -13,6 +14,8 @@ public enum NicknameValidationError: LocalizedError {
             "닉네임은 최소 \(min)자 이상이어야 합니다"
         case .duplicated:
             "이미 사용중인 닉네임 입니다"
+        case .profanity:
+            "비속어 닉네임은 사용할 수 없습니다"
         }
     }
 }

@@ -39,6 +39,16 @@ public final class DSTabBarView: UIView {
 
     private var itemViews: [DSTabBarItemView] = []
 
+    private let uploadBubbleView: DSSpeechBubbleView = {
+        let view = DSSpeechBubbleView(
+            text: "여행 추억, 지금 남겨두기",
+            foregroundColor: .dsGreyWhite,
+            bubbleColor: .dsMain
+        )
+        view.isHidden = true
+        return view
+    }()
+
     // MARK: - Constraints
 
     private var heightConstraint: Constraint?
@@ -68,6 +78,11 @@ public final class DSTabBarView: UIView {
     public func setSelectedIndex(_ index: Int) {
         selectedIndex = index
     }
+
+    public func setUploadBubbleVisible(_ isVisible: Bool) {
+        guard itemViews.count >= 3 else { return }
+        uploadBubbleView.isHidden = !isVisible
+    }
 }
 
 // MARK: - Private Logic
@@ -91,6 +106,16 @@ private extension DSTabBarView {
 
         if selectedIndex >= items.count {
             selectedIndex = max(0, items.count - 1)
+        }
+
+        updateBubbleConstraints()
+    }
+
+    func updateBubbleConstraints() {
+        guard itemViews.count >= 3 else { return }
+        uploadBubbleView.snp.remakeConstraints { make in
+            make.top.equalTo(itemViews[2].snp.top).offset(-16)
+            make.centerX.equalTo(itemViews[2].snp.centerX)
         }
     }
 
@@ -121,8 +146,11 @@ private extension DSTabBarView {
     }
 
     func setHierarchy() {
-        addSubview(stackView)
-        addSubview(topBorderView)
+        [
+            stackView,
+            topBorderView,
+            uploadBubbleView,
+        ].forEach(addSubview)
     }
 
     func setConstraints() {

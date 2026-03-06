@@ -3,7 +3,9 @@ import UIKit
 final class TabBarCoordinator: BaseCoordinator<TabRoute, RootRoute> {
     private let factory: PresentationFactory
 
-    private let tabController = CommonTabbarController()
+    private lazy var tabController = CommonTabbarController(
+        uploadPromptBubbleUseCase: factory.makeUploadPromptBubbleUseCase()
+    )
 
     private let homeNav = CommonNavigationController()
     private let discoveryNav = CommonNavigationController()

@@ -95,14 +95,19 @@ public final class DefaultDataFactory: DataFactory {
             storage: userDefaultsFactory.makeUDStorage()
         )
 
+        let badWordsLocalDataSource = DefaultBadWordsLocalDataSource()
+
         return DefaultOnboardingRepository(
             onboardingRemote: onboardingRemoteDataSource,
             onboardingLocal: onboardingLocalDataSource,
-            userLocal: userLocalDataSource
+            userLocal: userLocalDataSource,
+            badWordsLocal: badWordsLocalDataSource
         )
     }()
 
     // MARK: - Country
+
+    private lazy var cachedCountryLocalDataSource: CountryLocalDataSource = DefaultCountryLocalDataSource()
 
     private lazy var cachedCountryRepository: CountryRepository = {
         let plainClient = networkFactory.makePlainClient()
@@ -113,11 +118,9 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
-        let countryLocalDataSource = DefaultCountryLocalDataSource()
-
         return DefaultCountryRepository(
             countryRemote: countryRemoteDataSource,
-            countryLocal: countryLocalDataSource
+            countryLocal: cachedCountryLocalDataSource
         )
     }()
 
@@ -146,11 +149,9 @@ public final class DefaultDataFactory: DataFactory {
             authed: authedClient
         )
 
-        let countryLocalDataSource = DefaultCountryLocalDataSource()
-
         return DefaultDiscoveryRepository(
             discoveryRemote: discoveryRemoteDataSource,
-            countryLocal: countryLocalDataSource
+            countryLocal: cachedCountryLocalDataSource
         )
     }()
 

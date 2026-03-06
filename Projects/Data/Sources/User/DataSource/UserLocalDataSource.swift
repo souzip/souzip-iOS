@@ -13,6 +13,9 @@ public protocol UserLocalDataSource {
 
     func getUser() -> UserDTO?
     func deleteUser()
+
+    func getHasVisitedMyPage() -> Bool
+    func markMyPageVisited()
 }
 
 public final class DefaultUserLocalDataSource: UserLocalDataSource {
@@ -62,6 +65,16 @@ public final class DefaultUserLocalDataSource: UserLocalDataSource {
             nickname: nickname,
             needsOnboarding: needsOnboarding
         )
+    }
+
+    // MARK: - MyPage Visit
+
+    public func getHasVisitedMyPage() -> Bool {
+        storage.get(UserDefaultsKeys.hasVisitedMyPage)
+    }
+
+    public func markMyPageVisited() {
+        storage.set(true, for: UserDefaultsKeys.hasVisitedMyPage)
     }
 
     // MARK: - Delete

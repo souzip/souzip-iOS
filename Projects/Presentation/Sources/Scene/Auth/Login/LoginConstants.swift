@@ -7,6 +7,7 @@ enum LoginConstants {
     enum Strings {
         static let welcomeMessage = "지금 내 주변, 기념품 모음집\n수집에 오신 걸 환영합니다!"
         static let guestButtonTitle = "둘러보기"
+        static let recentLoginBadge = "최근 로그인 했어요!"
     }
 
     // MARK: - Metrics
@@ -21,9 +22,10 @@ enum LoginConstants {
     // 수집 로고
     static let logoImageWidth: CGFloat = 100
     static let logoImageHeight: CGFloat = 60
-    static let logoBottomSpacing: CGFloat = LayoutConstants.Spacing.xSmall
+    static let logoBottomSpacing: CGFloat = 10
 
     // 환영 라벨
+    static let welcomeLabelHeight: CGFloat = 62
     static let welcomeBottomSpacing: CGFloat = LayoutConstants.Spacing.xxLarge
 
     // 로그인 버튼 스택뷰
@@ -44,10 +46,6 @@ enum LoginConstants {
     static let guestButtonHeight: CGFloat = 16
 
     // 최근 로그인 뱃지
-    static let badgeTopOffset: CGFloat = 9 + (badgeShadowWidth / 2)
-    static let badgeTrailingOffset: CGFloat = 20 - (badgeShadowHeight / 2)
-    static let badgeWidth: CGFloat = 86 + badgeShadowWidth
-    static let badgeHeight: CGFloat = 24 + badgeShadowHeight
-    static let badgeShadowWidth: CGFloat = 17
-    static let badgeShadowHeight: CGFloat = 15
+    static let badgeTrailingInset: CGFloat = 16
+    static let badgeShadowRadius: CGFloat = 6.2 / 2
 }

@@ -196,6 +196,8 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     // MARK: - Properties
 
     private var currentDetail: SouvenirDetail?
+    private var priceHeightConstraint: Constraint?
+    private var descriptionTopConstraint: Constraint?
 
     // MARK: - Override
 
@@ -296,11 +298,11 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         priceContainerStack.snp.makeConstraints { make in
             make.top.equalTo(nameCategoryStack.snp.bottom)
             make.leading.equalToSuperview().inset(20)
-            make.height.equalTo(36)
+            priceHeightConstraint = make.height.equalTo(36).constraint
         }
 
         descriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(priceContainerStack.snp.bottom).offset(12)
+            descriptionTopConstraint = make.top.equalTo(priceContainerStack.snp.bottom).offset(12).constraint
             make.horizontalEdges.equalToSuperview().inset(20)
         }
 
@@ -368,10 +370,14 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
            let symbol = detail.currencySymbol,
            let krwPrice = detail.krwPrice {
             priceContainerStack.isHidden = false
+            priceHeightConstraint?.update(offset: 36)
+            descriptionTopConstraint?.update(offset: 12)
             localPriceLabel.text = "\(symbol) \(formatKRW(localPrice))"
             krwPriceLabel.text = "\(formatKRW(krwPrice))원"
         } else {
             priceContainerStack.isHidden = true
+            priceHeightConstraint?.update(offset: 0)
+            descriptionTopConstraint?.update(offset: 0)
         }
 
         // 설명

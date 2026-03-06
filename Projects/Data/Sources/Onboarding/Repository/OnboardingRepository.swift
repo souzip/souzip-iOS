@@ -5,15 +5,18 @@ public final class DefaultOnboardingRepository: OnboardingRepository {
     private let onboardingRemote: OnboardingRemoteDataSource
     private let onboardingLocal: OnboardingLocalDataSource
     private let userLocal: UserLocalDataSource
+    private let badWordsLocal: BadWordsLocalDataSource
 
     public init(
         onboardingRemote: OnboardingRemoteDataSource,
         onboardingLocal: OnboardingLocalDataSource,
-        userLocal: UserLocalDataSource
+        userLocal: UserLocalDataSource,
+        badWordsLocal: BadWordsLocalDataSource
     ) {
         self.onboardingRemote = onboardingRemote
         self.onboardingLocal = onboardingLocal
         self.userLocal = userLocal
+        self.badWordsLocal = badWordsLocal
     }
 
     // MARK: - Save
@@ -70,6 +73,12 @@ public final class DefaultOnboardingRepository: OnboardingRepository {
         } catch {
             throw mapToDomainError(error)
         }
+    }
+
+    // MARK: - Bad Words
+
+    public func fetchBadWords() -> Set<String> {
+        badWordsLocal.fetchBadWords()
     }
 }
 

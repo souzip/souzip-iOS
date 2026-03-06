@@ -1,70 +1,30 @@
-import Domain
 import Foundation
 
 public protocol CountryLocalDataSource {
-    func fetchCountries() throws -> [CountryDetail]
-    func fetchCountry(countryCode: String) throws -> CountryDetail
+    func fetchCountries() -> [CountryDTO]
+    func fetchCountry(countryCode: String) -> CountryDTO?
 }
 
 public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
-    public init() {}
+    private let cachedCountries: [String: CountryDTO]
 
-    public func fetchCountries() throws -> [CountryDetail] {
-        let all = try loadAllCountries()
-
-        return all
-            .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
-            .sorted {
-                PopularDestinationsKR.orderIndex[$0.code, default: .max]
-                    < PopularDestinationsKR.orderIndex[$1.code, default: .max]
-            }
-    }
-
-    public func fetchCountry(countryCode: String) throws -> CountryDetail {
-        let all = try loadAllCountries()
-
-        guard let country = all.first(where: {
-            $0.code.caseInsensitiveCompare(countryCode) == .orderedSame
-        }) else {
-            throw CountryError.notFound
+    public init() {
+        do {
+            let response: CountryResponseDTO = try JSONLoader.load(filename: "country")
+            cachedCountries = Dictionary(
+                response.data.countries.map { ($0.code.uppercased(), $0) },
+                uniquingKeysWith: { first, _ in first }
+            )
+        } catch {
+            fatalError("Failed to load country.json from bundle: \(error)")
         }
-
-        return country
     }
 
-    // MARK: - Private
-
-    private func loadAllCountries() throws -> [CountryDetail] {
-        let dto: CountryResponseDTO =
-            try JSONLoader.load(filename: "country", as: CountryResponseDTO.self)
-
-        return dto.data.countries.map { $0.toDomain() }
+    public func fetchCountries() -> [CountryDTO] {
+        Array(cachedCountries.values)
     }
-}
 
-enum JSONLoader {
-    static func load<T: Decodable>(
-        filename: String,
-        as type: T.Type
-    ) throws -> T {
-        guard let url = Bundle.module.url(
-            forResource: filename,
-            withExtension: "json"
-        ) else {
-            throw NSError(domain: "JSONNotFound", code: 0)
-        }
-
-        let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode(T.self, from: data)
+    public func fetchCountry(countryCode: String) -> CountryDTO? {
+        cachedCountries[countryCode.uppercased()]
     }
-}
-
-private enum PopularDestinationsKR {
-    static let top30Codes: [String] = [
-        "JP", "VN", "CN", "TH", "PH", "TW", "HK", "SG", "MY", "ID",
-        "US", "AU", "CA", "DE", "FR", "GB", "ES", "IT", "TR", "RU",
-        "NL", "BE", "CH", "GR", "AT", "CZ", "HU", "PL", "MX", "BR",
-    ]
-
-    static let orderIndex: [String: Int] = Dictionary(uniqueKeysWithValues: top30Codes.enumerated().map { ($0.element, $0.offset) })
 }

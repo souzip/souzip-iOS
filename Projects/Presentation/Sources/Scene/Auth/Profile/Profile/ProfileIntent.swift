@@ -15,10 +15,13 @@ struct ProfileState {
     var nicknameErrorMessage: String?
     var nicknameMaxLength: Int = 0
     var selectedImageType: ProfileImageType?
-    var isCompleteButtonEnabled: Bool = false
 
     var nicknameCountText: String {
         "\(nickname.count)/\(nicknameMaxLength)"
+    }
+
+    var isCompleteButtonEnabled: Bool {
+        selectedImageType != nil && nickname.count >= 2
     }
 }
 

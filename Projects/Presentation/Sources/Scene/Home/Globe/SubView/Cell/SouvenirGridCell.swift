@@ -99,6 +99,7 @@ private extension SouvenirGridCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(21)
+            make.bottom.equalToSuperview()
         }
     }
 }

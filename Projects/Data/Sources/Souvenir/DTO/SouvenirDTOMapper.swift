@@ -16,9 +16,9 @@ public enum SouvenirDTOMapper {
 
             if original.symbol == "₩" {
                 // original이 원화
-                krwPrice = original.amount
                 localPrice = converted.amount
-                currencySymbol = converted.symbol
+                currencySymbol = original.symbol
+                krwPrice = original.amount
             } else {
                 // original이 현지 통화
                 localPrice = original.amount
@@ -43,7 +43,7 @@ public enum SouvenirDTOMapper {
             category: mapToCategory(dto.category),
             purpose: mapToPurpose(dto.purpose),
             countryCode: dto.countryCode,
-            isOwned: dto.isOwned,
+            isOwned: dto.isOwned ?? false,
             owner: SouvenirOwner(
                 nickname: dto.userNickname,
                 profileImageUrl: dto.userProfileImageUrl
@@ -87,9 +87,8 @@ public enum SouvenirDTOMapper {
     public static func toRequest(_ input: SouvenirInput) -> SouvenirRequest {
         SouvenirRequest(
             name: input.name,
-            localPrice: input.localPrice,
-            currencySymbol: input.currencySymbol,
-            krwPrice: input.krwPrice,
+            price: input.price,
+            currency: input.currencyCode,
             description: input.description,
             address: input.address,
             locationDetail: input.locationDetail,

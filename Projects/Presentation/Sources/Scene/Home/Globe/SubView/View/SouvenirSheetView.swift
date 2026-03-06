@@ -113,6 +113,14 @@ final class SouvenirSheetView: UIView {
         return candidates.min { abs($0.1 - currentHeight) < abs($1.1 - currentHeight) }?.0 ?? .mid
     }
 
+    func targetHeight(for level: Level) -> CGFloat {
+        switch level {
+        case .min: minHeight
+        case .mid: midHeight
+        case .max: maxHeight
+        }
+    }
+
     func renderGrid(_ items: [SouvenirListItem]) {
         souvenirGridView.render(items: items)
     }
@@ -228,7 +236,7 @@ final class SouvenirSheetView: UIView {
 
         guard let superview else { return }
         if animated {
-            UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut]) {
+            UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
                 superview.layoutIfNeeded()
             }
         } else {

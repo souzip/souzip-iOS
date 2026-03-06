@@ -8,7 +8,7 @@ struct CountryDataDTO: Decodable {
     let countries: [CountryDTO]
 }
 
-struct CountryDTO: Decodable {
+public struct CountryDTO: Decodable {
     let nameEn: String
     let nameKr: String
     let code: String
@@ -20,12 +20,12 @@ struct CountryDTO: Decodable {
     let currency: CurrencyDTO
 }
 
-struct RegionDTO: Decodable {
+public struct RegionDTO: Decodable {
     let englishName: String
     let koreanName: String
 }
 
-struct CurrencyDTO: Decodable {
+public struct CurrencyDTO: Decodable {
     let code: String
     let symbol: String
 }

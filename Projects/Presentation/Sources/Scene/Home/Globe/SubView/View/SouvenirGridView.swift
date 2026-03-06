@@ -153,31 +153,23 @@ private extension SouvenirGridView {
     func makeCVLayout() -> UICollectionViewLayout {
         let horizontalInset: CGFloat = 20
         let interItemSpacing: CGFloat = 7
-        let lineSpacing: CGFloat = 7
-
-        // 셀 너비 계산: (전체너비 - 좌여백 - 우여백 - 가로간격) / 2
-        let totalWidth = UIScreen.main.bounds.width
-        let availableWidth = totalWidth - (horizontalInset * 2) - interItemSpacing
-        let itemWidth = availableWidth / 2
-
-        // 셀 높이 계산: 164:219 비율
-        let itemHeight = itemWidth * (219.0 / 164.0)
+        let lineSpacing: CGFloat = 25
 
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(itemWidth),
-            heightDimension: .absolute(itemHeight)
+            widthDimension: .fractionalWidth(0.5),
+            heightDimension: .estimated(230)
         )
 
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(itemHeight)
+            heightDimension: .estimated(230)
         )
 
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
-            subitems: [item]
+            subitems: [item, item]
         )
         group.interItemSpacing = .fixed(interItemSpacing)
 

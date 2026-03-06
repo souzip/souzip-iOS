@@ -47,6 +47,8 @@ final class LoginView: BaseView<LoginAction> {
         label.textColor = .dsGreyWhite
         label.textAlignment = .center
         label.setTypography(.body1SB)
+        // 2줄(27pt × 2 = 54pt)이 62pt 컨테이너를 채우도록 줄 사이에 8pt 간격 배치
+        label.paragraphSpacing = 8
         return label
     }()
 
@@ -71,12 +73,15 @@ final class LoginView: BaseView<LoginAction> {
         return UIButton(configuration: config)
     }()
 
-    private let recentLoginBadgeView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .dsLoginRecent
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = true
-        return imageView
+    private let recentLoginBadgeView: DSSpeechBubbleView = {
+        let view = DSSpeechBubbleView(
+            text: Strings.recentLoginBadge,
+            foregroundColor: .dsBackground,
+            bubbleColor: .dsGreyWhite,
+            shadow: .init(color: .white, opacity: 0.73, radius: Metric.badgeShadowRadius)
+        )
+        view.isHidden = true
+        return view
     }()
 
     override init(frame: CGRect) {
@@ -128,6 +133,7 @@ final class LoginView: BaseView<LoginAction> {
 
         welcomeLabel.snp.makeConstraints { make in
             make.bottom.equalTo(loginButtonStackView.snp.top).offset(-Metric.welcomeBottomSpacing)
+            make.height.equalTo(Metric.welcomeLabelHeight)
             make.centerX.equalToSuperview()
         }
 
@@ -161,10 +167,8 @@ final class LoginView: BaseView<LoginAction> {
 
         recentLoginBadgeView.isHidden = false
         recentLoginBadgeView.snp.remakeConstraints { make in
-            make.top.equalTo(button.snp.top).offset(-Metric.badgeTopOffset)
-            make.trailing.equalTo(button.snp.trailing).offset(-Metric.badgeTrailingOffset)
-            make.width.equalTo(Metric.badgeWidth)
-            make.height.equalTo(Metric.badgeHeight)
+            make.top.equalTo(button.snp.top).offset(-10)
+            make.trailing.equalTo(button.snp.trailing).offset(-Metric.badgeTrailingInset)
         }
     }
 }
