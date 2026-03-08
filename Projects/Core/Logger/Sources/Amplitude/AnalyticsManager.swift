@@ -35,6 +35,11 @@ public final class AnalyticsManager {
         amplitude?.setUserId(userId: userId)
     }
 
+    /// 로그아웃/탈퇴 시 호출하여 user_id를 해제 (계정 간 이벤트 섞임 방지)
+    public func clearUserId() {
+        amplitude?.setUserId(userId: nil)
+    }
+
     // MARK: - Tracking
 
     public func track(event: AnalyticsEvent) {

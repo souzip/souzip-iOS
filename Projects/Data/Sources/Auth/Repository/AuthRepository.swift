@@ -44,9 +44,11 @@ public final class DefaultAuthRepository: AuthRepository {
             try await authRemote.logout()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
         } catch {
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
             throw mapToDomainError(error)
         }
     }
@@ -56,9 +58,11 @@ public final class DefaultAuthRepository: AuthRepository {
             try await authRemote.withdraw()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
         } catch {
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
             throw mapToDomainError(error)
         }
     }
