@@ -11,7 +11,7 @@ public final class AnalyticsManager {
     // MARK: - Configuration
 
     public func configure(apiKey: String) {
-        // screenViews를 제외한 autocapture 설정
+        // Amplitude autocapture 설정
         let configuration = Configuration(
             apiKey: apiKey,
             autocapture: [.sessions, .appLifecycles, .screenViews]
@@ -27,6 +27,15 @@ public final class AnalyticsManager {
 
         amplitude = Amplitude(configuration: configuration)
     }
+
+    // MARK: - User Identity
+
+    /// 로그인/자동로그인 완료 시점에 호출하여 user_id를 설정
+    public func setUserId(_ userId: String) {
+        amplitude?.setUserId(userId: userId)
+    }
+
+    // MARK: - Tracking
 
     public func track(event: AnalyticsEvent) {
         amplitude?.track(
