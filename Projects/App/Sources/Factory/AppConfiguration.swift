@@ -13,6 +13,5 @@ struct AppConfiguration {
         FontRegistration.register()
         ImageCacheConfiguration.shared.setup()
         AnalyticsManager.shared.configure(apiKey: amplitudeAPIKey)
-        AnalyticsManager.shared.track(event: .appOpened)
     }
 }
