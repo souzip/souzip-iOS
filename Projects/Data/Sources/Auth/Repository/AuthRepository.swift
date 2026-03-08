@@ -1,5 +1,6 @@
 import Domain
 import Keychain
+import Logger
 import Networking
 
 public final class DefaultAuthRepository: AuthRepository {
@@ -28,6 +29,7 @@ public final class DefaultAuthRepository: AuthRepository {
             authLocal.saveOAuthPlatform(platform)
 
             userLocal.saveUserId(dto.user.userId)
+            AnalyticsManager.shared.setUserId(dto.user.userId)
             userLocal.saveUserNickname(dto.user.nickname)
             userLocal.saveNeedsOnboarding(dto.needsOnboarding)
 
@@ -83,6 +85,7 @@ public final class DefaultAuthRepository: AuthRepository {
                 throw AuthError.invalidUser
             }
 
+            AnalyticsManager.shared.setUserId(userDTO.userId)
             return UserDTOMapper.toDomain(userDTO)
         } catch {
             throw mapToDomainError(error)
