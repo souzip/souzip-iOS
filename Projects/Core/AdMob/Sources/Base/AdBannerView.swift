@@ -51,6 +51,6 @@ public final class AdBannerView: UIView {
 
 extension AdBannerView: BannerViewDelegate {
     public func bannerViewDidRecordClick(_ bannerView: BannerView) {
-        AnalyticsManager.shared.track(event: .tapBanner)
+        AnalyticsManager.shared.track(event: .app(.tapBanner))
     }
 }
