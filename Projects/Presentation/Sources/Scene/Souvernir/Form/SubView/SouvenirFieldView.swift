@@ -26,6 +26,7 @@ final class SouvenirFieldView: UIView {
         titleLabel.text = title
         configure()
         setPlaceholder("기념품 이름을 입력해주세요.")
+        textField.setMaxLength(30)
         bind()
     }
 

@@ -87,7 +87,9 @@ final class SouvenirFormViewModel: BaseViewModel<
         case let .updateName(text):
             let wasEmpty = state.value.name.isEmpty
             mutate { state in
-                state.name = text
+                if text.count <= 30 {
+                    state.name = text
+                }
             }
             if wasEmpty, !text.isEmpty {
                 trackUploadOnce(.upload(.titleAdded))
