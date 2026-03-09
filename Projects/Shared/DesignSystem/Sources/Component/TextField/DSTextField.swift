@@ -83,6 +83,10 @@ public final class DSTextField: UIView {
         textField.keyboardType = type
     }
 
+    public func setUnderlineColor(_ color: UIColor) {
+        underlineView.backgroundColor = color
+    }
+
     public func setReturnKeyType(_ returnKeyType: UIReturnKeyType = .done) {
         textField.returnKeyType = returnKeyType
 
