@@ -23,6 +23,9 @@ final class SouvenirFormViewModel: BaseViewModel<
     /// 업로드 퍼널 이벤트 중복 발송 방지
     private var firedUploadEvents: Set<String> = []
 
+    /// 폼에 입력 이벤트가 한 번이라도 발생했는지 여부
+    private var isDirty: Bool = false
+
     // MARK: - Life Cycle
 
     init(
@@ -52,7 +55,22 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .tapClose, .confirmClose, .tapSubmit:
+            break
+        default:
+            isDirty = true
+        }
+
+        switch action {
         case .tapClose:
+            if isDirty {
+                emit(.showConfirmClose)
+            } else {
+                navigate(to: .dismiss)
+                navigate(to: .finish)
+            }
+
+        case .confirmClose:
             navigate(to: .dismiss)
             navigate(to: .finish)
 
