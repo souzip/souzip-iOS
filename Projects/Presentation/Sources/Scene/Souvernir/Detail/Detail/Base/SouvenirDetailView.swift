@@ -127,6 +127,8 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         return label
     }()
 
+    private let exchangeRateInfoButton = ExchangeRateInfoButton()
+
     // 설명
     private let descriptionLabel: TypographyLabel = {
         let label = TypographyLabel()
@@ -237,6 +239,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         [
             localPriceLabel,
             krwPriceLabel,
+            exchangeRateInfoButton,
         ].forEach(priceContainerStack.addArrangedSubview)
     }
 
@@ -295,6 +298,10 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             make.top.equalTo(nameCategoryStack.snp.bottom)
             make.leading.equalToSuperview().inset(20)
             priceHeightConstraint = make.height.equalTo(36).constraint
+        }
+
+        exchangeRateInfoButton.snp.makeConstraints { make in
+            make.size.equalTo(18)
         }
 
         descriptionLabel.snp.makeConstraints { make in
@@ -372,6 +379,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             krwPriceLabel.text = "\(formatKRW(krwPrice))원"
         } else {
             priceContainerStack.isHidden = true
+            exchangeRateInfoButton.hideTooltip()
             priceHeightConstraint?.update(offset: 0)
             descriptionTopConstraint?.update(offset: 0)
         }
