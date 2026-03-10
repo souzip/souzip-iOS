@@ -149,7 +149,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         let label = TypographyLabel()
         label.textColor = .dsGreyWhite
         label.numberOfLines = 1
-        label.lineBreakMode = .byTruncatingTail
         label.setTypography(.body2M)
         return label
     }()
