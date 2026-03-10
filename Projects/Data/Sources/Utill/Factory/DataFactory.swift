@@ -155,6 +155,20 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Notice
+
+    private lazy var cachedNoticeRepository: NoticeRepository = {
+        let plainClient = networkFactory.makePlainClient()
+
+        let noticeRemoteDataSource = DefaultNoticeRemoteDataSource(
+            plain: plainClient
+        )
+
+        return DefaultNoticeRepository(
+            noticeRemote: noticeRemoteDataSource
+        )
+    }()
+
     // MARK: - User
 
     private lazy var cachedUserRepository: UserRepository = {
@@ -198,5 +212,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeUserRepository() -> UserRepository {
         cachedUserRepository
+    }
+
+    public func makeNoticeRepository() -> NoticeRepository {
+        cachedNoticeRepository
     }
 }
