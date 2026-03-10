@@ -4,6 +4,7 @@ import Foundation
 enum SouvenirFormAction {
     // Navigation
     case tapClose
+    case confirmClose
 
     case tapPhotoAdd
     case addLocalPhotos([LocalPhoto])
@@ -138,4 +139,5 @@ enum SouvenirFormEvent {
     case loading(Bool)
     case showImagePicker
     case showError(String)
+    case showConfirmClose
 }
