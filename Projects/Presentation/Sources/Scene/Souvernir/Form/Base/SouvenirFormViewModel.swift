@@ -55,7 +55,8 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .tapClose, .confirmClose, .tapSubmit:
+        case .tapClose, .confirmClose, .tapSubmit,
+             .tapPhotoAdd, .tapAddress, .tapCategory :
             break
         default:
             isDirty = true
