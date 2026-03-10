@@ -5,7 +5,8 @@ public protocol DomainFactory:
     DomainCountryFactory,
     DomainSouvenirFactory,
     DomainDiscoveryFactory,
-    DomainUserFactory {}
+    DomainUserFactory,
+    DomainNoticeFactory, {}
 
 public final class DefaultDomainFactory: DomainFactory {
     let factory: DataFactory
