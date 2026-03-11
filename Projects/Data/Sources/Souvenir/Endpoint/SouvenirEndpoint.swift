@@ -58,6 +58,7 @@ extension SouvenirEndpoint: APIEndpoint {
                 params["radiusMeter"] = radius
             }
             return params
+
         default:
             return nil
         }

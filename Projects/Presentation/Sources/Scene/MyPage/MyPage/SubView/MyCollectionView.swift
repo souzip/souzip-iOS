@@ -119,6 +119,7 @@ private extension MyCollectionView {
                     for: indexPath,
                     item: item
                 )
+
             case .souvenir:
                 collectionView.dequeueConfiguredReusableCell(
                     using: souvenirRegistration,

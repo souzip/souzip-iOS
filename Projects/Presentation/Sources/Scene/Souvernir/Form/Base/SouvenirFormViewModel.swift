@@ -235,6 +235,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         case .create:
             trackUploadOnce(.upload(.complete))
             handleCreate(input: input)
+
         case let .edit(original):
             handleUpdate(id: original.id, input: input)
         }

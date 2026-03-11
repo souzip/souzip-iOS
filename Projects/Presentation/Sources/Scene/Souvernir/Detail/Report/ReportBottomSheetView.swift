@@ -31,8 +31,7 @@ final class ReportBottomSheetView: BaseView<ReportBottomSheetView.Action> {
         var titleAttr = AttributedString("닫기")
         titleAttr.font = .pretendard(size: 17, weight: .medium)
         config.attributedTitle = titleAttr
-        let button = UIButton(configuration: config)
-        return button
+        return UIButton(configuration: config)
     }()
 
     // MARK: - Setup

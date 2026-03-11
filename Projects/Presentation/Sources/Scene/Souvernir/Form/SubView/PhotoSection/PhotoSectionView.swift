@@ -174,6 +174,7 @@ private extension PhotoSectionView {
                     for: indexPath,
                     item: item
                 )
+
             case .local, .remote:
                 collectionView.dequeueConfiguredReusableCell(
                     using: photoRegistration,

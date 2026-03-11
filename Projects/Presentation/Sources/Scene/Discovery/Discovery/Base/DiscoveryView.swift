@@ -308,6 +308,7 @@ private extension DiscoveryView {
             case .banner, .statisticsChips:
                 section.contentInsets.leading = 0
                 section.contentInsets.trailing = 0
+
             default:
                 section.contentInsets.leading = Space.horizontal
                 section.contentInsets.trailing = Space.horizontal
@@ -404,8 +405,7 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 
     // Top10 카드 섹션 (가로 스크롤)
@@ -558,8 +558,7 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 
     func makeSpacerSectionLayout() -> NSCollectionLayoutSection {
@@ -575,7 +574,6 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 }

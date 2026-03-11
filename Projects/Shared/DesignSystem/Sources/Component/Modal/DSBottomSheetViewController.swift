@@ -10,7 +10,7 @@ open class DSBottomSheetViewController: UIViewController {
     // MARK: - Init
 
     public init(
-        contentView: UIView,
+        contentView: UIView
     ) {
         super.init(nibName: nil, bundle: nil)
         modalPresentationStyle = .overFullScreen

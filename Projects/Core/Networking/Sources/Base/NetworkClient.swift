@@ -48,22 +48,22 @@ public final class DefaultNetworkClient: NetworkClient {
 
     // MARK: - Regular Request
 
-    public func request<T>(_ endpoint: any APIEndpoint) async throws -> T where T: Decodable {
+    public func request<T: Decodable>(_ endpoint: any APIEndpoint) async throws -> T {
         try await performRequest(endpoint, isRetry: false)
     }
 
     // MARK: - Multipart Request
 
-    public func requestMultipart<T>(_ endpoint: any APIEndpoint) async throws -> T where T: Decodable {
+    public func requestMultipart<T: Decodable>(_ endpoint: any APIEndpoint) async throws -> T {
         try await performMultipartRequest(endpoint, isRetry: false)
     }
 
     // MARK: - Private Implementation
 
-    private func performRequest<T>(
+    private func performRequest<T: Decodable>(
         _ endpoint: any APIEndpoint,
         isRetry: Bool
-    ) async throws -> T where T: Decodable {
+    ) async throws -> T {
         do {
             var urlRequest = try endpoint.asURLRequest(baseURL: baseURL)
 
@@ -100,10 +100,10 @@ public final class DefaultNetworkClient: NetworkClient {
 
     // MARK: - Private Implementation (Multipart)
 
-    private func performMultipartRequest<T>(
+    private func performMultipartRequest<T: Decodable>(
         _ endpoint: any APIEndpoint,
         isRetry: Bool
-    ) async throws -> T where T: Decodable {
+    ) async throws -> T {
         do {
             guard let multipartEndpoint = endpoint as? MultipartEndpoint else {
                 throw NetworkError.invalidEndpointType
@@ -165,12 +165,12 @@ public final class DefaultNetworkClient: NetworkClient {
 
     // MARK: - Unauthorized Handling
 
-    private func handleUnauthorized<T>(
+    private func handleUnauthorized<T: Decodable>(
         endpoint: any APIEndpoint,
         isRetry: Bool,
         isMultipart: Bool,
         refresher: TokenRefresher
-    ) async throws -> T where T: Decodable {
+    ) async throws -> T {
         guard !isRetry else {
             try? await refresher.clearTokens()
             Logger.shared.logAuthorizationFailure(
@@ -199,11 +199,11 @@ public final class DefaultNetworkClient: NetworkClient {
 
     // MARK: - Response Handling
 
-    private func handleResponse<T>(
+    private func handleResponse<T: Decodable>(
         _ response: HTTPURLResponse,
         data: Data,
         endpoint: String
-    ) throws -> T where T: Decodable {
+    ) throws -> T {
         switch response.statusCode {
         case 200 ... 299:
             do {
@@ -213,10 +213,13 @@ public final class DefaultNetworkClient: NetworkClient {
             } catch {
                 throw NetworkError.decodingError(error)
             }
+
         default:
-            let errorMessage = (try? JSONDecoder()
-                .decode(ErrorResponse.self, from: data)
-                .message) ?? "알 수 없는 오류가 발생했어요."
+            let errorMessage = (
+                try? JSONDecoder()
+                    .decode(ErrorResponse.self, from: data)
+                    .message
+            ) ?? "알 수 없는 오류가 발생했어요."
 
             Logger.shared.logAPIFailure(
                 endpoint: endpoint,

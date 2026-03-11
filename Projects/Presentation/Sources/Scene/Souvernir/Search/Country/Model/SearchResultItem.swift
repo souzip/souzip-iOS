@@ -12,7 +12,7 @@ struct SearchResultItem: Hashable {
     let type: SearchResultType
     let coordinate: CLLocationCoordinate2D
 
-    public static func == (lhs: SearchResultItem, rhs: SearchResultItem) -> Bool {
+    static func == (lhs: SearchResultItem, rhs: SearchResultItem) -> Bool {
         lhs.id == rhs.id
     }
 

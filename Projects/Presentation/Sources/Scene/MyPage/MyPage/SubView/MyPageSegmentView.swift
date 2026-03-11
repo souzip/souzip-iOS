@@ -15,15 +15,13 @@ final class MyPageSegmentView: BaseView<CollectionTab> {
     private lazy var collectionButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.setTypography(.body2SB, title: "컬렉션")
-        let button = UIButton(configuration: config)
-        return button
+        return UIButton(configuration: config)
     }()
 
     private lazy var likedButton: UIButton = {
         var config = UIButton.Configuration.plain()
         config.setTypography(.body2SB, title: "찜")
-        let button = UIButton(configuration: config)
-        return button
+        return UIButton(configuration: config)
     }()
 
     private let underlineView: UIView = {
