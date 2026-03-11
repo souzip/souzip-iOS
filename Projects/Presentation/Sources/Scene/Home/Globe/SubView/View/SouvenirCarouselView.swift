@@ -11,17 +11,17 @@ private struct CarouselItem: Hashable {
     let souvenir: SouvenirListItem
 }
 
+// MARK: - SouvenirCarouselAction
+
+enum SouvenirCarouselAction {
+    case itemTapped(SouvenirListItem)
+    case closeButtonTapped
+    case centerItemChanged(SouvenirListItem)
+}
+
 // MARK: - SouvenirCarouselView
 
-final class SouvenirCarouselView: UIView {
-    // MARK: - Action
-
-    let itemTapped = PublishRelay<SouvenirListItem>()
-    let closeButtonTapped = PublishRelay<Void>()
-    let centerItemChanged = PublishRelay<SouvenirListItem>()
-
-    private let disposeBag = DisposeBag()
-
+final class SouvenirCarouselView: BaseView<SouvenirCarouselAction> {
     // MARK: - Types
 
     typealias Section = Int
@@ -47,7 +47,6 @@ final class SouvenirCarouselView: UIView {
         view.alwaysBounceHorizontal = false
         view.showsHorizontalScrollIndicator = false
         view.decelerationRate = .fast
-        view.delegate = self
         return view
     }()
 
@@ -57,15 +56,31 @@ final class SouvenirCarouselView: UIView {
     private var sourceItems: [SouvenirListItem] = []
     private var isScrollingProgrammatically = false
 
-    // MARK: - Init
+    // MARK: - Override
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
+    override func setAttributes() {
+        backgroundColor = .clear
+        configureDataSource()
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
+    override func setHierarchy() {
+        addSubview(collectionView)
+    }
+
+    override func setConstraints() {
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.height.equalTo(Metric.height)
+        }
+    }
+
+    override func setBindings() {
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] in
+                self?.dataSource?.itemIdentifier(for: $0)?.souvenir
+            }
+            .map { .itemTapped($0) }
+    }
 
     // MARK: - Public
 
@@ -125,32 +140,6 @@ final class SouvenirCarouselView: UIView {
     }
 }
 
-// MARK: - UI Configuration
-
-private extension SouvenirCarouselView {
-    func configure() {
-        setAttributes()
-        setHierarchy()
-        setConstraints()
-    }
-
-    func setAttributes() {
-        backgroundColor = .clear
-        configureDataSource()
-    }
-
-    func setHierarchy() {
-        addSubview(collectionView)
-    }
-
-    func setConstraints() {
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.height.equalTo(Metric.height)
-        }
-    }
-}
-
 // MARK: - Diffable / CellRegistration
 
 private extension SouvenirCarouselView {
@@ -163,7 +152,8 @@ private extension SouvenirCarouselView {
 
             cell.render(item: item.souvenir)
             cell.closeButtonTapped
-                .bind(to: closeButtonTapped)
+                .map { SouvenirCarouselAction.closeButtonTapped }
+                .bind(to: action)
                 .disposed(by: cell.disposeBag)
         }
 
@@ -230,19 +220,10 @@ private extension SouvenirCarouselView {
                 guard let closestItem,
                       let carouselItem = dataSource?.itemIdentifier(for: closestItem.indexPath) else { return }
 
-                centerItemChanged.accept(carouselItem.souvenir)
+                action.accept(.centerItemChanged(carouselItem.souvenir))
             }
 
             return section
         }
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension SouvenirCarouselView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        itemTapped.accept(item.souvenir)
     }
 }
