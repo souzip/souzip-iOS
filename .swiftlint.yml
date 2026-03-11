@@ -6,7 +6,7 @@ disabled_rules:
 
 # ===== Opt-in 규칙 =====
 opt_in_rules:
-  - force_unwrap
+  - force_unwrapping
   - implicitly_unwrapped_optional
   - closure_spacing
   - unowned_variable_capture
@@ -21,7 +21,7 @@ opt_in_rules:
   - closure_body_length
 
 # ===== 규칙별 설정 =====
-force_unwrap: error
+force_unwrapping: error
 implicitly_unwrapped_optional: error
 
 line_length:
@@ -69,5 +69,9 @@ type_name:
 excluded:
   - Tuist
   - Derived
+  - .build
+  - "**/.build"
+  - "**/DerivedData"
   - "**/*.generated.swift"
   - "**/Derived/**"
+  - "**/.tuist-generated"
