@@ -15,6 +15,9 @@
 # ===== Import 정렬 =====
 --importgrouping testable-bottom    # import 그룹화: testable을 맨 아래로
 
+# ===== 미사용 Import 제거 =====
+--enable unusedImports              # 사용하지 않는 import 자동 제거
+
 # ===== 공백 제거 =====
 --stripunusedargs closure-only      # 사용하지 않는 클로저 인자 제거
 
