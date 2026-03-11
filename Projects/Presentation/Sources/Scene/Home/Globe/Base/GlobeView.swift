@@ -162,20 +162,23 @@ final class GlobeView: BaseView<GlobeAction> {
     }
 
     private func bindCarousel() {
-        // 캐러셀 아이템 탭 → 상세
-        bind(souvenirCarouselView.itemTapped.asObservable())
-            .map { .wantToSeeSouvenirDetail($0) }
+        // 캐러셀 아이템 탭, 닫기 → GlobeAction
+        bind(souvenirCarouselView.action)
+            .compactMap { carouselAction -> GlobeAction? in
+                switch carouselAction {
+                case let .itemTapped(item): return .wantToSeeSouvenirDetail(item)
+                case .closeButtonTapped: return .userClosedCarousel
+                case .centerItemChanged: return nil
+                }
+            }
 
-        bind(souvenirCarouselView.closeButtonTapped.asObservable())
-            .map { .userClosedCarousel }
-
-        // 캐러셀 센터 변경 (프로그래밍/사용자 모두)
-        souvenirCarouselView.centerItemChanged
+        // 캐러셀 센터 변경 (distinctUntilChanged + debounce 필요 → 일반 Rx)
+        souvenirCarouselView.action
+            .compactMap { if case let .centerItemChanged(item) = $0 { item } else { nil } }
             .distinctUntilChanged { $0.id == $1.id }
             .debounce(.milliseconds(100), scheduler: MainScheduler.instance)
-            .bind { [weak self] item in
-                self?.action.accept(.carouselCenterChanged(item))
-            }
+            .map { GlobeAction.carouselCenterChanged($0) }
+            .bind(to: action)
             .disposed(by: disposeBag)
     }
 

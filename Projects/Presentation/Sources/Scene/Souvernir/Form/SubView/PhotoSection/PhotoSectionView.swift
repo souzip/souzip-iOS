@@ -12,7 +12,7 @@ enum PhotoSectionAction {
     case tapRemoveLocal(UUID)
 }
 
-final class PhotoSectionView: UIView {
+final class PhotoSectionView: BaseView<PhotoSectionAction> {
     // MARK: - Types
 
     typealias Section = Int
@@ -27,9 +27,6 @@ final class PhotoSectionView: UIView {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
 
     // MARK: - Properties
-
-    let action = PublishRelay<PhotoSectionAction>()
-    private let disposeBag = DisposeBag()
 
     private var mainPhotoIndex: Int?
 
@@ -50,7 +47,6 @@ final class PhotoSectionView: UIView {
         )
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.delegate = self
         return collectionView
     }()
 
@@ -60,14 +56,41 @@ final class PhotoSectionView: UIView {
 
     // MARK: - Init
 
-    init() {
-        super.init(frame: .zero)
-        configure()
+    convenience init() {
+        self.init(frame: .zero)
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - Override
+
+    override func setAttributes() {
+        configureDataSource()
+    }
+
+    override func setHierarchy() {
+        [titleLabel, collectionView].forEach { addSubview($0) }
+    }
+
+    override func setConstraints() {
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(20)
+        }
+
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(84)
+            make.bottom.equalToSuperview()
+        }
+    }
+
+    override func setBindings() {
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] indexPath -> PhotoSectionAction? in
+                guard let item = self?.dataSource?.itemIdentifier(for: indexPath),
+                      case .addButton = item else { return nil }
+                return .tapAdd
+            }
     }
 
     // MARK: - Public
@@ -103,61 +126,13 @@ final class PhotoSectionView: UIView {
         applySnapshot(items)
     }
 
+    // MARK: - Private
+
     private func applySnapshot(_ items: [Item]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(items, toSection: 0)
         dataSource?.apply(snapshot, animatingDifferences: true)
-    }
-
-    // MARK: - Private
-
-    private func configure() {
-        setHierarchy()
-        setConstraints()
-        configureDataSource()
-    }
-
-    private func setHierarchy() {
-        [titleLabel, collectionView].forEach { addSubview($0) }
-    }
-
-    private func setConstraints() {
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.horizontalEdges.equalToSuperview().inset(20)
-        }
-
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(8)
-            make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(84)
-            make.bottom.equalToSuperview()
-        }
-    }
-
-    private func createLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(84),
-            heightDimension: .absolute(84)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(84),
-            heightDimension: .absolute(84)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-
-        let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = 12
-        section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
-
-        return UICollectionViewCompositionalLayout(section: section)
     }
 }
 
@@ -208,16 +183,28 @@ private extension PhotoSectionView {
             }
         }
     }
-}
 
-// MARK: - UICollectionViewDelegate
+    func createLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(84),
+            heightDimension: .absolute(84)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
-extension PhotoSectionView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .absolute(84),
+            heightDimension: .absolute(84)
+        )
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
 
-        if case .addButton = item {
-            action.accept(.tapAdd)
-        }
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 12
+        section.orthogonalScrollingBehavior = .continuous
+        section.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
+
+        return UICollectionViewCompositionalLayout(section: section)
     }
 }

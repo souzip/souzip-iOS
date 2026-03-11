@@ -86,7 +86,7 @@ final class CategoryView: BaseView<CategoryAction> {
 
     override func setBindings() {
         bind(naviBar.onLeftTap).to(.back)
-        bind(categoryGridView.toggle.asObservable())
+        bind(categoryGridView.action)
             .map { .toggle(item: $0) }
         bind(completeButton.rx.tap).to(.complete)
     }

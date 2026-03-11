@@ -1,19 +1,20 @@
 import DesignSystem
 import Domain
-import RxRelay
 import RxSwift
 import SnapKit
 import UIKit
 
-final class SouvenirGridView: UIView {
-    // MARK: - Action
+// MARK: - SouvenirGridAction
 
-    let itemTap = PublishRelay<Item>()
-    let shouldDismissSheet = PublishRelay<Void>()
-    let tapUpload = PublishRelay<Void>()
+enum SouvenirGridAction {
+    case itemTap(SouvenirListItem)
+    case shouldDismissSheet
+    case tapUpload
+}
 
-    private let disposeBag = DisposeBag()
+// MARK: - SouvenirGridView
 
+final class SouvenirGridView: BaseView<SouvenirGridAction> {
     // MARK: - Types
 
     typealias Section = Int
@@ -37,7 +38,6 @@ final class SouvenirGridView: UIView {
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = true
         view.bounces = false
-        view.delegate = self
         return view
     }()
 
@@ -47,50 +47,14 @@ final class SouvenirGridView: UIView {
 
     private var dataSource: DataSource?
 
-    // MARK: - Init
+    // MARK: - Override
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
-
-    // MARK: - Public
-
-    func render(items: [Item]) {
-        var snapshot = Snapshot()
-        snapshot.appendSections([0])
-        snapshot.appendItems(items, toSection: 0)
-        dataSource?.apply(snapshot, animatingDifferences: false)
-
-        updateEmptyState(isEmpty: items.isEmpty)
-    }
-
-    private func updateEmptyState(isEmpty: Bool) {
-        titleLabel.isHidden = isEmpty
-        collectionView.isHidden = isEmpty
-        emptyView.isHidden = !isEmpty
-    }
-}
-
-// MARK: - UI Configuration
-
-private extension SouvenirGridView {
-    func configure() {
-        setAttributes()
-        setHierarchy()
-        setConstraints()
-        setBindings()
-    }
-
-    func setAttributes() {
+    override func setAttributes() {
         backgroundColor = .clear
         configureDataSource()
     }
 
-    func setHierarchy() {
+    override func setHierarchy() {
         [
             titleLabel,
             collectionView,
@@ -98,7 +62,7 @@ private extension SouvenirGridView {
         ].forEach(addSubview)
     }
 
-    func setConstraints() {
+    override func setConstraints() {
         titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview().inset(20)
@@ -117,10 +81,36 @@ private extension SouvenirGridView {
         }
     }
 
-    func setBindings() {
-        emptyView.tapUpload
-            .bind(to: tapUpload)
-            .disposed(by: disposeBag)
+    override func setBindings() {
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
+            .map { .itemTap($0) }
+
+        bind(collectionView.rx.contentOffset)
+            .filter { $0.y < 0 }
+            .map { _ in .shouldDismissSheet }
+
+        bind(emptyView.tapUpload)
+            .to(.tapUpload)
+    }
+
+    // MARK: - Public
+
+    func render(items: [Item]) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([0])
+        snapshot.appendItems(items, toSection: 0)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+
+        updateEmptyState(isEmpty: items.isEmpty)
+    }
+
+    // MARK: - Private
+
+    private func updateEmptyState(isEmpty: Bool) {
+        titleLabel.isHidden = isEmpty
+        collectionView.isHidden = isEmpty
+        emptyView.isHidden = !isEmpty
     }
 }
 
@@ -183,22 +173,5 @@ private extension SouvenirGridView {
         )
 
         return UICollectionViewCompositionalLayout(section: section)
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension SouvenirGridView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        itemTap.accept(item)
-        collectionView.deselectItem(at: indexPath, animated: true)
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        if offsetY < 0 {
-            shouldDismissSheet.accept(())
-        }
     }
 }

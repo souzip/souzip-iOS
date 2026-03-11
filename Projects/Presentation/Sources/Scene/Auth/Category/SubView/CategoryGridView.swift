@@ -1,14 +1,9 @@
 import Domain
-import RxRelay
 import RxSwift
 import SnapKit
 import UIKit
 
-final class CategoryGridView: UIView {
-    // MARK: - Action
-
-    let toggle = PublishRelay<Item>()
-
+final class CategoryGridView: BaseView<CategoryItem> {
     // MARK: - Types
 
     typealias Section = Int
@@ -25,7 +20,6 @@ final class CategoryGridView: UIView {
         view.isScrollEnabled = false
         view.showsVerticalScrollIndicator = false
         view.allowsMultipleSelection = true
-        view.delegate = self
         return view
     }()
 
@@ -33,15 +27,32 @@ final class CategoryGridView: UIView {
 
     private var dataSource: DataSource?
 
-    // MARK: - Init
+    // MARK: - Override
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
+    override func setAttributes() {
+        backgroundColor = .clear
+        configureDataSource()
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
+    override func setHierarchy() {
+        addSubview(collectionView)
+    }
+
+    override func setConstraints() {
+        collectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+
+    override func setBindings() {
+        bind(
+            Observable.merge(
+                collectionView.rx.itemSelected.asObservable(),
+                collectionView.rx.itemDeselected.asObservable()
+            )
+        )
+        .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
+    }
 
     // MARK: - Public
 
@@ -50,31 +61,6 @@ final class CategoryGridView: UIView {
         snapshot.appendSections([0])
         snapshot.appendItems(items, toSection: 0)
         dataSource?.apply(snapshot, animatingDifferences: false)
-    }
-}
-
-// MARK: - UI Configuration
-
-private extension CategoryGridView {
-    func configure() {
-        setAttributes()
-        setHierarchy()
-        setConstraints()
-    }
-
-    func setAttributes() {
-        backgroundColor = .clear
-        configureDataSource()
-    }
-
-    func setHierarchy() {
-        addSubview(collectionView)
-    }
-
-    func setConstraints() {
-        collectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
     }
 }
 
@@ -127,19 +113,5 @@ private extension CategoryGridView {
         section.interGroupSpacing = 8
 
         return UICollectionViewCompositionalLayout(section: section)
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension CategoryGridView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        toggle.accept(item)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        toggle.accept(item)
     }
 }

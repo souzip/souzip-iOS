@@ -173,18 +173,17 @@ final class SouvenirSheetView: UIView {
     }
 
     private func setBindings() {
-        souvenirGridView.shouldDismissSheet
-            .bind { [weak self] in
-                self?.setLevel(.min)
+        souvenirGridView.action
+            .bind { [weak self] gridAction in
+                switch gridAction {
+                case .shouldDismissSheet:
+                    self?.setLevel(.min)
+                case let .itemTap(item):
+                    self?.tapSouvenirItem.accept(item)
+                case .tapUpload:
+                    self?.tapUpload.accept(())
+                }
             }
-            .disposed(by: disposeBag)
-
-        souvenirGridView.itemTap
-            .bind(to: tapSouvenirItem)
-            .disposed(by: disposeBag)
-
-        souvenirGridView.tapUpload
-            .bind(to: tapUpload)
             .disposed(by: disposeBag)
     }
 

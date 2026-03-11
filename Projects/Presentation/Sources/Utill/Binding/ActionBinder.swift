@@ -72,4 +72,12 @@ public final class ActionBinder<Input, Action> {
             disposeBag: disposeBag
         )
     }
+
+    // 반환 타입이 Action?인 경우 — 바로 구독 (terminal)
+    public func compactMap(_ transform: @escaping (Input) -> Action?) {
+        source
+            .compactMap(transform)
+            .bind(to: sink)
+            .disposed(by: disposeBag)
+    }
 }

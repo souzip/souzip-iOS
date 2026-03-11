@@ -54,7 +54,6 @@ final class TermsView: BaseView<TermsAction> {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isScrollEnabled = false
         collectionView.delaysContentTouches = false
-        collectionView.delegate = self
         return collectionView
     }()
 
@@ -109,6 +108,15 @@ final class TermsView: BaseView<TermsAction> {
     override func setBindings() {
         bind(naviBar.onLeftTap).to(.tapback)
         bind(agreeButton.rx.tap).to(.tapAgreeButton)
+
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] indexPath -> TermsAction? in
+                guard let item = self?.dataSource?.itemIdentifier(for: indexPath) else { return nil }
+                return switch item {
+                case .allAgree: .tapAllAgree
+                case let .term(termsItem): .tapTerm(termsItem.type)
+                }
+            }
     }
 
     // MARK: - Render
@@ -213,20 +221,5 @@ final class TermsView: BaseView<TermsAction> {
         snapshot.appendItems(items.map { .term($0) }, toSection: .terms)
 
         dataSource?.apply(snapshot, animatingDifferences: false)
-    }
-}
-
-extension TermsView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-
-        let action: TermsAction = switch item {
-        case .allAgree:
-            .tapAllAgree
-        case let .term(termsItem):
-            .tapTerm(termsItem.type)
-        }
-
-        self.action.accept(action)
     }
 }
