@@ -16,18 +16,21 @@ public enum TabRoute: Int, CaseIterable {
                 image: .dsIconGift,
                 selectedImage: .dsIconGift.withTintColor(.dsMain)
             )
+
         case .home:
             .init(
                 title: "지도",
                 image: .dsIconGlobe,
                 selectedImage: .dsIconGlobe.withTintColor(.dsMain)
             )
+
         case .myPage:
             .init(
                 title: "마이",
                 image: .dsIconUserProfile,
                 selectedImage: .dsIconUserProfile.withTintColor(.dsMain)
             )
+
         default: nil
         }
     }

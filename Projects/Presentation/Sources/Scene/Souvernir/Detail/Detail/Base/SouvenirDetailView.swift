@@ -19,10 +19,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         style: .back
     )
 
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        return scrollView
-    }()
+    private let scrollView: UIScrollView = .init()
 
     private let contentView = UIView()
 

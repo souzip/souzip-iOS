@@ -5,7 +5,6 @@ public enum SouvenirDTOMapper {
     // MARK: - Detail Response to Domain
 
     public static func toDomain(_ dto: SouvenirDetailResponse) -> SouvenirDetail {
-
         var localPrice: Int? = nil
         var currencySymbol: String? = nil
         var krwPrice: Int? = nil

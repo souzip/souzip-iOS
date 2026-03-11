@@ -75,8 +75,11 @@ final class RecommendView: BaseView<RecommendAction> {
                         flagImage: countryItem.flagImage,
                         isSelected: countryItem.isSelected
                     ))
+
                 case let .souvenirCard(cardItem): return .souvenirCardTap(cardItem)
+
                 case .uploadPrompt: return .uploadButtonTap
+
                 case .moreButton:
                     guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else { return nil }
                     switch section {
@@ -84,6 +87,7 @@ final class RecommendView: BaseView<RecommendAction> {
                     case .uploadMore: return .uploadMoreTap
                     default: return nil
                     }
+
                 default: return nil
                 }
             }
@@ -174,6 +178,7 @@ private extension RecommendView {
                 supplementaryView.isHidden = true
                 supplementaryView.render(title: "")
                 return
+
             default:
                 supplementaryView.isHidden = false
                 supplementaryView.render(title: section.title)
@@ -299,6 +304,7 @@ private extension RecommendView {
             case .spacer:
                 layoutSection.contentInsets.leading = 0
                 layoutSection.contentInsets.trailing = 0
+
             default:
                 layoutSection.contentInsets.leading = Space.horizontal
                 layoutSection.contentInsets.trailing = Space.horizontal
@@ -497,8 +503,6 @@ private extension RecommendView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 }

@@ -19,7 +19,6 @@ enum SettingSection: Int, CaseIterable {
 extension SettingSection {
     var rows: [SettingRow] {
         switch self {
-
         case .general:
             [
                 .spacer(12),

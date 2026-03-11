@@ -37,8 +37,7 @@ final class UploadPromptCell: UICollectionViewCell {
         config.baseForegroundColor = .dsGreyWhite
         config.background.cornerRadius = 8
         config.setTypography(.body2M, title: "업로드하기")
-        let button = UIButton(configuration: config)
-        return button
+        return UIButton(configuration: config)
     }()
 
     private let stackView: UIStackView = {

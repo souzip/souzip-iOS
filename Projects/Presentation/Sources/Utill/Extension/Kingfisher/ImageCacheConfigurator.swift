@@ -48,6 +48,7 @@ public final class ImageCacheConfiguration {
                     "현재 디스크 캐시 크기: \(String(format: "%.2f", mb))MB",
                     category: .cache
                 )
+
             case let .failure(error):
                 Logger.shared.error(
                     "캐시 크기 확인 실패: \(error.localizedDescription)",

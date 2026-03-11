@@ -47,7 +47,7 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
 
     public func updateSouvenir(
         id: Int,
-        input: SouvenirInput,
+        input: SouvenirInput
     ) async throws -> SouvenirDetail {
         do {
             let request = SouvenirDTOMapper.toRequest(input)

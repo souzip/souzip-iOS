@@ -6,7 +6,7 @@ public struct OAuthConfiguration {
 
     public init(
         kakaoAppKey: String,
-        googleClientID: String,
+        googleClientID: String
     ) {
         self.kakaoAppKey = kakaoAppKey
         self.googleClientID = googleClientID

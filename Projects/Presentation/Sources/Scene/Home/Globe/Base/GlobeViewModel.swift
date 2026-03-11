@@ -32,7 +32,7 @@ final class GlobeViewModel: BaseViewModel<
     init(
         countryRepo: CountryRepository,
         souvenirRepo: SouvenirRepository,
-        authRepo: AuthRepository,
+        authRepo: AuthRepository
     ) {
         self.countryRepo = countryRepo
         self.souvenirRepo = souvenirRepo

@@ -4,10 +4,10 @@ import Utils
 public protocol UserDefaultsStorage: AnyObject {
     func get<Value>(_ key: DefaultsKey<Value>) -> Value
     func set<Value>(_ value: Value, for key: DefaultsKey<Value>)
-    func remove<Value>(_ key: DefaultsKey<Value>)
+    func remove(_ key: DefaultsKey<some Any>)
 
     func getDecodable<T: Decodable>(from key: DefaultsKey<Data?>) throws -> T?
-    func setEncodable<T: Encodable>(_ value: T, for key: DefaultsKey<Data?>) throws
+    func setEncodable(_ value: some Encodable, for key: DefaultsKey<Data?>) throws
 }
 
 public final class DefaultUDStorage: UserDefaultsStorage {
