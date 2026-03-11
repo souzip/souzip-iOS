@@ -52,7 +52,6 @@ final class CategoryGridView: BaseView<CategoryItem> {
             )
         )
         .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
-        .map { $0 }
     }
 
     // MARK: - Public

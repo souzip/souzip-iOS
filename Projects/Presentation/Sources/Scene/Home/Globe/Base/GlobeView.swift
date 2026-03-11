@@ -171,7 +171,6 @@ final class GlobeView: BaseView<GlobeAction> {
                 case .centerItemChanged: return nil
                 }
             }
-            .map { $0 }
 
         // 캐러셀 센터 변경 (distinctUntilChanged + debounce 필요 → 일반 Rx)
         souvenirCarouselView.action

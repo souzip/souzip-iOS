@@ -91,7 +91,6 @@ final class PhotoSectionView: BaseView<PhotoSectionAction> {
                       case .addButton = item else { return nil }
                 return .tapAdd
             }
-            .map { $0 }
     }
 
     // MARK: - Public

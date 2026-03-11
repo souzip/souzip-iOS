@@ -84,7 +84,6 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
                 default: return nil
                 }
             }
-            .map { $0 }
     }
 
     // MARK: - Public

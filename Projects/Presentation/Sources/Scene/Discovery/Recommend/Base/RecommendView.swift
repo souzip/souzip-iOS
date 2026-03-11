@@ -87,7 +87,6 @@ final class RecommendView: BaseView<RecommendAction> {
                 default: return nil
                 }
             }
-            .map { $0 }
     }
 
     // MARK: - Public

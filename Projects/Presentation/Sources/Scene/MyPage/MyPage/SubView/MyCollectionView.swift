@@ -71,7 +71,6 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
     override func setBindings() {
         bind(collectionView.rx.itemSelected)
             .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
-            .map { $0 }
     }
 
     private func updateHeight() {

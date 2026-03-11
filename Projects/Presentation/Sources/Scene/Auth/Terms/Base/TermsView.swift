@@ -117,7 +117,6 @@ final class TermsView: BaseView<TermsAction> {
                 case let .term(termsItem): .tapTerm(termsItem.type)
                 }
             }
-            .map { $0 }
     }
 
     // MARK: - Render
