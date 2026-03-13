@@ -115,10 +115,13 @@ final class PriceFieldView: BaseView<PriceFieldAction> {
                 .replacingOccurrences(of: ",", with: "")
                 .filter(\.isNumber)
 
-            let formatted = formatNumberWithComma(raw)
+            // 최대 15자리로 제한 (Int 변환 안전 범위 확보 + 가격 입력 UX 제한)
+            let limitedRaw = String(raw.prefix(15))
 
-            // 외부에는 raw 전달
-            action.accept(.priceChanged(raw))
+            let formatted = formatNumberWithComma(limitedRaw)
+
+            // 외부에는 limitedRaw 전달
+            action.accept(.priceChanged(limitedRaw))
 
             guard formatted != text else { return }
 
@@ -205,7 +208,8 @@ final class PriceFieldView: BaseView<PriceFieldAction> {
     }
 
     private func formatNumberWithComma(_ numberString: String) -> String {
-        guard let number = Int(numberString) else { return "" }
+        // Int 변환 실패 시 "" 대신 numberString 반환 — 필드 초기화 방지
+        guard let number = Int(numberString) else { return numberString }
 
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal

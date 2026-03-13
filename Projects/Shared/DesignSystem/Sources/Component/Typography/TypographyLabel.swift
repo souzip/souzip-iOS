@@ -18,6 +18,12 @@ public final class TypographyLabel: UILabel {
         }
     }
 
+    override public var lineBreakMode: NSLineBreakMode {
+        didSet {
+            applyTypography()
+        }
+    }
+
     override public var text: String? {
         didSet {
             applyTypography()
@@ -48,6 +54,7 @@ public final class TypographyLabel: UILabel {
             attributes[.paragraphStyle] = paragraphStyle
         }
         paragraphStyle.alignment = textAlignment
+        paragraphStyle.lineBreakMode = lineBreakMode
         if let spacing = paragraphSpacing {
             paragraphStyle.paragraphSpacing = spacing
         }
