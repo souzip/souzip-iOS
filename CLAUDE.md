@@ -92,6 +92,10 @@ App → Presentation → Domain ← Data → Core
 
 **기본 브랜치**: `develop` (PR 타겟)
 
+## AI 협업 워크플로우
+
+`plan-before-code` 스킬 참조. 리서치 → 플랜 → 승인 → 구현 순서를 따른다.
+
 ## 새 기능 추가 절차
 
 1. **Domain**: `Projects/Domain/Sources/{Feature}/`에 Model, UseCase, Repository 프로토콜, Error 추가
