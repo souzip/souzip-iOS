@@ -26,6 +26,12 @@ final class MyPageCoordinator: BaseCoordinator<MyPageRoute, TabRoute> {
         case let .noticeDetail(id):
             showNoticeDetail(id: id)
 
+        case .withdraw:
+            showWithdraw()
+
+        case .withdrawComplete:
+            showWithdrawComplete()
+
         case let .souvenirRoute(sovenirRoute):
             handleSouvenirRoute(sovenirRoute)
 
@@ -67,6 +73,20 @@ private extension MyPageCoordinator {
 
     func showNoticeDetail(id: Int) {
         let scene = factory.makeNoticeDetail(id: id)
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
+
+    func showWithdraw() {
+        let scene = factory.makeWithdraw()
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        nav.pushViewController(scene.vc, animated: true)
+    }
+
+    func showWithdrawComplete() {
+        let scene = factory.makeWithdrawComplete()
         scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         nav.pushViewController(scene.vc, animated: true)

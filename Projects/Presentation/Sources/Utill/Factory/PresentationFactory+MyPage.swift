@@ -3,6 +3,8 @@ protocol PresentationMyPageFactory: AnyObject {
     func makeSetting() -> RoutedScene<MyPageRoute>
     func makeNoticeList() -> RoutedScene<MyPageRoute>
     func makeNoticeDetail(id: Int) -> RoutedScene<MyPageRoute>
+    func makeWithdraw() -> RoutedScene<MyPageRoute>
+    func makeWithdrawComplete() -> RoutedScene<MyPageRoute>
 }
 
 extension DefaultPresentationFactory {
@@ -58,6 +60,32 @@ extension DefaultPresentationFactory {
         )
         let view = NoticeDetailView()
         let vc = NoticeDetailViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeWithdraw() -> RoutedScene<MyPageRoute> {
+        let vm = WithdrawViewModel(
+            authRepo: domainFactory.makeAuthRepository()
+        )
+        let view = WithdrawView()
+        let vc = WithdrawViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeWithdrawComplete() -> RoutedScene<MyPageRoute> {
+        let vm = WithdrawCompleteViewModel()
+        let view = WithdrawCompleteView()
+        let vc = WithdrawCompleteViewController(viewModel: vm, contentView: view)
 
         return .init(
             vc: vc,
