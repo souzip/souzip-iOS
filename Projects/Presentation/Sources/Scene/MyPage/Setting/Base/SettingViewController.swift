@@ -32,16 +32,6 @@ final class SettingViewController: BaseViewController<
                 }
             )
 
-        case .showWithdrawAlert:
-            showDSConfirmAlert(
-                message: "탈퇴 하시겠습니까?",
-                confirmTitle: "아니요",
-                cancelTitle: "탈퇴하기",
-                cancelHandler: { [weak self] in
-                    self?.viewModel.action.accept(.withdraw)
-                }
-            )
-
         case let .showSFView(url):
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .pageSheet

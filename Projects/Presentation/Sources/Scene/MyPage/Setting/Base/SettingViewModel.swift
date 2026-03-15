@@ -38,12 +38,6 @@ final class SettingViewModel: BaseViewModel<
                 try? await authRepo.logout()
                 navigate(to: .login)
             }
-
-        case .withdraw:
-            Task {
-                try? await authRepo.withdraw()
-                navigate(to: .login)
-            }
         }
     }
 
@@ -72,7 +66,7 @@ final class SettingViewModel: BaseViewModel<
             emit(.showLogoutAlert)
 
         case .withdraw:
-            emit(.showWithdrawAlert)
+            navigate(to: .withdraw)
 
         default:
             break
