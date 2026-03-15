@@ -24,7 +24,8 @@ public final class CommonNavigationController: UINavigationController {
 
 extension CommonNavigationController: UIGestureRecognizerDelegate {
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        viewControllers.count > 1
+        guard viewControllers.count > 1 else { return false }
+        return topViewController?.isSwipeBackEnabled ?? true
     }
 }
 
