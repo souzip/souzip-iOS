@@ -1,4 +1,4 @@
-public struct Notice: Equatable {
+public struct Notice: Hashable {
     public let id: Int
     public let title: String
     public let createdAt: String
