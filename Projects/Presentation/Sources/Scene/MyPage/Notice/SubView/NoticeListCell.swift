@@ -108,7 +108,9 @@ private extension NoticeListCell {
 // MARK: - Private
 
 private extension NoticeListCell {
-    static func formatDate(_ isoString: String) -> String {
-        String(isoString.prefix(10)).replacingOccurrences(of: "-", with: ". ")
+    static func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy. MM. dd"
+        return formatter.string(from: date)
     }
 }

@@ -1,15 +1,17 @@
+import Foundation
+
 public struct NoticeDetail: Equatable {
     public let id: Int
     public let title: String
     public let content: String
-    public let createdAt: String
+    public let createdAt: Date
     public let imageURLs: [String]
 
     public init(
         id: Int,
         title: String,
         content: String,
-        createdAt: String,
+        createdAt: Date,
         imageURLs: [String]
     ) {
         self.id = id
