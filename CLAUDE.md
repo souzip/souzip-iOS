@@ -60,6 +60,17 @@ App → Presentation → Domain ← Data → Core
 
 - 한국어 커밋 메시지 & 코드 주석
 - SnapKit으로 프로그래매틱 UI (스토리보드 사용 안 함)
+  - `makeConstraints { make in` 형태 사용 (`$0` 단축 표기 금지)
+  - `setHierarchy` 내 `addSubview` / `addArrangedSubview` 는 멀티라인 배열 + `forEach` 사용
+    ```swift
+    // ✅
+    [viewA, viewB].forEach(addSubview)
+    // ✅ (뷰가 많을 때)
+    [
+        viewA,
+        viewB,
+    ].forEach(addSubview)
+    ```
 - RxSwift/RxRelay/RxCocoa로 리액티브 바인딩
 - BaseViewModel 4타입 패턴 준수 (State, Action, Event, Route)
 - DTO → Domain 변환은 **Mapper** 사용 (`toDomain()` 직접 구현 금지)
