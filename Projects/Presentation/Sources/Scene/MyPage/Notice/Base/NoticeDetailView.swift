@@ -127,7 +127,7 @@ final class NoticeDetailView: BaseView<NoticeDetailAction> {
     func render(detail: NoticeDetail) {
         titleLabel.text = detail.title
         dateLabel.text = formatDate(detail.createdAt)
-        bodyLabel.text = detail.content
+        bodyLabel.text = detail.content.strippedHTML
 
         imageStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
