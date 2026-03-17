@@ -56,11 +56,13 @@ final class SettingViewModel: BaseViewModel<
 
     private func handleType(_ type: SettingItemType) {
         switch type {
+        case .notice:
+            navigate(to: .noticeList)
+
         case .termsOfService,
              .privacyPolicy,
              .locationTerms,
              .marketingConsentInfo,
-             .notice,
              .feedback,
              .faq:
             guard let url = URL(string: type.url) else { return }

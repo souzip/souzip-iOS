@@ -5,4 +5,5 @@ public protocol DataFactory: AnyObject {
     func makeSouvenirRepository() -> SouvenirRepository
     func makeDiscoveryRepository() -> DiscoveryRepository
     func makeUserRepository() -> UserRepository
+    func makeNoticeRepository() -> NoticeRepository
 }
