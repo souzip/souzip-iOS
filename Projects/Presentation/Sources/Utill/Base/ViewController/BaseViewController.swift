@@ -14,8 +14,6 @@ class BaseViewController<
     let contentView: ContentView
     let disposeBag = DisposeBag()
 
-    var isSwipeBackEnabled: Bool { true }
-
     init(viewModel: ViewModel, contentView: ContentView) {
         self.viewModel = viewModel
         self.contentView = contentView

@@ -1,6 +1,12 @@
 import DesignSystem
 import UIKit
 
+// MARK: - SwipeBack
+
+extension UIViewController {
+    @objc var isSwipeBackEnabled: Bool { true }
+}
+
 // MARK: - Alert
 
 extension UIViewController {

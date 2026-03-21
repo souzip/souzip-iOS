@@ -1,3 +1,4 @@
+import DesignSystem
 import UIKit
 
 public final class CommonNavigationController: UINavigationController {
@@ -5,6 +6,14 @@ public final class CommonNavigationController: UINavigationController {
         super.viewDidLoad()
         delegate = self
         setupNavigationBar()
+    }
+
+    override public func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        let systemBottom = view.window?.safeAreaInsets.bottom ?? 0
+        let needed = LayoutConstants.SafeArea.minBottom - systemBottom
+        guard additionalSafeAreaInsets.bottom != needed else { return }
+        additionalSafeAreaInsets.bottom = needed
     }
 
     private func setupNavigationBar() {
@@ -15,7 +24,8 @@ public final class CommonNavigationController: UINavigationController {
 
 extension CommonNavigationController: UIGestureRecognizerDelegate {
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        viewControllers.count > 1
+        guard viewControllers.count > 1 else { return false }
+        return topViewController?.isSwipeBackEnabled ?? true
     }
 }
 

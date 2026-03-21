@@ -22,6 +22,12 @@ public enum LayoutConstants {
         public static let large: CGFloat = 20
     }
 
+    /// Safe Area 관련 값
+    public enum SafeArea {
+        /// 하단 Safe Area 고정값 (모든 기기에서 동일하게 적용)
+        public static let minBottom: CGFloat = 21
+    }
+
     /// 공통 여백 값
     public enum Inset {
         public static let horizontal: CGFloat = 20
