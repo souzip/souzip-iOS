@@ -1,3 +1,4 @@
+import Analytics
 import CoreLocation
 import Domain
 import Logger

@@ -1,4 +1,4 @@
-import AdMob
+import Ads
 import Domain
 
 final class SplashViewModel: BaseViewModel<
