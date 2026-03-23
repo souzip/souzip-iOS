@@ -1,3 +1,4 @@
+import Analytics
 import Domain
 import Logger
 import Photos

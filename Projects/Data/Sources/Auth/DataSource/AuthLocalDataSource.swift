@@ -1,6 +1,5 @@
 import Foundation
-import Keychain
-import UserDefaults
+import Storage
 import Utils
 
 public protocol AuthLocalDataSource {
