@@ -40,10 +40,10 @@ App → Presentation → Domain ← Data → Core
 | Presentation | Presentation | `Projects/Presentation/` |
 | Domain | Domain | `Projects/Domain/` |
 | Data | Data | `Projects/Data/` |
-| Core | Networking, Logger, Keychain, UserDefaults, AdMob | `Projects/Core/{module}/` |
+| Core | Networking, Logger, Analytics, Storage, Ads | `Projects/Core/{module}/` |
 | Shared | DesignSystem, Utils | `Projects/Shared/{module}/` |
 
-상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조.
+상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조. 모듈·레이어 import 규범: [`docs/claude/module-layer-constitution.md`](docs/claude/module-layer-constitution.md).
 
 ## 금지 사항 (DO NOT)
 
