@@ -1,3 +1,4 @@
+import Analytics
 import GoogleMobileAds
 import Logger
 import UIKit
