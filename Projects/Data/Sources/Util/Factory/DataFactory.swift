@@ -1,7 +1,6 @@
 import Domain
-import Keychain
 import Networking
-import UserDefaults
+import Storage
 
 public final class DefaultDataFactory: DataFactory {
     private let networkFactory: NetworkFactory
