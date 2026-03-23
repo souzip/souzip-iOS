@@ -1,4 +1,4 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.framework(.keychain, hasTests: true)
+let project = Project.framework(.storage, hasTests: true)

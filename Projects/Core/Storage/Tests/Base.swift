@@ -1,5 +1,5 @@
 import XCTest
-@testable import Keychain
+@testable import Storage
 
 final class Tests: XCTestCase {
     func testExample() {
