@@ -137,6 +137,9 @@ final class SouvenirPinView: UIView {
                 width: width,
                 height: height
             )
+            self.pinImageView.layer.shadowPath = UIBezierPath(
+                rect: CGRect(x: 0, y: 0, width: width, height: height)
+            ).cgPath
 
             // categoryIconImageView - 중앙 상단 배치
             let iconX = (width - iconSize) / 2

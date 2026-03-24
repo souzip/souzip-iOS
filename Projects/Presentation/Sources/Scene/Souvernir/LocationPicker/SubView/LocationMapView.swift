@@ -90,6 +90,9 @@ final class LocationMapView: UIView {
         mapboxMapView.ornaments.options.scaleBar.visibility = .hidden
         mapboxMapView.ornaments.options.compass.visibility = .hidden
 
+        mapboxMapView.layer.cornerRadius = 10
+        mapboxMapView.clipsToBounds = true
+
         addSubview(mapboxMapView)
 
         mapboxMapView.snp.makeConstraints { make in
