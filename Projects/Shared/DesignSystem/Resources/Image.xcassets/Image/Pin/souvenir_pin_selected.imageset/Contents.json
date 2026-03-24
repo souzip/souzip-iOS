@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "souvenir_pin_selected_1x.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "souvenir_pin_selected_2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "souvenir_pin_selected_3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "souvenir_pin_selected.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

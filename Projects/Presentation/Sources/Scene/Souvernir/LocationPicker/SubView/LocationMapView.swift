@@ -20,6 +20,10 @@ final class LocationMapView: UIView {
     private let centerPinView: UIImageView = {
         let iv = UIImageView(image: .dsLocationPin)
         iv.contentMode = .scaleAspectFit
+        iv.layer.shadowColor = UIColor.black.cgColor
+        iv.layer.shadowOpacity = 0.15
+        iv.layer.shadowOffset = .zero
+        iv.layer.shadowRadius = 2
         return iv
     }()
 

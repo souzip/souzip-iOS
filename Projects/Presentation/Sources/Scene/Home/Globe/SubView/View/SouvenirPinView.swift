@@ -8,8 +8,8 @@ final class SouvenirPinView: UIView {
         // 기본 상태
         static let normalWidth: CGFloat = 32
         static let normalHeight: CGFloat = 38
-        static let normalIconTop: CGFloat = 4
-        static let normalIconSize: CGFloat = 24
+        static let normalIconTop: CGFloat = 2
+        static let normalIconSize: CGFloat = 28
 
         // 선택 상태
         static let selectedWidth: CGFloat = 56
@@ -82,11 +82,16 @@ final class SouvenirPinView: UIView {
         contentView.addSubview(pinImageView)
         contentView.addSubview(categoryIconImageView)
 
+        pinImageView.layer.shadowColor = UIColor.black.cgColor
+        pinImageView.layer.shadowOpacity = 0.15
+        pinImageView.layer.shadowOffset = .zero
+        pinImageView.layer.shadowRadius = 2
+
         updateLayout(animated: false)
     }
 
     private func updateIcon() {
-        categoryIconImageView.image = category.mainImage
+        categoryIconImageView.image = category.tintedImage
     }
 
     private func updateLayout(animated: Bool) {
