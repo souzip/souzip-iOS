@@ -17,33 +17,48 @@ extension SouvenirCategory {
         }
     }
 
-    var image: UIImage {
+    var grayImage: UIImage {
         switch self {
-        case .snack: .dsIconCategorySnack
-        case .healthBeauty: .dsIconCategoryHealthBeauty
-        case .fashion: .dsIconCategoryFashion
-        case .culture: .dsIconCategoryCulture
-        case .toy: .dsIconCategoryToy
-        case .classic: .dsIconCategoryClassic
-        case .lifestyle: .dsIconCategoryLifestyle
-        case .art: .dsIconCategoryArt
-        case .travel: .dsIconCategoryTravel
-        case .tech: .dsIconCategoryTech
+        case .snack: .dsIconCategorySnackGray
+        case .healthBeauty: .dsIconCategoryHealthBeautyGray
+        case .fashion: .dsIconCategoryFashionGray
+        case .culture: .dsIconCategoryCultureGray
+        case .toy: .dsIconCategoryToyGray
+        case .classic: .dsIconCategoryClassicGray
+        case .lifestyle: .dsIconCategoryLifestyleGray
+        case .art: .dsIconCategoryArtGray
+        case .travel: .dsIconCategoryTravelGray
+        case .tech: .dsIconCategoryTechGray
         }
     }
 
-    var selectedImage: UIImage {
+    var mainImage: UIImage {
         switch self {
-        case .snack: .dsIconCategorySnackSelected
-        case .healthBeauty: .dsIconCategoryHealthBeautySelected
-        case .fashion: .dsIconCategoryFashionSelected
-        case .culture: .dsIconCategoryCultureSelected
-        case .toy: .dsIconCategoryToySelected
-        case .classic: .dsIconCategoryClassicSelected
-        case .lifestyle: .dsIconCategoryLifestyleSelected
-        case .art: .dsIconCategoryArtSelected
-        case .travel: .dsIconCategoryTravelSelected
-        case .tech: .dsIconCategoryTechSelected
+        case .snack: .dsIconCategorySnackMain
+        case .healthBeauty: .dsIconCategoryHealthBeautyMain
+        case .fashion: .dsIconCategoryFashionMain
+        case .culture: .dsIconCategoryCultureMain
+        case .toy: .dsIconCategoryToyMain
+        case .classic: .dsIconCategoryClassicMain
+        case .lifestyle: .dsIconCategoryLifestyleMain
+        case .art: .dsIconCategoryArtMain
+        case .travel: .dsIconCategoryTravelMain
+        case .tech: .dsIconCategoryTechMain
+        }
+    }
+
+    var tintedImage: UIImage {
+        switch self {
+        case .snack: .dsIconCategorySnackTinted
+        case .healthBeauty: .dsIconCategoryHealthBeautyTinted
+        case .fashion: .dsIconCategoryFashionTinted
+        case .culture: .dsIconCategoryCultureTinted
+        case .toy: .dsIconCategoryToyTinted
+        case .classic: .dsIconCategoryClassicTinted
+        case .lifestyle: .dsIconCategoryLifestyleTinted
+        case .art: .dsIconCategoryArtTinted
+        case .travel: .dsIconCategoryTravelTinted
+        case .tech: .dsIconCategoryTechTinted
         }
     }
 }

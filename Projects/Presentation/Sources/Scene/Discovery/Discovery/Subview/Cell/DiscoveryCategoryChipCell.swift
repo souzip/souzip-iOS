@@ -48,7 +48,7 @@ final class DiscoveryCategoryChipCell: UICollectionViewCell {
     // MARK: - Public
 
     func render(item: CategoryItem) {
-        iconImageView.image = item.category.selectedImage
+        iconImageView.image = item.category.mainImage
         titleLabel.text = item.category.title
 
         if item.isSelected {

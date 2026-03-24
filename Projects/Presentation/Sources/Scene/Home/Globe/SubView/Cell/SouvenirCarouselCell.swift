@@ -162,7 +162,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         nameLabel.text = item.name
         categoryIconView.render(
             title: item.category.title,
-            image: item.category.selectedImage
+            image: item.category.tintedImage
         )
 
         let hasPrice = item.currencySymbol != nil
