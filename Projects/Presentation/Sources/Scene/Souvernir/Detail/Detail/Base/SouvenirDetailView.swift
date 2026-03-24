@@ -378,7 +378,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             priceContainerStack.isHidden = true
             exchangeRateInfoButton.hideTooltip()
             priceHeightConstraint?.update(offset: 0)
-            descriptionTopConstraint?.update(offset: 0)
+            descriptionTopConstraint?.update(offset: 12)
         }
 
         // 설명
