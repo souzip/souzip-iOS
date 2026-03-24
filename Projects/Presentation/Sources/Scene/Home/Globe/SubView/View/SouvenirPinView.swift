@@ -86,7 +86,7 @@ final class SouvenirPinView: UIView {
     }
 
     private func updateIcon() {
-        categoryIconImageView.image = category.selectedImage
+        categoryIconImageView.image = category.mainImage
     }
 
     private func updateLayout(animated: Bool) {

@@ -32,14 +32,14 @@ final class CategoryChipCell: UICollectionViewCell {
         if item.isSelected {
             iconTitleView.render(
                 title: item.category.title,
-                image: item.category.selectedImage
+                image: item.category.mainImage
             )
             iconTitleView.setTitleColor(.dsMain)
             applySelectedStyle()
         } else {
             iconTitleView.render(
                 title: item.category.title,
-                image: item.category.image
+                image: item.category.grayImage
             )
             iconTitleView.setTitleColor(.dsGreyWhite)
             applyDeselectedStyle()
