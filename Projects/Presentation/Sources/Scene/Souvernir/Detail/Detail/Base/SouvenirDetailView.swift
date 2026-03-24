@@ -365,7 +365,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         // 카테고리
         categoryView.render(
             title: detail.category.title,
-            image: detail.category.mainImage
+            image: detail.category.tintedImage
         )
 
         // 가격 (둘 다 있을 때만 표시)

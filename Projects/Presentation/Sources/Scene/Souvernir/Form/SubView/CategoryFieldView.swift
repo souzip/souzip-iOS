@@ -80,7 +80,10 @@ final class CategoryFieldView: UIView {
 
     func render(_ category: SouvenirCategory?) {
         if let category {
-            categoryView.render(title: category.title, image: category.mainImage)
+            categoryView.render(
+                title: category.title,
+                image: category.tintedImage
+            )
             setContent(showCategory: true)
         } else {
             setContent(showCategory: false)
