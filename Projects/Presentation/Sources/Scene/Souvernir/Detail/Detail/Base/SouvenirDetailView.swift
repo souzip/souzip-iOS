@@ -202,9 +202,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     override func setAttributes() {
         backgroundColor = .dsBackground
         setupDataSource()
-
-        mapView?.layer.cornerRadius = 10
-        mapView?.clipsToBounds = true
     }
 
     override func setHierarchy() {
@@ -396,8 +393,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             let map = LocationMapView(mode: .readonly, initialCoordinate: coordinate)
             contentView.addSubview(map)
             mapView = map
-            mapView?.layer.cornerRadius = 10
-            mapView?.clipsToBounds = true
 
             map.snp.makeConstraints { make in
                 make.top.equalTo(locationTitleLabel.snp.bottom).offset(8)
