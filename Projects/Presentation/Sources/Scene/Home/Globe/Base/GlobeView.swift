@@ -370,6 +370,7 @@ extension GlobeView {
         animated: Bool
     ) {
         souvenirSheetView.isHidden = true
+        souvenirSheetView.setLevel(.min, animated: false)
         souvenirCarouselView.isHidden = false
         searchInLocationButton.isHidden = true
 
