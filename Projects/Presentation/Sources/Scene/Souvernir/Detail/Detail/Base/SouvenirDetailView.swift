@@ -73,7 +73,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     private let nameCategoryStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 8
+        stack.spacing = 12
         stack.alignment = .center
         return stack
     }()
