@@ -27,11 +27,9 @@ public enum NoticeDTOMapper {
 
 private extension NoticeDTOMapper {
     static func parseDate(_ isoString: String) -> Date {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-
-        // 서버가 UTC 시간을 timezone suffix 없이 반환 → "Z" 추가
-        let utcString = isoString.hasSuffix("Z") ? isoString : isoString + "Z"
-        return formatter.date(from: utcString) ?? Date()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return formatter.date(from: String(isoString.prefix(19))) ?? Date()
     }
 }
