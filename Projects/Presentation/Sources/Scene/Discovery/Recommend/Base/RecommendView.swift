@@ -23,7 +23,6 @@ final class RecommendView: BaseView<RecommendAction> {
         let view = UICollectionView(frame: .zero, collectionViewLayout: makeCVLayout())
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
-        view.delegate = self
         view.refreshControl = refreshContorl
         view.contentInset.top = 18
         return view
@@ -64,6 +63,34 @@ final class RecommendView: BaseView<RecommendAction> {
     override func setBindings() {
         bind(naviBar.onLeftTap).to(.back)
         bind(refreshContorl.rx.controlEvent(.valueChanged)).to(.refresh)
+
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] indexPath -> RecommendAction? in
+                guard let self, let item = dataSource?.itemIdentifier(for: indexPath) else { return nil }
+                switch item {
+                case let .countryChip(countryItem):
+                    return .countryChipTap(.init(
+                        countryCode: countryItem.countryCode,
+                        title: countryItem.title,
+                        flagImage: countryItem.flagImage,
+                        isSelected: countryItem.isSelected
+                    ))
+
+                case let .souvenirCard(cardItem): return .souvenirCardTap(cardItem)
+
+                case .uploadPrompt: return .uploadButtonTap
+
+                case .moreButton:
+                    guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else { return nil }
+                    switch section {
+                    case .preferredMore: return .preferredMoreTap
+                    case .uploadMore: return .uploadMoreTap
+                    default: return nil
+                    }
+
+                default: return nil
+                }
+            }
     }
 
     // MARK: - Public
@@ -151,6 +178,7 @@ private extension RecommendView {
                 supplementaryView.isHidden = true
                 supplementaryView.render(title: "")
                 return
+
             default:
                 supplementaryView.isHidden = false
                 supplementaryView.render(title: section.title)
@@ -276,6 +304,7 @@ private extension RecommendView {
             case .spacer:
                 layoutSection.contentInsets.leading = 0
                 layoutSection.contentInsets.trailing = 0
+
             default:
                 layoutSection.contentInsets.leading = Space.horizontal
                 layoutSection.contentInsets.trailing = Space.horizontal
@@ -474,46 +503,6 @@ private extension RecommendView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-
-        return section
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension RecommendView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-
-        switch item {
-        case let .countryChip(countryItem):
-            action.accept(.countryChipTap(.init(
-                countryCode: countryItem.countryCode,
-                title: countryItem.title,
-                flagImage: countryItem.flagImage,
-                isSelected: countryItem.isSelected
-            )))
-
-        case let .souvenirCard(cardItem):
-            action.accept(.souvenirCardTap(cardItem))
-
-        case .uploadPrompt:
-            action.accept(.uploadButtonTap)
-
-        case .moreButton:
-            guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else { return }
-            switch section {
-            case .preferredMore:
-                action.accept(.preferredMoreTap)
-            case .uploadMore:
-                action.accept(.uploadMoreTap)
-            default:
-                break
-            }
-
-        default:
-            break
-        }
+        return NSCollectionLayoutSection(group: group)
     }
 }

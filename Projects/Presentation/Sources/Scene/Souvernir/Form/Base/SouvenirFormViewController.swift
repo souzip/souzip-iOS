@@ -83,6 +83,16 @@ final class SouvenirFormViewController: BaseViewController<
 
         case let .showError(message):
             showDSAlert(message: message)
+
+        case .showConfirmClose:
+            showDSConfirmAlert(
+                message: "기념품 작성을 그만둘까요?\n작성된 내용은 저장되지 않아요",
+                confirmTitle: "계속 작성하기",
+                cancelTitle: "그만두기",
+                cancelHandler: { [weak self] in
+                    self?.viewModel.action.accept(.confirmClose)
+                }
+            )
         }
     }
 

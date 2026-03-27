@@ -110,12 +110,8 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         return label
     }()
 
-    // 가격 옆 info 아이콘 버튼
-    private let infoButton: UIButton = {
-        let button = UIButton()
-        button.setImage(.dsIconInformationCircle, for: .normal)
-        return button
-    }()
+    // 환율 안내 ⓘ 버튼 (툴팁 포함, containerView 밖 contentView에 배치)
+    private let exchangeRateInfoButton = ExchangeRateInfoButton()
 
     // localPriceLabel + krwPriceLabel을 묶는 컨테이너
     private let priceContainerView = UIView()
@@ -155,6 +151,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         imageView.image = nil
         imageView.kf.cancelDownloadTask()
         setPriceVisibility(isHidden: true)
+        exchangeRateInfoButton.hideTooltip()
     }
 
     // MARK: - Public
@@ -165,7 +162,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
         nameLabel.text = item.name
         categoryIconView.render(
             title: item.category.title,
-            image: item.category.selectedImage
+            image: item.category.tintedImage
         )
 
         let hasPrice = item.currencySymbol != nil
@@ -182,7 +179,7 @@ final class SouvenirCarouselCell: UICollectionViewCell {
 
     private func setPriceVisibility(isHidden: Bool) {
         priceContainerView.isHidden = isHidden
-        infoButton.isHidden = isHidden
+        exchangeRateInfoButton.isHidden = isHidden
         priceHeightConstraint?.update(offset: isHidden ? 0 : 24)
 //        addressTopConstraint?.update(offset: isHidden ? 0 : 8)
     }
@@ -199,13 +196,14 @@ private extension SouvenirCarouselCell {
 
     func setHierarchy() {
         contentView.addSubview(containerView)
+        // containerView.clipsToBounds = true를 우회하기 위해 contentView에 직접 추가
+        contentView.addSubview(exchangeRateInfoButton)
 
         [
             imageView,
             closeButton,
             infoContainerView,
             priceContainerView,
-//            infoButton,
             addressLabel,
         ].forEach { containerView.addSubview($0) }
 
@@ -274,11 +272,12 @@ private extension SouvenirCarouselCell {
             make.centerY.equalToSuperview()
         }
 
-//        infoButton.snp.makeConstraints { make in
-//            make.leading.equalTo(krwPriceLabel.snp.trailing).offset(15)
-//            make.centerY.equalTo(localPriceLabel)
-//            make.size.equalTo(18)
-//        }
+        // containerView.edges == contentView.edges이므로 좌표계가 동일
+        exchangeRateInfoButton.snp.makeConstraints { make in
+            make.leading.equalTo(krwPriceLabel.snp.trailing).offset(8)
+            make.centerY.equalTo(priceContainerView)
+            make.size.equalTo(18)
+        }
 
         addressLabel.snp.makeConstraints { make in
             addressTopConstraint = make.top.equalTo(priceContainerView.snp.bottom).offset(8).constraint

@@ -45,6 +45,9 @@ public enum DefaultInfoPlist {
             ]
         ],
 
+        // Export Compliance
+        "ITSAppUsesNonExemptEncryption": false,
+
         // URL Schemes
         "LSApplicationQueriesSchemes": [
           "kakaokompassauth",

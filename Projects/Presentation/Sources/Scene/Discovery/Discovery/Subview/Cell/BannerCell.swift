@@ -1,4 +1,4 @@
-import AdMob
+import Ads
 import SnapKit
 import UIKit
 

@@ -130,17 +130,13 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
             .to(.tapAddress)
 
         // Price Field
-        priceFieldView.priceChanged
-            .bind { [weak self] price in
-                self?.action.accept(.updateLocalPrice(price))
+        bind(priceFieldView.action)
+            .map { action -> SouvenirFormAction in
+                switch action {
+                case let .priceChanged(text): return .updateLocalPrice(text)
+                case let .currencyChanged(symbol): return .updateCurrencySymbol(symbol)
+                }
             }
-            .disposed(by: disposeBag)
-
-        priceFieldView.currencyChanged
-            .bind { [weak self] symbol in
-                self?.action.accept(.updateCurrencySymbol(symbol))
-            }
-            .disposed(by: disposeBag)
 
         bind(categoryFieldView.tapRelay.asObservable())
             .to(.tapCategory)

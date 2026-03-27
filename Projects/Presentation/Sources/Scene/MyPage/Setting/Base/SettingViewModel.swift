@@ -38,12 +38,6 @@ final class SettingViewModel: BaseViewModel<
                 try? await authRepo.logout()
                 navigate(to: .login)
             }
-
-        case .withdraw:
-            Task {
-                try? await authRepo.withdraw()
-                navigate(to: .login)
-            }
         }
     }
 
@@ -56,11 +50,13 @@ final class SettingViewModel: BaseViewModel<
 
     private func handleType(_ type: SettingItemType) {
         switch type {
+        case .notice:
+            navigate(to: .noticeList)
+
         case .termsOfService,
              .privacyPolicy,
              .locationTerms,
              .marketingConsentInfo,
-             .notice,
              .feedback,
              .faq:
             guard let url = URL(string: type.url) else { return }
@@ -70,7 +66,7 @@ final class SettingViewModel: BaseViewModel<
             emit(.showLogoutAlert)
 
         case .withdraw:
-            emit(.showWithdrawAlert)
+            navigate(to: .withdraw)
 
         default:
             break

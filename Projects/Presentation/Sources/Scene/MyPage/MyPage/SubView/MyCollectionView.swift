@@ -21,7 +21,6 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
             collectionViewLayout: createLayout()
         )
         collectionView.backgroundColor = .clear
-        collectionView.delegate = self
         collectionView.isScrollEnabled = false
         return collectionView
     }()
@@ -67,6 +66,11 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
             make.edges.equalToSuperview()
             heightConstraint = make.height.equalTo(1).constraint
         }
+    }
+
+    override func setBindings() {
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
     }
 
     private func updateHeight() {
@@ -115,6 +119,7 @@ private extension MyCollectionView {
                     for: indexPath,
                     item: item
                 )
+
             case .souvenir:
                 collectionView.dequeueConfiguredReusableCell(
                     using: souvenirRegistration,
@@ -200,14 +205,5 @@ private extension MyCollectionView {
         )
 
         return section
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension MyCollectionView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        action.accept(item)
     }
 }

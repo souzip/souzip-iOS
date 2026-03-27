@@ -14,6 +14,7 @@
 
 # ===== Import 정렬 =====
 --importgrouping testable-bottom    # import 그룹화: testable을 맨 아래로
+--enable sortImports                # import 알파벳 정렬 (importgrouping 동작에 필요)
 
 # ===== 공백 제거 =====
 --stripunusedargs closure-only      # 사용하지 않는 클로저 인자 제거
@@ -21,11 +22,20 @@
 # ===== 세미콜론 =====
 --semicolons never                  # 세미콜론 사용 안함 (inline 제외)
 
+# ===== Trailing Comma =====
+--trailing-commas collections-only  # 컬렉션 리터럴에만 trailing comma 적용 (protocol 상속 목록 제외)
+
 # ===== 비활성화할 규칙 =====
 --disable \
     blankLinesAtEndOfScope,\
-    blankLinesAtStartOfScope,\
-    wrapMultilineStatementBraces
+    wrapMultilineStatementBraces,\
+    wrapFunctionBodies,\
+    wrapPropertyBodies,\
+    docComments
+
+# ===== 활성화할 규칙 =====
+--enable preferFinalClasses,\
+    blankLineAfterSwitchCase
 
 # ===== 파일 제외 =====
 --exclude \

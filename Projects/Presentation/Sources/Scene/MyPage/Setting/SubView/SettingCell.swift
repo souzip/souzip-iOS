@@ -3,7 +3,6 @@ import SnapKit
 import UIKit
 
 final class SettingCell: UITableViewCell {
-
     enum Position {
         case single, top, middle, bottom
     }
@@ -99,13 +98,16 @@ final class SettingCell: UITableViewCell {
                 .layerMinXMaxYCorner,
                 .layerMaxXMaxYCorner,
             ]
+
         case .top:
             cardView.layer.maskedCorners = [
                 .layerMinXMinYCorner,
                 .layerMaxXMinYCorner,
             ]
+
         case .middle:
             cardView.layer.maskedCorners = []
+
         case .bottom:
             cardView.layer.maskedCorners = [
                 .layerMinXMaxYCorner,

@@ -55,7 +55,7 @@ final class CategoryPickerView: BaseView<CategoryPickerAction> {
 
     override func setBindings() {
         bind(naviBar.onLeftTap).to(.back)
-        bind(categoryGridView.toggle.asObservable())
+        bind(categoryGridView.action)
             .map { .select(item: $0) }
         bind(completeButton.rx.tap).to(.complete)
     }

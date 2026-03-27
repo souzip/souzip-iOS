@@ -3,7 +3,6 @@ import SnapKit
 import UIKit
 
 final class SettingView: BaseView<SettingAction>, UITableViewDataSource, UITableViewDelegate {
-
     private enum Metric {
         static let rowHeight: CGFloat = 48
         static let sectionTopSpacing: CGFloat = 12

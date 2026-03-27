@@ -28,7 +28,6 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.keyboardDismissMode = .onDrag
-        collectionView.delegate = self
         return collectionView
     }()
 
@@ -93,6 +92,10 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
 
         bind(searchTextFieldView.returnKeyTapped.asObservable())
             .to(.returnKeyTapped)
+
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
+            .map { .selectItem($0) }
     }
 
     // MARK: - Public
@@ -175,14 +178,5 @@ private extension SearchCountryView {
                 item: item
             )
         }
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension SearchCountryView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-        action.accept(.selectItem(item))
     }
 }

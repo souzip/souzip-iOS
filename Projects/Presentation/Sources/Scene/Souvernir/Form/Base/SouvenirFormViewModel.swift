@@ -1,4 +1,6 @@
+import Analytics
 import Domain
+import Logger
 import Photos
 import RxSwift
 import UIKit
@@ -19,6 +21,12 @@ final class SouvenirFormViewModel: BaseViewModel<
     /// 검색화면 재진입 시 유지할 마지막 검색어
     private var locationSearchQuery: String = ""
 
+    /// 업로드 퍼널 이벤트 중복 발송 방지
+    private var firedUploadEvents: Set<String> = []
+
+    /// 폼에 입력 이벤트가 한 번이라도 발생했는지 여부
+    private var isDirty: Bool = false
+
     // MARK: - Life Cycle
 
     init(
@@ -38,13 +46,33 @@ final class SouvenirFormViewModel: BaseViewModel<
            let country = try? countryRepo.fetchCountry(countryCode: initialState.countryCode) {
             mutate { $0.localCurrencySymbol = country.currency.symbol }
         }
+
+        if case .create = mode {
+            trackUploadOnce(.upload(.start))
+        }
     }
 
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
+        case .tapClose, .confirmClose, .tapSubmit,
+             .tapPhotoAdd, .tapAddress, .tapCategory:
+            break
+        default:
+            isDirty = true
+        }
+
+        switch action {
         case .tapClose:
+            if isDirty {
+                emit(.showConfirmClose)
+            } else {
+                navigate(to: .dismiss)
+                navigate(to: .finish)
+            }
+
+        case .confirmClose:
             navigate(to: .dismiss)
             navigate(to: .finish)
 
@@ -59,8 +87,14 @@ final class SouvenirFormViewModel: BaseViewModel<
             handleRemoveLocalPhoto(id)
 
         case let .updateName(text):
+            let wasEmpty = state.value.name.isEmpty
             mutate { state in
-                state.name = text
+                if text.count <= 30 {
+                    state.name = text
+                }
+            }
+            if wasEmpty, !text.isEmpty {
+                trackUploadOnce(.upload(.titleAdded))
             }
 
         // 주소 입력 탭 처리
@@ -88,6 +122,7 @@ final class SouvenirFormViewModel: BaseViewModel<
                 state.coordinate = coordinate
                 state.locationDetail = detail
             }
+            trackUploadOnce(.upload(.locationSet))
 
             Task { await updateAddress(coordinate) }
 
@@ -103,6 +138,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             mutate { state in
                 state.purpose = purpose
             }
+            trackUploadOnce(.upload(.targetAdded))
 
         case .tapCategory:
             let category = state.value.category
@@ -117,6 +153,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             mutate { state in
                 state.category = category
             }
+            trackUploadOnce(.upload(.categoryAdded))
 
         case let .updateDescription(text):
             handleUpdateDescription(text)
@@ -129,10 +166,14 @@ final class SouvenirFormViewModel: BaseViewModel<
     // MARK: - Private
 
     private func handleAddLocalPhotos(_ photos: [LocalPhoto]) {
+        let wasEmpty = state.value.localPhotos.isEmpty
         mutate { state in
             guard case .create = state.mode else { return }
             let remaining = max(0, 5 - state.localPhotos.count)
             state.localPhotos.append(contentsOf: photos.prefix(remaining))
+        }
+        if wasEmpty, !state.value.localPhotos.isEmpty {
+            trackUploadOnce(.upload(.photoAdded))
         }
     }
 
@@ -163,17 +204,25 @@ final class SouvenirFormViewModel: BaseViewModel<
     }
 
     private func handleUpdatePrice(_ text: String) {
+        let wasEmpty = state.value.price.isEmpty
         let filtered = text.filter(\.isNumber)
         mutate { state in
             state.price = filtered
         }
+        if wasEmpty, !filtered.isEmpty {
+            trackUploadOnce(.upload(.priceAdded))
+        }
     }
 
     private func handleUpdateDescription(_ text: String) {
+        let wasEmpty = state.value.description.isEmpty
         mutate { state in
             if text.count <= 2000 {
                 state.description = text
             }
+        }
+        if wasEmpty, !text.isEmpty {
+            trackUploadOnce(.upload(.introduceAdded))
         }
     }
 
@@ -185,10 +234,22 @@ final class SouvenirFormViewModel: BaseViewModel<
 
         switch state.value.mode {
         case .create:
+            trackUploadOnce(.upload(.complete))
             handleCreate(input: input)
+
         case let .edit(original):
             handleUpdate(id: original.id, input: input)
         }
+    }
+
+    // MARK: - Analytics
+
+    /// 업로드 퍼널 이벤트를 폼 세션 당 1회만 발송
+    private func trackUploadOnce(_ event: AnalyticsEvent) {
+        guard case .create = state.value.mode else { return }
+        guard !firedUploadEvents.contains(event.eventType) else { return }
+        firedUploadEvents.insert(event.eventType)
+        AnalyticsManager.shared.track(event: event)
     }
 
     // MARK: - Private Helpers

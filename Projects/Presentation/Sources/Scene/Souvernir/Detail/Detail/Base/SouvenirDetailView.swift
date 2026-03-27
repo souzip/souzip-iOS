@@ -19,10 +19,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         style: .back
     )
 
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        return scrollView
-    }()
+    private let scrollView: UIScrollView = .init()
 
     private let contentView = UIView()
 
@@ -76,7 +73,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     private let nameCategoryStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
-        stack.spacing = 8
+        stack.spacing = 12
         stack.alignment = .center
         return stack
     }()
@@ -130,6 +127,8 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         return label
     }()
 
+    private let exchangeRateInfoButton = ExchangeRateInfoButton()
+
     // 설명
     private let descriptionLabel: TypographyLabel = {
         let label = TypographyLabel()
@@ -152,7 +151,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         let label = TypographyLabel()
         label.textColor = .dsGreyWhite
         label.numberOfLines = 1
-        label.lineBreakMode = .byTruncatingTail
         label.setTypography(.body2M)
         return label
     }()
@@ -204,9 +202,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     override func setAttributes() {
         backgroundColor = .dsBackground
         setupDataSource()
-
-        mapView?.layer.cornerRadius = 10
-        mapView?.clipsToBounds = true
     }
 
     override func setHierarchy() {
@@ -241,6 +236,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         [
             localPriceLabel,
             krwPriceLabel,
+            exchangeRateInfoButton,
         ].forEach(priceContainerStack.addArrangedSubview)
     }
 
@@ -299,6 +295,10 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             make.top.equalTo(nameCategoryStack.snp.bottom)
             make.leading.equalToSuperview().inset(20)
             priceHeightConstraint = make.height.equalTo(36).constraint
+        }
+
+        exchangeRateInfoButton.snp.makeConstraints { make in
+            make.size.equalTo(18)
         }
 
         descriptionLabel.snp.makeConstraints { make in
@@ -362,7 +362,7 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         // 카테고리
         categoryView.render(
             title: detail.category.title,
-            image: detail.category.selectedImage
+            image: detail.category.tintedImage
         )
 
         // 가격 (둘 다 있을 때만 표시)
@@ -376,8 +376,9 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             krwPriceLabel.text = "\(formatKRW(krwPrice))원"
         } else {
             priceContainerStack.isHidden = true
+            exchangeRateInfoButton.hideTooltip()
             priceHeightConstraint?.update(offset: 0)
-            descriptionTopConstraint?.update(offset: 0)
+            descriptionTopConstraint?.update(offset: 12)
         }
 
         // 설명
@@ -392,8 +393,6 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
             let map = LocationMapView(mode: .readonly, initialCoordinate: coordinate)
             contentView.addSubview(map)
             mapView = map
-            mapView?.layer.cornerRadius = 10
-            mapView?.clipsToBounds = true
 
             map.snp.makeConstraints { make in
                 make.top.equalTo(locationTitleLabel.snp.bottom).offset(8)

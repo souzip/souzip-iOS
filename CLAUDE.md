@@ -40,10 +40,10 @@ App → Presentation → Domain ← Data → Core
 | Presentation | Presentation | `Projects/Presentation/` |
 | Domain | Domain | `Projects/Domain/` |
 | Data | Data | `Projects/Data/` |
-| Core | Networking, Logger, Keychain, UserDefaults, AdMob | `Projects/Core/{module}/` |
+| Core | Networking, Logger, Analytics, Storage, Ads | `Projects/Core/{module}/` |
 | Shared | DesignSystem, Utils | `Projects/Shared/{module}/` |
 
-상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조.
+상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조. 모듈·레이어 import 규범: [`docs/claude/module-layer-constitution.md`](docs/claude/module-layer-constitution.md).
 
 ## 금지 사항 (DO NOT)
 
@@ -60,6 +60,17 @@ App → Presentation → Domain ← Data → Core
 
 - 한국어 커밋 메시지 & 코드 주석
 - SnapKit으로 프로그래매틱 UI (스토리보드 사용 안 함)
+  - `makeConstraints { make in` 형태 사용 (`$0` 단축 표기 금지)
+  - `setHierarchy` 내 `addSubview` / `addArrangedSubview` 는 멀티라인 배열 + `forEach` 사용
+    ```swift
+    // ✅
+    [viewA, viewB].forEach(addSubview)
+    // ✅ (뷰가 많을 때)
+    [
+        viewA,
+        viewB,
+    ].forEach(addSubview)
+    ```
 - RxSwift/RxRelay/RxCocoa로 리액티브 바인딩
 - BaseViewModel 4타입 패턴 준수 (State, Action, Event, Route)
 - DTO → Domain 변환은 **Mapper** 사용 (`toDomain()` 직접 구현 금지)
@@ -91,6 +102,10 @@ App → Presentation → Domain ← Data → Core
 예시: `feat/SOU-398/nickname-policy`, `fix/SOU-380/profile-image-downsampling`, `refactor/SOU-422/souvenirs-api-v2`
 
 **기본 브랜치**: `develop` (PR 타겟)
+
+## AI 협업 워크플로우
+
+`plan-before-code` 스킬 참조. 리서치 → 플랜 → 승인 → 구현 순서를 따른다.
 
 ## 새 기능 추가 절차
 

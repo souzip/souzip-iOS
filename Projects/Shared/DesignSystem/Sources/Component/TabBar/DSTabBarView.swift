@@ -126,8 +126,9 @@ private extension DSTabBarView {
     }
 
     func updateSafeAreaConstraints() {
-        heightConstraint?.update(offset: baseHeight + safeAreaInsets.bottom)
-        stackBottomConstraint?.update(offset: safeAreaInsets.bottom)
+        let bottomInset = LayoutConstants.SafeArea.minBottom
+        heightConstraint?.update(offset: baseHeight + bottomInset)
+        stackBottomConstraint?.update(offset: bottomInset)
     }
 }
 
@@ -167,7 +168,7 @@ private extension DSTabBarView {
         stackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.horizontalEdges.equalToSuperview()
-            stackBottomConstraint = make.bottom.equalToSuperview().constraint
+            stackBottomConstraint = make.bottom.equalTo(safeAreaLayoutGuide).constraint
         }
     }
 }

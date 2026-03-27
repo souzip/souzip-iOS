@@ -24,7 +24,6 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
         let view = UICollectionView(frame: .zero, collectionViewLayout: makeCVLayout())
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
-        view.delegate = self
         view.refreshControl = refreshContorl
         view.contentInset.top = 18
         return view
@@ -73,6 +72,18 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
     override func setBindings() {
         bind(faButton.rx.tap).to(.tapFAB)
         bind(refreshContorl.rx.controlEvent(.valueChanged)).to(.refresh)
+
+        bind(collectionView.rx.itemSelected)
+            .compactMap { [weak self] indexPath -> DiscoveryAction? in
+                guard let item = self?.dataSource?.itemIdentifier(for: indexPath) else { return nil }
+                switch item {
+                case let .countryChip(chipItem): return .countryChipTap(chipItem)
+                case let .souvenirCard(cardItem): return .souvenirCardTap(cardItem)
+                case let .categoryChip(chipItem): return .categoryChipTap(chipItem)
+                case .moreButton: return .moreButtonTap
+                default: return nil
+                }
+            }
     }
 
     // MARK: - Public
@@ -297,6 +308,7 @@ private extension DiscoveryView {
             case .banner, .statisticsChips:
                 section.contentInsets.leading = 0
                 section.contentInsets.trailing = 0
+
             default:
                 section.contentInsets.leading = Space.horizontal
                 section.contentInsets.trailing = Space.horizontal
@@ -393,8 +405,7 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 
     // Top10 카드 섹션 (가로 스크롤)
@@ -547,8 +558,7 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
+        return NSCollectionLayoutSection(group: group)
     }
 
     func makeSpacerSectionLayout() -> NSCollectionLayoutSection {
@@ -564,28 +574,6 @@ private extension DiscoveryView {
             subitems: [item]
         )
 
-        let section = NSCollectionLayoutSection(group: group)
-        return section
-    }
-}
-
-// MARK: - UICollectionView Delegate
-
-extension DiscoveryView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let item = dataSource?.itemIdentifier(for: indexPath) else { return }
-
-        switch item {
-        case let .countryChip(chipItem):
-            action.accept(.countryChipTap(chipItem))
-        case let .souvenirCard(cardItem):
-            action.accept(.souvenirCardTap(cardItem))
-        case let .categoryChip(chipItem):
-            action.accept(.categoryChipTap(chipItem))
-        case .moreButton:
-            action.accept(.moreButtonTap)
-        default:
-            break
-        }
+        return NSCollectionLayoutSection(group: group)
     }
 }

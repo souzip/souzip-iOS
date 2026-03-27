@@ -20,6 +20,10 @@ final class LocationMapView: UIView {
     private let centerPinView: UIImageView = {
         let iv = UIImageView(image: .dsLocationPin)
         iv.contentMode = .scaleAspectFit
+        iv.layer.shadowColor = UIColor.black.cgColor
+        iv.layer.shadowOpacity = 0.15
+        iv.layer.shadowOffset = .zero
+        iv.layer.shadowRadius = 2
         return iv
     }()
 
@@ -85,6 +89,9 @@ final class LocationMapView: UIView {
         // Ornaments 설정
         mapboxMapView.ornaments.options.scaleBar.visibility = .hidden
         mapboxMapView.ornaments.options.compass.visibility = .hidden
+
+        mapboxMapView.layer.cornerRadius = 10
+        mapboxMapView.clipsToBounds = true
 
         addSubview(mapboxMapView)
 

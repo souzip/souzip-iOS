@@ -1,3 +1,4 @@
+import Analytics
 import CoreLocation
 import Domain
 import Logger
@@ -22,7 +23,7 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
             showEditSouvenir(detail, onResult)
 
         case let .detail(id):
-            AnalyticsManager.shared.track(event: .tapSouvenirDetail(id: id.description))
+            AnalyticsManager.shared.track(event: .app(.tapSouvenirDetail(id: id.description)))
             showDetailSouvenir(id)
 
         case let .search(context):

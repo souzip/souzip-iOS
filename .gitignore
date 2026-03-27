@@ -48,3 +48,6 @@ Config/*.xcconfig
 
 # Misc
 *.log
+
+# AI 작업 문서 (플랜·리서치)
+docs/plans/

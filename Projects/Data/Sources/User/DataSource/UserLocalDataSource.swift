@@ -1,5 +1,5 @@
 import Foundation
-import UserDefaults
+import Storage
 import Utils
 
 public protocol UserLocalDataSource {

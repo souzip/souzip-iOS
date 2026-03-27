@@ -4,6 +4,7 @@ CLAUDE.md의 아키텍처 섹션에서 이어지는 상세 내용입니다.
 
 ## Tuist 설정 파일
 
+- **모듈·레이어 규범(import·Factory 경계)**: [`module-layer-constitution.md`](./module-layer-constitution.md)
 - 모듈 정의: `Tuist/ProjectDescriptionHelpers/Core/Module.swift`
 - 의존성 그래프: `Tuist/ProjectDescriptionHelpers/Dependencies/ModuleDependencies.swift`
 - 프로젝트 템플릿: `Tuist/ProjectDescriptionHelpers/Templates/Project+App.swift`, `Project+Framework.swift`

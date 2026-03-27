@@ -11,12 +11,11 @@ import PackageDescription
 let package = Package(
     name: "Souzip",
     dependencies: [
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.9.1"),
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.10.1"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.7.0"),
         .package(url: "https://github.com/onevcat/Kingfisher.git", from: "8.0.0"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk", from: "2.26.0"),
         .package(url: "https://github.com/mapbox/mapbox-maps-ios", from: "11.17.0"),
-        .package(url: "https://github.com/mchoe/SwiftSVG", from: "2.3.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "9.1.0"),
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.16.5"),
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "12.14.0")

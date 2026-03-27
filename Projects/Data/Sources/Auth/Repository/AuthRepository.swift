@@ -1,6 +1,8 @@
+import Analytics
 import Domain
-import Keychain
+import Logger
 import Networking
+import Storage
 
 public final class DefaultAuthRepository: AuthRepository {
     private let authRemote: AuthRemoteDataSource
@@ -28,6 +30,7 @@ public final class DefaultAuthRepository: AuthRepository {
             authLocal.saveOAuthPlatform(platform)
 
             userLocal.saveUserId(dto.user.userId)
+            AnalyticsManager.shared.setUserId(dto.user.userId)
             userLocal.saveUserNickname(dto.user.nickname)
             userLocal.saveNeedsOnboarding(dto.needsOnboarding)
 
@@ -42,9 +45,11 @@ public final class DefaultAuthRepository: AuthRepository {
             try await authRemote.logout()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
         } catch {
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
             throw mapToDomainError(error)
         }
     }
@@ -54,9 +59,11 @@ public final class DefaultAuthRepository: AuthRepository {
             try await authRemote.withdraw()
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
         } catch {
             await authLocal.deleteAllTokens()
             userLocal.deleteUser()
+            AnalyticsManager.shared.clearUserId()
             throw mapToDomainError(error)
         }
     }
@@ -83,6 +90,7 @@ public final class DefaultAuthRepository: AuthRepository {
                 throw AuthError.invalidUser
             }
 
+            AnalyticsManager.shared.setUserId(userDTO.userId)
             return UserDTOMapper.toDomain(userDTO)
         } catch {
             throw mapToDomainError(error)

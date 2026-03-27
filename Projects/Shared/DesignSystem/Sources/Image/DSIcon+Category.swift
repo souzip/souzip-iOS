@@ -3,33 +3,43 @@ import UIKit
 public extension UIImage {
     // MARK: - Category
 
-    static let dsIconCategoryArt: UIImage = .iconCategoryArt
-    static let dsIconCategoryArtSelected: UIImage = .iconCategoryArtSelected
+    static let dsIconCategoryArtGray: UIImage = .iconCategoryArtGray
+    static let dsIconCategoryArtMain: UIImage = .iconCategoryArtMain
+    static let dsIconCategoryArtTinted: UIImage = .iconCategoryArtTinted
 
-    static let dsIconCategoryClassic: UIImage = .iconCategoryClassic
-    static let dsIconCategoryClassicSelected: UIImage = .iconCategoryClassicSelected
+    static let dsIconCategoryClassicGray: UIImage = .iconCategoryClassicGray
+    static let dsIconCategoryClassicMain: UIImage = .iconCategoryClassicMain
+    static let dsIconCategoryClassicTinted: UIImage = .iconCategoryClassicTinted
 
-    static let dsIconCategoryCulture: UIImage = .iconCategoryCulture
-    static let dsIconCategoryCultureSelected: UIImage = .iconCategoryCultureSelected
+    static let dsIconCategoryCultureGray: UIImage = .iconCategoryCultureGray
+    static let dsIconCategoryCultureMain: UIImage = .iconCategoryCultureMain
+    static let dsIconCategoryCultureTinted: UIImage = .iconCategoryCultureTinted
 
-    static let dsIconCategoryTech: UIImage = .iconCategoryTech
-    static let dsIconCategoryTechSelected: UIImage = .iconCategoryTechSelected
+    static let dsIconCategoryTechGray: UIImage = .iconCategoryTechGray
+    static let dsIconCategoryTechMain: UIImage = .iconCategoryTechMain
+    static let dsIconCategoryTechTinted: UIImage = .iconCategoryTechTinted
 
-    static let dsIconCategoryToy: UIImage = .iconCategoryToy
-    static let dsIconCategoryToySelected: UIImage = .iconCategoryToySelected
+    static let dsIconCategoryToyGray: UIImage = .iconCategoryToyGray
+    static let dsIconCategoryToyMain: UIImage = .iconCategoryToyMain
+    static let dsIconCategoryToyTinted: UIImage = .iconCategoryToyTinted
 
-    static let dsIconCategoryTravel: UIImage = .iconCategoryTravel
-    static let dsIconCategoryTravelSelected: UIImage = .iconCategoryTravelSelected
+    static let dsIconCategoryTravelGray: UIImage = .iconCategoryTravelGray
+    static let dsIconCategoryTravelMain: UIImage = .iconCategoryTravelMain
+    static let dsIconCategoryTravelTinted: UIImage = .iconCategoryTravelTinted
 
-    static let dsIconCategoryFashion: UIImage = .iconCategoryFashion
-    static let dsIconCategoryFashionSelected: UIImage = .iconCategoryFashionSelected
+    static let dsIconCategoryFashionGray: UIImage = .iconCategoryFashionGray
+    static let dsIconCategoryFashionMain: UIImage = .iconCategoryFashionMain
+    static let dsIconCategoryFashionTinted: UIImage = .iconCategoryFashionTinted
 
-    static let dsIconCategoryHealthBeauty: UIImage = .iconCategoryHealthAndBeauty
-    static let dsIconCategoryHealthBeautySelected: UIImage = .iconCategoryHealthAndBeautySelected
+    static let dsIconCategoryHealthBeautyGray: UIImage = .iconCategoryHealthAndBeautyGray
+    static let dsIconCategoryHealthBeautyMain: UIImage = .iconCategoryHealthAndBeautyMain
+    static let dsIconCategoryHealthBeautyTinted: UIImage = .iconCategoryHealthAndBeautyTinted
 
-    static let dsIconCategoryLifestyle: UIImage = .iconCategoryLifestyle
-    static let dsIconCategoryLifestyleSelected: UIImage = .iconCategoryLifestyleSelected
+    static let dsIconCategoryLifestyleGray: UIImage = .iconCategoryLifestyleGray
+    static let dsIconCategoryLifestyleMain: UIImage = .iconCategoryLifestyleMain
+    static let dsIconCategoryLifestyleTinted: UIImage = .iconCategoryLifestyleTinted
 
-    static let dsIconCategorySnack: UIImage = .iconCategorySnack
-    static let dsIconCategorySnackSelected: UIImage = .iconCategorySnackSelected
+    static let dsIconCategorySnackGray: UIImage = .iconCategorySnackGray
+    static let dsIconCategorySnackMain: UIImage = .iconCategorySnackMain
+    static let dsIconCategorySnackTinted: UIImage = .iconCategorySnackTinted
 }

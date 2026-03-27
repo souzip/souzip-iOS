@@ -44,7 +44,6 @@ public extension ExternalLibrary {
     var productType: Product {
         switch self {
         case .mapboxMaps: .framework
-        case .rxSwift, .rxRelay, .rxCocoa: .framework
         case .amplitudeSwift, .googleMobileAds: .framework
         default: .staticFramework
         }

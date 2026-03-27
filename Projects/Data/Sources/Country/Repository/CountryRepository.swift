@@ -6,7 +6,7 @@ final class DefaultCountryRepository: CountryRepository {
     private let countryRemote: CountryRemoteDataSource
     private let countryLocal: CountryLocalDataSource
 
-    public init(
+    init(
         countryRemote: CountryRemoteDataSource,
         countryLocal: CountryLocalDataSource
     ) {

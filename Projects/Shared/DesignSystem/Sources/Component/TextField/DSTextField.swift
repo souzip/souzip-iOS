@@ -39,6 +39,7 @@ public final class DSTextField: UIView {
     // MARK: - Properties
 
     private var onTextChangedHandler: ((String) -> Void)?
+    private var maxLength: Int?
 
     // MARK: - Init
 
@@ -83,6 +84,16 @@ public final class DSTextField: UIView {
         textField.keyboardType = type
     }
 
+    public func setMaxLength(_ maxLength: Int) {
+        self.maxLength = maxLength
+        let current = textField.text ?? ""
+        setCharacterCountText("\(current.count)/\(maxLength)")
+    }
+
+    public func setUnderlineColor(_ color: UIColor) {
+        underlineView.backgroundColor = color
+    }
+
     public func setReturnKeyType(_ returnKeyType: UIReturnKeyType = .done) {
         textField.returnKeyType = returnKeyType
 
@@ -102,7 +113,18 @@ public final class DSTextField: UIView {
     // MARK: - Private
 
     @objc private func textDidChange() {
-        onTextChangedHandler?(textField.text ?? "")
+        let text = textField.text ?? ""
+        if let maxLength {
+            let limited = String(text.prefix(maxLength))
+            if limited != text {
+                // 초과분 잘라내기 (programmatic 설정 → editingChanged 재발화 없음)
+                textField.text = limited
+            }
+            setCharacterCountText("\(limited.count)/\(maxLength)")
+            onTextChangedHandler?(limited)
+        } else {
+            onTextChangedHandler?(text)
+        }
     }
 
     @objc private func textFieldDidReturn() {
