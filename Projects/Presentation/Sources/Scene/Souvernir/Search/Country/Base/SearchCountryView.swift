@@ -1,5 +1,4 @@
 import DesignSystem
-import Domain
 import RxRelay
 import RxSwift
 import SnapKit
@@ -161,8 +160,16 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
 
 private extension SearchCountryView {
     func configureDataSource() {
-        let registration = UICollectionView.CellRegistration<
-            SearchResultCell,
+        let cityRegistration = UICollectionView.CellRegistration<
+            CitySearchResultCell,
+            Item
+        > { [weak self] cell, _, item in
+            guard let self else { return }
+            cell.render(item: item, searchText: currentSearchText)
+        }
+
+        let placeRegistration = UICollectionView.CellRegistration<
+            PlaceSearchResultCell,
             Item
         > { [weak self] cell, _, item in
             guard let self else { return }
@@ -172,11 +179,21 @@ private extension SearchCountryView {
         dataSource = .init(
             collectionView: collectionView
         ) { collectionView, indexPath, item in
-            collectionView.dequeueConfiguredReusableCell(
-                using: registration,
-                for: indexPath,
-                item: item
-            )
+            switch item.type {
+            case .city:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: cityRegistration,
+                    for: indexPath,
+                    item: item
+                )
+
+            case .place:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: placeRegistration,
+                    for: indexPath,
+                    item: item
+                )
+            }
         }
     }
 }
