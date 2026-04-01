@@ -54,10 +54,10 @@ final class DefaultCountryRepository: CountryRepository {
 
     func searchLocations(
         keyword: String
-    ) async throws -> [SearchedLocation] {
+    ) async throws -> [LocationSearchHit] {
         do {
-            let dto = try await countryRemote.searchLocations(keyword: keyword)
-            return CountryDTOMapper.toDomain(dto)
+            let items = try await countryRemote.searchLocations(keyword: keyword)
+            return CountryDTOMapper.toDomain(items)
         } catch {
             throw mapToDomainError(error)
         }
