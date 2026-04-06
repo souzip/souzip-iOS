@@ -108,6 +108,8 @@ public final class DefaultDataFactory: DataFactory {
 
     private lazy var cachedCountryLocalDataSource: CountryLocalDataSource = DefaultCountryLocalDataSource()
 
+    private lazy var cachedPlaceTypeLocalDataSource: GooglePlaceTypeLocalDataSource = DefaultGooglePlaceTypeLocalDataSource()
+
     private lazy var cachedCountryRepository: CountryRepository = {
         let plainClient = networkFactory.makePlainClient()
         let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
@@ -119,7 +121,8 @@ public final class DefaultDataFactory: DataFactory {
 
         return DefaultCountryRepository(
             countryRemote: countryRemoteDataSource,
-            countryLocal: cachedCountryLocalDataSource
+            countryLocal: cachedCountryLocalDataSource,
+            placeTypeLocal: cachedPlaceTypeLocalDataSource
         )
     }()
 

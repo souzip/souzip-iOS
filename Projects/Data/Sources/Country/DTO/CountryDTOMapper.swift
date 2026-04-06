@@ -1,5 +1,6 @@
 import Domain
 import Foundation
+import Logger
 
 public enum CountryDTOMapper {
     public static func toDomain(_ dto: GeocodingAddressResponse) -> GeocodingAddress {
@@ -33,14 +34,12 @@ public enum CountryDTOMapper {
 
         switch item.type.lowercased() {
         case "place":
-            let kindLabel = GooglePlaceTypeKoreanMapping.koreanLabel(forAPIValue: item.category)
-            let placeKind: String? = kindLabel.isEmpty ? nil : kindLabel
-            let areaDescription = Self.nonEmptyTrimmed(item.region) ?? Self.nonEmptyTrimmed(item.address)
+            let areaDescription = nonEmptyTrimmed(item.region) ?? nonEmptyTrimmed(item.address)
             return .place(
                 PlaceSearchHit(
                     id: id,
                     title: item.name,
-                    placeKind: placeKind,
+                    placeKind: nonEmptyTrimmed(item.category),
                     areaDescription: areaDescription,
                     coordinate: coordinate
                 )
@@ -57,6 +56,7 @@ public enum CountryDTOMapper {
             )
 
         default:
+            Logger.shared.warning("Unknown location type: \(item.type)", category: .network)
             return .city(
                 CitySearchHit(
                     id: id,
@@ -70,8 +70,8 @@ public enum CountryDTOMapper {
 
     private static func nonEmptyTrimmed(_ raw: String?) -> String? {
         guard let raw else { return nil }
-        let t = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        return t.isEmpty ? nil : t
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 
     private static func makeLocationSearchHitID(
