@@ -5,7 +5,7 @@ public protocol CountryRemoteDataSource {
     func getAddress(
         latitude: Double,
         longitude: Double
-    ) async throws -> GeocodingAddressResponse
+    ) async throws -> LocationAddressResponse
 
     func searchLocations(
         keyword: String
@@ -29,13 +29,13 @@ public final class DefaultCountryRemoteDataSource: CountryRemoteDataSource {
     public func getAddress(
         latitude: Double,
         longitude: Double
-    ) async throws -> GeocodingAddressResponse {
-        let endpoint = CountryEndpoint.geocodingAddress(
+    ) async throws -> LocationAddressResponse {
+        let endpoint = CountryEndpoint.locationAddress(
             latitude: latitude,
             longitude: longitude
         )
 
-        let response: APIResponse<GeocodingAddressResponse> = try await authed.request(endpoint)
+        let response: APIResponse<LocationAddressResponse> = try await authed.request(endpoint)
 
         guard let data = response.data else {
             throw NetworkError.noData
