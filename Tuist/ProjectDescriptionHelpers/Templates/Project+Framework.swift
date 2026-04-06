@@ -7,11 +7,10 @@ public extension Project {
         hasTests: Bool = false,
         additionalScripts: [TargetScript] = []
     ) -> Project {
-        
         let dependencies = ModuleDependencies.dependencies(for: module)
         let resources: ResourceFileElements? = hasResources ? ["Resources/**"] : nil
         let scripts = BuildScripts.framework + additionalScripts
-        
+
         var targets: [Target] = [
             .target(
                 name: module.rawValue,
@@ -24,9 +23,9 @@ public extension Project {
                 resources: resources,
                 scripts: scripts,
                 dependencies: dependencies
-            )
+            ),
         ]
-        
+
         if hasTests {
             targets.append(
                 .testTarget(
@@ -35,7 +34,7 @@ public extension Project {
                 )
             )
         }
-        
+
         return Project(
             name: module.rawValue,
             organizationName: Environment.organizationName,

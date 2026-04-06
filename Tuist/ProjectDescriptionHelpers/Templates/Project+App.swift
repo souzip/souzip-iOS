@@ -6,10 +6,9 @@ public extension Project {
         infoPlist: InfoPlist? = nil,
         additionalScripts: [TargetScript] = []
     ) -> Project {
-        
         let dependencies = ModuleDependencies.dependencies(for: module)
         let scripts = BuildScripts.app + additionalScripts
-        
+
         return Project(
             name: module.rawValue,
             organizationName: Environment.organizationName,
@@ -32,7 +31,7 @@ public extension Project {
                     settings: .settings(
                         configurations: DefaultSettings.targetConfigurations()
                     )
-                )
+                ),
             ],
             schemes: DefaultSchemes.appSchemes(for: module)
         )

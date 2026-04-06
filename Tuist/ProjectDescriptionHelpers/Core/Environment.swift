@@ -1,7 +1,6 @@
 import ProjectDescription
 
 public enum Environment {
-
     // MARK: - App Information
 
     public static let appName = "수집"

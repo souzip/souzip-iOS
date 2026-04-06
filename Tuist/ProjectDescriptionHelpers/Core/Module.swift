@@ -16,26 +16,26 @@ public enum Module: String, CaseIterable {
     case utils = "Utils"
 }
 
-extension Module {
-    public var path: Path {
+public extension Module {
+    var path: Path {
         switch self {
         case .app:
-            return .relativeToRoot("Projects/App")
+            .relativeToRoot("Projects/App")
         case .presentation, .domain, .data:
-            return .relativeToRoot("Projects/\(rawValue)")
+            .relativeToRoot("Projects/\(rawValue)")
         case .networking, .logger, .analytics, .storage, .ads:
-            return .relativeToRoot("Projects/Core/\(rawValue)")
+            .relativeToRoot("Projects/Core/\(rawValue)")
         case .designSystem, .utils:
-            return .relativeToRoot("Projects/Shared/\(rawValue)")
+            .relativeToRoot("Projects/Shared/\(rawValue)")
         }
     }
 
-    public var product: Product {
+    var product: Product {
         switch self {
         case .app:
-            return .app
+            .app
         default:
-            return .framework
+            .framework
         }
     }
 }
