@@ -51,6 +51,7 @@ enum TextHighlight {
         )
 
         let tokens = tokenize(searchText)
+        guard !tokens.isEmpty else { return attributed }
         let ranges = mergeRanges(allMatchRanges(in: text, tokens: tokens))
         for range in ranges {
             attributed.addAttribute(.foregroundColor, value: highlight.color, range: range)
