@@ -29,6 +29,7 @@ public extension UIImage {
     static let dsSouvenirPinSelected: UIImage = .souvenirPinSelected
 
     static let dsLocationPin: UIImage = .locationPin
+    static let dsLocationPinSelected: UIImage = .locationPinSelected
 
     // MARK: - Character
 

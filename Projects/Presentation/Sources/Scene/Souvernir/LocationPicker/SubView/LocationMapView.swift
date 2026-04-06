@@ -18,7 +18,7 @@ final class LocationMapView: UIView {
     private var mapboxMapView: MapView
 
     private let centerPinView: UIImageView = {
-        let iv = UIImageView(image: .dsLocationPin)
+        let iv = UIImageView(image: .dsLocationPinSelected)
         iv.contentMode = .scaleAspectFit
         iv.layer.shadowColor = UIColor.black.cgColor
         iv.layer.shadowOpacity = 0.15
