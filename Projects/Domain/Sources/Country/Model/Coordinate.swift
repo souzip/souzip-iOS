@@ -1,4 +1,4 @@
-public struct Coordinate {
+public struct Coordinate: Hashable, Sendable {
     public let latitude: Double
     public let longitude: Double
 

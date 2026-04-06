@@ -12,7 +12,7 @@ extension CountryEndpoint: APIEndpoint {
         case .geocodingAddress:
             "/api/geocoding/address"
         case .searchLocations:
-            "/api/search/locations"
+            "/api/location/search"
         }
     }
 

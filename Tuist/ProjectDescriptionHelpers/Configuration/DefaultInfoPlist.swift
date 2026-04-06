@@ -30,7 +30,7 @@ public enum DefaultInfoPlist {
         // UI Configuration
         "UILaunchStoryboardName": "LaunchScreen",
         "UISupportedInterfaceOrientations": [
-            "UIInterfaceOrientationPortrait"
+            "UIInterfaceOrientationPortrait",
         ],
         "UIUserInterfaceStyle": "Dark",
         "UIApplicationSceneManifest": [
@@ -39,10 +39,10 @@ public enum DefaultInfoPlist {
                 "UIWindowSceneSessionRoleApplication": [
                     [
                         "UISceneConfigurationName": "Default Configuration",
-                        "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate"
-                    ]
-                ]
-            ]
+                        "UISceneDelegateClassName": "$(PRODUCT_MODULE_NAME).SceneDelegate",
+                    ],
+                ],
+            ],
         ],
 
         // Export Compliance
@@ -50,28 +50,28 @@ public enum DefaultInfoPlist {
 
         // URL Schemes
         "LSApplicationQueriesSchemes": [
-          "kakaokompassauth",
-          "kakaolink",
-          "kakaoplus"
+            "kakaokompassauth",
+            "kakaolink",
+            "kakaoplus",
         ],
         "CFBundleURLTypes": [
             [
                 "CFBundleTypeRole": "Editor",
                 "CFBundleURLSchemes": [
-                    "kakao$(KAKAO_APP_KEY)"
-                ]
+                    "kakao$(KAKAO_APP_KEY)",
+                ],
             ],
             [
                 "CFBundleTypeRole": "Editor",
                 "CFBundleURLSchemes": [
-                    "$(GOOGLE_REVERSED_CLIENT_ID)"
-                ]
-            ]
+                    "$(GOOGLE_REVERSED_CLIENT_ID)",
+                ],
+            ],
         ],
     ]
-    
+
     // MARK: - Public InfoPlists
-    
+
     public static let app: InfoPlist = .extendingDefault(
         with: base
             .merging(privacy)
@@ -80,14 +80,14 @@ public enum DefaultInfoPlist {
     )
 
     public static let framework: InfoPlist = .default
-    
+
     public static let test: InfoPlist = .default
 }
 
 // MARK: - Extensions
 
-private extension Dictionary where Key == String, Value == Plist.Value {
+private extension [String: Plist.Value] {
     func merging(_ other: [String: Plist.Value]) -> [String: Plist.Value] {
-        self.merging(other) { _, new in new }
+        merging(other) { _, new in new }
     }
 }

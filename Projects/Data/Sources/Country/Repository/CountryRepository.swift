@@ -5,13 +5,16 @@ import Networking
 final class DefaultCountryRepository: CountryRepository {
     private let countryRemote: CountryRemoteDataSource
     private let countryLocal: CountryLocalDataSource
+    private let placeTypeLocal: GooglePlaceTypeLocalDataSource
 
     init(
         countryRemote: CountryRemoteDataSource,
-        countryLocal: CountryLocalDataSource
+        countryLocal: CountryLocalDataSource,
+        placeTypeLocal: GooglePlaceTypeLocalDataSource
     ) {
         self.countryRemote = countryRemote
         self.countryLocal = countryLocal
+        self.placeTypeLocal = placeTypeLocal
     }
 
     func fetchTop30Countries() throws -> [CountryDetail] {
@@ -54,10 +57,11 @@ final class DefaultCountryRepository: CountryRepository {
 
     func searchLocations(
         keyword: String
-    ) async throws -> [SearchedLocation] {
+    ) async throws -> [LocationSearchHit] {
         do {
-            let dto = try await countryRemote.searchLocations(keyword: keyword)
-            return CountryDTOMapper.toDomain(dto)
+            let items = try await countryRemote.searchLocations(keyword: keyword)
+            let hits = CountryDTOMapper.toDomain(items)
+            return resolvePlaceKinds(hits)
         } catch {
             throw mapToDomainError(error)
         }
@@ -67,6 +71,24 @@ final class DefaultCountryRepository: CountryRepository {
 // MARK: - Error Mapper
 
 private extension DefaultCountryRepository {
+    func resolvePlaceKinds(_ hits: [LocationSearchHit]) -> [LocationSearchHit] {
+        hits.map { hit in
+            guard case let .place(place) = hit else { return hit }
+
+            let koreanLabel = placeTypeLocal.koreanLabel(forAPIValue: place.placeKind)
+            let resolvedKind: String? = koreanLabel.isEmpty ? nil : koreanLabel
+            return .place(
+                PlaceSearchHit(
+                    id: place.id,
+                    title: place.title,
+                    placeKind: resolvedKind,
+                    areaDescription: place.areaDescription,
+                    coordinate: place.coordinate
+                )
+            )
+        }
+    }
+
     func mapToDomainError(_ error: Error) -> CountryError {
         if let networkError = error as? NetworkError {
             switch networkError {

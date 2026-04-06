@@ -9,5 +9,5 @@ public protocol CountryRepository {
 
     func searchLocations(
         keyword: String
-    ) async throws -> [SearchedLocation]
+    ) async throws -> [LocationSearchHit]
 }

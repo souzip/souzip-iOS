@@ -9,7 +9,7 @@ public protocol CountryRemoteDataSource {
 
     func searchLocations(
         keyword: String
-    ) async throws -> SearchLocationsResponse
+    ) async throws -> [LocationSearchItemResponse]
 }
 
 public final class DefaultCountryRemoteDataSource: CountryRemoteDataSource {
@@ -48,10 +48,10 @@ public final class DefaultCountryRemoteDataSource: CountryRemoteDataSource {
 
     public func searchLocations(
         keyword: String
-    ) async throws -> SearchLocationsResponse {
+    ) async throws -> [LocationSearchItemResponse] {
         let endpoint = CountryEndpoint.searchLocations(keyword: keyword)
 
-        let response: APIResponse<SearchLocationsResponse> = try await plain.request(endpoint)
+        let response: APIResponse<[LocationSearchItemResponse]> = try await plain.request(endpoint)
 
         guard let data = response.data else {
             throw NetworkError.noData

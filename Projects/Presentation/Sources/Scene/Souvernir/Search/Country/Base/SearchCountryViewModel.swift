@@ -89,32 +89,29 @@ final class SearchCountryViewModel: BaseViewModel<
     }
 
     private func mapToSearchResultItems(
-        _ locations: [SearchedLocation]
+        _ hits: [LocationSearchHit]
     ) -> [SearchResultItem] {
-        locations.map { location in
-            let type: SearchResultType =
-                location.type == .country ? .country : .city
+        hits.map { hit in
+            switch hit {
+            case let .city(city):
+                SearchResultItem(
+                    id: city.id.rawValue,
+                    name: city.title,
+                    detail: .city(subName: city.countryLine ?? ""),
+                    coordinate: city.coordinate.toCLLocationCoordinate2D
+                )
 
-            let name: String
-            let subName: String
-
-            switch type {
-            case .country:
-                name = location.nameKr
-                subName = ""
-
-            case .city:
-                name = location.nameKr
-                subName = location.countryNameKr ?? ""
+            case let .place(place):
+                SearchResultItem(
+                    id: place.id.rawValue,
+                    name: place.title,
+                    detail: .place(
+                        category: place.placeKind ?? "",
+                        region: place.areaDescription ?? ""
+                    ),
+                    coordinate: place.coordinate.toCLLocationCoordinate2D
+                )
             }
-
-            return SearchResultItem(
-                id: "\(type)-\(location.id)",
-                name: name,
-                subName: subName,
-                type: type,
-                coordinate: location.coordinate.toCLLocationCoordinate2D
-            )
         }
     }
 

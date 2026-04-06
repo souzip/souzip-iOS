@@ -4,7 +4,7 @@ import PackageDescription
 #if TUIST
     import ProjectDescription
     import ProjectDescriptionHelpers
-    
+
     let packageSettings = ExternalLibrary.packageSettings
 #endif
 
@@ -18,6 +18,6 @@ let package = Package(
         .package(url: "https://github.com/mapbox/mapbox-maps-ios", from: "11.17.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS", from: "9.1.0"),
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.16.5"),
-        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "12.14.0")
+        .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git", from: "12.14.0"),
     ]
 )

@@ -100,8 +100,10 @@ final class LocationMapView: UIView {
         }
 
         addSubview(centerPinView)
+        // 카메라 center(좌표)는 뷰포트 정중앙. Globe 기념품 핀과 동일하게 핀 하단이 그 지점에 오도록 앵커.
         centerPinView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(self.snp.centerY)
         }
 
         try? mapboxMapView.mapboxMap.setProjection(StyleProjection(name: .mercator))

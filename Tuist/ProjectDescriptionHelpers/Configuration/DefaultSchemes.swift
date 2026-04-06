@@ -1,7 +1,6 @@
 import ProjectDescription
 
 public enum DefaultSchemes {
-    
     public static func appSchemes(for module: Module) -> [Scheme] {
         [
             createScheme(
@@ -13,10 +12,10 @@ public enum DefaultSchemes {
                 name: "\(Environment.appName)",
                 configuration: Environment.releaseConfigName,
                 module: module
-            )
+            ),
         ]
     }
-    
+
     private static func createScheme(
         name: String,
         configuration: ConfigurationName,
