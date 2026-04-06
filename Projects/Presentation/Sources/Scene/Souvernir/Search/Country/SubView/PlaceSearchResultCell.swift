@@ -2,7 +2,7 @@ import DesignSystem
 import SnapKit
 import UIKit
 
-/// `SearchResultType.place` 한 줄: 제목 + `[category] · [region]`.
+/// `SearchResultDetail.place` 한 줄: 제목 + `[category] · [region]`.
 final class PlaceSearchResultCell: UICollectionViewCell {
     // MARK: - UI Components
 
@@ -94,7 +94,13 @@ final class PlaceSearchResultCell: UICollectionViewCell {
 
     func render(item: SearchResultItem, searchText: String) {
         renderTitle(item.name, searchText: searchText)
-        renderMeta(category: item.placeCategory, region: item.placeRegion)
+        if case let .place(category, region) = item.detail {
+            renderMeta(category: category, region: region)
+        } else {
+            placeCategoryLabel.isHidden = true
+            placeMiddleDotLabel.isHidden = true
+            placeRegionLabel.isHidden = true
+        }
     }
 }
 

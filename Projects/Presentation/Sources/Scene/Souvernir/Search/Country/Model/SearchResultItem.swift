@@ -1,36 +1,15 @@
 import CoreLocation
 
-enum SearchResultType {
-    case city
-    case place
+enum SearchResultDetail {
+    case city(subName: String)
+    case place(category: String, region: String)
 }
 
 struct SearchResultItem: Hashable {
     let id: String
     let name: String
-    let subName: String
-    let type: SearchResultType
-    let placeCategory: String
-    let placeRegion: String
+    let detail: SearchResultDetail
     let coordinate: CLLocationCoordinate2D
-
-    init(
-        id: String,
-        name: String,
-        subName: String = "",
-        type: SearchResultType,
-        placeCategory: String = "",
-        placeRegion: String = "",
-        coordinate: CLLocationCoordinate2D
-    ) {
-        self.id = id
-        self.name = name
-        self.subName = subName
-        self.type = type
-        self.placeCategory = placeCategory
-        self.placeRegion = placeRegion
-        self.coordinate = coordinate
-    }
 
     static func == (lhs: SearchResultItem, rhs: SearchResultItem) -> Bool {
         lhs.id == rhs.id

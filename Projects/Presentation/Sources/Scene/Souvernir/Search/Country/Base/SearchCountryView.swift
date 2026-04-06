@@ -179,7 +179,7 @@ private extension SearchCountryView {
         dataSource = .init(
             collectionView: collectionView
         ) { collectionView, indexPath, item in
-            switch item.type {
+            switch item.detail {
             case .city:
                 collectionView.dequeueConfiguredReusableCell(
                     using: cityRegistration,

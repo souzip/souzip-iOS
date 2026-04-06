@@ -2,7 +2,7 @@ import DesignSystem
 import SnapKit
 import UIKit
 
-/// `SearchResultType.city` 한 줄: 제목 + 국가(부제).
+/// `SearchResultDetail.city` 한 줄: 제목 + 국가(부제).
 final class CitySearchResultCell: UICollectionViewCell {
     // MARK: - UI Components
 
@@ -58,13 +58,13 @@ final class CitySearchResultCell: UICollectionViewCell {
 
     func render(item: SearchResultItem, searchText: String) {
         nameLabel.attributedText = TextHighlight.primary(text: item.name, searchText: searchText)
-        let subTrimmed = item.subName.trimmingCharacters(in: .whitespacesAndNewlines)
-        if subTrimmed.isEmpty {
+        if case let .city(subName) = item.detail {
+            let trimmed = subName.trimmingCharacters(in: .whitespacesAndNewlines)
+            subNameLabel.isHidden = trimmed.isEmpty
+            subNameLabel.text = trimmed.isEmpty ? nil : trimmed
+        } else {
             subNameLabel.isHidden = true
             subNameLabel.text = nil
-        } else {
-            subNameLabel.isHidden = false
-            subNameLabel.text = subTrimmed
         }
     }
 }

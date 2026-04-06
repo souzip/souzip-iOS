@@ -97,8 +97,7 @@ final class SearchCountryViewModel: BaseViewModel<
                 SearchResultItem(
                     id: city.id.rawValue,
                     name: city.title,
-                    subName: city.countryLine ?? "",
-                    type: .city,
+                    detail: .city(subName: city.countryLine ?? ""),
                     coordinate: city.coordinate.toCLLocationCoordinate2D
                 )
 
@@ -106,10 +105,10 @@ final class SearchCountryViewModel: BaseViewModel<
                 SearchResultItem(
                     id: place.id.rawValue,
                     name: place.title,
-                    subName: "",
-                    type: .place,
-                    placeCategory: place.placeKind ?? "",
-                    placeRegion: place.areaDescription ?? "",
+                    detail: .place(
+                        category: place.placeKind ?? "",
+                        region: place.areaDescription ?? ""
+                    ),
                     coordinate: place.coordinate.toCLLocationCoordinate2D
                 )
             }
