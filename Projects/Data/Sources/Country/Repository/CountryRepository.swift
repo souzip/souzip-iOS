@@ -41,7 +41,7 @@ final class DefaultCountryRepository: CountryRepository {
     func getAddress(
         latitude: Double,
         longitude: Double
-    ) async throws -> GeocodingAddress {
+    ) async throws -> LocationAddress {
         do {
             let dto = try await countryRemote.getAddress(
                 latitude: latitude,

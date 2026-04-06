@@ -2,15 +2,15 @@ import Foundation
 import Networking
 
 public enum CountryEndpoint {
-    case geocodingAddress(latitude: Double, longitude: Double)
+    case locationAddress(latitude: Double, longitude: Double)
     case searchLocations(keyword: String)
 }
 
 extension CountryEndpoint: APIEndpoint {
     public var path: String {
         switch self {
-        case .geocodingAddress:
-            "/api/geocoding/address"
+        case .locationAddress:
+            "/api/location/address"
         case .searchLocations:
             "/api/location/search"
         }
@@ -26,7 +26,7 @@ extension CountryEndpoint: APIEndpoint {
 
     public var parameters: [String: Any]? {
         switch self {
-        case let .geocodingAddress(latitude, longitude):
+        case let .locationAddress(latitude, longitude):
             [
                 "latitude": latitude,
                 "longitude": longitude,

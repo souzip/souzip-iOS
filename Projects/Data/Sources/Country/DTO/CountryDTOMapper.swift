@@ -3,9 +3,9 @@ import Foundation
 import Logger
 
 public enum CountryDTOMapper {
-    public static func toDomain(_ dto: GeocodingAddressResponse) -> GeocodingAddress {
-        GeocodingAddress(
-            formattedAddress: dto.formattedAddress,
+    public static func toDomain(_ dto: LocationAddressResponse) -> LocationAddress {
+        LocationAddress(
+            address: dto.address,
             city: dto.city,
             countryCode: dto.countryCode
         )
