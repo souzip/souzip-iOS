@@ -186,17 +186,17 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private func updateAddress(_ coordinate: Coordinate) async {
         do {
-            let address = try await countryRepo.getAddress(
+            let locationAddress = try await countryRepo.getAddress(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
 
-            let country = try countryRepo.fetchCountry(countryCode: address.countryCode)
+            let country = try countryRepo.fetchCountry(countryCode: locationAddress.countryCode)
             mutate {
-                $0.address = address.formattedAddress
+                $0.address = locationAddress.address
                 $0.currencySymbol = country.currency.symbol
                 $0.localCurrencySymbol = country.currency.symbol
-                $0.countryCode = address.countryCode
+                $0.countryCode = locationAddress.countryCode
             }
         } catch {
             emit(.showError(error.localizedDescription))
