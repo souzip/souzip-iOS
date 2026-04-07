@@ -129,6 +129,9 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         bind(addressFieldView.tapRelay.asObservable())
             .to(.tapAddress)
 
+        bind(addressFieldView.preciseLocationTapRelay.asObservable())
+            .to(.tapPreciseLocation)
+
         // Price Field
         bind(priceFieldView.action)
             .map { action -> SouvenirFormAction in
@@ -175,9 +178,12 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         nameFieldView.setText(text)
     }
 
-    func renderAddress(_ text: String, _ description: String) {
+    func renderAddress(_ text: String, _ description: String, showPreciseLocationEntry: Bool) {
         addressFieldView.render(text: text)
-        addressFieldView.renderDescription(description)
+        addressFieldView.renderDetailOrHintLine(
+            detailText: description,
+            showPreciseLocationEntry: showPreciseLocationEntry
+        )
     }
 
     func renderPrice(
