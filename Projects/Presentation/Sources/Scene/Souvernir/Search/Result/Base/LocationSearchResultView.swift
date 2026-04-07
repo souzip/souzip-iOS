@@ -16,13 +16,18 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
     // MARK: - Sheet Constants
 
     private enum SheetMetric {
-        /// 최소 높이 = 헤더만(51pt). 이때 확인 버튼은 시트 높이상 도저히 보이지 않으며 `masksToBounds`로 잘림.
-        /// 중간 높이에서 UX가 어색하면 `currentSheetHeight` 등 기준으로 버튼 숨김·인셋 조정을 별도 검토.
-        static let sheetHeaderHeight: CGFloat = 51
-        static let minHeight: CGFloat = sheetHeaderHeight
+        /// 그래버 영역이 있는 시트 상단 바
+        static let sheetHeaderHeight: CGFloat = 30
+        /// 시트를 내릴 수 있는 하한
+        static let minHeight: CGFloat = 80
         static let cornerRadius: CGFloat = 20
         /// 시트 상단 고정 영역(초기 시트 높이 계산용, SnapKit과 동일)
         static let chromeAboveList: CGFloat = sheetHeaderHeight
+        /// 이 높이 이하로 내려가면 확인 버튼 숨김 (헤더 + 셀 2행 + 셀 간격×2)
+        static var sheetHeightHidingConfirmButton: CGFloat {
+            sheetHeaderHeight + 2 * cellHeight + 2 * interItemSpacing
+        }
+
         static let cellHeight: CGFloat = 70
         static let interItemSpacing: CGFloat = 13
         static let confirmButtonHeight: CGFloat = 50
@@ -38,6 +43,8 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
         static let sheetPullMinTranslationY: CGFloat = 2
         /// `contentOffset`이 상단에 붙었는지 판별할 때 허용 오차(pt)
         static let scrollTopTolerance: CGFloat = 1
+        /// 팬 종료 시 높이 변화가 이보다 작으면 가장 가까운 앵커(기존 동작)
+        static let sheetSnapDirectionAmbiguousThreshold: CGFloat = 20
     }
 
     // MARK: - UI
@@ -198,7 +205,7 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
         }
 
         grabberView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(9)
+            make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
             make.width.equalTo(36.5)
             make.height.equalTo(4)
@@ -250,6 +257,7 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
             .subscribe(onNext: { [weak self] index in
                 guard let self else { return }
                 action.accept(.selectItemFromMap(index))
+                snapSheetToMid(animated: true)
                 DispatchQueue.main.async {
                     self.scrollCollectionToShowItem(at: index)
                 }
@@ -395,6 +403,11 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
         currentSheetHeight = clamped
         heightConstraint?.update(offset: clamped)
 
+        confirmButton.isHidden = clamped <= SheetMetric.sheetHeightHidingConfirmButton
+
+        // min 높이에서는 리스트가 거의 안 보이므로 스크롤 비활성(제스처는 시트 드래그에 사용)
+        collectionView.isScrollEnabled = clamped > SheetMetric.minHeight
+
         let halfScreen = UIScreen.main.bounds.height * 0.5
         let lift = min(clamped / halfScreen * 150, 150)
         mapView.updateCameraPadding(bottom: lift)
@@ -408,10 +421,28 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
         }
     }
 
-    private func snapSheetToNearest() {
-        let candidates = [SheetMetric.minHeight, midHeight, maxHeight]
-        let nearest = candidates.min { abs($0 - currentSheetHeight) < abs($1 - currentSheetHeight) } ?? midHeight
-        setSheetHeight(nearest, animated: true)
+    private func snapSheetToMid(animated: Bool) {
+        guard midHeight > 0 else { return }
+        setSheetHeight(midHeight, animated: animated)
+    }
+
+    /// 팬 종료 시: 시트를 키운 방향이면 현재 높이 이상인 앵커 중 가장 낮은 값(올림), 줄인 방향이면 이하 중 가장 높은 값(내림).
+    /// 변화량이 작으면 가장 가까운 앵커(기존 nearest).
+    private func snapSheetAfterPanEnded() {
+        let h = currentSheetHeight
+        let delta = h - panStartHeight
+        let anchors = [SheetMetric.minHeight, midHeight, maxHeight].sorted()
+
+        let target: CGFloat = if abs(delta) < SheetMetric.sheetSnapDirectionAmbiguousThreshold {
+            anchors.min { abs($0 - h) < abs($1 - h) } ?? midHeight
+        } else if delta > 0 {
+            anchors.first { $0 >= h - 0.5 } ?? maxHeight
+        } else {
+            anchors.last { $0 <= h + 0.5 } ?? SheetMetric.minHeight
+        }
+
+        let clamped = max(SheetMetric.minHeight, min(target, maxHeight))
+        setSheetHeight(clamped, animated: true)
     }
 
     private func isCollectionScrolledToTop() -> Bool {
@@ -431,15 +462,19 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
 
         case .changed:
             if gesture === collectionSheetPullPan {
-                guard isCollectionScrolledToTop() else { return }
-                // 위로 당기면 리스트 스크롤에 맡기고, 아래로 당길 때만 시트를 내림
-                guard translation.y > SheetMetric.sheetPullMinTranslationY else { return }
+                // min에서 제스처를 시작했으면 시트 전 구간을 헤더 팬과 같이 양방향으로 조절
+                let pullStartedAtMin = panStartHeight <= SheetMetric.minHeight + 0.5
+                if !pullStartedAtMin {
+                    guard isCollectionScrolledToTop() else { return }
+                    // 위로 당기면 리스트 스크롤, 아래로만 시트 축소
+                    guard translation.y > SheetMetric.sheetPullMinTranslationY else { return }
+                }
             }
             let proposed = panStartHeight - translation.y
             setSheetHeight(proposed, animated: false)
 
         case .ended, .cancelled:
-            snapSheetToNearest()
+            snapSheetAfterPanEnded()
 
         default:
             break
@@ -450,6 +485,9 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard gestureRecognizer === collectionSheetPullPan else {
             return super.gestureRecognizerShouldBegin(gestureRecognizer)
+        }
+        if currentSheetHeight <= SheetMetric.minHeight + 0.5 {
+            return true
         }
         return isCollectionScrolledToTop()
     }
