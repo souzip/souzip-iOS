@@ -7,6 +7,12 @@ public final class TypographyTextField: UITextField {
 
     // MARK: - Overrides
 
+    override public var textAlignment: NSTextAlignment {
+        didSet {
+            applyTypography()
+        }
+    }
+
     override public var text: String? {
         didSet {
             applyTypography()
@@ -42,9 +48,21 @@ public final class TypographyTextField: UITextField {
               let text,
               !text.isEmpty else { return }
 
+        var attributes = typography.toAttributes()
+
+        let paragraphStyle: NSMutableParagraphStyle
+        if let existing = attributes[.paragraphStyle] as? NSMutableParagraphStyle {
+            paragraphStyle = existing
+        } else {
+            paragraphStyle = NSMutableParagraphStyle()
+            attributes[.paragraphStyle] = paragraphStyle
+        }
+        paragraphStyle.alignment = textAlignment
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+
         attributedText = NSAttributedString(
             string: text,
-            attributes: typography.toAttributes()
+            attributes: attributes
         )
     }
 }
