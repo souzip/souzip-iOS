@@ -1,4 +1,5 @@
 import Analytics
+import CoreLocation
 import Domain
 import Logger
 import Photos
@@ -57,7 +58,7 @@ final class SouvenirFormViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .tapClose, .confirmClose, .tapSubmit,
-             .tapPhotoAdd, .tapAddress, .tapCategory:
+             .tapPhotoAdd, .tapAddress, .tapPreciseLocation, .tapCategory:
             break
         default:
             isDirty = true
@@ -97,6 +98,18 @@ final class SouvenirFormViewModel: BaseViewModel<
                 trackUploadOnce(.upload(.titleAdded))
             }
 
+        case .tapPreciseLocation:
+            guard let coordinate = state.value.coordinate else { return }
+            navigate(to: .locationPicker(
+                initialCoordinate: coordinate.toCLLocationCoordinate2D,
+                onComplete: { [weak self] clCoordinate, detail in
+                    self?.handleAction(.updateAddress(
+                        clCoordinate.toCoordinate,
+                        detail
+                    ))
+                }
+            ))
+
         // 주소 입력 탭 처리
         case .tapAddress:
             navigate(to: .search(.init(
@@ -114,9 +127,10 @@ final class SouvenirFormViewModel: BaseViewModel<
                             searchText: searchText,
                             centerCoordinate: selectedItem.coordinate,
                             onConfirm: { [weak self] confirmedItem in
+                                // 상세주소는 피커에서만 입력; 검색 결과 이름은 locationDetail에 넣지 않음
                                 self?.handleAction(.updateAddress(
                                     confirmedItem.coordinate.toCoordinate,
-                                    confirmedItem.name
+                                    ""
                                 ))
                             }
                         )
