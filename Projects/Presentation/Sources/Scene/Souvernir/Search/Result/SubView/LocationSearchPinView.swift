@@ -63,8 +63,8 @@ final class LocationSearchPinView: UIView {
         addSubview(contentView)
         contentView.addSubview(pinImageView)
 
-        pinImageView.layer.shadowColor = UIColor.black.cgColor
-        pinImageView.layer.shadowOpacity = 0.15
+        pinImageView.layer.shadowColor = UIColor.black.withAlphaComponent(0.15).cgColor
+        pinImageView.layer.shadowOpacity = 1
         pinImageView.layer.shadowOffset = .zero
         pinImageView.layer.shadowRadius = 2
 

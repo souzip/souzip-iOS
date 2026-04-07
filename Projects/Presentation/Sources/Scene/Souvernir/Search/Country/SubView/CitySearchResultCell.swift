@@ -67,6 +67,18 @@ final class CitySearchResultCell: UICollectionViewCell {
             subNameLabel.text = nil
         }
     }
+
+    func renderSelected(_ isSelected: Bool) {
+        if isSelected {
+            contentView.backgroundColor = .dsGrey800
+            contentView.layer.borderWidth = 1
+            contentView.layer.borderColor = UIColor.dsGrey500.cgColor
+        } else {
+            contentView.backgroundColor = .clear
+            contentView.layer.borderWidth = 0
+            contentView.layer.borderColor = nil
+        }
+    }
 }
 
 // MARK: - UI Configuration
@@ -80,6 +92,8 @@ private extension CitySearchResultCell {
 
     func setAttributes() {
         contentView.backgroundColor = .clear
+        contentView.layer.cornerRadius = 12
+        contentView.layer.masksToBounds = true
     }
 
     func setHierarchy() {
@@ -91,7 +105,7 @@ private extension CitySearchResultCell {
 
     func setConstraints() {
         iconImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(8)
             make.centerY.equalToSuperview()
             make.size.equalTo(54)
         }

@@ -102,6 +102,18 @@ final class PlaceSearchResultCell: UICollectionViewCell {
             placeRegionLabel.isHidden = true
         }
     }
+
+    func renderSelected(_ isSelected: Bool) {
+        if isSelected {
+            contentView.backgroundColor = .dsGrey800
+            contentView.layer.borderWidth = 1
+            contentView.layer.borderColor = UIColor.dsGrey500.cgColor
+        } else {
+            contentView.backgroundColor = .clear
+            contentView.layer.borderWidth = 0
+            contentView.layer.borderColor = nil
+        }
+    }
 }
 
 // MARK: - Render
@@ -132,6 +144,8 @@ private extension PlaceSearchResultCell {
 
     func setAttributes() {
         contentView.backgroundColor = .clear
+        contentView.layer.cornerRadius = 12
+        contentView.layer.masksToBounds = true
     }
 
     func setHierarchy() {
@@ -143,7 +157,7 @@ private extension PlaceSearchResultCell {
 
     func setConstraints() {
         iconImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(8)
             make.centerY.equalToSuperview()
             make.size.equalTo(54)
         }
