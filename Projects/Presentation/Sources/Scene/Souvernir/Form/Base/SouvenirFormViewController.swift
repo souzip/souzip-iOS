@@ -42,12 +42,8 @@ final class SouvenirFormViewController: BaseViewController<
             .onNext(contentView.renderName)
 
         observeState()
-            .map { state in
-                (state.address, state.locationDetail, state.coordinate != nil)
-            }
-            .onNext { address, detail, showPrecise in
-                self.contentView.renderAddress(address, detail, showPreciseLocationEntry: showPrecise)
-            }
+            .map { ($0.address, $0.locationDetail, $0.coordinate != nil) }
+            .onNext(contentView.renderAddress)
 
         observeState()
             .map { ($0.price, $0.currencySymbol) }
