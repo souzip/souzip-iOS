@@ -15,6 +15,9 @@ final class SearchCountryViewModel: BaseViewModel<
     /// 엔터 입력 후 API 결과를 기다리는 중인지 여부
     private var pendingReturnKey = false
 
+    /// 진행 중인 위치 검색 요청 — 새 검색 시 취소해 이전 응답이 상태를 덮어쓰지 않게 함
+    private var searchLocationsTask: Task<Void, Never>?
+
     // MARK: - Init
 
     init(
@@ -61,6 +64,8 @@ final class SearchCountryViewModel: BaseViewModel<
     // MARK: - Private Logic
 
     private func handleSearchTextChangedUI(_ text: String) {
+        searchLocationsTask?.cancel()
+        searchLocationsTask = nil
         pendingReturnKey = false
         mutate { state in
             state.searchText = text
@@ -76,25 +81,44 @@ final class SearchCountryViewModel: BaseViewModel<
     private func handleSearchTextChangedAPI(_ text: String) {
         guard !text.isEmpty else { return }
 
-        Task {
+        searchLocationsTask?.cancel()
+        let query = text
+        searchLocationsTask = Task { [weak self] in
+            guard let self else { return }
             do {
-                emit(.loading(true))
-                let results = try await countryRepo.searchLocations(keyword: text)
+                await MainActor.run {
+                    self.emit(.loading(true))
+                }
+                let results = try await countryRepo.searchLocations(keyword: query)
                 let items = mapToSearchResultItems(results)
-                mutate { state in
-                    state.items = items
-                    state.isSearchInFlight = false
+                await MainActor.run {
+                    guard self.state.value.searchText == query else { return }
+                    guard !Task.isCancelled else { return }
+                    self.mutate { state in
+                        state.items = items
+                        state.isSearchInFlight = false
+                    }
+                    self.emit(.loading(false))
+                    self.handlePendingReturnKeyIfNeeded(items: items)
                 }
-                emit(.loading(false))
-                handlePendingReturnKeyIfNeeded(items: items)
             } catch {
-                emit(.showAlert(message: error.localizedDescription))
-                emit(.loading(false))
-                mutate { state in
-                    state.items = []
-                    state.isSearchInFlight = false
+                await MainActor.run {
+                    guard self.state.value.searchText == query else { return }
+                    if error is CancellationError || Task.isCancelled {
+                        self.mutate { state in
+                            state.isSearchInFlight = false
+                        }
+                        self.emit(.loading(false))
+                        return
+                    }
+                    self.emit(.showAlert(message: error.localizedDescription))
+                    self.emit(.loading(false))
+                    self.mutate { state in
+                        state.items = []
+                        state.isSearchInFlight = false
+                    }
+                    self.handlePendingReturnKeyIfNeeded(items: [])
                 }
-                handlePendingReturnKeyIfNeeded(items: [])
             }
         }
     }
@@ -127,6 +151,8 @@ final class SearchCountryViewModel: BaseViewModel<
     }
 
     private func handleClearSearch() {
+        searchLocationsTask?.cancel()
+        searchLocationsTask = nil
         pendingReturnKey = false
         mutate { state in
             state.searchText = ""
