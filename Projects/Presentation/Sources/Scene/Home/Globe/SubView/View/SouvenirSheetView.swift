@@ -12,6 +12,8 @@ final class SouvenirSheetView: UIView {
     // MARK: - UI
 
     private let containerView = UIView()
+    /// 그래버 터치 영역(상단 30pt). 전체 시트 팬은 스크롤뷰와 겹쳐 리스트 제스처와 충돌하므로 이 구역 + 그리드 상단 풀만 사용.
+    private let grabberTouchContainer = UIView()
     private let grabberView = UIView()
 
     private let souvenirGridView = SouvenirGridView()
@@ -56,6 +58,7 @@ final class SouvenirSheetView: UIView {
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
+        souvenirGridView.setSheetPullTranslationSuperview(superview)
         guard let superview else { return }
 
         if !didInstallHeightConstraint {
@@ -143,6 +146,8 @@ final class SouvenirSheetView: UIView {
         containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         containerView.layer.masksToBounds = true
 
+        grabberTouchContainer.backgroundColor = .clear
+
         grabberView.backgroundColor = .systemGray3
         grabberView.layer.cornerRadius = 2
     }
@@ -150,13 +155,19 @@ final class SouvenirSheetView: UIView {
     private func setHierarchy() {
         addSubview(containerView)
         [
-            grabberView,
+            grabberTouchContainer,
             souvenirGridView,
         ].forEach(containerView.addSubview)
+        grabberTouchContainer.addSubview(grabberView)
     }
 
     private func setConstraints() {
         containerView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        grabberTouchContainer.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(30)
+        }
 
         grabberView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(9)
@@ -166,7 +177,7 @@ final class SouvenirSheetView: UIView {
         }
 
         souvenirGridView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(30)
+            make.top.equalTo(grabberTouchContainer.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -176,12 +187,23 @@ final class SouvenirSheetView: UIView {
         souvenirGridView.action
             .bind { [weak self] gridAction in
                 switch gridAction {
-                case .shouldDismissSheet:
-                    self?.setLevel(.min)
                 case let .itemTap(item):
                     self?.tapSouvenirItem.accept(item)
+
                 case .tapUpload:
                     self?.tapUpload.accept(())
+
+                case .sheetPullBegan:
+                    guard let self else { return }
+                    panStartHeight = currentHeight
+
+                case let .sheetPullChanged(translationY):
+                    guard let self else { return }
+                    let proposed = panStartHeight - translationY
+                    setHeight(proposed, animated: false)
+
+                case .sheetPullEnded:
+                    self?.snapToNearest()
                 }
             }
             .disposed(by: disposeBag)
@@ -189,7 +211,7 @@ final class SouvenirSheetView: UIView {
 
     private func setGestures() {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        addGestureRecognizer(pan)
+        grabberTouchContainer.addGestureRecognizer(pan)
     }
 
     // MARK: - Heights
