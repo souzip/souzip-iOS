@@ -1,3 +1,4 @@
+import Domain
 import Foundation
 
 enum SettingSection: Int, CaseIterable {
@@ -36,32 +37,9 @@ extension SettingSection {
             [
                 .spacer(12),
                 .title("이용 약관"),
-                .item(.init(
-                    type: .termsOfService,
-                    title: "서비스 이용약관",
-                    trailingText: nil,
-                    showsChevron: true
-                )),
-                .item(.init(
-                    type: .privacyPolicy,
-                    title: "개인정보처리방침",
-                    trailingText: nil,
-                    showsChevron: true
-                )),
-                .item(.init(
-                    type: .locationTerms,
-                    title: "위치기반서비스 이용약관",
-                    trailingText: nil,
-                    showsChevron: true
-                )),
-                .item(.init(
-                    type: .marketingConsentInfo,
-                    title: "마케팅 정보 수신 동의 안내",
-                    trailingText: nil,
-                    showsChevron: true
-                )),
-                .spacer(12),
             ]
+                + TermsType.settingMenuOrderedCases.map { .item(.termsMenuRow($0)) }
+                + [.spacer(12)]
 
         case .support:
             [

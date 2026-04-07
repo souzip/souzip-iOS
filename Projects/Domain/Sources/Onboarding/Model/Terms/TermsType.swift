@@ -1,4 +1,4 @@
-public enum TermsType: Equatable {
+public enum TermsType: Equatable, Hashable {
     case age14
     case service
     case privacy
