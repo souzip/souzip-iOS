@@ -8,7 +8,7 @@ final class SearchCountryViewModel: BaseViewModel<
 > {
     // MARK: - Properties
 
-    private let onResult: (SearchResultItem) -> Void
+    private let onResult: ([SearchResultItem], SearchResultItem, String) -> Void
 
     private let countryRepo: CountryRepository
 
@@ -19,7 +19,7 @@ final class SearchCountryViewModel: BaseViewModel<
 
     init(
         initialSearchText: String = "",
-        onResult: @escaping (SearchResultItem) -> Void,
+        onResult: @escaping ([SearchResultItem], SearchResultItem, String) -> Void,
         countryRepo: CountryRepository
     ) {
         self.onResult = onResult
@@ -52,6 +52,9 @@ final class SearchCountryViewModel: BaseViewModel<
 
         case .returnKeyTapped:
             handleReturnKeyTapped()
+
+        case let .resumeFromLocationResult(query):
+            handleResumeFromLocationResult(query)
         }
     }
 
@@ -149,6 +152,20 @@ final class SearchCountryViewModel: BaseViewModel<
     }
 
     private func handleSelectItem(_ item: SearchResultItem) {
-        onResult(item)
+        onResult(state.value.items, item, state.value.searchText)
+    }
+
+    private func handleResumeFromLocationResult(_ query: String?) {
+        pendingReturnKey = false
+        if let query, !query.isEmpty {
+            mutate { state in
+                state.searchText = query
+                state.items = []
+                state.isEmpty = false
+            }
+            handleSearchTextChangedAPI(query)
+        } else {
+            handleClearSearch()
+        }
     }
 }

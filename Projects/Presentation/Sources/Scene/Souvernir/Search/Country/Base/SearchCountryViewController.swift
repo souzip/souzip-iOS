@@ -44,6 +44,19 @@ final class SearchCountryViewController: BaseViewController<
             .onNext(contentView.setInitialSearchText(_:))
     }
 
+    // MARK: - 위치 검색 결과 복귀 (Coordinator에서 호출)
+
+    func applyReturnFromLocationResult(_ resume: LocationSearchResumeFromResult) {
+        switch resume {
+        case let .refineQuery(query):
+            viewModel.action.accept(.resumeFromLocationResult(query: query))
+
+        case .clearAndRestart:
+            viewModel.action.accept(.resumeFromLocationResult(query: nil))
+        }
+        contentView.setInitialSearchText(viewModel.state.value.searchText)
+    }
+
     // MARK: - Event
 
     override func handleEvent(_ event: Event) {

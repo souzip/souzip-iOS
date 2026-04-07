@@ -22,6 +22,8 @@ enum SearchCountryAction {
     case clearSearch
     case selectItem(SearchResultItem)
     case returnKeyTapped
+    /// 위치 검색 결과에서 pop(무애니) 후 검색 필드·목록 동기화
+    case resumeFromLocationResult(query: String?)
 }
 
 // MARK: - Event

@@ -102,17 +102,24 @@ final class SouvenirFormViewModel: BaseViewModel<
             navigate(to: .search(.init(
                 initialQuery: locationSearchQuery,
                 mode: .store,
-                onResult: { [weak self] searchResult in
-                    self?.locationSearchQuery = searchResult.name
+                onResult: { [weak self] items, selectedItem, searchText in
+                    self?.locationSearchQuery = searchText
+                    let orderedItems = Self.searchResultsPlacingSelectedFirst(
+                        items,
+                        selected: selectedItem
+                    )
                     self?.navigate(
-                        to: .locationPicker(
-                            initialCoordinate: searchResult.coordinate
-                        ) { [weak self] coordinate, detail in
-                            self?.handleAction(.updateAddress(
-                                coordinate.toCoordinate,
-                                detail
-                            ))
-                        }
+                        to: .locationSearchResult(
+                            items: orderedItems,
+                            searchText: searchText,
+                            centerCoordinate: selectedItem.coordinate,
+                            onConfirm: { [weak self] confirmedItem in
+                                self?.handleAction(.updateAddress(
+                                    confirmedItem.coordinate.toCoordinate,
+                                    confirmedItem.name
+                                ))
+                            }
+                        )
                     )
                 }
             )))
@@ -382,6 +389,23 @@ final class SouvenirFormViewModel: BaseViewModel<
 
         let uiImage = UIImage(cgImage: finalCGImage)
         return uiImage.jpegData(compressionQuality: compressionQuality)
+    }
+}
+
+// MARK: - 위치 검색 결과 순서
+
+private extension SouvenirFormViewModel {
+    /// 탭한 항목만 맨 앞으로, 나머지는 기존 상대 순서 유지
+    static func searchResultsPlacingSelectedFirst(
+        _ items: [SearchResultItem],
+        selected: SearchResultItem
+    ) -> [SearchResultItem] {
+        guard let index = items.firstIndex(where: { $0.id == selected.id }) else {
+            return items
+        }
+        var rest = items
+        let chosen = rest.remove(at: index)
+        return [chosen] + rest
     }
 }
 

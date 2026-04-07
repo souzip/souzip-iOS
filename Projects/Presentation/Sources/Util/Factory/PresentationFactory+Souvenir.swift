@@ -8,6 +8,12 @@ protocol PresentationSouvenirFactory: AnyObject {
         onResult: ((SouvenirDetail) -> Void)?
     ) -> RoutedScene<SouvenirRoute>
     func makeSearchScene(context: SearchCountryContext) -> RoutedScene<SouvenirRoute>
+    func makeLocationSearchResultScene(
+        items: [SearchResultItem],
+        searchText: String,
+        centerCoordinate: CLLocationCoordinate2D,
+        onConfirm: @escaping (SearchResultItem) -> Void
+    ) -> RoutedScene<SouvenirRoute>
     func makeLocationPicker(
         initialCoordinate: CLLocationCoordinate2D,
         onComplete: @escaping (CLLocationCoordinate2D, String) -> Void
@@ -64,6 +70,27 @@ extension DefaultPresentationFactory {
         let view = SearchCountryView()
         view.render(mode: context.mode)
         let vc = SearchCountryViewController(viewModel: vm, contentView: view)
+
+        return .init(
+            vc: vc,
+            route: vm.route,
+            disposeBag: vc.disposeBag
+        )
+    }
+
+    func makeLocationSearchResultScene(
+        items: [SearchResultItem],
+        searchText: String,
+        centerCoordinate: CLLocationCoordinate2D,
+        onConfirm: @escaping (SearchResultItem) -> Void
+    ) -> RoutedScene<SouvenirRoute> {
+        let vm = LocationSearchResultViewModel(
+            items: items,
+            searchText: searchText,
+            onConfirm: onConfirm
+        )
+        let view = LocationSearchResultView(centerCoordinate: centerCoordinate)
+        let vc = LocationSearchResultViewController(viewModel: vm, contentView: view)
 
         return .init(
             vc: vc,
