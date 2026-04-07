@@ -104,14 +104,8 @@ struct DiscoveryState {
 
         // stats
         if !statCountry.isEmpty {
-            let date = Date()
-            let calendar = Calendar.current
-            let year = calendar.component(.year, from: date) % 100
-            let month = calendar.component(.month, from: date)
-            let dateText = "\(year)년 \(month)월"
-
             models.append(.init(
-                section: .statisticsChips(date: dateText),
+                section: .statisticsChips,
                 items: [.statCountryChip(statCountry)]
             ))
         }
