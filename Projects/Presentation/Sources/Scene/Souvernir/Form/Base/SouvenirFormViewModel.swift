@@ -28,6 +28,9 @@ final class SouvenirFormViewModel: BaseViewModel<
     /// 폼에 입력 이벤트가 한 번이라도 발생했는지 여부
     private var isDirty: Bool = false
 
+    /// 역지오코딩 요청 세대 — 늦게 도착한 응답이 최신 좌표를 덮어쓰지 않게 함
+    private var addressLookupGeneration: UInt64 = 0
+
     // MARK: - Life Cycle
 
     init(
@@ -145,7 +148,15 @@ final class SouvenirFormViewModel: BaseViewModel<
             }
             trackUploadOnce(.upload(.locationSet))
 
-            Task { await updateAddress(coordinate) }
+            addressLookupGeneration += 1
+            let generation = addressLookupGeneration
+            let lookupCoordinate = coordinate
+            Task { [weak self] in
+                await self?.resolveAddressIfLatest(
+                    coordinate: lookupCoordinate,
+                    generation: generation
+                )
+            }
 
         case let .updateLocalPrice(text):
             handleUpdatePrice(text)
@@ -205,7 +216,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         }
     }
 
-    private func updateAddress(_ coordinate: Coordinate) async {
+    private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
         do {
             let locationAddress = try await countryRepo.getAddress(
                 latitude: coordinate.latitude,
@@ -213,14 +224,24 @@ final class SouvenirFormViewModel: BaseViewModel<
             )
 
             let country = try countryRepo.fetchCountry(countryCode: locationAddress.countryCode)
-            mutate {
-                $0.address = locationAddress.address
-                $0.currencySymbol = country.currency.symbol
-                $0.localCurrencySymbol = country.currency.symbol
-                $0.countryCode = locationAddress.countryCode
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                guard generation == addressLookupGeneration else { return }
+                guard state.value.coordinate == coordinate else { return }
+                mutate {
+                    $0.address = locationAddress.address
+                    $0.currencySymbol = country.currency.symbol
+                    $0.localCurrencySymbol = country.currency.symbol
+                    $0.countryCode = locationAddress.countryCode
+                }
             }
         } catch {
-            emit(.showError(error.localizedDescription))
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                guard generation == addressLookupGeneration else { return }
+                guard state.value.coordinate == coordinate else { return }
+                emit(.showError(error.localizedDescription))
+            }
         }
     }
 
