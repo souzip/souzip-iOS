@@ -1,15 +1,27 @@
 import Domain
 
+// MARK: - Main pane
+
+enum SearchCountryMainPane: Equatable {
+    /// 검색어 없음 — 캐릭터 온보딩
+    case onboarding
+    /// 검색 완료 후 결과 0건
+    case noResults
+    /// 리스트 표시(API 대기 중 빈 리스트 포함)
+    case results
+}
+
 // MARK: - State
 
 struct SearchCountryState {
     var searchText: String
     var items: [SearchResultItem] = []
-    var isEmpty: Bool
+    /// 검색어가 있는데 아직 API 응답 전이면 true → 노결과 화면 대신 빈 컬렉션(+로딩)
+    var isSearchInFlight: Bool
 
     init(initialSearchText: String = "") {
         searchText = initialSearchText
-        isEmpty = initialSearchText.isEmpty
+        isSearchInFlight = !initialSearchText.isEmpty
     }
 }
 

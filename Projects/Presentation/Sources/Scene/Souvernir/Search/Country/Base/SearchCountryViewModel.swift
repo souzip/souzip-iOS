@@ -65,7 +65,11 @@ final class SearchCountryViewModel: BaseViewModel<
         mutate { state in
             state.searchText = text
             state.items = []
-            state.isEmpty = text.isEmpty ? true : false
+            if text.isEmpty {
+                state.isSearchInFlight = false
+            } else {
+                state.isSearchInFlight = true
+            }
         }
     }
 
@@ -79,13 +83,17 @@ final class SearchCountryViewModel: BaseViewModel<
                 let items = mapToSearchResultItems(results)
                 mutate { state in
                     state.items = items
-                    state.isEmpty = items.isEmpty
+                    state.isSearchInFlight = false
                 }
                 emit(.loading(false))
                 handlePendingReturnKeyIfNeeded(items: items)
             } catch {
                 emit(.showAlert(message: error.localizedDescription))
                 emit(.loading(false))
+                mutate { state in
+                    state.items = []
+                    state.isSearchInFlight = false
+                }
                 handlePendingReturnKeyIfNeeded(items: [])
             }
         }
@@ -123,7 +131,7 @@ final class SearchCountryViewModel: BaseViewModel<
         mutate { state in
             state.searchText = ""
             state.items = []
-            state.isEmpty = true
+            state.isSearchInFlight = false
         }
     }
 
@@ -161,7 +169,7 @@ final class SearchCountryViewModel: BaseViewModel<
             mutate { state in
                 state.searchText = query
                 state.items = []
-                state.isEmpty = false
+                state.isSearchInFlight = true
             }
             handleSearchTextChangedAPI(query)
         } else {

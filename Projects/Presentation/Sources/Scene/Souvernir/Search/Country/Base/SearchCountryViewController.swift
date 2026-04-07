@@ -35,9 +35,21 @@ final class SearchCountryViewController: BaseViewController<
                 self?.contentView.render(items: items, searchText: searchText)
             }
 
-        observe(\.isEmpty)
+        observeState()
+            .map { state -> SearchCountryMainPane in
+                if state.searchText.isEmpty {
+                    return .onboarding
+                }
+                if !state.items.isEmpty {
+                    return .results
+                }
+                if state.isSearchInFlight {
+                    return .results
+                }
+                return .noResults
+            }
             .distinct()
-            .onNext(contentView.render(isEmpty:))
+            .onNext(contentView.render(mainPane:))
 
         observe(\.searchText)
             .take(1)
