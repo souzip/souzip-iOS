@@ -11,7 +11,7 @@ public enum Environment {
     // MARK: - Version
 
     public static let appVersion = "1.2.0"
-    public static let appBuildVersion = "2"
+    public static let appBuildVersion = "3"
     public static let swiftVersion = "5.9"
 
     // MARK: - Platform
