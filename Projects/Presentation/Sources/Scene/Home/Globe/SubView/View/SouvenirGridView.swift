@@ -67,6 +67,9 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
 
     private var dataSource: DataSource?
 
+    /// 시트 높이 조절이 실제로 시작된 뒤에만 `sheetPullEnded`를 보내 스냅이 불필요하게 돌지 않게 함
+    private var isSheetPullActive = false
+
     // MARK: - Override
 
     override func setAttributes() {
@@ -147,14 +150,20 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
 
         switch gesture.state {
         case .began:
-            action.accept(.sheetPullBegan)
+            break
 
         case .changed:
             guard isCollectionScrolledToTop() else { return }
             guard translation.y > SheetPullMetric.minVerticalTranslation else { return }
+            if !isSheetPullActive {
+                isSheetPullActive = true
+                action.accept(.sheetPullBegan)
+            }
             action.accept(.sheetPullChanged(translationY: translation.y))
 
         case .ended, .cancelled:
+            guard isSheetPullActive else { return }
+            isSheetPullActive = false
             action.accept(.sheetPullEnded)
 
         default:
@@ -168,7 +177,10 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
             return super.gestureRecognizerShouldBegin(gestureRecognizer)
         }
         guard sheetPullTranslationSuperview != nil else { return false }
-        return isCollectionScrolledToTop()
+        let velocity = collectionSheetPullPan.velocity(in: self)
+        // 수직 드래그만 시트 풀 후보로 잡아 맨 위에서의 가로 스크롤 오인식 완화
+        guard abs(velocity.y) >= abs(velocity.x) else { return false }
+        return true
     }
 }
 
