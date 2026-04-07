@@ -42,6 +42,11 @@ final class SouvenirSheetView: UIView {
 
     private var panStartHeight: CGFloat = 0
 
+    private enum SnapMetric {
+        /// 높이 변화가 이보다 작으면 가장 가까운 min/mid/max
+        static let directionAmbiguousThreshold: CGFloat = 20
+    }
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -203,7 +208,7 @@ final class SouvenirSheetView: UIView {
                     setHeight(proposed, animated: false)
 
                 case .sheetPullEnded:
-                    self?.snapToNearest()
+                    self?.snapAfterPanEnded()
                 }
             }
             .disposed(by: disposeBag)
@@ -265,10 +270,21 @@ final class SouvenirSheetView: UIView {
         }
     }
 
-    private func snapToNearest() {
-        let candidates = [minHeight, midHeight, maxHeight]
-        let nearest = candidates.min { abs($0 - currentHeight) < abs($1 - currentHeight) } ?? midHeight
-        setHeight(nearest, animated: true)
+    /// 시트를 키운 방향이면 현재 높이 이상 앵커 중 최소(올림), 줄이면 이하 중 최대(내림). 변화가 작으면 가장 가까운 앵커.
+    private func snapAfterPanEnded() {
+        let h = currentHeight
+        let delta = h - panStartHeight
+        let anchors = [minHeight, midHeight, maxHeight].sorted()
+
+        let target: CGFloat = if abs(delta) < SnapMetric.directionAmbiguousThreshold {
+            anchors.min { abs($0 - h) < abs($1 - h) } ?? midHeight
+        } else if delta > 0 {
+            anchors.first { $0 >= h - 0.5 } ?? maxHeight
+        } else {
+            anchors.last { $0 <= h + 0.5 } ?? minHeight
+        }
+
+        setHeight(clamp(target, minHeight, maxHeight), animated: true)
     }
 
     // MARK: - Pan
@@ -286,7 +302,7 @@ final class SouvenirSheetView: UIView {
             setHeight(proposed, animated: false)
 
         case .ended, .cancelled:
-            snapToNearest()
+            snapAfterPanEnded()
 
         default:
             break
