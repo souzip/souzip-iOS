@@ -506,8 +506,7 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
             cell.renderSelected(isSelected)
         }
 
-        dataSource = .init(collectionView: collectionView) { [weak self] collectionView, indexPath, item in
-            guard let self else { return UICollectionViewCell() }
+        dataSource = .init(collectionView: collectionView) { collectionView, indexPath, item in
             switch item.detail {
             case .city:
                 return collectionView.dequeueConfiguredReusableCell(
