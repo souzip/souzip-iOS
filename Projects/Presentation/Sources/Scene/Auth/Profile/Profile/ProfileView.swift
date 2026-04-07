@@ -58,7 +58,7 @@ final class ProfileView: BaseView<ProfileAction> {
     private let completeButton: DSButton = {
         let button = DSButton()
         button.setTitle("완료")
-        button.setEnabled(true)
+        button.setEnabled(false)
         return button
     }()
 
