@@ -74,12 +74,12 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         }
 
         noResultsView.snp.makeConstraints { make in
-            make.top.equalTo(searchTextFieldView.snp.bottom).offset(115)
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(125)
             make.centerX.equalToSuperview()
         }
 
         onboardingView.snp.makeConstraints { make in
-            make.top.equalTo(searchTextFieldView.snp.bottom).offset(60)
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(70)
             make.centerX.equalToSuperview()
         }
     }
