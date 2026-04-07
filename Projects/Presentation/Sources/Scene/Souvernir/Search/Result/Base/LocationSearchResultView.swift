@@ -509,14 +509,14 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
         dataSource = .init(collectionView: collectionView) { collectionView, indexPath, item in
             switch item.detail {
             case .city:
-                return collectionView.dequeueConfiguredReusableCell(
+                collectionView.dequeueConfiguredReusableCell(
                     using: cityRegistration,
                     for: indexPath,
                     item: item
                 )
 
             case .place:
-                return collectionView.dequeueConfiguredReusableCell(
+                collectionView.dequeueConfiguredReusableCell(
                     using: placeRegistration,
                     for: indexPath,
                     item: item
