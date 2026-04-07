@@ -35,7 +35,11 @@ final class LocationMapView: UIView {
 
     // MARK: - Init
 
-    init(mode: LocationMapMode, initialCoordinate: CLLocationCoordinate2D) {
+    init(
+        mode: LocationMapMode,
+        initialCoordinate: CLLocationCoordinate2D,
+        initialZoom: CGFloat = 15.0
+    ) {
         self.mode = mode
 
         let mapInitOptions = MapInitOptions(
@@ -46,7 +50,7 @@ final class LocationMapView: UIView {
             ),
             cameraOptions: CameraOptions(
                 center: initialCoordinate,
-                zoom: 15.0
+                zoom: initialZoom
             )
         )
         mapboxMapView = MapView(frame: .zero, mapInitOptions: mapInitOptions)
@@ -140,9 +144,10 @@ final class LocationMapView: UIView {
     func moveCamera(to coordinate: CLLocationCoordinate2D) {
         let cameraOptions = CameraOptions(
             center: coordinate,
-            zoom: 15.0
+            zoom: nil
         )
-        mapboxMapView.camera.fly(to: cameraOptions, duration: 0.3)
+        // Globe `moveCameraAndSelectPin`과 같이 줌 유지, ease·0.6s
+        mapboxMapView.camera.ease(to: cameraOptions, duration: 0.6)
     }
 
     @objc private func handleSearchPinTap(_ gesture: UITapGestureRecognizer) {
