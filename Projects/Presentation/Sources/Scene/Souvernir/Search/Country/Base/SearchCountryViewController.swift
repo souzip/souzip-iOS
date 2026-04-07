@@ -35,13 +35,38 @@ final class SearchCountryViewController: BaseViewController<
                 self?.contentView.render(items: items, searchText: searchText)
             }
 
-        observe(\.isEmpty)
+        observeState()
+            .map { state -> SearchCountryMainPane in
+                if state.searchText.isEmpty {
+                    return .onboarding
+                }
+                if !state.items.isEmpty {
+                    return .results
+                }
+                if state.isSearchInFlight {
+                    return .results
+                }
+                return .noResults
+            }
             .distinct()
-            .onNext(contentView.render(isEmpty:))
+            .onNext(contentView.render(mainPane:))
 
         observe(\.searchText)
             .take(1)
             .onNext(contentView.setInitialSearchText(_:))
+    }
+
+    // MARK: - 위치 검색 결과 복귀 (Coordinator에서 호출)
+
+    func applyReturnFromLocationResult(_ resume: LocationSearchResumeFromResult) {
+        switch resume {
+        case let .refineQuery(query):
+            viewModel.action.accept(.resumeFromLocationResult(query: query))
+
+        case .clearAndRestart:
+            viewModel.action.accept(.resumeFromLocationResult(query: nil))
+        }
+        contentView.setInitialSearchText(viewModel.state.value.searchText)
     }
 
     // MARK: - Event

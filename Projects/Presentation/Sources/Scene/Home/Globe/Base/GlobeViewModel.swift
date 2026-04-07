@@ -232,7 +232,7 @@ private extension GlobeViewModel {
         let currentQuery = state.value.searchQuery ?? ""
         navigate(
             to: .souvenirRoute(
-                .search(.init(initialQuery: currentQuery, mode: .country) { [weak self] item in
+                .search(.init(initialQuery: currentQuery, mode: .country) { [weak self] _, item, _ in
                     self?.navigate(to: .pop)
                     self?.handleAction(.didSelectSearchResult(item))
                 })

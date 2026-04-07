@@ -30,7 +30,8 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         return collectionView
     }()
 
-    private let emptyView = SearchEmptyView()
+    private let onboardingView = SearchCountryOnboardingView()
+    private let noResultsView = SearchCountryNoResultsView()
 
     // MARK: - Data
 
@@ -50,7 +51,8 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             navigationBar,
             searchTextFieldView,
             collectionView,
-            emptyView,
+            noResultsView,
+            onboardingView,
         ].forEach { addSubview($0) }
     }
 
@@ -71,8 +73,14 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             make.bottom.equalToSuperview()
         }
 
-        emptyView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        noResultsView.snp.makeConstraints { make in
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(125)
+            make.centerX.equalToSuperview()
+        }
+
+        onboardingView.snp.makeConstraints { make in
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(70)
+            make.centerX.equalToSuperview()
         }
     }
 
@@ -108,9 +116,10 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
 
-    func render(isEmpty: Bool) {
-        emptyView.isHidden = !isEmpty
-        collectionView.isHidden = isEmpty
+    func render(mainPane: SearchCountryMainPane) {
+        onboardingView.isHidden = mainPane != .onboarding
+        noResultsView.isHidden = mainPane != .noResults
+        collectionView.isHidden = mainPane != .results
     }
 
     func focusSearchField() {
@@ -128,6 +137,7 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         case .store:
             searchTextFieldView.setPlaceholder("어디에서 구매하셨나요?")
         }
+        onboardingView.render(mode: mode)
     }
 
     // MARK: - Private

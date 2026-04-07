@@ -13,6 +13,9 @@ enum SouvenirFormAction {
     // Basic Info
     case updateName(String)
     case tapAddress
+    /// 검색·결과로 좌표가 잡힌 뒤, 지도에서 핀을 다시 조정할 때
+    case tapPreciseLocation
+    /// 두 번째 인자는 **상세 주소**(피커 `detailText`). 메인 주소 줄은 역지오코딩으로 `state.address`에 채움.
     case updateAddress(Coordinate, String)
 
     // Price

@@ -129,6 +129,9 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         bind(addressFieldView.tapRelay.asObservable())
             .to(.tapAddress)
 
+        bind(addressFieldView.preciseLocationTapRelay.asObservable())
+            .to(.tapPreciseLocation)
+
         // Price Field
         bind(priceFieldView.action)
             .map { action -> SouvenirFormAction in
@@ -158,16 +161,12 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         naviBar.render(title: title, style: .close)
     }
 
-    func renderPhotos(
-        _ mode: SouvenirFormMode,
-        _ localPhotos: [LocalPhoto],
-        _ existingFiles: [SouvenirFile]
-    ) {
-        switch mode {
+    func renderPhotos(_ line: (SouvenirFormMode, [LocalPhoto], [SouvenirFile])) {
+        switch line.0 {
         case .create:
-            photoSectionView.renderCreate(localPhotos: localPhotos)
+            photoSectionView.renderCreate(localPhotos: line.1)
         case .edit:
-            photoSectionView.renderEdit(existingFiles: existingFiles)
+            photoSectionView.renderEdit(existingFiles: line.2)
         }
     }
 
@@ -175,16 +174,17 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         nameFieldView.setText(text)
     }
 
-    func renderAddress(_ text: String, _ description: String) {
-        addressFieldView.render(text: text)
-        addressFieldView.renderDescription(description)
+    /// `(주소, 상세·힌트 문구, 정밀 위치 진입 표시 여부)`
+    func renderAddress(_ line: (String, String, Bool)) {
+        addressFieldView.render(text: line.0)
+        addressFieldView.renderDetailOrHintLine(
+            detailText: line.1,
+            showPreciseLocationEntry: line.2
+        )
     }
 
-    func renderPrice(
-        _ price: String,
-        _ currencySymbol: String
-    ) {
-        priceFieldView.render(price: price, currencySymbol: currencySymbol)
+    func renderPrice(_ line: (String, String)) {
+        priceFieldView.render(price: line.0, currencySymbol: line.1)
     }
 
     func updateLocalCurrencySymbol(_ symbol: String) {
@@ -203,9 +203,9 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         descriptionFieldView.updateUI(text: description)
     }
 
-    func renderSubmitButton(_ title: String, _ isEnabled: Bool) {
-        submitButton.setTitle(title)
-        submitButton.setEnabled(isEnabled)
+    func renderSubmitButton(_ line: (String, Bool)) {
+        submitButton.setTitle(line.0)
+        submitButton.setEnabled(line.1)
     }
 
     func updateKeyboardHeight(_ height: CGFloat, duration: TimeInterval, curve: UIView.AnimationOptions) {
