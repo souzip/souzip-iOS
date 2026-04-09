@@ -1,3 +1,4 @@
+import Domain
 import Foundation
 
 enum SettingRow: Hashable {
@@ -11,13 +12,19 @@ struct SettingItem: Hashable {
     let title: String
     let trailingText: String?
     let showsChevron: Bool
+
+    static func termsMenuRow(_ termsType: TermsType) -> SettingItem {
+        SettingItem(
+            type: .term(termsType),
+            title: termsType.settingMenuTitle,
+            trailingText: nil,
+            showsChevron: true
+        )
+    }
 }
 
 enum SettingItemType: Hashable {
-    case termsOfService
-    case privacyPolicy
-    case locationTerms
-    case marketingConsentInfo
+    case term(TermsType)
 
     case appVersion
 
@@ -32,10 +39,8 @@ enum SettingItemType: Hashable {
 extension SettingItemType {
     var url: String {
         switch self {
-        case .termsOfService: "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5801885cfc72d69e16a34"
-        case .privacyPolicy: "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5802499befa952e59529e"
-        case .locationTerms: "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580db899bcb4bd78c8012"
-        case .marketingConsentInfo: "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580cdbe77dce440e8e85f"
+        case let .term(termsType):
+            termsType.urlString ?? ""
         case .notice: "https://noiseless-hornet-d9e.notion.site/2e2d4699d3f58000a30bd96d614229a3?v=2e2d4699d3f58083bd95000cda957c2c&source=copy_link"
         case .feedback:
             "https://docs.google.com/forms/d/e/1FAIpQLSe9uOrj9bjyrqtMWKCWcXduYgmrmTqKyGt94YwPKiAMvjqj2w/viewform"
