@@ -1,4 +1,5 @@
 import Domain
+import Foundation
 
 struct DiscoverySectionModel {
     let section: DiscoverySection
@@ -12,7 +13,7 @@ enum DiscoverySection: Hashable {
     case categoryChips
     case categoryCards
     case categoryMore
-    case statisticsChips(date: String)
+    case statisticsChips
 
     case spacer
 }
@@ -32,8 +33,8 @@ extension DiscoverySection {
 
     var subTitle: String {
         switch self {
-        case let .statisticsChips(date):
-            "\(date) 등록 기념품 수 기준"
+        case .statisticsChips:
+            "\(Calendar.current.component(.year, from: Date()))년에 등록된 기념품 기준"
         default: ""
         }
     }

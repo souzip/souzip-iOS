@@ -8,18 +8,21 @@ final class SearchCountryViewModel: BaseViewModel<
 > {
     // MARK: - Properties
 
-    private let onResult: (SearchResultItem) -> Void
+    private let onResult: ([SearchResultItem], SearchResultItem, String) -> Void
 
     private let countryRepo: CountryRepository
 
     /// 엔터 입력 후 API 결과를 기다리는 중인지 여부
     private var pendingReturnKey = false
 
+    /// 진행 중인 위치 검색 요청 — 새 검색 시 취소해 이전 응답이 상태를 덮어쓰지 않게 함
+    private var searchLocationsTask: Task<Void, Never>?
+
     // MARK: - Init
 
     init(
         initialSearchText: String = "",
-        onResult: @escaping (SearchResultItem) -> Void,
+        onResult: @escaping ([SearchResultItem], SearchResultItem, String) -> Void,
         countryRepo: CountryRepository
     ) {
         self.onResult = onResult
@@ -52,78 +55,109 @@ final class SearchCountryViewModel: BaseViewModel<
 
         case .returnKeyTapped:
             handleReturnKeyTapped()
+
+        case let .resumeFromLocationResult(query):
+            handleResumeFromLocationResult(query)
         }
     }
 
     // MARK: - Private Logic
 
     private func handleSearchTextChangedUI(_ text: String) {
+        searchLocationsTask?.cancel()
+        searchLocationsTask = nil
         pendingReturnKey = false
         mutate { state in
             state.searchText = text
             state.items = []
-            state.isEmpty = text.isEmpty ? true : false
+            if text.isEmpty {
+                state.isSearchInFlight = false
+            } else {
+                state.isSearchInFlight = true
+            }
         }
     }
 
     private func handleSearchTextChangedAPI(_ text: String) {
         guard !text.isEmpty else { return }
 
-        Task {
+        searchLocationsTask?.cancel()
+        let query = text
+        searchLocationsTask = Task { [weak self] in
+            guard let self else { return }
             do {
-                emit(.loading(true))
-                let results = try await countryRepo.searchLocations(keyword: text)
-                let items = mapToSearchResultItems(results)
-                mutate { state in
-                    state.items = items
-                    state.isEmpty = items.isEmpty
+                await MainActor.run {
+                    self.emit(.loading(true))
                 }
-                emit(.loading(false))
-                handlePendingReturnKeyIfNeeded(items: items)
+                let results = try await countryRepo.searchLocations(keyword: query)
+                let items = mapToSearchResultItems(results)
+                await MainActor.run {
+                    guard self.state.value.searchText == query else { return }
+                    guard !Task.isCancelled else { return }
+                    self.mutate { state in
+                        state.items = items
+                        state.isSearchInFlight = false
+                    }
+                    self.emit(.loading(false))
+                    self.handlePendingReturnKeyIfNeeded(items: items)
+                }
             } catch {
-                emit(.showAlert(message: error.localizedDescription))
-                emit(.loading(false))
-                handlePendingReturnKeyIfNeeded(items: [])
+                await MainActor.run {
+                    guard self.state.value.searchText == query else { return }
+                    if error is CancellationError || Task.isCancelled {
+                        self.mutate { state in
+                            state.isSearchInFlight = false
+                        }
+                        self.emit(.loading(false))
+                        return
+                    }
+                    self.emit(.showAlert(message: error.localizedDescription))
+                    self.emit(.loading(false))
+                    self.mutate { state in
+                        state.items = []
+                        state.isSearchInFlight = false
+                    }
+                    self.handlePendingReturnKeyIfNeeded(items: [])
+                }
             }
         }
     }
 
     private func mapToSearchResultItems(
-        _ locations: [SearchedLocation]
+        _ hits: [LocationSearchHit]
     ) -> [SearchResultItem] {
-        locations.map { location in
-            let type: SearchResultType =
-                location.type == .country ? .country : .city
+        hits.map { hit in
+            switch hit {
+            case let .city(city):
+                SearchResultItem(
+                    id: city.id.rawValue,
+                    name: city.title,
+                    detail: .city(subName: city.countryLine ?? ""),
+                    coordinate: city.coordinate.toCLLocationCoordinate2D
+                )
 
-            let name: String
-            let subName: String
-
-            switch type {
-            case .country:
-                name = location.nameKr
-                subName = ""
-
-            case .city:
-                name = location.nameKr
-                subName = location.countryNameKr ?? ""
+            case let .place(place):
+                SearchResultItem(
+                    id: place.id.rawValue,
+                    name: place.title,
+                    detail: .place(
+                        category: place.placeKind ?? "",
+                        region: place.areaDescription ?? ""
+                    ),
+                    coordinate: place.coordinate.toCLLocationCoordinate2D
+                )
             }
-
-            return SearchResultItem(
-                id: "\(type)-\(location.id)",
-                name: name,
-                subName: subName,
-                type: type,
-                coordinate: location.coordinate.toCLLocationCoordinate2D
-            )
         }
     }
 
     private func handleClearSearch() {
+        searchLocationsTask?.cancel()
+        searchLocationsTask = nil
         pendingReturnKey = false
         mutate { state in
             state.searchText = ""
             state.items = []
-            state.isEmpty = true
+            state.isSearchInFlight = false
         }
     }
 
@@ -152,6 +186,20 @@ final class SearchCountryViewModel: BaseViewModel<
     }
 
     private func handleSelectItem(_ item: SearchResultItem) {
-        onResult(item)
+        onResult(state.value.items, item, state.value.searchText)
+    }
+
+    private func handleResumeFromLocationResult(_ query: String?) {
+        pendingReturnKey = false
+        if let query, !query.isEmpty {
+            mutate { state in
+                state.searchText = query
+                state.items = []
+                state.isSearchInFlight = true
+            }
+            handleSearchTextChangedAPI(query)
+        } else {
+            handleClearSearch()
+        }
     }
 }

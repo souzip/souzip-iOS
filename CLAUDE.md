@@ -84,6 +84,8 @@ App → Presentation → Domain ← Data → Core
 ```
 <type>: <한국어 설명>
 ```
+- 본문(body) 없이 제목(title) 한 줄만 작성
+- `Co-Authored-By` 등 트레일러도 포함하지 않음
 
 | 타입 | 설명 |
 |------|------|

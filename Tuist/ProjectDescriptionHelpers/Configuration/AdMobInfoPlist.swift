@@ -2,17 +2,17 @@ import ProjectDescription
 
 public enum AdMobInfoPlist {
     // MARK: - Privacy Configuration
-    
+
     private static let privacy: [String: Plist.Value] = [
-        "NSUserTrackingUsageDescription": "맞춤형 광고를 제공하기 위해 추적 권한이 필요합니다."
+        "NSUserTrackingUsageDescription": "맞춤형 광고를 제공하기 위해 추적 권한이 필요합니다.",
     ]
-    
+
     // MARK: - AdMob Configuration
-    
+
     private static let admobSettings: [String: Plist.Value] = [
         "GADApplicationIdentifier": "$(ADMOB_APP_ID)",
         "ADMOB_BANNER_AD_UNIT_ID": "$(ADMOB_BANNER_AD_UNIT_ID)",
-        
+
         // SKAdNetwork IDs
         "SKAdNetworkItems": .array([
             .dictionary(["SKAdNetworkIdentifier": "cstr6suwn9.skadnetwork"]),
@@ -63,12 +63,12 @@ public enum AdMobInfoPlist {
             .dictionary(["SKAdNetworkIdentifier": "8c4e2ghe7u.skadnetwork"]),
             .dictionary(["SKAdNetworkIdentifier": "3rd42ekr43.skadnetwork"]),
             .dictionary(["SKAdNetworkIdentifier": "97r2b46745.skadnetwork"]),
-            .dictionary(["SKAdNetworkIdentifier": "3qcr597p9d.skadnetwork"])
-        ])
+            .dictionary(["SKAdNetworkIdentifier": "3qcr597p9d.skadnetwork"]),
+        ]),
     ]
-    
+
     // MARK: - Public Configuration
-    
+
     public static var configuration: [String: Plist.Value] {
         privacy.merging(admobSettings)
     }
@@ -76,8 +76,8 @@ public enum AdMobInfoPlist {
 
 // MARK: - Extensions
 
-private extension Dictionary where Key == String, Value == Plist.Value {
+private extension [String: Plist.Value] {
     func merging(_ other: [String: Plist.Value]) -> [String: Plist.Value] {
-        self.merging(other) { _, new in new }
+        merging(other) { _, new in new }
     }
 }

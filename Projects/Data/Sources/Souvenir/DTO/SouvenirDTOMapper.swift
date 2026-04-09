@@ -16,7 +16,7 @@ public enum SouvenirDTOMapper {
             if original.symbol == "₩" {
                 // original이 원화
                 localPrice = converted.amount
-                currencySymbol = original.symbol
+                currencySymbol = converted.symbol
                 krwPrice = original.amount
             } else {
                 // original이 현지 통화

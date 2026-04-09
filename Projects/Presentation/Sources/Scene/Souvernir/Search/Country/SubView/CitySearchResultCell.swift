@@ -2,8 +2,9 @@ import DesignSystem
 import SnapKit
 import UIKit
 
-final class SearchResultCell: UICollectionViewCell {
-    // MARK: - UI
+/// `SearchResultDetail.city` 한 줄: 제목 + 국가(부제).
+final class CitySearchResultCell: UICollectionViewCell {
+    // MARK: - UI Components
 
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -19,6 +20,8 @@ final class SearchResultCell: UICollectionViewCell {
         let label = TypographyLabel()
         label.textColor = .dsGreyWhite
         label.setTypography(.body1R)
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
 
@@ -26,6 +29,8 @@ final class SearchResultCell: UICollectionViewCell {
         let label = TypographyLabel()
         label.textColor = .dsGrey500
         label.setTypography(.body3M)
+        label.numberOfLines = 1
+        label.lineBreakMode = .byTruncatingTail
         return label
     }()
 
@@ -37,7 +42,7 @@ final class SearchResultCell: UICollectionViewCell {
         return stackView
     }()
 
-    // MARK: - Init
+    // MARK: - Initialization
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,25 +54,58 @@ final class SearchResultCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Configure
+    // MARK: - Public
 
-    private func configure() {
+    func render(item: SearchResultItem, searchText: String) {
+        nameLabel.attributedText = TextHighlight.primary(text: item.name, searchText: searchText)
+        if case let .city(subName) = item.detail {
+            let trimmed = subName.trimmingCharacters(in: .whitespacesAndNewlines)
+            subNameLabel.isHidden = trimmed.isEmpty
+            subNameLabel.text = trimmed.isEmpty ? nil : trimmed
+        } else {
+            subNameLabel.isHidden = true
+            subNameLabel.text = nil
+        }
+    }
+
+    func renderSelected(_ isSelected: Bool) {
+        if isSelected {
+            contentView.backgroundColor = .dsGrey800
+            contentView.layer.borderWidth = 1
+            contentView.layer.borderColor = UIColor.dsGrey500.cgColor
+        } else {
+            contentView.backgroundColor = .clear
+            contentView.layer.borderWidth = 0
+            contentView.layer.borderColor = nil
+        }
+    }
+}
+
+// MARK: - UI Configuration
+
+private extension CitySearchResultCell {
+    func configure() {
+        setAttributes()
         setHierarchy()
         setConstraints()
     }
 
-    private func setHierarchy() {
+    func setAttributes() {
+        contentView.backgroundColor = .clear
+        contentView.layer.cornerRadius = 12
+        contentView.layer.masksToBounds = true
+    }
+
+    func setHierarchy() {
         [
             iconImageView,
             textStackView,
-        ].forEach {
-            contentView.addSubview($0)
-        }
+        ].forEach { contentView.addSubview($0) }
     }
 
-    private func setConstraints() {
+    func setConstraints() {
         iconImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
+            make.leading.equalToSuperview().inset(8)
             make.centerY.equalToSuperview()
             make.size.equalTo(54)
         }
@@ -77,42 +115,5 @@ final class SearchResultCell: UICollectionViewCell {
             make.trailing.lessThanOrEqualToSuperview()
             make.centerY.equalToSuperview()
         }
-    }
-
-    // MARK: - Public
-
-    func render(item: SearchResultItem, searchText: String) {
-        nameLabel.attributedText = highlight(text: item.name, searchText: searchText)
-
-        switch item.type {
-        case .country:
-            subNameLabel.isHidden = true
-
-        case .city:
-            subNameLabel.isHidden = false
-            subNameLabel.text = item.subName
-        }
-    }
-
-    // MARK: - Private
-
-    private func highlight(text: String, searchText: String) -> NSAttributedString {
-        let attributedString = NSMutableAttributedString(
-            string: text,
-            attributes: Typography.body1SB.toAttributes().merging([.foregroundColor: UIColor.dsGreyWhite]) { $1 }
-        )
-
-        guard !searchText.isEmpty else { return attributedString }
-
-        let range = (text as NSString).range(of: searchText, options: .caseInsensitive)
-        if range.location != NSNotFound {
-            attributedString.addAttribute(
-                .foregroundColor,
-                value: UIColor.dsMain,
-                range: range
-            )
-        }
-
-        return attributedString
     }
 }

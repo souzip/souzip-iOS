@@ -1,5 +1,4 @@
 import DesignSystem
-import Domain
 import RxRelay
 import RxSwift
 import SnapKit
@@ -31,7 +30,8 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         return collectionView
     }()
 
-    private let emptyView = SearchEmptyView()
+    private let onboardingView = SearchCountryOnboardingView()
+    private let noResultsView = SearchCountryNoResultsView()
 
     // MARK: - Data
 
@@ -51,7 +51,8 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             navigationBar,
             searchTextFieldView,
             collectionView,
-            emptyView,
+            noResultsView,
+            onboardingView,
         ].forEach { addSubview($0) }
     }
 
@@ -72,8 +73,14 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
             make.bottom.equalToSuperview()
         }
 
-        emptyView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        noResultsView.snp.makeConstraints { make in
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(125)
+            make.centerX.equalToSuperview()
+        }
+
+        onboardingView.snp.makeConstraints { make in
+            make.top.equalTo(searchTextFieldView.snp.bottom).offset(70)
+            make.centerX.equalToSuperview()
         }
     }
 
@@ -109,9 +116,10 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         dataSource?.apply(snapshot, animatingDifferences: false)
     }
 
-    func render(isEmpty: Bool) {
-        emptyView.isHidden = !isEmpty
-        collectionView.isHidden = isEmpty
+    func render(mainPane: SearchCountryMainPane) {
+        onboardingView.isHidden = mainPane != .onboarding
+        noResultsView.isHidden = mainPane != .noResults
+        collectionView.isHidden = mainPane != .results
     }
 
     func focusSearchField() {
@@ -129,6 +137,7 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
         case .store:
             searchTextFieldView.setPlaceholder("어디에서 구매하셨나요?")
         }
+        onboardingView.render(mode: mode)
     }
 
     // MARK: - Private
@@ -161,8 +170,16 @@ final class SearchCountryView: BaseView<SearchCountryAction> {
 
 private extension SearchCountryView {
     func configureDataSource() {
-        let registration = UICollectionView.CellRegistration<
-            SearchResultCell,
+        let cityRegistration = UICollectionView.CellRegistration<
+            CitySearchResultCell,
+            Item
+        > { [weak self] cell, _, item in
+            guard let self else { return }
+            cell.render(item: item, searchText: currentSearchText)
+        }
+
+        let placeRegistration = UICollectionView.CellRegistration<
+            PlaceSearchResultCell,
             Item
         > { [weak self] cell, _, item in
             guard let self else { return }
@@ -172,11 +189,21 @@ private extension SearchCountryView {
         dataSource = .init(
             collectionView: collectionView
         ) { collectionView, indexPath, item in
-            collectionView.dequeueConfiguredReusableCell(
-                using: registration,
-                for: indexPath,
-                item: item
-            )
+            switch item.detail {
+            case .city:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: cityRegistration,
+                    for: indexPath,
+                    item: item
+                )
+
+            case .place:
+                collectionView.dequeueConfiguredReusableCell(
+                    using: placeRegistration,
+                    for: indexPath,
+                    item: item
+                )
+            }
         }
     }
 }

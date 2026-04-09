@@ -53,10 +53,7 @@ final class SettingViewModel: BaseViewModel<
         case .notice:
             navigate(to: .noticeList)
 
-        case .termsOfService,
-             .privacyPolicy,
-             .locationTerms,
-             .marketingConsentInfo,
+        case .term,
              .feedback,
              .faq:
             guard let url = URL(string: type.url) else { return }

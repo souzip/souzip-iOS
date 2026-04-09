@@ -12,6 +12,8 @@ final class SouvenirSheetView: UIView {
     // MARK: - UI
 
     private let containerView = UIView()
+    /// 그래버 터치 영역(상단 30pt). 전체 시트 팬은 스크롤뷰와 겹쳐 리스트 제스처와 충돌하므로 이 구역 + 그리드 상단 풀만 사용.
+    private let grabberTouchContainer = UIView()
     private let grabberView = UIView()
 
     private let souvenirGridView = SouvenirGridView()
@@ -40,6 +42,11 @@ final class SouvenirSheetView: UIView {
 
     private var panStartHeight: CGFloat = 0
 
+    private enum SnapMetric {
+        /// 높이 변화가 이보다 작으면 가장 가까운 min/mid/max
+        static let directionAmbiguousThreshold: CGFloat = 20
+    }
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -56,6 +63,7 @@ final class SouvenirSheetView: UIView {
 
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
+        souvenirGridView.setSheetPullTranslationSuperview(superview)
         guard let superview else { return }
 
         if !didInstallHeightConstraint {
@@ -143,6 +151,8 @@ final class SouvenirSheetView: UIView {
         containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         containerView.layer.masksToBounds = true
 
+        grabberTouchContainer.backgroundColor = .clear
+
         grabberView.backgroundColor = .systemGray3
         grabberView.layer.cornerRadius = 2
     }
@@ -150,13 +160,19 @@ final class SouvenirSheetView: UIView {
     private func setHierarchy() {
         addSubview(containerView)
         [
-            grabberView,
+            grabberTouchContainer,
             souvenirGridView,
         ].forEach(containerView.addSubview)
+        grabberTouchContainer.addSubview(grabberView)
     }
 
     private func setConstraints() {
         containerView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        grabberTouchContainer.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(30)
+        }
 
         grabberView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(9)
@@ -166,7 +182,7 @@ final class SouvenirSheetView: UIView {
         }
 
         souvenirGridView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(30)
+            make.top.equalTo(grabberTouchContainer.snp.bottom)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -176,12 +192,23 @@ final class SouvenirSheetView: UIView {
         souvenirGridView.action
             .bind { [weak self] gridAction in
                 switch gridAction {
-                case .shouldDismissSheet:
-                    self?.setLevel(.min)
                 case let .itemTap(item):
                     self?.tapSouvenirItem.accept(item)
+
                 case .tapUpload:
                     self?.tapUpload.accept(())
+
+                case .sheetPullBegan:
+                    guard let self else { return }
+                    panStartHeight = currentHeight
+
+                case let .sheetPullChanged(translationY):
+                    guard let self else { return }
+                    let proposed = panStartHeight - translationY
+                    setHeight(proposed, animated: false)
+
+                case .sheetPullEnded:
+                    self?.snapAfterPanEnded()
                 }
             }
             .disposed(by: disposeBag)
@@ -189,7 +216,7 @@ final class SouvenirSheetView: UIView {
 
     private func setGestures() {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        addGestureRecognizer(pan)
+        grabberTouchContainer.addGestureRecognizer(pan)
     }
 
     // MARK: - Heights
@@ -243,10 +270,21 @@ final class SouvenirSheetView: UIView {
         }
     }
 
-    private func snapToNearest() {
-        let candidates = [minHeight, midHeight, maxHeight]
-        let nearest = candidates.min { abs($0 - currentHeight) < abs($1 - currentHeight) } ?? midHeight
-        setHeight(nearest, animated: true)
+    /// 시트를 키운 방향이면 현재 높이 이상 앵커 중 최소(올림), 줄이면 이하 중 최대(내림). 변화가 작으면 가장 가까운 앵커.
+    private func snapAfterPanEnded() {
+        let h = currentHeight
+        let delta = h - panStartHeight
+        let anchors = [minHeight, midHeight, maxHeight].sorted()
+
+        let target: CGFloat = if abs(delta) < SnapMetric.directionAmbiguousThreshold {
+            anchors.min { abs($0 - h) < abs($1 - h) } ?? midHeight
+        } else if delta > 0 {
+            anchors.first { $0 >= h - 0.5 } ?? maxHeight
+        } else {
+            anchors.last { $0 <= h + 0.5 } ?? minHeight
+        }
+
+        setHeight(clamp(target, minHeight, maxHeight), animated: true)
     }
 
     // MARK: - Pan
@@ -264,7 +302,7 @@ final class SouvenirSheetView: UIView {
             setHeight(proposed, animated: false)
 
         case .ended, .cancelled:
-            snapToNearest()
+            snapAfterPanEnded()
 
         default:
             break

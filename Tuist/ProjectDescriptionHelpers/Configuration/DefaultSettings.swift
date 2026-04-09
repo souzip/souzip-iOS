@@ -1,7 +1,6 @@
 import ProjectDescription
 
 public enum DefaultSettings {
-
     // MARK: - Base Settings
 
     public static let base: SettingsDictionary = [
@@ -36,9 +35,8 @@ public enum DefaultSettings {
         "DEAD_CODE_STRIPPING": "YES",
 
         // Scripts
-        "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
+        "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
     ]
-
 
     // MARK: - Debug Settings
 
@@ -49,7 +47,7 @@ public enum DefaultSettings {
         "GCC_OPTIMIZATION_LEVEL": "0",
         "DEBUG_INFORMATION_FORMAT": "dwarf",
         "ENABLE_TESTABILITY": "YES",
-        "OTHER_SWIFT_FLAGS": "-D DEBUG"
+        "OTHER_SWIFT_FLAGS": "-D DEBUG",
     ]
 
     // MARK: - Release Settings
@@ -59,16 +57,16 @@ public enum DefaultSettings {
         "SWIFT_OPTIMIZATION_LEVEL": "-O",
         "SWIFT_COMPILATION_MODE": "wholemodule",
         "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-        "ENABLE_TESTABILITY": "NO"
+        "ENABLE_TESTABILITY": "NO",
     ]
 
     // MARK: - App Specific Settings
 
     private static func appSettings(for environment: Environment.BuildEnvironment) -> SettingsDictionary {
-        return [
+        [
             "PRODUCT_BUNDLE_IDENTIFIER": .string(environment.bundleId),
             "APP_DISPLAY_NAME": .string(environment.displayName),
-            "ASSETCATALOG_COMPILER_APPICON_NAME": .string(environment.appIconName)
+            "ASSETCATALOG_COMPILER_APPICON_NAME": .string(environment.appIconName),
         ]
     }
 
@@ -93,7 +91,7 @@ public enum DefaultSettings {
                 name: Environment.releaseConfigName,
                 settings: release,
                 xcconfig: .relativeToRoot("Config/Release.xcconfig")
-            )
+            ),
         ]
     }
 
@@ -109,7 +107,7 @@ public enum DefaultSettings {
             .release(
                 name: Environment.releaseConfigName,
                 settings: releaseAppSettings
-            )
+            ),
         ]
     }
 }
@@ -118,6 +116,6 @@ public enum DefaultSettings {
 
 private extension SettingsDictionary {
     func merging(_ other: SettingsDictionary) -> SettingsDictionary {
-        self.merging(other) { _, new in new }
+        merging(other) { _, new in new }
     }
 }

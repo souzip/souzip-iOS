@@ -29,6 +29,17 @@ final class SouvenirCoordinator: BaseCoordinator<SouvenirRoute, Never> {
         case let .search(context):
             showSearch(context: context)
 
+        case let .locationSearchResult(items, searchText, centerCoordinate, onConfirm):
+            showLocationSearchResult(
+                items: items,
+                searchText: searchText,
+                centerCoordinate: centerCoordinate,
+                onConfirm: onConfirm
+            )
+
+        case let .popToSearchFromLocationResult(resume):
+            popToSearchFromLocationResultApplying(resume)
+
         case let .locationPicker(initial, onComplete):
             showLocationPicker(
                 initialCoordinate: initial,
@@ -98,6 +109,23 @@ private extension SouvenirCoordinator {
 
     func showSearch(context: SearchCountryContext) {
         let scene = factory.makeSearchScene(context: context)
+        scene.vc.hidesBottomBarWhenPushed = true
+        bindRoute(scene)
+        activeNav().pushViewController(scene.vc, animated: true)
+    }
+
+    func showLocationSearchResult(
+        items: [SearchResultItem],
+        searchText: String,
+        centerCoordinate: CLLocationCoordinate2D,
+        onConfirm: @escaping (SearchResultItem) -> Void
+    ) {
+        let scene = factory.makeLocationSearchResultScene(
+            items: items,
+            searchText: searchText,
+            centerCoordinate: centerCoordinate,
+            onConfirm: onConfirm
+        )
         scene.vc.hidesBottomBarWhenPushed = true
         bindRoute(scene)
         activeNav().pushViewController(scene.vc, animated: true)
@@ -175,5 +203,13 @@ private extension SouvenirCoordinator {
         } else {
             handlePop()
         }
+    }
+
+    func popToSearchFromLocationResultApplying(_ resume: LocationSearchResumeFromResult) {
+        let currentNav = activeNav()
+        guard currentNav.topViewController is LocationSearchResultViewController else { return }
+        currentNav.popViewController(animated: false)
+        guard let searchVC = currentNav.topViewController as? SearchCountryViewController else { return }
+        searchVC.applyReturnFromLocationResult(resume)
     }
 }

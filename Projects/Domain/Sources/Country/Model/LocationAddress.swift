@@ -1,14 +1,14 @@
-public struct GeocodingAddress {
-    public let formattedAddress: String
+public struct LocationAddress {
+    public let address: String
     public let city: String
     public let countryCode: String
 
     public init(
-        formattedAddress: String,
+        address: String,
         city: String,
         countryCode: String
     ) {
-        self.formattedAddress = formattedAddress
+        self.address = address
         self.city = city
         self.countryCode = countryCode
     }

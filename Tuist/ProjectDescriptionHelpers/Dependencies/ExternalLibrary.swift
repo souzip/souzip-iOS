@@ -2,17 +2,17 @@ import ProjectDescription
 
 public enum ExternalLibrary: String, CaseIterable {
     // MARK: - Reactive
-    
+
     case rxSwift = "RxSwift"
     case rxRelay = "RxRelay"
     case rxCocoa = "RxCocoa"
 
     // MARK: - UI
-    
+
     case snapKit = "SnapKit"
-    
+
     // MARK: - Utility
-    
+
     case kingfisher = "Kingfisher"
 
     // MARK: - Kakao SDK
@@ -28,13 +28,13 @@ public enum ExternalLibrary: String, CaseIterable {
     // MARK: - Google Sign In
 
     case googleSignIn = "GoogleSignIn"
-    
+
     // MARK: - Analytics
-    
+
     case amplitudeSwift = "AmplitudeSwift"
-    
+
     // MARK: - Google Mobile Ads
-    
+
     case googleMobileAds = "GoogleMobileAds"
 }
 
@@ -48,7 +48,7 @@ public extension ExternalLibrary {
         default: .staticFramework
         }
     }
-    
+
     // MARK: - Package Settings
 
     static var packageSettings: PackageSettings {
@@ -57,7 +57,7 @@ public extension ExternalLibrary {
                 ($0.rawValue, $0.productType)
             }
         )
-        
+
         return PackageSettings(
             productTypes: productTypes,
             baseSettings: .settings(
@@ -67,7 +67,7 @@ public extension ExternalLibrary {
                 ],
                 configurations: [
                     .debug(name: .configuration("Debug")),
-                    .release(name: .configuration("Release"))
+                    .release(name: .configuration("Release")),
                 ]
             )
         )

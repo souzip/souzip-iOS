@@ -5,9 +5,9 @@ public protocol CountryRepository {
     func getAddress(
         latitude: Double,
         longitude: Double
-    ) async throws -> GeocodingAddress
+    ) async throws -> LocationAddress
 
     func searchLocations(
         keyword: String
-    ) async throws -> [SearchedLocation]
+    ) async throws -> [LocationSearchHit]
 }

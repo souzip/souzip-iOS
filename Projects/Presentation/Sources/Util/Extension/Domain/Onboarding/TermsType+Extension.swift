@@ -2,6 +2,30 @@ import Domain
 import Foundation
 
 extension TermsType {
+    /// 설정 화면 「이용 약관」 섹션에 노출할 항목 순서. 새 약관 추가 시 여기와 아래 `settingMenuTitle`·`urlString`만 맞추면 됨.
+    static let settingMenuOrderedCases: [TermsType] = [
+        .service,
+        .privacy,
+        .location,
+        .marketing,
+    ]
+
+    /// 설정 리스트 행 제목(온보딩 체크 문구 `title`과 구분)
+    var settingMenuTitle: String {
+        switch self {
+        case .age14:
+            ""
+        case .service:
+            "서비스 이용약관"
+        case .privacy:
+            "개인정보처리방침"
+        case .location:
+            "위치기반서비스 이용약관"
+        case .marketing:
+            "마케팅 정보 수신 동의 안내"
+        }
+    }
+
     var title: String {
         switch self {
         case .age14:
@@ -21,13 +45,13 @@ extension TermsType {
         switch self {
         case .age14: nil
         case .service:
-            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5801885cfc72d69e16a34"
+            "https://www.souzip.com/terms"
         case .privacy:
-            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f5802499befa952e59529e"
+            "https://www.souzip.com/privacy"
         case .location:
-            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580db899bcb4bd78c8012"
+            "https://www.souzip.com/location-terms"
         case .marketing:
-            "https://noiseless-hornet-d9e.notion.site/2c7d4699d3f580cdbe77dce440e8e85f"
+            "https://www.souzip.com/marketing-terms"
         }
     }
 }

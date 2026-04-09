@@ -1,4 +1,5 @@
 import Analytics
+import CoreLocation
 import Domain
 import Logger
 import Photos
@@ -26,6 +27,9 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     /// 폼에 입력 이벤트가 한 번이라도 발생했는지 여부
     private var isDirty: Bool = false
+
+    /// 역지오코딩 요청 세대 — 늦게 도착한 응답이 최신 좌표를 덮어쓰지 않게 함
+    private var addressLookupGeneration: UInt64 = 0
 
     // MARK: - Life Cycle
 
@@ -57,7 +61,7 @@ final class SouvenirFormViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .tapClose, .confirmClose, .tapSubmit,
-             .tapPhotoAdd, .tapAddress, .tapCategory:
+             .tapPhotoAdd, .tapAddress, .tapPreciseLocation, .tapCategory:
             break
         default:
             isDirty = true
@@ -97,22 +101,42 @@ final class SouvenirFormViewModel: BaseViewModel<
                 trackUploadOnce(.upload(.titleAdded))
             }
 
+        case .tapPreciseLocation:
+            guard let coordinate = state.value.coordinate else { return }
+            navigate(to: .locationPicker(
+                initialCoordinate: coordinate.toCLLocationCoordinate2D,
+                onComplete: { [weak self] clCoordinate, detail in
+                    self?.handleAction(.updateAddress(
+                        clCoordinate.toCoordinate,
+                        detail
+                    ))
+                }
+            ))
+
         // 주소 입력 탭 처리
         case .tapAddress:
             navigate(to: .search(.init(
                 initialQuery: locationSearchQuery,
                 mode: .store,
-                onResult: { [weak self] searchResult in
-                    self?.locationSearchQuery = searchResult.name
+                onResult: { [weak self] items, selectedItem, searchText in
+                    self?.locationSearchQuery = searchText
+                    let orderedItems = Self.searchResultsPlacingSelectedFirst(
+                        items,
+                        selected: selectedItem
+                    )
                     self?.navigate(
-                        to: .locationPicker(
-                            initialCoordinate: searchResult.coordinate
-                        ) { [weak self] coordinate, detail in
-                            self?.handleAction(.updateAddress(
-                                coordinate.toCoordinate,
-                                detail
-                            ))
-                        }
+                        to: .locationSearchResult(
+                            items: orderedItems,
+                            searchText: searchText,
+                            centerCoordinate: selectedItem.coordinate,
+                            onConfirm: { [weak self] confirmedItem in
+                                // 상세주소는 피커에서만 입력; 검색 결과 이름은 locationDetail에 넣지 않음
+                                self?.handleAction(.updateAddress(
+                                    confirmedItem.coordinate.toCoordinate,
+                                    ""
+                                ))
+                            }
+                        )
                     )
                 }
             )))
@@ -124,7 +148,15 @@ final class SouvenirFormViewModel: BaseViewModel<
             }
             trackUploadOnce(.upload(.locationSet))
 
-            Task { await updateAddress(coordinate) }
+            addressLookupGeneration += 1
+            let generation = addressLookupGeneration
+            let lookupCoordinate = coordinate
+            Task { [weak self] in
+                await self?.resolveAddressIfLatest(
+                    coordinate: lookupCoordinate,
+                    generation: generation
+                )
+            }
 
         case let .updateLocalPrice(text):
             handleUpdatePrice(text)
@@ -184,22 +216,32 @@ final class SouvenirFormViewModel: BaseViewModel<
         }
     }
 
-    private func updateAddress(_ coordinate: Coordinate) async {
+    private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
         do {
-            let address = try await countryRepo.getAddress(
+            let locationAddress = try await countryRepo.getAddress(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
 
-            let country = try countryRepo.fetchCountry(countryCode: address.countryCode)
-            mutate {
-                $0.address = address.formattedAddress
-                $0.currencySymbol = country.currency.symbol
-                $0.localCurrencySymbol = country.currency.symbol
-                $0.countryCode = address.countryCode
+            let country = try countryRepo.fetchCountry(countryCode: locationAddress.countryCode)
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                guard generation == addressLookupGeneration else { return }
+                guard state.value.coordinate == coordinate else { return }
+                mutate {
+                    $0.address = locationAddress.address
+                    $0.currencySymbol = country.currency.symbol
+                    $0.localCurrencySymbol = country.currency.symbol
+                    $0.countryCode = locationAddress.countryCode
+                }
             }
         } catch {
-            emit(.showError(error.localizedDescription))
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                guard generation == addressLookupGeneration else { return }
+                guard state.value.coordinate == coordinate else { return }
+                emit(.showError(error.localizedDescription))
+            }
         }
     }
 
@@ -382,6 +424,23 @@ final class SouvenirFormViewModel: BaseViewModel<
 
         let uiImage = UIImage(cgImage: finalCGImage)
         return uiImage.jpegData(compressionQuality: compressionQuality)
+    }
+}
+
+// MARK: - 위치 검색 결과 순서
+
+private extension SouvenirFormViewModel {
+    /// 탭한 항목만 맨 앞으로, 나머지는 기존 상대 순서 유지
+    static func searchResultsPlacingSelectedFirst(
+        _ items: [SearchResultItem],
+        selected: SearchResultItem
+    ) -> [SearchResultItem] {
+        guard let index = items.firstIndex(where: { $0.id == selected.id }) else {
+            return items
+        }
+        var rest = items
+        let chosen = rest.remove(at: index)
+        return [chosen] + rest
     }
 }
 
