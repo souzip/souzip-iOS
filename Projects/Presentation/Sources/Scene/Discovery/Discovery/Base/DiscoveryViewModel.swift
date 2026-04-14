@@ -6,22 +6,25 @@ final class DiscoveryViewModel: BaseViewModel<
     DiscoveryEvent,
     DiscoveryRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let discoveryRepo: DiscoveryRepository
-    private let countryRepo: CountryRepository
-    private let authRepo: AuthRepository
+    private let loadCountryTopSouvenirs: LoadCountryTopSouvenirsUseCase
+    private let loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase
+    private let loadCountryDetail: LoadCountryDetailUseCase
+    private let checkFullAuthentication: CheckFullAuthenticationUseCase
 
     // MARK: - Init
 
     init(
-        discoveryRepo: DiscoveryRepository,
-        countryRepo: CountryRepository,
-        authRepo: AuthRepository
+        loadCountryTopSouvenirs: LoadCountryTopSouvenirsUseCase,
+        loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase,
+        loadCountryDetail: LoadCountryDetailUseCase,
+        checkFullAuthentication: CheckFullAuthenticationUseCase
     ) {
-        self.discoveryRepo = discoveryRepo
-        self.countryRepo = countryRepo
-        self.authRepo = authRepo
+        self.loadCountryTopSouvenirs = loadCountryTopSouvenirs
+        self.loadTopSouvenirsByCategory = loadTopSouvenirsByCategory
+        self.loadCountryDetail = loadCountryDetail
+        self.checkFullAuthentication = checkFullAuthentication
         super.init(initialState: State())
     }
 
@@ -31,7 +34,7 @@ final class DiscoveryViewModel: BaseViewModel<
         switch action {
         case .viewWillAppear:
             Task {
-                let isLogin = await authRepo.isFullyAuthenticated()
+                let isLogin = await checkFullAuthentication.execute()
                 mutate { $0.isGuest = !isLogin }
             }
 
@@ -79,7 +82,7 @@ final class DiscoveryViewModel: BaseViewModel<
             }
 
             // 1) 국가별 기념품 + 카테고리별 기념품 동시 호출
-            async let countrySouvenirsTask = discoveryRepo.getCountrySouvenirs()
+            async let countrySouvenirsTask = loadCountryTopSouvenirs.execute()
             async let categorySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCategory(category: firstCategory)
 
             let (allCountrySouvenirs, categorySouvenirs) = try await (
@@ -89,7 +92,7 @@ final class DiscoveryViewModel: BaseViewModel<
 
             // 2) 국가 칩 구성 (전체, 첫번째 선택)
             let countryChips: [CountryChipItem] = allCountrySouvenirs.enumerated().map { idx, item in
-                let flagImage = (try? countryRepo.fetchCountry(countryCode: item.countryCode))?.flagImageURL ?? ""
+                let flagImage = (try? loadCountryDetail.execute(countryCode: item.countryCode))?.flagImageURL ?? ""
 
                 return CountryChipItem(
                     countryCode: item.countryCode,
@@ -106,7 +109,7 @@ final class DiscoveryViewModel: BaseViewModel<
 
             // 4) 통계 (상위 3개)
             let stats: [StatCountryChipItem] = allCountrySouvenirs.prefix(3).enumerated().map { index, item in
-                let flagImage = (try? countryRepo.fetchCountry(countryCode: item.countryCode))?.flagImageURL ?? ""
+                let flagImage = (try? loadCountryDetail.execute(countryCode: item.countryCode))?.flagImageURL ?? ""
 
                 return StatCountryChipItem(
                     flagImage: flagImage,
@@ -209,11 +212,11 @@ final class DiscoveryViewModel: BaseViewModel<
     // MARK: - Fetch Helpers
 
     private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirCardItem] {
-        let souvenirs = try await discoveryRepo.getTop10SouvenirsByCategory(category: category)
+        let souvenirs = try await loadTopSouvenirsByCategory.execute(category: category)
         return mapToSouvenirCardItems(souvenirs)
     }
 
-    private func mapToSouvenirCardItems(_ souvenirs: [DiscoverySouvenir]) -> [SouvenirCardItem] {
+    private func mapToSouvenirCardItems(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
         souvenirs.map {
             SouvenirCardItem(
                 id: $0.id,

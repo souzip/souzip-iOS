@@ -16,16 +16,16 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - Public
 
-    public func getCountrySouvenirs() async throws -> [CountryTopSouvenir] {
+    public func loadCountrySouvenirs() async throws -> [CountryTopSouvenir] {
         do {
-            let dtos = try await discoveryRemote.getTop10CountrySouvenirs()
+            let dtos = try await discoveryRemote.loadTop10CountrySouvenirs()
 
             return dtos.map { dto in
                 CountryTopSouvenir(
                     countryCode: dto.countryCode,
                     countryNameKr: dto.countryNameKr,
                     souvenirCount: dto.souvenirCount,
-                    souvenirs: mapSouvenirs(dto.souvenirs)
+                    souvenirs: DiscoveryDTOMapper.toDomain(dto.souvenirs)
                 )
             }
         } catch {
@@ -33,13 +33,13 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
         }
     }
 
-    public func getTop10SouvenirsByCategory(
+    public func loadTopSouvenirsByCategory(
         category: SouvenirCategory
-    ) async throws -> [DiscoverySouvenir] {
+    ) async throws -> [CatalogSouvenir] {
         do {
             let categoryName = OnboardingDTOMapper.toDTO(category)
-            let dto = try await discoveryRemote.getTop10ByCategory(categoryName: categoryName)
-            return mapSouvenirs(dto)
+            let dto = try await discoveryRemote.loadTop10ByCategory(categoryName: categoryName)
+            return DiscoveryDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
         }
@@ -47,19 +47,19 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - AI (Authed)
 
-    public func getAIRecommendationByPreferenceCategory() async throws -> [DiscoverySouvenir] {
+    public func loadAIRecommendationsForCategory() async throws -> [CatalogSouvenir] {
         do {
-            let dto = try await discoveryRemote.getAIPreferenceCategory()
-            return mapSouvenirs(dto.souvenirs)
+            let dto = try await discoveryRemote.loadAIPreferenceCategory()
+            return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)
         }
     }
 
-    public func getAIRecommendationByPreferenceUpload() async throws -> [DiscoverySouvenir] {
+    public func loadAIRecommendationsForUpload() async throws -> [CatalogSouvenir] {
         do {
-            let dto = try await discoveryRemote.getAIPreferenceUpload()
-            return mapSouvenirs(dto.souvenirs)
+            let dto = try await discoveryRemote.loadAIPreferenceUpload()
+            return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)
         }
@@ -69,18 +69,6 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 // MARK: - Private
 
 private extension DefaultDiscoveryRepository {
-    func mapSouvenirs(_ dto: [DiscoverySouvenirResponse]) -> [DiscoverySouvenir] {
-        dto.map {
-            DiscoverySouvenir(
-                id: $0.id,
-                name: $0.name,
-                category: SouvenirDTOMapper.mapToCategory($0.category),
-                countryCode: $0.countryCode,
-                thumbnailUrl: $0.thumbnailUrl
-            )
-        }
-    }
-
     func mapToDomainError(_ error: Error) -> DiscoveryError {
         if let networkError = error as? NetworkError {
             switch networkError {

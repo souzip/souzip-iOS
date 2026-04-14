@@ -17,8 +17,8 @@ final class DefaultCountryRepository: CountryRepository {
         self.placeTypeLocal = placeTypeLocal
     }
 
-    func fetchTop30Countries() throws -> [CountryDetail] {
-        let dtos = countryLocal.fetchCountries()
+    func loadPopularCountries() throws -> [CountryDetail] {
+        let dtos = countryLocal.loadCountries()
 
         return dtos
             .filter { PopularDestinationsKR.orderIndex[$0.code] != nil }
@@ -26,24 +26,24 @@ final class DefaultCountryRepository: CountryRepository {
                 PopularDestinationsKR.orderIndex[$0.code, default: .max]
                     < PopularDestinationsKR.orderIndex[$1.code, default: .max]
             }
-            .map { $0.toDomain() }
+            .map { CountryDTOMapper.toDomain($0) }
     }
 
-    func fetchCountry(countryCode: String) throws -> CountryDetail {
-        guard let dto = countryLocal.fetchCountry(countryCode: countryCode) else {
+    func loadCountry(countryCode: String) throws -> CountryDetail {
+        guard let dto = countryLocal.loadCountry(countryCode: countryCode) else {
             throw CountryError.notFound
         }
-        return dto.toDomain()
+        return CountryDTOMapper.toDomain(dto)
     }
 
     // MARK: - Address
 
-    func getAddress(
+    func loadAddress(
         latitude: Double,
         longitude: Double
     ) async throws -> LocationAddress {
         do {
-            let dto = try await countryRemote.getAddress(
+            let dto = try await countryRemote.loadAddress(
                 latitude: latitude,
                 longitude: longitude
             )

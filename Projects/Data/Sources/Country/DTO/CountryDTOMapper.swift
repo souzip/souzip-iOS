@@ -3,6 +3,31 @@ import Foundation
 import Logger
 
 public enum CountryDTOMapper {
+    // MARK: - Country (로컬 번들 / 국가 메타)
+
+    public static func toDomain(_ dto: CountryDTO) -> CountryDetail {
+        CountryDetail(
+            nameEnglish: dto.nameEn,
+            nameKorean: dto.nameKr,
+            code: dto.code,
+            region: toDomain(dto.region),
+            capital: dto.capital ?? "",
+            flagImageURL: dto.imageUrl,
+            coordinate: Coordinate(latitude: dto.latitude, longitude: dto.longitude),
+            currency: toDomain(dto.currency)
+        )
+    }
+
+    private static func toDomain(_ dto: RegionDTO) -> CountryRegion {
+        CountryRegion(englishName: dto.englishName, koreanName: dto.koreanName)
+    }
+
+    private static func toDomain(_ dto: CurrencyDTO) -> CurrencyInfo {
+        CurrencyInfo(code: dto.code, symbol: dto.symbol)
+    }
+
+    // MARK: - Location / 주소
+
     public static func toDomain(_ dto: LocationAddressResponse) -> LocationAddress {
         LocationAddress(
             address: dto.address,

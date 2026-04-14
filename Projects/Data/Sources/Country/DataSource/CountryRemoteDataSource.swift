@@ -2,7 +2,7 @@ import Foundation
 import Networking
 
 public protocol CountryRemoteDataSource {
-    func getAddress(
+    func loadAddress(
         latitude: Double,
         longitude: Double
     ) async throws -> LocationAddressResponse
@@ -26,7 +26,7 @@ public final class DefaultCountryRemoteDataSource: CountryRemoteDataSource {
 
     // MARK: - Address API (인증 필요)
 
-    public func getAddress(
+    public func loadAddress(
         latitude: Double,
         longitude: Double
     ) async throws -> LocationAddressResponse {

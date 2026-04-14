@@ -6,22 +6,25 @@ final class RecommendViewModel: BaseViewModel<
     RecommendEvent,
     DiscoveryRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let discoveryRepo: DiscoveryRepository
-    private let countryRepo: CountryRepository
+    private let loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase
+    private let loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase
+    private let loadCountryDetail: LoadCountryDetailUseCase
 
-    private var preferredAll: [DiscoverySouvenir] = []
-    private var uploadAll: [DiscoverySouvenir] = []
+    private var preferredAll: [CatalogSouvenir] = []
+    private var uploadAll: [CatalogSouvenir] = []
 
     // MARK: - Init
 
     init(
-        discoveryRepo: DiscoveryRepository,
-        countryRepo: CountryRepository
+        loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase,
+        loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase,
+        loadCountryDetail: LoadCountryDetailUseCase
     ) {
-        self.discoveryRepo = discoveryRepo
-        self.countryRepo = countryRepo
+        self.loadAIRecommendationsForCategory = loadAIRecommendationsForCategory
+        self.loadAIRecommendationsForUpload = loadAIRecommendationsForUpload
+        self.loadCountryDetail = loadCountryDetail
         super.init(initialState: State())
     }
 
@@ -101,11 +104,11 @@ private extension RecommendViewModel {
     }
 
     func fetchAIRecommendations() async throws -> (
-        preferred: [DiscoverySouvenir],
-        upload: [DiscoverySouvenir]
+        preferred: [CatalogSouvenir],
+        upload: [CatalogSouvenir]
     ) {
-        async let preferredTask = discoveryRepo.getAIRecommendationByPreferenceCategory()
-        async let uploadTask = discoveryRepo.getAIRecommendationByPreferenceUpload()
+        async let preferredTask = loadAIRecommendationsForCategory.execute()
+        async let uploadTask = loadAIRecommendationsForUpload.execute()
 
         let preferred = try await preferredTask
         let upload = try await uploadTask
@@ -139,13 +142,13 @@ private extension RecommendViewModel {
 // MARK: - Builders
 
 private extension RecommendViewModel {
-    func makeCountryChips(from preferred: [DiscoverySouvenir]) async -> [CountryChipItem] {
+    func makeCountryChips(from preferred: [CatalogSouvenir]) async -> [CountryChipItem] {
         let codes = orderedUnique(preferred.map(\.countryCode))
 
         var result: [CountryChipItem] = []
 
         for code in codes {
-            guard let country = try? countryRepo.fetchCountry(countryCode: code) else {
+            guard let country = try? loadCountryDetail.execute(countryCode: code) else {
                 continue
             }
 
@@ -183,9 +186,9 @@ private extension RecommendViewModel {
         return mapToCards(filtered)
     }
 
-    func resolveUploadCountryName(from upload: [DiscoverySouvenir]) async -> String? {
+    func resolveUploadCountryName(from upload: [CatalogSouvenir]) async -> String? {
         guard let code = upload.first?.countryCode else { return nil }
-        guard let country = try? countryRepo.fetchCountry(countryCode: code) else { return nil }
+        guard let country = try? loadCountryDetail.execute(countryCode: code) else { return nil }
         return country.nameKorean
     }
 }
@@ -193,7 +196,7 @@ private extension RecommendViewModel {
 // MARK: - Helpers
 
 private extension RecommendViewModel {
-    func mapToCards(_ souvenirs: [DiscoverySouvenir]) -> [SouvenirCardItem] {
+    func mapToCards(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
         souvenirs.map {
             SouvenirCardItem(
                 id: $0.id,
@@ -205,9 +208,9 @@ private extension RecommendViewModel {
     }
 
     func filterByCountry(
-        _ souvenirs: [DiscoverySouvenir],
+        _ souvenirs: [CatalogSouvenir],
         countryCode: String?
-    ) -> [DiscoverySouvenir] {
+    ) -> [CatalogSouvenir] {
         guard let code = countryCode, code.isEmpty == false else { return souvenirs }
         return souvenirs.filter { $0.countryCode.caseInsensitiveCompare(code) == .orderedSame }
     }

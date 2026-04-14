@@ -2,11 +2,11 @@ import Foundation
 import Networking
 
 public protocol SouvenirRemoteDataSource {
-    func getSouvenir(id: Int) async throws -> SouvenirDetailResponse
+    func loadSouvenir(id: Int) async throws -> SouvenirDetailResponse
     func createSouvenir(data: MultipartSouvenirData) async throws -> SouvenirDetailResponse
     func updateSouvenir(id: Int, data: MultipartSouvenirData) async throws -> SouvenirDetailResponse
     func deleteSouvenir(id: Int) async throws
-    func getNearbySouvenirs(
+    func loadNearbySouvenirs(
         latitude: Double,
         longitude: Double,
         radiusMeter: Int?
@@ -27,8 +27,8 @@ public final class DefaultSouvenirRemoteDataSource: SouvenirRemoteDataSource {
 
     // MARK: - Get Souvenir (인증 불필요)
 
-    public func getSouvenir(id: Int) async throws -> SouvenirDetailResponse {
-        let endpoint = SouvenirEndpoint.getSouvenir(id: id)
+    public func loadSouvenir(id: Int) async throws -> SouvenirDetailResponse {
+        let endpoint = SouvenirEndpoint.loadSouvenir(id: id)
         let response: APIResponse<SouvenirDetailResponse> = try await authed.request(endpoint)
 
         guard let data = response.data else {
@@ -78,12 +78,12 @@ public final class DefaultSouvenirRemoteDataSource: SouvenirRemoteDataSource {
 
     // MARK: - Get Nearby Souvenirs (인증 불필요)
 
-    public func getNearbySouvenirs(
+    public func loadNearbySouvenirs(
         latitude: Double,
         longitude: Double,
         radiusMeter: Int? = nil
     ) async throws -> NearbySouvenirsResponse {
-        let endpoint = SouvenirEndpoint.getNearbySouvenirs(
+        let endpoint = SouvenirEndpoint.loadNearbySouvenirs(
             latitude: latitude,
             longitude: longitude,
             radiusMeter: radiusMeter

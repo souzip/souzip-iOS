@@ -9,15 +9,18 @@ final class SouvenirDetailViewModel: BaseViewModel<
 > {
     // MARK: - Properties
 
-    private let souvenirRepo: SouvenirRepository
+    private let loadSouvenirDetail: LoadSouvenirDetailUseCase
+    private let deleteSouvenir: DeleteSouvenirUseCase
 
     // MARK: - Init
 
     init(
         souvenirId: Int,
-        souvenirRepo: SouvenirRepository
+        loadSouvenirDetail: LoadSouvenirDetailUseCase,
+        deleteSouvenir: DeleteSouvenirUseCase
     ) {
-        self.souvenirRepo = souvenirRepo
+        self.loadSouvenirDetail = loadSouvenirDetail
+        self.deleteSouvenir = deleteSouvenir
         super.init(initialState: State())
 
         Task {
@@ -40,13 +43,9 @@ final class SouvenirDetailViewModel: BaseViewModel<
                     let newDetail = SouvenirDetail(
                         id: editedDetail.id,
                         name: editedDetail.name,
-                        localPrice: editedDetail.localPrice,
-                        currencySymbol: editedDetail.currencySymbol,
-                        krwPrice: editedDetail.krwPrice,
+                        price: editedDetail.price,
                         description: editedDetail.description,
-                        address: editedDetail.address,
-                        locationDetail: editedDetail.locationDetail,
-                        coordinate: editedDetail.coordinate,
+                        location: editedDetail.location,
                         category: editedDetail.category,
                         purpose: editedDetail.purpose,
                         countryCode: editedDetail.countryCode,
@@ -66,7 +65,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
             emit(.showReport)
 
         case .tapCopy:
-            guard let address = state.value.detail?.address else { return }
+            guard let address = state.value.detail?.location.address else { return }
             emit(.copy(address))
 
         case .confirmDelete:
@@ -80,7 +79,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
         emit(.loading(true))
 
         do {
-            let detail = try await souvenirRepo.getSouvenir(id: id)
+            let detail = try await loadSouvenirDetail.execute(id: id)
             mutate {
                 $0.detail = detail
                 $0.souvenirId = id
@@ -98,7 +97,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
         emit(.loading(true))
 
         do {
-            try await souvenirRepo.deleteSouvenir(id: detail.id)
+            try await deleteSouvenir.execute(id: detail.id)
             handleAction(.back)
         } catch {
             emit(.showAlert(message: error.localizedDescription))

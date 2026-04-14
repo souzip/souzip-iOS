@@ -8,11 +8,11 @@ final class GlobeViewModel: BaseViewModel<
     GlobeEvent,
     HomeRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let countryRepo: CountryRepository
-    private let souvenirRepo: SouvenirRepository
-    private let authRepo: AuthRepository
+    private let loadPopularCountries: LoadPopularCountriesUseCase
+    private let loadNearbySouvenirs: LoadNearbySouvenirsUseCase
+    private let checkFullAuthentication: CheckFullAuthenticationUseCase
 
     // MARK: - Properties
 
@@ -30,13 +30,13 @@ final class GlobeViewModel: BaseViewModel<
     // MARK: - Init
 
     init(
-        countryRepo: CountryRepository,
-        souvenirRepo: SouvenirRepository,
-        authRepo: AuthRepository
+        loadPopularCountries: LoadPopularCountriesUseCase,
+        loadNearbySouvenirs: LoadNearbySouvenirsUseCase,
+        checkFullAuthentication: CheckFullAuthenticationUseCase
     ) {
-        self.countryRepo = countryRepo
-        self.souvenirRepo = souvenirRepo
-        self.authRepo = authRepo
+        self.loadPopularCountries = loadPopularCountries
+        self.loadNearbySouvenirs = loadNearbySouvenirs
+        self.checkFullAuthentication = checkFullAuthentication
         super.init(initialState: State())
     }
 
@@ -67,7 +67,7 @@ final class GlobeViewModel: BaseViewModel<
 
         case .wantToUploadSouvenir:
             Task {
-                let isLogin = await authRepo.isFullyAuthenticated()
+                let isLogin = await checkFullAuthentication.execute()
                 if isLogin {
                     navigate(to: .souvenirRoute(.create))
                 } else {
@@ -111,7 +111,7 @@ private extension GlobeViewModel {
     }
 
     func loadCountryBadges() async {
-        let badges = try? countryRepo.fetchTop30Countries()
+        let badges = try? loadPopularCountries.execute()
             .map(CountryBadge.init)
 
         mutate {
@@ -469,7 +469,7 @@ private extension GlobeViewModel {
         near coordinate: CLLocationCoordinate2D,
         radius: Int
     ) async throws -> [SouvenirListItem] {
-        try await souvenirRepo.getNearbySouvenirs(
+        try await loadNearbySouvenirs.execute(
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
             radiusMeter: radius

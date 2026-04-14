@@ -2,17 +2,17 @@ import Foundation
 import Networking
 
 public enum SouvenirEndpoint {
-    case getSouvenir(id: Int)
+    case loadSouvenir(id: Int)
     case createSouvenir(data: MultipartSouvenirData)
     case updateSouvenir(id: Int, data: MultipartSouvenirData)
     case deleteSouvenir(id: Int)
-    case getNearbySouvenirs(latitude: Double, longitude: Double, radiusMeter: Int?)
+    case loadNearbySouvenirs(latitude: Double, longitude: Double, radiusMeter: Int?)
 }
 
 extension SouvenirEndpoint: APIEndpoint {
     public var path: String {
         switch self {
-        case let .getSouvenir(id):
+        case let .loadSouvenir(id):
             "/api/souvenirs/\(id)"
         case .createSouvenir:
             "/api/v2/souvenirs"
@@ -20,14 +20,14 @@ extension SouvenirEndpoint: APIEndpoint {
             "/api/v2/souvenirs/\(id)"
         case let .deleteSouvenir(id):
             "/api/souvenirs/\(id)"
-        case .getNearbySouvenirs:
+        case .loadNearbySouvenirs:
             "/api/souvenirs/nearby"
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .getSouvenir, .getNearbySouvenirs:
+        case .loadSouvenir, .loadNearbySouvenirs:
             .get
         case .createSouvenir:
             .post
@@ -49,7 +49,7 @@ extension SouvenirEndpoint: APIEndpoint {
 
     public var parameters: [String: Any]? {
         switch self {
-        case let .getNearbySouvenirs(latitude, longitude, radiusMeter):
+        case let .loadNearbySouvenirs(latitude, longitude, radiusMeter):
             var params: [String: Any] = [
                 "latitude": latitude,
                 "longitude": longitude,

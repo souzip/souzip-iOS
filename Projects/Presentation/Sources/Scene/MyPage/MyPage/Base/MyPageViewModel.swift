@@ -6,25 +6,28 @@ final class MyPageViewModel: BaseViewModel<
     MyPageEvent,
     MyPageRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let userRepo: UserRepository
-    private let souvenirRepo: SouvenirRepository
-    private let countryRepo: CountryRepository
-    private let authRepo: AuthRepository
+    private let loadUserProfile: LoadUserProfileUseCase
+    private let loadUserSouvenirs: LoadUserSouvenirsUseCase
+    private let loadCountryDetail: LoadCountryDetailUseCase
+    private let consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase
+    private let checkFullAuthentication: CheckFullAuthenticationUseCase
 
     // MARK: - Init
 
     init(
-        userRepo: UserRepository,
-        souvenirRepo: SouvenirRepository,
-        countryRepo: CountryRepository,
-        authRepo: AuthRepository
+        loadUserProfile: LoadUserProfileUseCase,
+        loadUserSouvenirs: LoadUserSouvenirsUseCase,
+        loadCountryDetail: LoadCountryDetailUseCase,
+        consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase,
+        checkFullAuthentication: CheckFullAuthenticationUseCase
     ) {
-        self.userRepo = userRepo
-        self.souvenirRepo = souvenirRepo
-        self.countryRepo = countryRepo
-        self.authRepo = authRepo
+        self.loadUserProfile = loadUserProfile
+        self.loadUserSouvenirs = loadUserSouvenirs
+        self.loadCountryDetail = loadCountryDetail
+        self.consumeSouvenirMyPageRefresh = consumeSouvenirMyPageRefresh
+        self.checkFullAuthentication = checkFullAuthentication
         super.init(initialState: State())
     }
 
@@ -34,13 +37,13 @@ final class MyPageViewModel: BaseViewModel<
         switch action {
         case .viewWillAppear:
             Task {
-                let isLogin = await authRepo.isFullyAuthenticated()
+                let isLogin = await checkFullAuthentication.execute()
                 if isLogin, state.value.isGuest == true {
                     mutate { $0.isGuest = false }
                     await loadInitialData()
                     return
                 }
-                let needs = await souvenirRepo.consumeMyPageNeedsRefresh()
+                let needs = await consumeSouvenirMyPageRefresh.execute()
                 guard needs else { return }
                 await loadInitialData()
             }
@@ -77,7 +80,7 @@ final class MyPageViewModel: BaseViewModel<
             let souvenirs = try await souvenirsTask
 
             let mapSouvenirs = souvenirs.compactMap { souvenir -> SouvenirThumbnail? in
-                guard let country = try? countryRepo.fetchCountry(countryCode: souvenir.country) else { return nil }
+                guard let country = try? loadCountryDetail.execute(countryCode: souvenir.country) else { return nil }
 
                 return .init(
                     id: souvenir.id,
@@ -112,7 +115,7 @@ final class MyPageViewModel: BaseViewModel<
     }
 
     private func fetchProfile() async throws -> ProfileData {
-        let userProfile = try await userRepo.getUserProfile()
+        let userProfile = try await loadUserProfile.execute()
 
         return ProfileData(
             profileImageUrl: userProfile.profileImageUrl,
@@ -122,6 +125,6 @@ final class MyPageViewModel: BaseViewModel<
     }
 
     private func fetchColletionSouvenirs() async throws -> [SouvenirThumbnail] {
-        try await userRepo.getUserSouvenirs()
+        try await loadUserSouvenirs.execute()
     }
 }

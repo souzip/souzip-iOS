@@ -12,10 +12,12 @@ final class SouvenirFormViewModel: BaseViewModel<
     SouvenirFormEvent,
     SouvenirRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let countryRepo: CountryRepository
-    private let souvenirRepo: SouvenirRepository
+    private let loadCountryDetail: LoadCountryDetailUseCase
+    private let loadLocationAddress: LoadLocationAddressUseCase
+    private let createSouvenir: CreateSouvenirUseCase
+    private let updateSouvenir: UpdateSouvenirUseCase
 
     private let onResult: ((SouvenirDetail) -> Void)?
 
@@ -36,20 +38,23 @@ final class SouvenirFormViewModel: BaseViewModel<
     init(
         mode: SouvenirFormMode,
         onResult: ((SouvenirDetail) -> Void)? = nil,
-        countryRepo: CountryRepository,
-        souvenirRepo: SouvenirRepository
+        loadCountryDetail: LoadCountryDetailUseCase,
+        loadLocationAddress: LoadLocationAddressUseCase,
+        createSouvenir: CreateSouvenirUseCase,
+        updateSouvenir: UpdateSouvenirUseCase
     ) {
         self.onResult = onResult
-        self.countryRepo = countryRepo
-        self.souvenirRepo = souvenirRepo
+        self.loadCountryDetail = loadCountryDetail
+        self.loadLocationAddress = loadLocationAddress
+        self.createSouvenir = createSouvenir
+        self.updateSouvenir = updateSouvenir
 
         let initialState = SouvenirFormState(mode: mode)
         super.init(initialState: initialState)
 
-        if !initialState.countryCode.isEmpty,
-           let country = try? countryRepo.fetchCountry(countryCode: initialState.countryCode) {
-            mutate { $0.localCurrencySymbol = country.currency.symbol }
-        }
+        applyLocalCurrencySymbolFromCountryIfAvailable(
+            countryCode: initialState.countryCode
+        )
 
         if case .create = mode {
             trackUploadOnce(.upload(.start))
@@ -197,6 +202,17 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     // MARK: - Private
 
+    /// 옵션 B: `countryCode`가 있으면 국가 메타 `currency.symbol`로 `localCurrencySymbol`을 갱신한다. 실패 시 `SouvenirFormState` 초기값 유지(편집: `detail.price.localCurrencySymbol` → `$`, 생성: `$`).
+    private func applyLocalCurrencySymbolFromCountryIfAvailable(countryCode: String) {
+        guard !countryCode.isEmpty else { return }
+        do {
+            let country = try loadCountryDetail.execute(countryCode: countryCode)
+            mutate { $0.localCurrencySymbol = country.currency.symbol }
+        } catch {
+            // 국가 조회 실패 — 폴백은 `SouvenirFormState` 편집 초기화에 위임. 로그는 네트워크/번들 계층 정책에 따름.
+        }
+    }
+
     private func handleAddLocalPhotos(_ photos: [LocalPhoto]) {
         let wasEmpty = state.value.localPhotos.isEmpty
         mutate { state in
@@ -218,12 +234,12 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
         do {
-            let locationAddress = try await countryRepo.getAddress(
+            let locationAddress = try await loadLocationAddress.execute(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
 
-            let country = try countryRepo.fetchCountry(countryCode: locationAddress.countryCode)
+            let country = try loadCountryDetail.execute(countryCode: locationAddress.countryCode)
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 guard generation == addressLookupGeneration else { return }
@@ -307,8 +323,8 @@ final class SouvenirFormViewModel: BaseViewModel<
         let currencyCode: String? = if currentState.currencySymbol == "₩" {
             "KRW"
         } else {
-            try? countryRepo
-                .fetchCountry(countryCode: currentState.countryCode)
+            try? loadCountryDetail
+                .execute(countryCode: currentState.countryCode)
                 .currency
                 .code
         }
@@ -332,7 +348,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             do {
                 emit(.loading(true))
                 let imageData = try convertPhotosToData(state.value.localPhotos)
-                _ = try await souvenirRepo.createSouvenir(
+                _ = try await createSouvenir.execute(
                     input: input,
                     images: imageData
                 )
@@ -349,7 +365,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         Task {
             do {
                 emit(.loading(true))
-                let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
+                let souvenirDetail = try await updateSouvenir.execute(id: id, input: input)
                 onResult?(souvenirDetail)
                 emit(.loading(false))
                 navigate(to: .dismiss)

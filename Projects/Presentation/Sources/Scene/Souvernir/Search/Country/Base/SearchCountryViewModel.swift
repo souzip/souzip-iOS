@@ -10,7 +10,7 @@ final class SearchCountryViewModel: BaseViewModel<
 
     private let onResult: ([SearchResultItem], SearchResultItem, String) -> Void
 
-    private let countryRepo: CountryRepository
+    private let searchLocations: SearchLocationsUseCase
 
     /// 엔터 입력 후 API 결과를 기다리는 중인지 여부
     private var pendingReturnKey = false
@@ -23,10 +23,10 @@ final class SearchCountryViewModel: BaseViewModel<
     init(
         initialSearchText: String = "",
         onResult: @escaping ([SearchResultItem], SearchResultItem, String) -> Void,
-        countryRepo: CountryRepository
+        searchLocations: SearchLocationsUseCase
     ) {
         self.onResult = onResult
-        self.countryRepo = countryRepo
+        self.searchLocations = searchLocations
         super.init(initialState: State(initialSearchText: initialSearchText))
 
         if !initialSearchText.isEmpty {
@@ -89,7 +89,7 @@ final class SearchCountryViewModel: BaseViewModel<
                 await MainActor.run {
                     self.emit(.loading(true))
                 }
-                let results = try await countryRepo.searchLocations(keyword: query)
+                let results = try await searchLocations.execute(keyword: query)
                 let items = mapToSearchResultItems(results)
                 await MainActor.run {
                     guard self.state.value.searchText == query else { return }

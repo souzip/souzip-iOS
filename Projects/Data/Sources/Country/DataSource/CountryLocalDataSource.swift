@@ -1,8 +1,8 @@
 import Foundation
 
 public protocol CountryLocalDataSource {
-    func fetchCountries() -> [CountryDTO]
-    func fetchCountry(countryCode: String) -> CountryDTO?
+    func loadCountries() -> [CountryDTO]
+    func loadCountry(countryCode: String) -> CountryDTO?
 }
 
 public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
@@ -20,11 +20,11 @@ public final class DefaultCountryLocalDataSource: CountryLocalDataSource {
         }
     }
 
-    public func fetchCountries() -> [CountryDTO] {
+    public func loadCountries() -> [CountryDTO] {
         Array(cachedCountries.values)
     }
 
-    public func fetchCountry(countryCode: String) -> CountryDTO? {
+    public func loadCountry(countryCode: String) -> CountryDTO? {
         cachedCountries[countryCode.uppercased()]
     }
 }

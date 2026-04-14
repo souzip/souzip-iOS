@@ -6,11 +6,11 @@ final class NoticeDetailViewModel: BaseViewModel<
     NoticeDetailEvent,
     MyPageRoute
 > {
-    private let noticeRepo: NoticeRepository
+    private let loadNoticeDetail: LoadNoticeDetailUseCase
     private let noticeID: Int
 
-    init(noticeRepo: NoticeRepository, noticeID: Int) {
-        self.noticeRepo = noticeRepo
+    init(loadNoticeDetail: LoadNoticeDetailUseCase, noticeID: Int) {
+        self.loadNoticeDetail = loadNoticeDetail
         self.noticeID = noticeID
         super.init(initialState: State())
     }
@@ -35,7 +35,7 @@ final class NoticeDetailViewModel: BaseViewModel<
 private extension NoticeDetailViewModel {
     func fetchDetail() async {
         do {
-            let detail = try await noticeRepo.getNotice(id: noticeID)
+            let detail = try await loadNoticeDetail.execute(id: noticeID)
             mutate { $0.detail = detail }
         } catch {
             emit(.showAlert(message: error.localizedDescription))

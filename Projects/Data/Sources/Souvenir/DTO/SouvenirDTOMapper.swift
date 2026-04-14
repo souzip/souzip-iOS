@@ -26,19 +26,26 @@ public enum SouvenirDTOMapper {
             }
         }
 
-        return SouvenirDetail(
-            id: dto.id,
-            name: dto.name,
-            localPrice: localPrice,
-            currencySymbol: currencySymbol,
-            krwPrice: krwPrice,
-            description: dto.description,
+        let price = SouvenirPrice(
+            localAmount: localPrice,
+            localCurrencySymbol: currencySymbol,
+            krwAmount: krwPrice
+        )
+        let location = SouvenirLocation(
             address: dto.address,
             locationDetail: dto.locationDetail,
             coordinate: Coordinate(
                 latitude: dto.latitude,
                 longitude: dto.longitude
-            ),
+            )
+        )
+
+        return SouvenirDetail(
+            id: dto.id,
+            name: dto.name,
+            price: price,
+            description: dto.description,
+            location: location,
             category: mapToCategory(dto.category),
             purpose: mapToPurpose(dto.purpose),
             countryCode: dto.countryCode,

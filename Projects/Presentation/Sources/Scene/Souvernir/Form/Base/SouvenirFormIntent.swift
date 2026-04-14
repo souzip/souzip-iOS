@@ -52,7 +52,9 @@ struct SouvenirFormState {
 
     // 가격
     var price: String = ""
+    /// 사용자가 선택한 표시 통화(원화 `₩` vs 현지). 제출 시 `makeSubmitInput`에서 원화 여부 판별에 사용.
     var currencySymbol: String = "₩"
+    /// 토글 비원화 쪽 라벨·탭 시 전달 심볼. **우선순위:** `SouvenirFormViewModel.init`에서 `loadCountryDetail` 성공 시 `country.currency.symbol` → 실패·비편집 시 기본 `$` / 편집 시 `detail.price.localCurrencySymbol` 폴백(`init` 내 설정).
     var localCurrencySymbol: String = "$"
 
     // 분류
@@ -69,16 +71,17 @@ struct SouvenirFormState {
         guard case let .edit(detail) = mode else { return }
         existingFiles = detail.files
         name = detail.name
-        coordinate = detail.coordinate
-        address = detail.address
+        coordinate = detail.location.coordinate
+        address = detail.location.address
         countryCode = detail.countryCode
-        locationDetail = detail.locationDetail ?? ""
-        let symbol = detail.currencySymbol ?? "₩"
+        locationDetail = detail.location.locationDetail ?? ""
+        let symbol = detail.price.localCurrencySymbol ?? "₩"
         currencySymbol = symbol
+        localCurrencySymbol = detail.price.localCurrencySymbol ?? "$"
         if symbol == "₩" {
-            price = detail.krwPrice.map { String($0) } ?? ""
+            price = detail.price.krwAmount.map { String($0) } ?? ""
         } else {
-            price = detail.localPrice.map { String($0) } ?? ""
+            price = detail.price.localAmount.map { String($0) } ?? ""
         }
         purpose = detail.purpose
         category = detail.category

@@ -28,7 +28,8 @@ extension DefaultPresentationFactory {
     func makeSouvenirDetailScene(id: Int) -> RoutedScene<SouvenirRoute> {
         let vm = SouvenirDetailViewModel(
             souvenirId: id,
-            souvenirRepo: domainFactory.makeSouvenirRepository()
+            loadSouvenirDetail: domainFactory.makeLoadSouvenirDetailUseCase(),
+            deleteSouvenir: domainFactory.makeDeleteSouvenirUseCase()
         )
         let view = SouvenirDetailView()
         let vc = SouvenirDetailViewController(viewModel: vm, contentView: view)
@@ -47,8 +48,10 @@ extension DefaultPresentationFactory {
         let vm = SouvenirFormViewModel(
             mode: mode,
             onResult: onResult,
-            countryRepo: domainFactory.makeCountryRepository(),
-            souvenirRepo: domainFactory.makeSouvenirRepository()
+            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
+            loadLocationAddress: domainFactory.makeLoadLocationAddressUseCase(),
+            createSouvenir: domainFactory.makeCreateSouvenirUseCase(),
+            updateSouvenir: domainFactory.makeUpdateSouvenirUseCase()
         )
 
         let view = SouvenirFormView()
@@ -65,7 +68,7 @@ extension DefaultPresentationFactory {
         let vm = SearchCountryViewModel(
             initialSearchText: context.initialQuery,
             onResult: context.onResult,
-            countryRepo: domainFactory.makeCountryRepository()
+            searchLocations: domainFactory.makeSearchLocationsUseCase()
         )
         let view = SearchCountryView()
         view.render(mode: context.mode)
