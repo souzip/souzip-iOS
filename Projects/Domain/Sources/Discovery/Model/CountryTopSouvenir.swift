@@ -2,13 +2,13 @@ public struct CountryTopSouvenir: Equatable {
     public let countryCode: String
     public let countryNameKr: String
     public let souvenirCount: Int
-    public let souvenirs: [DiscoverySouvenir]
+    public let souvenirs: [CatalogSouvenir]
 
     public init(
         countryCode: String,
         countryNameKr: String,
         souvenirCount: Int,
-        souvenirs: [DiscoverySouvenir]
+        souvenirs: [CatalogSouvenir]
     ) {
         self.countryCode = countryCode
         self.countryNameKr = countryNameKr
