@@ -29,32 +29,3 @@ public struct CurrencyDTO: Decodable {
     let code: String
     let symbol: String
 }
-
-// MARK: - Mapping
-
-extension CountryDTO {
-    func toDomain() -> CountryDetail {
-        CountryDetail(
-            nameEnglish: nameEn,
-            nameKorean: nameKr,
-            code: code,
-            region: region.toDomain(),
-            capital: capital ?? "",
-            flagImageURL: imageUrl,
-            coordinate: Coordinate(latitude: latitude, longitude: longitude),
-            currency: currency.toDomain()
-        )
-    }
-}
-
-extension RegionDTO {
-    func toDomain() -> CountryRegion {
-        CountryRegion(englishName: englishName, koreanName: koreanName)
-    }
-}
-
-extension CurrencyDTO {
-    func toDomain() -> CurrencyInfo {
-        CurrencyInfo(code: code, symbol: symbol)
-    }
-}

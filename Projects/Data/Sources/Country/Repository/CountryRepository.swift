@@ -26,14 +26,14 @@ final class DefaultCountryRepository: CountryRepository {
                 PopularDestinationsKR.orderIndex[$0.code, default: .max]
                     < PopularDestinationsKR.orderIndex[$1.code, default: .max]
             }
-            .map { $0.toDomain() }
+            .map { CountryDTOMapper.toDomain($0) }
     }
 
     func fetchCountry(countryCode: String) throws -> CountryDetail {
         guard let dto = countryLocal.fetchCountry(countryCode: countryCode) else {
             throw CountryError.notFound
         }
-        return dto.toDomain()
+        return CountryDTOMapper.toDomain(dto)
     }
 
     // MARK: - Address
