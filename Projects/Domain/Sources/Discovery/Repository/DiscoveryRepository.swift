@@ -1,6 +1,6 @@
 public protocol DiscoveryRepository {
-    func getCountrySouvenirs() async throws -> [CountryTopSouvenir]
-    func getTop10SouvenirsByCategory(category: SouvenirCategory) async throws -> [CatalogSouvenir]
-    func getAIRecommendationByPreferenceCategory() async throws -> [CatalogSouvenir]
-    func getAIRecommendationByPreferenceUpload() async throws -> [CatalogSouvenir]
+    func loadCountrySouvenirs() async throws -> [CountryTopSouvenir]
+    func loadTopSouvenirsByCategory(category: SouvenirCategory) async throws -> [CatalogSouvenir]
+    func loadAIRecommendationsForCategory() async throws -> [CatalogSouvenir]
+    func loadAIRecommendationsForUpload() async throws -> [CatalogSouvenir]
 }

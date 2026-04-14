@@ -16,9 +16,9 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - Public
 
-    public func getCountrySouvenirs() async throws -> [CountryTopSouvenir] {
+    public func loadCountrySouvenirs() async throws -> [CountryTopSouvenir] {
         do {
-            let dtos = try await discoveryRemote.getTop10CountrySouvenirs()
+            let dtos = try await discoveryRemote.loadTop10CountrySouvenirs()
 
             return dtos.map { dto in
                 CountryTopSouvenir(
@@ -33,12 +33,12 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
         }
     }
 
-    public func getTop10SouvenirsByCategory(
+    public func loadTopSouvenirsByCategory(
         category: SouvenirCategory
     ) async throws -> [CatalogSouvenir] {
         do {
             let categoryName = OnboardingDTOMapper.toDTO(category)
-            let dto = try await discoveryRemote.getTop10ByCategory(categoryName: categoryName)
+            let dto = try await discoveryRemote.loadTop10ByCategory(categoryName: categoryName)
             return DiscoveryDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
@@ -47,18 +47,18 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - AI (Authed)
 
-    public func getAIRecommendationByPreferenceCategory() async throws -> [CatalogSouvenir] {
+    public func loadAIRecommendationsForCategory() async throws -> [CatalogSouvenir] {
         do {
-            let dto = try await discoveryRemote.getAIPreferenceCategory()
+            let dto = try await discoveryRemote.loadAIPreferenceCategory()
             return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)
         }
     }
 
-    public func getAIRecommendationByPreferenceUpload() async throws -> [CatalogSouvenir] {
+    public func loadAIRecommendationsForUpload() async throws -> [CatalogSouvenir] {
         do {
-            let dto = try await discoveryRemote.getAIPreferenceUpload()
+            let dto = try await discoveryRemote.loadAIPreferenceUpload()
             return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)

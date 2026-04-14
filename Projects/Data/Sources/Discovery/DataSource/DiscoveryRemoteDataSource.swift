@@ -3,12 +3,12 @@ import Networking
 
 public protocol DiscoveryRemoteDataSource {
     // Public
-    func getTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse]
-    func getTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse]
+    func loadTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse]
+    func loadTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse]
 
     // AI (Authed)
-    func getAIPreferenceCategory() async throws -> AIRecommendationResponse
-    func getAIPreferenceUpload() async throws -> AIRecommendationResponse
+    func loadAIPreferenceCategory() async throws -> AIRecommendationResponse
+    func loadAIPreferenceUpload() async throws -> AIRecommendationResponse
 }
 
 public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
@@ -25,7 +25,7 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
 
     // MARK: - Public
 
-    public func getTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse] {
+    public func loadTop10CountrySouvenirs() async throws -> [Top10CountrySouvenirResponse] {
         let endpoint = DiscoveryEndpoint.top10CountrySouvenirs
         let response: APIResponse<[Top10CountrySouvenirResponse]> = try await plain.request(endpoint)
 
@@ -35,7 +35,7 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
         return data
     }
 
-    public func getTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse] {
+    public func loadTop10ByCategory(categoryName: String) async throws -> [DiscoverySouvenirResponse] {
         let endpoint = DiscoveryEndpoint.top10ByCategory(categoryName: categoryName)
         let response: APIResponse<[DiscoverySouvenirResponse]> = try await plain.request(endpoint)
 
@@ -47,7 +47,7 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
 
     // MARK: - AI (Authed)
 
-    public func getAIPreferenceCategory() async throws -> AIRecommendationResponse {
+    public func loadAIPreferenceCategory() async throws -> AIRecommendationResponse {
         let endpoint = DiscoveryEndpoint.aiPreferenceCategory
         let response: APIResponse<AIRecommendationResponse> = try await authed.request(endpoint)
 
@@ -57,7 +57,7 @@ public final class DefaultDiscoveryRemoteDataSource: DiscoveryRemoteDataSource {
         return data
     }
 
-    public func getAIPreferenceUpload() async throws -> AIRecommendationResponse {
+    public func loadAIPreferenceUpload() async throws -> AIRecommendationResponse {
         let endpoint = DiscoveryEndpoint.aiPreferenceUpload
         let response: APIResponse<AIRecommendationResponse> = try await authed.request(endpoint)
 

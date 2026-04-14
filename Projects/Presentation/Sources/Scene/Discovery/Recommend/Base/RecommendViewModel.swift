@@ -104,8 +104,8 @@ private extension RecommendViewModel {
         preferred: [CatalogSouvenir],
         upload: [CatalogSouvenir]
     ) {
-        async let preferredTask = discoveryRepo.getAIRecommendationByPreferenceCategory()
-        async let uploadTask = discoveryRepo.getAIRecommendationByPreferenceUpload()
+        async let preferredTask = discoveryRepo.loadAIRecommendationsForCategory()
+        async let uploadTask = discoveryRepo.loadAIRecommendationsForUpload()
 
         let preferred = try await preferredTask
         let upload = try await uploadTask
@@ -145,7 +145,7 @@ private extension RecommendViewModel {
         var result: [CountryChipItem] = []
 
         for code in codes {
-            guard let country = try? countryRepo.fetchCountry(countryCode: code) else {
+            guard let country = try? countryRepo.loadCountry(countryCode: code) else {
                 continue
             }
 
@@ -185,7 +185,7 @@ private extension RecommendViewModel {
 
     func resolveUploadCountryName(from upload: [CatalogSouvenir]) async -> String? {
         guard let code = upload.first?.countryCode else { return nil }
-        guard let country = try? countryRepo.fetchCountry(countryCode: code) else { return nil }
+        guard let country = try? countryRepo.loadCountry(countryCode: code) else { return nil }
         return country.nameKorean
     }
 }
