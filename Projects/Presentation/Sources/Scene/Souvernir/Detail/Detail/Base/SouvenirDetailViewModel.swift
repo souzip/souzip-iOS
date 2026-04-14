@@ -9,15 +9,18 @@ final class SouvenirDetailViewModel: BaseViewModel<
 > {
     // MARK: - Properties
 
-    private let souvenirRepo: SouvenirRepository
+    private let loadSouvenirDetail: LoadSouvenirDetailUseCase
+    private let deleteSouvenir: DeleteSouvenirUseCase
 
     // MARK: - Init
 
     init(
         souvenirId: Int,
-        souvenirRepo: SouvenirRepository
+        loadSouvenirDetail: LoadSouvenirDetailUseCase,
+        deleteSouvenir: DeleteSouvenirUseCase
     ) {
-        self.souvenirRepo = souvenirRepo
+        self.loadSouvenirDetail = loadSouvenirDetail
+        self.deleteSouvenir = deleteSouvenir
         super.init(initialState: State())
 
         Task {
@@ -76,7 +79,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
         emit(.loading(true))
 
         do {
-            let detail = try await souvenirRepo.loadSouvenir(id: id)
+            let detail = try await loadSouvenirDetail.execute(id: id)
             mutate {
                 $0.detail = detail
                 $0.souvenirId = id
@@ -94,7 +97,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
         emit(.loading(true))
 
         do {
-            try await souvenirRepo.deleteSouvenir(id: detail.id)
+            try await deleteSouvenir.execute(id: detail.id)
             handleAction(.back)
         } catch {
             emit(.showAlert(message: error.localizedDescription))

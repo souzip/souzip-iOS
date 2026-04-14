@@ -12,10 +12,12 @@ final class SouvenirFormViewModel: BaseViewModel<
     SouvenirFormEvent,
     SouvenirRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let countryRepo: CountryRepository
-    private let souvenirRepo: SouvenirRepository
+    private let loadCountryDetail: LoadCountryDetailUseCase
+    private let loadLocationAddress: LoadLocationAddressUseCase
+    private let createSouvenir: CreateSouvenirUseCase
+    private let updateSouvenir: UpdateSouvenirUseCase
 
     private let onResult: ((SouvenirDetail) -> Void)?
 
@@ -36,18 +38,22 @@ final class SouvenirFormViewModel: BaseViewModel<
     init(
         mode: SouvenirFormMode,
         onResult: ((SouvenirDetail) -> Void)? = nil,
-        countryRepo: CountryRepository,
-        souvenirRepo: SouvenirRepository
+        loadCountryDetail: LoadCountryDetailUseCase,
+        loadLocationAddress: LoadLocationAddressUseCase,
+        createSouvenir: CreateSouvenirUseCase,
+        updateSouvenir: UpdateSouvenirUseCase
     ) {
         self.onResult = onResult
-        self.countryRepo = countryRepo
-        self.souvenirRepo = souvenirRepo
+        self.loadCountryDetail = loadCountryDetail
+        self.loadLocationAddress = loadLocationAddress
+        self.createSouvenir = createSouvenir
+        self.updateSouvenir = updateSouvenir
 
         let initialState = SouvenirFormState(mode: mode)
         super.init(initialState: initialState)
 
         if !initialState.countryCode.isEmpty,
-           let country = try? countryRepo.loadCountry(countryCode: initialState.countryCode) {
+           let country = try? loadCountryDetail.execute(countryCode: initialState.countryCode) {
             mutate { $0.localCurrencySymbol = country.currency.symbol }
         }
 
@@ -218,12 +224,12 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
         do {
-            let locationAddress = try await countryRepo.loadAddress(
+            let locationAddress = try await loadLocationAddress.execute(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
 
-            let country = try countryRepo.loadCountry(countryCode: locationAddress.countryCode)
+            let country = try loadCountryDetail.execute(countryCode: locationAddress.countryCode)
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 guard generation == addressLookupGeneration else { return }
@@ -307,8 +313,8 @@ final class SouvenirFormViewModel: BaseViewModel<
         let currencyCode: String? = if currentState.currencySymbol == "₩" {
             "KRW"
         } else {
-            try? countryRepo
-                .loadCountry(countryCode: currentState.countryCode)
+            try? loadCountryDetail
+                .execute(countryCode: currentState.countryCode)
                 .currency
                 .code
         }
@@ -332,7 +338,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             do {
                 emit(.loading(true))
                 let imageData = try convertPhotosToData(state.value.localPhotos)
-                _ = try await souvenirRepo.createSouvenir(
+                _ = try await createSouvenir.execute(
                     input: input,
                     images: imageData
                 )
@@ -349,7 +355,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         Task {
             do {
                 emit(.loading(true))
-                let souvenirDetail = try await souvenirRepo.updateSouvenir(id: id, input: input)
+                let souvenirDetail = try await updateSouvenir.execute(id: id, input: input)
                 onResult?(souvenirDetail)
                 emit(.loading(false))
                 navigate(to: .dismiss)
