@@ -1,9 +1,10 @@
 import Domain
 
 extension SouvenirListItem {
+    /// 리스트·캐러셀도 상세와 동일: **통화 기호 왼쪽**, 공백 후 금액 (`SouvenirDetail+Extension`과 규칙 공유).
     var formattedLocalPrice: String? {
         guard let localPrice, let currencySymbol else { return nil }
-        return "\(localPrice.formatted())\(currencySymbol)"
+        return "\(currencySymbol) \(localPrice.formatted())"
     }
 
     var formattedKrwPrice: String? {

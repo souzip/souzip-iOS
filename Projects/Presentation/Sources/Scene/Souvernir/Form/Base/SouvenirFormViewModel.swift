@@ -52,10 +52,9 @@ final class SouvenirFormViewModel: BaseViewModel<
         let initialState = SouvenirFormState(mode: mode)
         super.init(initialState: initialState)
 
-        if !initialState.countryCode.isEmpty,
-           let country = try? loadCountryDetail.execute(countryCode: initialState.countryCode) {
-            mutate { $0.localCurrencySymbol = country.currency.symbol }
-        }
+        applyLocalCurrencySymbolFromCountryIfAvailable(
+            countryCode: initialState.countryCode
+        )
 
         if case .create = mode {
             trackUploadOnce(.upload(.start))
@@ -202,6 +201,17 @@ final class SouvenirFormViewModel: BaseViewModel<
     }
 
     // MARK: - Private
+
+    /// 옵션 B: `countryCode`가 있으면 국가 메타 `currency.symbol`로 `localCurrencySymbol`을 갱신한다. 실패 시 `SouvenirFormState` 초기값 유지(편집: `detail.price.localCurrencySymbol` → `$`, 생성: `$`).
+    private func applyLocalCurrencySymbolFromCountryIfAvailable(countryCode: String) {
+        guard !countryCode.isEmpty else { return }
+        do {
+            let country = try loadCountryDetail.execute(countryCode: countryCode)
+            mutate { $0.localCurrencySymbol = country.currency.symbol }
+        } catch {
+            // 국가 조회 실패 — 폴백은 `SouvenirFormState` 편집 초기화에 위임. 로그는 네트워크/번들 계층 정책에 따름.
+        }
+    }
 
     private func handleAddLocalPhotos(_ photos: [LocalPhoto]) {
         let wasEmpty = state.value.localPhotos.isEmpty

@@ -3,7 +3,7 @@ import Domain
 extension SouvenirDetail {
     var formattedLocalPrice: String? {
         guard let local = price.localAmount, let symbol = price.localCurrencySymbol else { return nil }
-        return "\(local.formatted())\(symbol)"
+        return "\(symbol) \(local.formatted())"
     }
 
     var formattedKrwPrice: String? {
