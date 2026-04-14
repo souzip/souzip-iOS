@@ -7,14 +7,14 @@ final class WithdrawViewModel: BaseViewModel<
     WithdrawEvent,
     MyPageRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let authRepo: AuthRepository
+    private let withdraw: WithdrawUseCase
 
     // MARK: - Init
 
-    init(authRepo: AuthRepository) {
-        self.authRepo = authRepo
+    init(withdraw: WithdrawUseCase) {
+        self.withdraw = withdraw
         super.init(initialState: State())
     }
 
@@ -28,7 +28,7 @@ final class WithdrawViewModel: BaseViewModel<
         case .tapWithdraw:
             Task {
                 mutate { $0.isLoading = true }
-                try? await authRepo.withdraw()
+                try? await withdraw.execute()
                 navigate(to: .withdrawComplete)
             }
         }

@@ -10,10 +10,11 @@ protocol PresentationMyPageFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeMyPageScene() -> RoutedScene<MyPageRoute> {
         let vm = MyPageViewModel(
-            userRepo: domainFactory.makeUserRepository(),
-            souvenirRepo: domainFactory.makeSouvenirRepository(),
-            countryRepo: domainFactory.makeCountryRepository(),
-            authRepo: domainFactory.makeAuthRepository()
+            loadUserProfile: domainFactory.makeLoadUserProfileUseCase(),
+            loadUserSouvenirs: domainFactory.makeLoadUserSouvenirsUseCase(),
+            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
+            consumeSouvenirMyPageRefresh: domainFactory.makeConsumeSouvenirMyPageRefreshUseCase(),
+            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
         )
         let view = MyPageView()
         let vc = MyPageViewController(viewModel: vm, contentView: view)
@@ -27,7 +28,8 @@ extension DefaultPresentationFactory {
 
     func makeSetting() -> RoutedScene<MyPageRoute> {
         let vm = SettingViewModel(
-            authRepo: domainFactory.makeAuthRepository()
+            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase(),
+            logout: domainFactory.makeLogoutUseCase()
         )
         let view = SettingView()
         let vc = SettingViewController(viewModel: vm, contentView: view)
@@ -41,7 +43,7 @@ extension DefaultPresentationFactory {
 
     func makeNoticeList() -> RoutedScene<MyPageRoute> {
         let vm = NoticeListViewModel(
-            noticeRepo: domainFactory.makeNoticeRepository()
+            loadNotices: domainFactory.makeLoadNoticesUseCase()
         )
         let view = NoticeListView()
         let vc = NoticeListViewController(viewModel: vm, contentView: view)
@@ -55,7 +57,7 @@ extension DefaultPresentationFactory {
 
     func makeNoticeDetail(id: Int) -> RoutedScene<MyPageRoute> {
         let vm = NoticeDetailViewModel(
-            noticeRepo: domainFactory.makeNoticeRepository(),
+            loadNoticeDetail: domainFactory.makeLoadNoticeDetailUseCase(),
             noticeID: id
         )
         let view = NoticeDetailView()
@@ -70,7 +72,7 @@ extension DefaultPresentationFactory {
 
     func makeWithdraw() -> RoutedScene<MyPageRoute> {
         let vm = WithdrawViewModel(
-            authRepo: domainFactory.makeAuthRepository()
+            withdraw: domainFactory.makeWithdrawUseCase()
         )
         let view = WithdrawView()
         let vc = WithdrawViewController(viewModel: vm, contentView: view)

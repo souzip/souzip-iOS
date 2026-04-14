@@ -7,16 +7,19 @@ final class SettingViewModel: BaseViewModel<
     SettingEvent,
     MyPageRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let authRepo: AuthRepository
+    private let checkFullAuthentication: CheckFullAuthenticationUseCase
+    private let logout: LogoutUseCase
 
     // MARK: - Init
 
     init(
-        authRepo: AuthRepository
+        checkFullAuthentication: CheckFullAuthenticationUseCase,
+        logout: LogoutUseCase
     ) {
-        self.authRepo = authRepo
+        self.checkFullAuthentication = checkFullAuthentication
+        self.logout = logout
         super.init(initialState: State())
     }
 
@@ -35,7 +38,7 @@ final class SettingViewModel: BaseViewModel<
 
         case .logout:
             Task {
-                try? await authRepo.logout()
+                try? await logout.execute()
                 navigate(to: .login)
             }
         }
@@ -44,7 +47,7 @@ final class SettingViewModel: BaseViewModel<
     // MARK: - Private Logic
 
     private func handleViewDidLoad() async {
-        let isLogin = await authRepo.isFullyAuthenticated()
+        let isLogin = await checkFullAuthentication.execute()
         mutate { $0.isGuest = !isLogin }
     }
 
