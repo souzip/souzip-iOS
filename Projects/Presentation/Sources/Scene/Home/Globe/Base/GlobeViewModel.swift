@@ -111,7 +111,7 @@ private extension GlobeViewModel {
     }
 
     func loadCountryBadges() async {
-        let badges = try? countryRepo.fetchTop30Countries()
+        let badges = try? countryRepo.loadPopularCountries()
             .map(CountryBadge.init)
 
         mutate {
@@ -469,7 +469,7 @@ private extension GlobeViewModel {
         near coordinate: CLLocationCoordinate2D,
         radius: Int
     ) async throws -> [SouvenirListItem] {
-        try await souvenirRepo.getNearbySouvenirs(
+        try await souvenirRepo.loadNearbySouvenirs(
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
             radiusMeter: radius

@@ -1,8 +1,8 @@
 public protocol CountryRepository {
-    func fetchTop30Countries() throws -> [CountryDetail]
-    func fetchCountry(countryCode: String) throws -> CountryDetail
+    func loadPopularCountries() throws -> [CountryDetail]
+    func loadCountry(countryCode: String) throws -> CountryDetail
 
-    func getAddress(
+    func loadAddress(
         latitude: Double,
         longitude: Double
     ) async throws -> LocationAddress

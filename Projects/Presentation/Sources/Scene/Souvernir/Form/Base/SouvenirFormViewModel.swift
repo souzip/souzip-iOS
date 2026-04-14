@@ -47,7 +47,7 @@ final class SouvenirFormViewModel: BaseViewModel<
         super.init(initialState: initialState)
 
         if !initialState.countryCode.isEmpty,
-           let country = try? countryRepo.fetchCountry(countryCode: initialState.countryCode) {
+           let country = try? countryRepo.loadCountry(countryCode: initialState.countryCode) {
             mutate { $0.localCurrencySymbol = country.currency.symbol }
         }
 
@@ -218,12 +218,12 @@ final class SouvenirFormViewModel: BaseViewModel<
 
     private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
         do {
-            let locationAddress = try await countryRepo.getAddress(
+            let locationAddress = try await countryRepo.loadAddress(
                 latitude: coordinate.latitude,
                 longitude: coordinate.longitude
             )
 
-            let country = try countryRepo.fetchCountry(countryCode: locationAddress.countryCode)
+            let country = try countryRepo.loadCountry(countryCode: locationAddress.countryCode)
             await MainActor.run { [weak self] in
                 guard let self else { return }
                 guard generation == addressLookupGeneration else { return }
@@ -308,7 +308,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             "KRW"
         } else {
             try? countryRepo
-                .fetchCountry(countryCode: currentState.countryCode)
+                .loadCountry(countryCode: currentState.countryCode)
                 .currency
                 .code
         }
