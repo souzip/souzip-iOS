@@ -6,9 +6,10 @@ protocol PresentationDiscoveryFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeDiscoveryScene() -> RoutedScene<DiscoveryRoute> {
         let vm = DiscoveryViewModel(
-            discoveryRepo: domainFactory.makeDiscoveryRepository(),
-            countryRepo: domainFactory.makeCountryRepository(),
-            authRepo: domainFactory.makeAuthRepository()
+            loadCountryTopSouvenirs: domainFactory.makeLoadCountryTopSouvenirsUseCase(),
+            loadTopSouvenirsByCategory: domainFactory.makeLoadTopSouvenirsByCategoryUseCase(),
+            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
+            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
         )
         let view = DiscoveryView()
         let vc = DiscoveryViewController(viewModel: vm, contentView: view)
@@ -22,8 +23,9 @@ extension DefaultPresentationFactory {
 
     func makeRecommendScene() -> RoutedScene<DiscoveryRoute> {
         let vm = RecommendViewModel(
-            discoveryRepo: domainFactory.makeDiscoveryRepository(),
-            countryRepo: domainFactory.makeCountryRepository()
+            loadAIRecommendationsForCategory: domainFactory.makeLoadAIRecommendationsForCategoryUseCase(),
+            loadAIRecommendationsForUpload: domainFactory.makeLoadAIRecommendationsForUploadUseCase(),
+            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase()
         )
         let view = RecommendView()
         let vc = RecommendViewController(viewModel: vm, contentView: view)

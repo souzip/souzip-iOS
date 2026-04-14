@@ -5,9 +5,9 @@ protocol PresentationHomeFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeGlobeScene() -> RoutedScene<HomeRoute> {
         let vm = GlobeViewModel(
-            countryRepo: domainFactory.makeCountryRepository(),
-            souvenirRepo: domainFactory.makeSouvenirRepository(),
-            authRepo: domainFactory.makeAuthRepository()
+            loadPopularCountries: domainFactory.makeLoadPopularCountriesUseCase(),
+            loadNearbySouvenirs: domainFactory.makeLoadNearbySouvenirsUseCase(),
+            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
         )
         let view = GlobeView()
         let vc = GlobeViewController(viewModel: vm, contentView: view)

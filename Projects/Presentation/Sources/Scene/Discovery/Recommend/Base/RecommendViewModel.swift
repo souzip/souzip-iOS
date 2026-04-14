@@ -6,10 +6,11 @@ final class RecommendViewModel: BaseViewModel<
     RecommendEvent,
     DiscoveryRoute
 > {
-    // MARK: - Repository
+    // MARK: - UseCase
 
-    private let discoveryRepo: DiscoveryRepository
-    private let countryRepo: CountryRepository
+    private let loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase
+    private let loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase
+    private let loadCountryDetail: LoadCountryDetailUseCase
 
     private var preferredAll: [CatalogSouvenir] = []
     private var uploadAll: [CatalogSouvenir] = []
@@ -17,11 +18,13 @@ final class RecommendViewModel: BaseViewModel<
     // MARK: - Init
 
     init(
-        discoveryRepo: DiscoveryRepository,
-        countryRepo: CountryRepository
+        loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase,
+        loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase,
+        loadCountryDetail: LoadCountryDetailUseCase
     ) {
-        self.discoveryRepo = discoveryRepo
-        self.countryRepo = countryRepo
+        self.loadAIRecommendationsForCategory = loadAIRecommendationsForCategory
+        self.loadAIRecommendationsForUpload = loadAIRecommendationsForUpload
+        self.loadCountryDetail = loadCountryDetail
         super.init(initialState: State())
     }
 
@@ -104,8 +107,8 @@ private extension RecommendViewModel {
         preferred: [CatalogSouvenir],
         upload: [CatalogSouvenir]
     ) {
-        async let preferredTask = discoveryRepo.loadAIRecommendationsForCategory()
-        async let uploadTask = discoveryRepo.loadAIRecommendationsForUpload()
+        async let preferredTask = loadAIRecommendationsForCategory.execute()
+        async let uploadTask = loadAIRecommendationsForUpload.execute()
 
         let preferred = try await preferredTask
         let upload = try await uploadTask
@@ -145,7 +148,7 @@ private extension RecommendViewModel {
         var result: [CountryChipItem] = []
 
         for code in codes {
-            guard let country = try? countryRepo.loadCountry(countryCode: code) else {
+            guard let country = try? loadCountryDetail.execute(countryCode: code) else {
                 continue
             }
 
@@ -185,7 +188,7 @@ private extension RecommendViewModel {
 
     func resolveUploadCountryName(from upload: [CatalogSouvenir]) async -> String? {
         guard let code = upload.first?.countryCode else { return nil }
-        guard let country = try? countryRepo.loadCountry(countryCode: code) else { return nil }
+        guard let country = try? loadCountryDetail.execute(countryCode: code) else { return nil }
         return country.nameKorean
     }
 }
