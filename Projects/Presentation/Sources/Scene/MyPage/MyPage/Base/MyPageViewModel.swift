@@ -40,7 +40,7 @@ final class MyPageViewModel: BaseViewModel<
                     await loadInitialData()
                     return
                 }
-                let needs = await souvenirRepo.consumeMyPageNeedsRefresh()
+                let needs = await souvenirRepo.consumeMyPageRefresh()
                 guard needs else { return }
                 await loadInitialData()
             }
@@ -77,7 +77,7 @@ final class MyPageViewModel: BaseViewModel<
             let souvenirs = try await souvenirsTask
 
             let mapSouvenirs = souvenirs.compactMap { souvenir -> SouvenirThumbnail? in
-                guard let country = try? countryRepo.fetchCountry(countryCode: souvenir.country) else { return nil }
+                guard let country = try? countryRepo.loadCountry(countryCode: souvenir.country) else { return nil }
 
                 return .init(
                     id: souvenir.id,

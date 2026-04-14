@@ -13,9 +13,9 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
 
     // MARK: - Get Souvenir
 
-    public func getSouvenir(id: Int) async throws -> SouvenirDetail {
+    public func loadSouvenir(id: Int) async throws -> SouvenirDetail {
         do {
-            let dto = try await souvenirRemote.getSouvenir(id: id)
+            let dto = try await souvenirRemote.loadSouvenir(id: id)
             return SouvenirDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
@@ -80,13 +80,13 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
 
     // MARK: - Get Nearby Souvenirs
 
-    public func getNearbySouvenirs(
+    public func loadNearbySouvenirs(
         latitude: Double,
         longitude: Double,
         radiusMeter: Int?
     ) async throws -> [SouvenirListItem] {
         do {
-            let dto = try await souvenirRemote.getNearbySouvenirs(
+            let dto = try await souvenirRemote.loadNearbySouvenirs(
                 latitude: latitude,
                 longitude: longitude,
                 radiusMeter: radiusMeter
@@ -97,7 +97,7 @@ public final class DefaultSouvenirRepository: SouvenirRepository {
         }
     }
 
-    public func consumeMyPageNeedsRefresh() async -> Bool {
+    public func consumeMyPageRefresh() async -> Bool {
         defer { needsMyPageRefresh = false }
         return needsMyPageRefresh
     }

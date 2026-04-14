@@ -76,7 +76,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
         emit(.loading(true))
 
         do {
-            let detail = try await souvenirRepo.getSouvenir(id: id)
+            let detail = try await souvenirRepo.loadSouvenir(id: id)
             mutate {
                 $0.detail = detail
                 $0.souvenirId = id

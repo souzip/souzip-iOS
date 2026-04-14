@@ -1,9 +1,10 @@
 public protocol DomainSouvenirFactory: AnyObject {
     func makeSouvenirRepository() -> SouvenirRepository
-}
 
-public extension DefaultDomainFactory {
-    func makeSouvenirRepository() -> SouvenirRepository {
-        factory.makeSouvenirRepository()
-    }
+    func makeLoadSouvenirDetailUseCase() -> LoadSouvenirDetailUseCase
+    func makeCreateSouvenirUseCase() -> CreateSouvenirUseCase
+    func makeUpdateSouvenirUseCase() -> UpdateSouvenirUseCase
+    func makeDeleteSouvenirUseCase() -> DeleteSouvenirUseCase
+    func makeLoadNearbySouvenirsUseCase() -> LoadNearbySouvenirsUseCase
+    func makeConsumeSouvenirMyPageRefreshUseCase() -> ConsumeSouvenirMyPageRefreshUseCase
 }
