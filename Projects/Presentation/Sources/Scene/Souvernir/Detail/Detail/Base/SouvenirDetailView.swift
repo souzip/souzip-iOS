@@ -366,9 +366,9 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         )
 
         // 가격 (둘 다 있을 때만 표시)
-        if let localPrice = detail.localPrice,
-           let symbol = detail.currencySymbol,
-           let krwPrice = detail.krwPrice {
+        if let localPrice = detail.price.localAmount,
+           let symbol = detail.price.localCurrencySymbol,
+           let krwPrice = detail.price.krwAmount {
             priceContainerStack.isHidden = false
             priceHeightConstraint?.update(offset: 36)
             descriptionTopConstraint?.update(offset: 12)
@@ -387,8 +387,8 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         // 지도 생성 및 레이아웃
         if mapView == nil {
             let coordinate = CLLocationCoordinate2D(
-                latitude: detail.coordinate.latitude,
-                longitude: detail.coordinate.longitude
+                latitude: detail.location.coordinate.latitude,
+                longitude: detail.location.coordinate.longitude
             )
             let map = LocationMapView(mode: .readonly, initialCoordinate: coordinate)
             contentView.addSubview(map)
@@ -421,10 +421,10 @@ final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
         }
 
         // 주소 텍스트
-        addressLabel.text = detail.address
+        addressLabel.text = detail.location.address
 
         // 위치 상세
-        if let locationDetail = detail.locationDetail {
+        if let locationDetail = detail.location.locationDetail {
             locationDetailLabel.isHidden = false
             locationDetailLabel.text = locationDetail
         } else {

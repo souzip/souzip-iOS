@@ -40,13 +40,9 @@ final class SouvenirDetailViewModel: BaseViewModel<
                     let newDetail = SouvenirDetail(
                         id: editedDetail.id,
                         name: editedDetail.name,
-                        localPrice: editedDetail.localPrice,
-                        currencySymbol: editedDetail.currencySymbol,
-                        krwPrice: editedDetail.krwPrice,
+                        price: editedDetail.price,
                         description: editedDetail.description,
-                        address: editedDetail.address,
-                        locationDetail: editedDetail.locationDetail,
-                        coordinate: editedDetail.coordinate,
+                        location: editedDetail.location,
                         category: editedDetail.category,
                         purpose: editedDetail.purpose,
                         countryCode: editedDetail.countryCode,
@@ -66,7 +62,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
             emit(.showReport)
 
         case .tapCopy:
-            guard let address = state.value.detail?.address else { return }
+            guard let address = state.value.detail?.location.address else { return }
             emit(.copy(address))
 
         case .confirmDelete:

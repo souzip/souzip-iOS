@@ -2,13 +2,13 @@ import Domain
 
 extension SouvenirDetail {
     var formattedLocalPrice: String? {
-        guard let localPrice, let currencySymbol else { return nil }
-        return "\(localPrice.formatted())\(currencySymbol)"
+        guard let local = price.localAmount, let symbol = price.localCurrencySymbol else { return nil }
+        return "\(local.formatted())\(symbol)"
     }
 
     var formattedKrwPrice: String? {
-        guard let krwPrice else { return nil }
-        return "\(krwPrice.formatted())원"
+        guard let krw = price.krwAmount else { return nil }
+        return "\(krw.formatted())원"
     }
 
     // 표시용 가격 (원화 우선)

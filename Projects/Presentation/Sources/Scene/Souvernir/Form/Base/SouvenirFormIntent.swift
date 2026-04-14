@@ -69,16 +69,16 @@ struct SouvenirFormState {
         guard case let .edit(detail) = mode else { return }
         existingFiles = detail.files
         name = detail.name
-        coordinate = detail.coordinate
-        address = detail.address
+        coordinate = detail.location.coordinate
+        address = detail.location.address
         countryCode = detail.countryCode
-        locationDetail = detail.locationDetail ?? ""
-        let symbol = detail.currencySymbol ?? "₩"
+        locationDetail = detail.location.locationDetail ?? ""
+        let symbol = detail.price.localCurrencySymbol ?? "₩"
         currencySymbol = symbol
         if symbol == "₩" {
-            price = detail.krwPrice.map { String($0) } ?? ""
+            price = detail.price.krwAmount.map { String($0) } ?? ""
         } else {
-            price = detail.localPrice.map { String($0) } ?? ""
+            price = detail.price.localAmount.map { String($0) } ?? ""
         }
         purpose = detail.purpose
         category = detail.category
