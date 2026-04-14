@@ -25,7 +25,7 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
                     countryCode: dto.countryCode,
                     countryNameKr: dto.countryNameKr,
                     souvenirCount: dto.souvenirCount,
-                    souvenirs: mapSouvenirs(dto.souvenirs)
+                    souvenirs: DiscoveryDTOMapper.toDomain(dto.souvenirs)
                 )
             }
         } catch {
@@ -35,11 +35,11 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     public func getTop10SouvenirsByCategory(
         category: SouvenirCategory
-    ) async throws -> [DiscoverySouvenir] {
+    ) async throws -> [CatalogSouvenir] {
         do {
             let categoryName = OnboardingDTOMapper.toDTO(category)
             let dto = try await discoveryRemote.getTop10ByCategory(categoryName: categoryName)
-            return mapSouvenirs(dto)
+            return DiscoveryDTOMapper.toDomain(dto)
         } catch {
             throw mapToDomainError(error)
         }
@@ -47,19 +47,19 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 
     // MARK: - AI (Authed)
 
-    public func getAIRecommendationByPreferenceCategory() async throws -> [DiscoverySouvenir] {
+    public func getAIRecommendationByPreferenceCategory() async throws -> [CatalogSouvenir] {
         do {
             let dto = try await discoveryRemote.getAIPreferenceCategory()
-            return mapSouvenirs(dto.souvenirs)
+            return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)
         }
     }
 
-    public func getAIRecommendationByPreferenceUpload() async throws -> [DiscoverySouvenir] {
+    public func getAIRecommendationByPreferenceUpload() async throws -> [CatalogSouvenir] {
         do {
             let dto = try await discoveryRemote.getAIPreferenceUpload()
-            return mapSouvenirs(dto.souvenirs)
+            return DiscoveryDTOMapper.toDomain(dto.souvenirs)
         } catch {
             throw mapToDomainError(error)
         }
@@ -69,18 +69,6 @@ public final class DefaultDiscoveryRepository: DiscoveryRepository {
 // MARK: - Private
 
 private extension DefaultDiscoveryRepository {
-    func mapSouvenirs(_ dto: [DiscoverySouvenirResponse]) -> [DiscoverySouvenir] {
-        dto.map {
-            DiscoverySouvenir(
-                id: $0.id,
-                name: $0.name,
-                category: SouvenirDTOMapper.mapToCategory($0.category),
-                countryCode: $0.countryCode,
-                thumbnailUrl: $0.thumbnailUrl
-            )
-        }
-    }
-
     func mapToDomainError(_ error: Error) -> DiscoveryError {
         if let networkError = error as? NetworkError {
             switch networkError {
