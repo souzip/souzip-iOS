@@ -213,7 +213,7 @@ final class DiscoveryViewModel: BaseViewModel<
         return mapToSouvenirCardItems(souvenirs)
     }
 
-    private func mapToSouvenirCardItems(_ souvenirs: [DiscoverySouvenir]) -> [SouvenirCardItem] {
+    private func mapToSouvenirCardItems(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
         souvenirs.map {
             SouvenirCardItem(
                 id: $0.id,

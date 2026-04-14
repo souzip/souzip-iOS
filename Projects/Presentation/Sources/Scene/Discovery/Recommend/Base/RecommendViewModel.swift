@@ -11,8 +11,8 @@ final class RecommendViewModel: BaseViewModel<
     private let discoveryRepo: DiscoveryRepository
     private let countryRepo: CountryRepository
 
-    private var preferredAll: [DiscoverySouvenir] = []
-    private var uploadAll: [DiscoverySouvenir] = []
+    private var preferredAll: [CatalogSouvenir] = []
+    private var uploadAll: [CatalogSouvenir] = []
 
     // MARK: - Init
 
@@ -101,8 +101,8 @@ private extension RecommendViewModel {
     }
 
     func fetchAIRecommendations() async throws -> (
-        preferred: [DiscoverySouvenir],
-        upload: [DiscoverySouvenir]
+        preferred: [CatalogSouvenir],
+        upload: [CatalogSouvenir]
     ) {
         async let preferredTask = discoveryRepo.getAIRecommendationByPreferenceCategory()
         async let uploadTask = discoveryRepo.getAIRecommendationByPreferenceUpload()
@@ -139,7 +139,7 @@ private extension RecommendViewModel {
 // MARK: - Builders
 
 private extension RecommendViewModel {
-    func makeCountryChips(from preferred: [DiscoverySouvenir]) async -> [CountryChipItem] {
+    func makeCountryChips(from preferred: [CatalogSouvenir]) async -> [CountryChipItem] {
         let codes = orderedUnique(preferred.map(\.countryCode))
 
         var result: [CountryChipItem] = []
@@ -183,7 +183,7 @@ private extension RecommendViewModel {
         return mapToCards(filtered)
     }
 
-    func resolveUploadCountryName(from upload: [DiscoverySouvenir]) async -> String? {
+    func resolveUploadCountryName(from upload: [CatalogSouvenir]) async -> String? {
         guard let code = upload.first?.countryCode else { return nil }
         guard let country = try? countryRepo.fetchCountry(countryCode: code) else { return nil }
         return country.nameKorean
@@ -193,7 +193,7 @@ private extension RecommendViewModel {
 // MARK: - Helpers
 
 private extension RecommendViewModel {
-    func mapToCards(_ souvenirs: [DiscoverySouvenir]) -> [SouvenirCardItem] {
+    func mapToCards(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
         souvenirs.map {
             SouvenirCardItem(
                 id: $0.id,
@@ -205,9 +205,9 @@ private extension RecommendViewModel {
     }
 
     func filterByCountry(
-        _ souvenirs: [DiscoverySouvenir],
+        _ souvenirs: [CatalogSouvenir],
         countryCode: String?
-    ) -> [DiscoverySouvenir] {
+    ) -> [CatalogSouvenir] {
         guard let code = countryCode, code.isEmpty == false else { return souvenirs }
         return souvenirs.filter { $0.countryCode.caseInsensitiveCompare(code) == .orderedSame }
     }
