@@ -17,6 +17,8 @@ final class DefaultPresentationFactory: PresentationFactory {
         checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
     )
 
+    lazy var userSouvenirInvalidationStore: UserSouvenirInvalidationStore = .init()
+
     init(domainFactory: DomainFactory) {
         self.domainFactory = domainFactory
     }
