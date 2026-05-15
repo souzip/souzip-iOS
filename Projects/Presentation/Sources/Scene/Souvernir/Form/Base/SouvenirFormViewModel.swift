@@ -18,6 +18,7 @@ final class SouvenirFormViewModel: BaseViewModel<
     private let loadLocationAddress: LoadLocationAddressUseCase
     private let createSouvenir: CreateSouvenirUseCase
     private let updateSouvenir: UpdateSouvenirUseCase
+    private let userSouvenirInvalidationStore: UserSouvenirInvalidationStore
 
     private let onResult: ((SouvenirDetail) -> Void)?
 
@@ -41,13 +42,15 @@ final class SouvenirFormViewModel: BaseViewModel<
         loadCountryDetail: LoadCountryDetailUseCase,
         loadLocationAddress: LoadLocationAddressUseCase,
         createSouvenir: CreateSouvenirUseCase,
-        updateSouvenir: UpdateSouvenirUseCase
+        updateSouvenir: UpdateSouvenirUseCase,
+        userSouvenirInvalidationStore: UserSouvenirInvalidationStore
     ) {
         self.onResult = onResult
         self.loadCountryDetail = loadCountryDetail
         self.loadLocationAddress = loadLocationAddress
         self.createSouvenir = createSouvenir
         self.updateSouvenir = updateSouvenir
+        self.userSouvenirInvalidationStore = userSouvenirInvalidationStore
 
         let initialState = SouvenirFormState(mode: mode)
         super.init(initialState: initialState)
@@ -352,6 +355,7 @@ final class SouvenirFormViewModel: BaseViewModel<
                     input: input,
                     images: imageData
                 )
+                userSouvenirInvalidationStore.notifyUserSouvenirsChanged()
                 emit(.loading(false))
                 navigate(to: .dismiss)
             } catch {
@@ -366,6 +370,7 @@ final class SouvenirFormViewModel: BaseViewModel<
             do {
                 emit(.loading(true))
                 let souvenirDetail = try await updateSouvenir.execute(id: id, input: input)
+                userSouvenirInvalidationStore.notifyUserSouvenirsChanged()
                 onResult?(souvenirDetail)
                 emit(.loading(false))
                 navigate(to: .dismiss)
