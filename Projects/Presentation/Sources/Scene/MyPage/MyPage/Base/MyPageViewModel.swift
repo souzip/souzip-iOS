@@ -13,7 +13,7 @@ final class MyPageViewModel: BaseViewModel<
     private let loadUserProfile: LoadUserProfileUseCase
     private let loadUserSouvenirs: LoadUserSouvenirsUseCase
     private let loadCountryDetail: LoadCountryDetailUseCase
-    private let consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase
+    private let userSouvenirInvalidationStore: UserSouvenirInvalidationStore
     private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
@@ -22,29 +22,23 @@ final class MyPageViewModel: BaseViewModel<
         loadUserProfile: LoadUserProfileUseCase,
         loadUserSouvenirs: LoadUserSouvenirsUseCase,
         loadCountryDetail: LoadCountryDetailUseCase,
-        consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase,
+        userSouvenirInvalidationStore: UserSouvenirInvalidationStore,
         authSessionStore: AuthSessionStore
     ) {
         self.loadUserProfile = loadUserProfile
         self.loadUserSouvenirs = loadUserSouvenirs
         self.loadCountryDetail = loadCountryDetail
-        self.consumeSouvenirMyPageRefresh = consumeSouvenirMyPageRefresh
+        self.userSouvenirInvalidationStore = userSouvenirInvalidationStore
         self.authSessionStore = authSessionStore
         super.init(initialState: State())
         bindAuthSessionStore()
+        bindUserSouvenirInvalidationStore()
     }
 
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewWillAppear:
-            Task {
-                let needs = await consumeSouvenirMyPageRefresh.execute()
-                guard needs else { return }
-                await loadInitialData()
-            }
-
         case .tapSetting:
             navigate(to: .setting)
 
@@ -77,6 +71,21 @@ final class MyPageViewModel: BaseViewModel<
                 if isLogin, wasGuest {
                     Task { await self.loadInitialData() }
                 }
+            })
+            .disposed(by: disposeBag)
+    }
+
+    // MARK: - User souvenir collection
+
+    private func bindUserSouvenirInvalidationStore() {
+        userSouvenirInvalidationStore.userSouvenirCollectionDidChange
+            .observe(on: MainScheduler.instance)
+            .filter { [weak self] _ in
+                guard let self else { return false }
+                return !state.value.isGuest
+            }
+            .subscribe(onNext: { [weak self] _ in
+                Task { await self?.loadInitialData() }
             })
             .disposed(by: disposeBag)
     }

@@ -13,7 +13,7 @@ extension DefaultPresentationFactory {
             loadUserProfile: domainFactory.makeLoadUserProfileUseCase(),
             loadUserSouvenirs: domainFactory.makeLoadUserSouvenirsUseCase(),
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
-            consumeSouvenirMyPageRefresh: domainFactory.makeConsumeSouvenirMyPageRefreshUseCase(),
+            userSouvenirInvalidationStore: userSouvenirInvalidationStore,
             authSessionStore: authSessionStore
         )
         let view = MyPageView()

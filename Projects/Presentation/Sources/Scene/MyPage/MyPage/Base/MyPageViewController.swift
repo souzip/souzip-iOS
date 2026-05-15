@@ -5,13 +5,6 @@ final class MyPageViewController: BaseViewController<
     MyPageViewModel,
     MyPageView
 > {
-    // MARK: - Lifecycle
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.action.accept(.viewWillAppear)
-    }
-
     // MARK: - Bind
 
     override func bindState() {
