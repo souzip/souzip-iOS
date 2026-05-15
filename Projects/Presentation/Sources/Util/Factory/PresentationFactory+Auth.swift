@@ -11,7 +11,8 @@ protocol PresentationAuthFactory: AnyObject {
 extension DefaultPresentationFactory {
     func makeSplashScene() -> RoutedScene<AuthRoute> {
         let vm = SplashViewModel(
-            autoLogin: domainFactory.makeAutoLoginUseCase()
+            autoLogin: domainFactory.makeAutoLoginUseCase(),
+            authSessionStore: authSessionStore
         )
         let view = SplashView()
         let vc = SplashViewController(viewModel: vm, contentView: view)
@@ -26,7 +27,8 @@ extension DefaultPresentationFactory {
     func makeLoginScene() -> RoutedScene<AuthRoute> {
         let vm = LoginViewModel(
             loadRecentAuthProvider: domainFactory.makeLoadRecentAuthProviderUseCase(),
-            login: domainFactory.makeLoginUseCase()
+            login: domainFactory.makeLoginUseCase(),
+            authSessionStore: authSessionStore
         )
         let view = LoginView()
         let vc = LoginViewController(viewModel: vm, contentView: view)
@@ -87,7 +89,8 @@ extension DefaultPresentationFactory {
 
     func makeLoginBottomSheetScene() -> RoutedScene<LoginBottomSheetRoute> {
         let viewModel = LoginBottomSheetViewModel(
-            login: domainFactory.makeLoginUseCase()
+            login: domainFactory.makeLoginUseCase(),
+            authSessionStore: authSessionStore
         )
         let contentView = LoginBottomSheetView()
         let vc = LoginBottomSheetViewController(viewModel: viewModel, contentView: contentView)

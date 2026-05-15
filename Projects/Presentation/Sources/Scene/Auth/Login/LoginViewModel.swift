@@ -10,15 +10,18 @@ final class LoginViewModel: BaseViewModel<
 
     private let loadRecentAuthProvider: LoadRecentAuthProviderUseCase
     private let login: LoginUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
 
     init(
         loadRecentAuthProvider: LoadRecentAuthProviderUseCase,
-        login: LoginUseCase
+        login: LoginUseCase,
+        authSessionStore: AuthSessionStore
     ) {
         self.loadRecentAuthProvider = loadRecentAuthProvider
         self.login = login
+        self.authSessionStore = authSessionStore
         super.init(initialState: State())
         bindState()
     }
@@ -54,8 +57,11 @@ final class LoginViewModel: BaseViewModel<
             let result = try await login.execute(provider: provider)
             switch result {
             case .ready, .guest:
+                await authSessionStore.refreshSession()
                 navigate(to: .main)
+
             case .shouldOnboarding:
+                await authSessionStore.refreshSession()
                 navigate(to: .terms)
             }
         } catch {
