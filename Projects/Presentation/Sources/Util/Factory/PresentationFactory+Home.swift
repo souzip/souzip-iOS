@@ -7,7 +7,7 @@ extension DefaultPresentationFactory {
         let vm = GlobeViewModel(
             loadPopularCountries: domainFactory.makeLoadPopularCountriesUseCase(),
             loadNearbySouvenirs: domainFactory.makeLoadNearbySouvenirsUseCase(),
-            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
+            authSessionStore: authSessionStore
         )
         let view = GlobeView()
         let vc = GlobeViewController(viewModel: vm, contentView: view)

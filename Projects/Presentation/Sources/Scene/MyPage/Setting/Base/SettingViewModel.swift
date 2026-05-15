@@ -1,5 +1,7 @@
 import Domain
 import Foundation
+import RxCocoa
+import RxSwift
 
 final class SettingViewModel: BaseViewModel<
     SettingState,
@@ -9,18 +11,19 @@ final class SettingViewModel: BaseViewModel<
 > {
     // MARK: - UseCase
 
-    private let checkFullAuthentication: CheckFullAuthenticationUseCase
+    private let authSessionStore: AuthSessionStore
     private let logout: LogoutUseCase
 
     // MARK: - Init
 
     init(
-        checkFullAuthentication: CheckFullAuthenticationUseCase,
+        authSessionStore: AuthSessionStore,
         logout: LogoutUseCase
     ) {
-        self.checkFullAuthentication = checkFullAuthentication
+        self.authSessionStore = authSessionStore
         self.logout = logout
         super.init(initialState: State())
+        bindAuthSessionStore()
     }
 
     // MARK: - Action Handling
@@ -28,7 +31,7 @@ final class SettingViewModel: BaseViewModel<
     override func handleAction(_ action: Action) {
         switch action {
         case .viewDidLoad:
-            Task { await handleViewDidLoad() }
+            break
 
         case .back:
             navigate(to: .pop)
@@ -39,6 +42,7 @@ final class SettingViewModel: BaseViewModel<
         case .logout:
             Task {
                 try? await logout.execute()
+                await authSessionStore.refreshSession()
                 navigate(to: .login)
             }
         }
@@ -46,9 +50,13 @@ final class SettingViewModel: BaseViewModel<
 
     // MARK: - Private Logic
 
-    private func handleViewDidLoad() async {
-        let isLogin = await checkFullAuthentication.execute()
-        mutate { $0.isGuest = !isLogin }
+    private func bindAuthSessionStore() {
+        authSessionStore.authStateChanges
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLogin in
+                self?.mutate { $0.isGuest = !isLogin }
+            })
+            .disposed(by: disposeBag)
     }
 
     private func handleType(_ type: SettingItemType) {

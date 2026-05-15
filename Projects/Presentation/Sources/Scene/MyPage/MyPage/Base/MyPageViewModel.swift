@@ -1,4 +1,6 @@
 import Domain
+import RxCocoa
+import RxSwift
 
 final class MyPageViewModel: BaseViewModel<
     MyPageState,
@@ -12,7 +14,7 @@ final class MyPageViewModel: BaseViewModel<
     private let loadUserSouvenirs: LoadUserSouvenirsUseCase
     private let loadCountryDetail: LoadCountryDetailUseCase
     private let consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase
-    private let checkFullAuthentication: CheckFullAuthenticationUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
 
@@ -21,14 +23,15 @@ final class MyPageViewModel: BaseViewModel<
         loadUserSouvenirs: LoadUserSouvenirsUseCase,
         loadCountryDetail: LoadCountryDetailUseCase,
         consumeSouvenirMyPageRefresh: ConsumeSouvenirMyPageRefreshUseCase,
-        checkFullAuthentication: CheckFullAuthenticationUseCase
+        authSessionStore: AuthSessionStore
     ) {
         self.loadUserProfile = loadUserProfile
         self.loadUserSouvenirs = loadUserSouvenirs
         self.loadCountryDetail = loadCountryDetail
         self.consumeSouvenirMyPageRefresh = consumeSouvenirMyPageRefresh
-        self.checkFullAuthentication = checkFullAuthentication
+        self.authSessionStore = authSessionStore
         super.init(initialState: State())
+        bindAuthSessionStore()
     }
 
     // MARK: - Action Handling
@@ -37,12 +40,6 @@ final class MyPageViewModel: BaseViewModel<
         switch action {
         case .viewWillAppear:
             Task {
-                let isLogin = await checkFullAuthentication.execute()
-                if isLogin, state.value.isGuest == true {
-                    mutate { $0.isGuest = false }
-                    await loadInitialData()
-                    return
-                }
                 let needs = await consumeSouvenirMyPageRefresh.execute()
                 guard needs else { return }
                 await loadInitialData()
@@ -66,6 +63,22 @@ final class MyPageViewModel: BaseViewModel<
         case .tapCreateSouvenir:
             navigate(to: .souvenirRoute(.create))
         }
+    }
+
+    // MARK: - Auth
+
+    private func bindAuthSessionStore() {
+        authSessionStore.authStateChanges
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLogin in
+                guard let self else { return }
+                let wasGuest = state.value.isGuest
+                mutate { $0.isGuest = !isLogin }
+                if isLogin, wasGuest {
+                    Task { await self.loadInitialData() }
+                }
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Private Logic
