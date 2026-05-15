@@ -19,11 +19,6 @@ final class DiscoveryViewController: BaseViewController<
         viewModel.action.accept(.viewDidLoad)
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.action.accept(.viewWillAppear)
-    }
-
     private func setupLoadingIndicator() {
         view.addSubview(loadingIndicator)
 

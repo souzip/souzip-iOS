@@ -35,9 +35,6 @@ final class DiscoveryViewModel: BaseViewModel<
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewWillAppear:
-            break
-
         case .viewDidLoad:
             Task {
                 emit(.loading(true))
