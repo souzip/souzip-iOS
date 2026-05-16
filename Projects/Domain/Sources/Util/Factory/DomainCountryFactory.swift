@@ -6,5 +6,4 @@ public protocol DomainSouvenirFactory: AnyObject {
     func makeUpdateSouvenirUseCase() -> UpdateSouvenirUseCase
     func makeDeleteSouvenirUseCase() -> DeleteSouvenirUseCase
     func makeLoadNearbySouvenirsUseCase() -> LoadNearbySouvenirsUseCase
-    func makeConsumeSouvenirMyPageRefreshUseCase() -> ConsumeSouvenirMyPageRefreshUseCase
 }

@@ -12,7 +12,7 @@ final class GlobeViewModel: BaseViewModel<
 
     private let loadPopularCountries: LoadPopularCountriesUseCase
     private let loadNearbySouvenirs: LoadNearbySouvenirsUseCase
-    private let checkFullAuthentication: CheckFullAuthenticationUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Properties
 
@@ -32,11 +32,11 @@ final class GlobeViewModel: BaseViewModel<
     init(
         loadPopularCountries: LoadPopularCountriesUseCase,
         loadNearbySouvenirs: LoadNearbySouvenirsUseCase,
-        checkFullAuthentication: CheckFullAuthenticationUseCase
+        authSessionStore: AuthSessionStore
     ) {
         self.loadPopularCountries = loadPopularCountries
         self.loadNearbySouvenirs = loadNearbySouvenirs
-        self.checkFullAuthentication = checkFullAuthentication
+        self.authSessionStore = authSessionStore
         super.init(initialState: State())
     }
 
@@ -67,7 +67,8 @@ final class GlobeViewModel: BaseViewModel<
 
         case .wantToUploadSouvenir:
             Task {
-                let isLogin = await checkFullAuthentication.execute()
+                await authSessionStore.refreshSession()
+                let isLogin = authSessionStore.isFullyAuthenticatedValue
                 if isLogin {
                     navigate(to: .souvenirRoute(.create))
                 } else {

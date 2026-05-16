@@ -1,4 +1,6 @@
 import Domain
+import RxCocoa
+import RxSwift
 
 final class DiscoveryViewModel: BaseViewModel<
     DiscoveryState,
@@ -11,7 +13,7 @@ final class DiscoveryViewModel: BaseViewModel<
     private let loadCountryTopSouvenirs: LoadCountryTopSouvenirsUseCase
     private let loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase
     private let loadCountryDetail: LoadCountryDetailUseCase
-    private let checkFullAuthentication: CheckFullAuthenticationUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
 
@@ -19,25 +21,20 @@ final class DiscoveryViewModel: BaseViewModel<
         loadCountryTopSouvenirs: LoadCountryTopSouvenirsUseCase,
         loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase,
         loadCountryDetail: LoadCountryDetailUseCase,
-        checkFullAuthentication: CheckFullAuthenticationUseCase
+        authSessionStore: AuthSessionStore
     ) {
         self.loadCountryTopSouvenirs = loadCountryTopSouvenirs
         self.loadTopSouvenirsByCategory = loadTopSouvenirsByCategory
         self.loadCountryDetail = loadCountryDetail
-        self.checkFullAuthentication = checkFullAuthentication
+        self.authSessionStore = authSessionStore
         super.init(initialState: State())
+        bindAuthSessionStore()
     }
 
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
         switch action {
-        case .viewWillAppear:
-            Task {
-                let isLogin = await checkFullAuthentication.execute()
-                mutate { $0.isGuest = !isLogin }
-            }
-
         case .viewDidLoad:
             Task {
                 emit(.loading(true))
@@ -67,6 +64,17 @@ final class DiscoveryViewModel: BaseViewModel<
         case .tapFAB:
             navigate(to: .recommend)
         }
+    }
+
+    // MARK: - Auth
+
+    private func bindAuthSessionStore() {
+        authSessionStore.authStateChanges
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLogin in
+                self?.mutate { $0.isGuest = !isLogin }
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Data Loading

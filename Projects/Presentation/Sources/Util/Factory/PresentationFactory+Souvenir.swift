@@ -29,7 +29,8 @@ extension DefaultPresentationFactory {
         let vm = SouvenirDetailViewModel(
             souvenirId: id,
             loadSouvenirDetail: domainFactory.makeLoadSouvenirDetailUseCase(),
-            deleteSouvenir: domainFactory.makeDeleteSouvenirUseCase()
+            deleteSouvenir: domainFactory.makeDeleteSouvenirUseCase(),
+            userSouvenirInvalidationStore: userSouvenirInvalidationStore
         )
         let view = SouvenirDetailView()
         let vc = SouvenirDetailViewController(viewModel: vm, contentView: view)
@@ -51,7 +52,8 @@ extension DefaultPresentationFactory {
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
             loadLocationAddress: domainFactory.makeLoadLocationAddressUseCase(),
             createSouvenir: domainFactory.makeCreateSouvenirUseCase(),
-            updateSouvenir: domainFactory.makeUpdateSouvenirUseCase()
+            updateSouvenir: domainFactory.makeUpdateSouvenirUseCase(),
+            userSouvenirInvalidationStore: userSouvenirInvalidationStore
         )
 
         let view = SouvenirFormView()

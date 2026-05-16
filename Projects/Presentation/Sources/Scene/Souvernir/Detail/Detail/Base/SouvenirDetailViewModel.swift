@@ -11,16 +11,19 @@ final class SouvenirDetailViewModel: BaseViewModel<
 
     private let loadSouvenirDetail: LoadSouvenirDetailUseCase
     private let deleteSouvenir: DeleteSouvenirUseCase
+    private let userSouvenirInvalidationStore: UserSouvenirInvalidationStore
 
     // MARK: - Init
 
     init(
         souvenirId: Int,
         loadSouvenirDetail: LoadSouvenirDetailUseCase,
-        deleteSouvenir: DeleteSouvenirUseCase
+        deleteSouvenir: DeleteSouvenirUseCase,
+        userSouvenirInvalidationStore: UserSouvenirInvalidationStore
     ) {
         self.loadSouvenirDetail = loadSouvenirDetail
         self.deleteSouvenir = deleteSouvenir
+        self.userSouvenirInvalidationStore = userSouvenirInvalidationStore
         super.init(initialState: State())
 
         Task {
@@ -98,6 +101,7 @@ final class SouvenirDetailViewModel: BaseViewModel<
 
         do {
             try await deleteSouvenir.execute(id: detail.id)
+            userSouvenirInvalidationStore.notifyUserSouvenirsChanged()
             handleAction(.back)
         } catch {
             emit(.showAlert(message: error.localizedDescription))

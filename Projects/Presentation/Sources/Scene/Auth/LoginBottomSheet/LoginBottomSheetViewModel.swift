@@ -10,11 +10,13 @@ final class LoginBottomSheetViewModel: BaseViewModel<
     // MARK: - UseCase
 
     private let login: LoginUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
 
-    init(login: LoginUseCase) {
+    init(login: LoginUseCase, authSessionStore: AuthSessionStore) {
         self.login = login
+        self.authSessionStore = authSessionStore
         super.init(initialState: State())
     }
 
@@ -41,10 +43,12 @@ final class LoginBottomSheetViewModel: BaseViewModel<
             let result = try await login.execute(provider: provider)
             switch result {
             case .ready:
+                await authSessionStore.refreshSession()
                 emit(.dismiss)
                 navigate(to: .complete)
 
             case .shouldOnboarding:
+                await authSessionStore.refreshSession()
                 emit(.dismiss)
                 navigate(to: .terms)
 

@@ -10,11 +10,13 @@ final class SplashViewModel: BaseViewModel<
     // MARK: - UseCase
 
     private let autoLogin: AutoLoginUseCase
+    private let authSessionStore: AuthSessionStore
 
     // MARK: - Init
 
-    init(autoLogin: AutoLoginUseCase) {
+    init(autoLogin: AutoLoginUseCase, authSessionStore: AuthSessionStore) {
         self.autoLogin = autoLogin
+        self.authSessionStore = authSessionStore
         super.init(initialState: State(minDisplayTime: .seconds(3)))
         Task { await checkStatus() }
     }
@@ -32,10 +34,14 @@ final class SplashViewModel: BaseViewModel<
 
         switch result {
         case .ready:
+            await authSessionStore.refreshSession()
             navigate(to: .main)
+
         case .shouldLogin:
             navigate(to: .login)
+
         case .shouldOnboarding:
+            await authSessionStore.refreshSession()
             navigate(to: .terms)
         }
     }

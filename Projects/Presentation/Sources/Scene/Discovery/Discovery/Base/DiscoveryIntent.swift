@@ -3,7 +3,6 @@ import Foundation
 
 enum DiscoveryAction {
     case viewDidLoad
-    case viewWillAppear
     case refresh
 
     case countryChipTap(CountryChipItem)

@@ -22,8 +22,4 @@ public extension DefaultDomainFactory {
     func makeLoadNearbySouvenirsUseCase() -> LoadNearbySouvenirsUseCase {
         DefaultLoadNearbySouvenirsUseCase(souvenirRepo: makeSouvenirRepository())
     }
-
-    func makeConsumeSouvenirMyPageRefreshUseCase() -> ConsumeSouvenirMyPageRefreshUseCase {
-        DefaultConsumeSouvenirMyPageRefreshUseCase(souvenirRepo: makeSouvenirRepository())
-    }
 }

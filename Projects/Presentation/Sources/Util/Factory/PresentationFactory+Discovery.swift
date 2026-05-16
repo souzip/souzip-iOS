@@ -9,7 +9,7 @@ extension DefaultPresentationFactory {
             loadCountryTopSouvenirs: domainFactory.makeLoadCountryTopSouvenirsUseCase(),
             loadTopSouvenirsByCategory: domainFactory.makeLoadTopSouvenirsByCategoryUseCase(),
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
-            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
+            authSessionStore: authSessionStore
         )
         let view = DiscoveryView()
         let vc = DiscoveryViewController(viewModel: vm, contentView: view)

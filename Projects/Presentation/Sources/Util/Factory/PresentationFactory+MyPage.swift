@@ -13,8 +13,8 @@ extension DefaultPresentationFactory {
             loadUserProfile: domainFactory.makeLoadUserProfileUseCase(),
             loadUserSouvenirs: domainFactory.makeLoadUserSouvenirsUseCase(),
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
-            consumeSouvenirMyPageRefresh: domainFactory.makeConsumeSouvenirMyPageRefreshUseCase(),
-            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase()
+            userSouvenirInvalidationStore: userSouvenirInvalidationStore,
+            authSessionStore: authSessionStore
         )
         let view = MyPageView()
         let vc = MyPageViewController(viewModel: vm, contentView: view)
@@ -28,7 +28,7 @@ extension DefaultPresentationFactory {
 
     func makeSetting() -> RoutedScene<MyPageRoute> {
         let vm = SettingViewModel(
-            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase(),
+            authSessionStore: authSessionStore,
             logout: domainFactory.makeLogoutUseCase()
         )
         let view = SettingView()
