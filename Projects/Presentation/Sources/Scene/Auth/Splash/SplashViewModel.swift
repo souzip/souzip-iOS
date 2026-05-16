@@ -36,8 +36,10 @@ final class SplashViewModel: BaseViewModel<
         case .ready:
             await authSessionStore.refreshSession()
             navigate(to: .main)
+
         case .shouldLogin:
             navigate(to: .login)
+
         case .shouldOnboarding:
             await authSessionStore.refreshSession()
             navigate(to: .terms)
