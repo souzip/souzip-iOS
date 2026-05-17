@@ -9,15 +9,33 @@ protocol PresentationMyPageFactory: AnyObject {
 
 extension DefaultPresentationFactory {
     func makeMyPageScene() -> RoutedScene<MyPageRoute> {
+        let collectionTabVM = MyPageCollectionTabViewModel()
+        let likedTabVM = MyPageLikedTabViewModel()
+
+        let collectionTabVC = MyPageCollectionTabViewController(
+            viewModel: collectionTabVM,
+            contentView: MyPageCollectionTabView()
+        )
+        let likedTabVC = MyPageLikedTabViewController(
+            viewModel: likedTabVM,
+            contentView: MyPageLikedTabView()
+        )
+
         let vm = MyPageViewModel(
             loadUserProfile: domainFactory.makeLoadUserProfileUseCase(),
             loadUserSouvenirs: domainFactory.makeLoadUserSouvenirsUseCase(),
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
             userSouvenirInvalidationStore: userSouvenirInvalidationStore,
-            authSessionStore: authSessionStore
+            authSessionStore: authSessionStore,
+            collectionTabViewModel: collectionTabVM
         )
         let view = MyPageView()
-        let vc = MyPageViewController(viewModel: vm, contentView: view)
+        let vc = MyPageViewController(
+            viewModel: vm,
+            contentView: view,
+            collectionTabViewController: collectionTabVC,
+            likedTabViewController: likedTabVC
+        )
 
         return .init(
             vc: vc,

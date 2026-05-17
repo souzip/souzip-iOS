@@ -10,36 +10,16 @@ final class MyPageView: BaseView<MyPageAction> {
         style: .Settings
     )
 
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.backgroundColor = .clear
-        return scrollView
-    }()
-
-    private let contentView = UIView()
-
-    private let headerView = MyPageHeaderView()
-
-    private let segmentView = MyPageSegmentView()
-
-    private let collectionView = MyCollectionView()
-
-    private let collectionEmptyView: MyPageCollectionEmptyView = {
-        let view = MyPageCollectionEmptyView()
-        view.isHidden = true
-        return view
-    }()
-
-    private let likedEmptyView: MyPageLikedEmptyView = {
-        let view = MyPageLikedEmptyView()
-        view.isHidden = true
-        return view
-    }()
+    private let myPageRootListView = MyPageRootListView()
 
     private let faButton = DSFAButton(image: .dsIconEditContained)
 
     private let guestLoginView = GuestLoginView()
+
+    private var didApplyRootListSnapshotOnce = false
+
+    /// 스냅샷 반영 뒤 VC 쪽 후속 작업(페이저 높이 등)을 연결한다.
+    var onRootListSnapshotRendered: (() -> Void)?
 
     // MARK: - Override
 
@@ -50,20 +30,10 @@ final class MyPageView: BaseView<MyPageAction> {
     override func setHierarchy() {
         [
             navigationBar,
-            scrollView,
-            collectionEmptyView,
-            likedEmptyView,
+            myPageRootListView,
             faButton,
             guestLoginView,
         ].forEach(addSubview)
-
-        scrollView.addSubview(contentView)
-
-        [
-            headerView,
-            segmentView,
-            collectionView,
-        ].forEach(contentView.addSubview)
     }
 
     override func setConstraints() {
@@ -72,42 +42,9 @@ final class MyPageView: BaseView<MyPageAction> {
             make.horizontalEdges.equalToSuperview()
         }
 
-        scrollView.snp.makeConstraints { make in
+        myPageRootListView.snp.makeConstraints { make in
             make.top.equalTo(navigationBar.snp.bottom)
             make.horizontalEdges.bottom.equalToSuperview()
-        }
-
-        contentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalToSuperview()
-        }
-
-        headerView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(12)
-            make.horizontalEdges.equalToSuperview().inset(20)
-        }
-
-        segmentView.snp.makeConstraints { make in
-            make.top.equalTo(headerView.snp.bottom).offset(12)
-            make.horizontalEdges.equalToSuperview()
-        }
-
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(segmentView.snp.bottom)
-            make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview().inset(20)
-        }
-
-        collectionEmptyView.snp.makeConstraints { make in
-            make.top.equalTo(segmentView.snp.bottom)
-            make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
-
-        likedEmptyView.snp.makeConstraints { make in
-            make.top.equalTo(segmentView.snp.bottom)
-            make.horizontalEdges.equalToSuperview()
-            make.bottom.equalToSuperview()
         }
 
         faButton.snp.makeConstraints { make in
@@ -131,22 +68,6 @@ final class MyPageView: BaseView<MyPageAction> {
                 }
             }
 
-        bind(segmentView.action)
-            .map { .tapSegmentTab($0) }
-
-        bind(collectionView.action)
-            .map { item in
-                switch item {
-                case let .country(countryItem):
-                    .tapCountry(countryItem)
-                case let .souvenir(souvenir):
-                    .tapSouvenir(souvenir)
-                }
-            }
-
-        bind(collectionEmptyView.action)
-            .map { .tapCreateSouvenir }
-
         bind(faButton.rx.tap).to(.tapCreateSouvenir)
 
         bind(guestLoginView.action).to(.tapLogin)
@@ -154,41 +75,22 @@ final class MyPageView: BaseView<MyPageAction> {
 
     // MARK: - Public
 
-    func renderProfile(_ profile: ProfileData) {
-        headerView.render(profile)
+    func rootListView() -> MyPageRootListView {
+        myPageRootListView
     }
 
-    func renderSeagment(_ tab: CollectionTab) {
-        segmentView.updateUI(for: tab)
-    }
-
-    func renderVisibleContent(_ content: MyPageVisibleContent) {
-        let allViews = [
-            collectionView,
-            collectionEmptyView,
-            likedEmptyView,
-        ]
-        allViews.forEach { $0.isHidden = true }
-
-        switch content {
-        case .collection:
-            collectionView.isHidden = false
-        case .collectionEmpty:
-            collectionEmptyView.isHidden = false
-        case .likedEmpty:
-            likedEmptyView.isHidden = false
-        }
-    }
-
-    func renderCollection(_ data: MyCollectionData) {
-        collectionView.render(data: data)
+    func renderRootList(_ input: (isGuest: Bool, profile: ProfileData?)) {
+        renderIsGuest(input.isGuest)
+        let animatingDifferences = didApplyRootListSnapshotOnce
+        didApplyRootListSnapshotOnce = true
+        myPageRootListView.applySnapshot(input, animatingDifferences: animatingDifferences)
+        onRootListSnapshotRendered?()
     }
 
     func renderIsGuest(_ isGuest: Bool) {
         guestLoginView.isHidden = !isGuest
 
-        scrollView.isHidden = isGuest
-        collectionEmptyView.isHidden = isGuest
+        myPageRootListView.isHidden = isGuest
         faButton.isHidden = isGuest
     }
 }

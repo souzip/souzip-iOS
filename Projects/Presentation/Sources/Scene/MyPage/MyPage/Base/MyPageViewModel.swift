@@ -8,6 +8,10 @@ final class MyPageViewModel: BaseViewModel<
     MyPageEvent,
     MyPageRoute
 > {
+    // MARK: - Child
+
+    let collectionTabViewModel: MyPageCollectionTabViewModel
+
     // MARK: - UseCase
 
     private let loadUserProfile: LoadUserProfileUseCase
@@ -23,16 +27,19 @@ final class MyPageViewModel: BaseViewModel<
         loadUserSouvenirs: LoadUserSouvenirsUseCase,
         loadCountryDetail: LoadCountryDetailUseCase,
         userSouvenirInvalidationStore: UserSouvenirInvalidationStore,
-        authSessionStore: AuthSessionStore
+        authSessionStore: AuthSessionStore,
+        collectionTabViewModel: MyPageCollectionTabViewModel
     ) {
         self.loadUserProfile = loadUserProfile
         self.loadUserSouvenirs = loadUserSouvenirs
         self.loadCountryDetail = loadCountryDetail
         self.userSouvenirInvalidationStore = userSouvenirInvalidationStore
         self.authSessionStore = authSessionStore
+        self.collectionTabViewModel = collectionTabViewModel
         super.init(initialState: State())
         bindAuthSessionStore()
         bindUserSouvenirInvalidationStore()
+        bindChildCollectionRoutes()
     }
 
     // MARK: - Action Handling
@@ -44,12 +51,6 @@ final class MyPageViewModel: BaseViewModel<
 
         case let .tapSegmentTab(tab):
             handleSelectTab(tab)
-
-        case let .tapCountry(countryItem):
-            handleSelectCountry(countryItem)
-
-        case let .tapSouvenir(souvenir):
-            navigate(to: .souvenirRoute(.detail(id: souvenir.id)))
 
         case .tapLogin:
             navigate(to: .loginBottomSheet)
@@ -68,6 +69,9 @@ final class MyPageViewModel: BaseViewModel<
                 guard let self else { return }
                 let wasGuest = state.value.isGuest
                 mutate { $0.isGuest = !isLogin }
+                if !isLogin {
+                    collectionTabViewModel.syncSouvenirs([])
+                }
                 if isLogin, wasGuest {
                     Task { await self.loadInitialData() }
                 }
@@ -90,11 +94,20 @@ final class MyPageViewModel: BaseViewModel<
             .disposed(by: disposeBag)
     }
 
+    // MARK: - Child routes → 부모 route
+
+    private func bindChildCollectionRoutes() {
+        collectionTabViewModel.route
+            .subscribe(onNext: { [weak self] route in
+                self?.navigate(to: route)
+            })
+            .disposed(by: disposeBag)
+    }
+
     // MARK: - Private Logic
 
     private func loadInitialData() async {
         do {
-            // 1. 프로필 데이터 가져오기
             async let profileTask = await fetchProfile()
             async let souvenirsTask = await fetchColletionSouvenirs()
 
@@ -113,10 +126,8 @@ final class MyPageViewModel: BaseViewModel<
                 )
             }
 
-            mutate { state in
-                state.profile = profile
-                state.collectionSouvenirs = mapSouvenirs
-            }
+            mutate { $0.profile = profile }
+            collectionTabViewModel.syncSouvenirs(mapSouvenirs)
         } catch {
             emit(.showErrorAlert(error.localizedDescription))
         }
@@ -125,14 +136,6 @@ final class MyPageViewModel: BaseViewModel<
     private func handleSelectTab(_ tab: CollectionTab) {
         mutate { state in
             state.selectedTab = tab
-        }
-    }
-
-    private func handleSelectCountry(_ countryItem: CountryItem) {
-        let country = countryItem.name == "전체" ? nil : countryItem.name
-
-        mutate { state in
-            state.selectedCountry = country
         }
     }
 
