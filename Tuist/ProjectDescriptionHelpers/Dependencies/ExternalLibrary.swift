@@ -10,6 +10,7 @@ public enum ExternalLibrary: String, CaseIterable {
     // MARK: - UI
 
     case snapKit = "SnapKit"
+    case parchment = "Parchment"
 
     // MARK: - Utility
 
