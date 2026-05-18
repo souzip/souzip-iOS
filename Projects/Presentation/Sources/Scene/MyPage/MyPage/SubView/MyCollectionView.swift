@@ -32,15 +32,19 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
 
     // MARK: - Public
 
+    /// 레이아웃 반영 후 컬렉션 콘텐츠 높이 (바깥 스크롤·페이저 높이 산정용)
+    func displayedCollectionContentHeight() -> CGFloat {
+        collectionView.layoutIfNeeded()
+        return collectionView.collectionViewLayout.collectionViewContentSize.height
+    }
+
     func render(data: MyCollectionData) {
         var snapshot = Snapshot()
 
-        // Section 1: Country Filter
         snapshot.appendSections([.countryFilter])
         let countryItems = data.countryFilter.countries.map { Item.country($0) }
         snapshot.appendItems(countryItems, toSection: .countryFilter)
 
-        // Section 2: Souvenir Grid
         snapshot.appendSections([.souvenirGrid])
         let souvenirItems = data.souvenirGrid.souvenirs.map { Item.souvenir($0) }
         snapshot.appendItems(souvenirItems, toSection: .souvenirGrid)
@@ -70,7 +74,8 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
 
     override func setBindings() {
         bind(collectionView.rx.itemSelected)
-            .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
+            .compactMap { [weak self] indexPath in self?.dataSource?.itemIdentifier(for: indexPath) }
+            .map { $0 }
     }
 
     private func updateHeight() {

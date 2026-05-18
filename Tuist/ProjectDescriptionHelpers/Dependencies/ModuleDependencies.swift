@@ -29,6 +29,7 @@ public enum ModuleDependencies {
                 .external(.rxCocoa),
                 .external(.kingfisher),
                 .external(.mapboxMaps),
+                .external(.parchment),
             ]
 
         case .domain:

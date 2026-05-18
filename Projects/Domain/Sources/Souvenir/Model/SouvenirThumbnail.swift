@@ -1,4 +1,4 @@
-public struct SouvenirThumbnail {
+public struct SouvenirThumbnail: Equatable {
     public let id: Int
     public let thumbnailUrl: String
     public let country: String
