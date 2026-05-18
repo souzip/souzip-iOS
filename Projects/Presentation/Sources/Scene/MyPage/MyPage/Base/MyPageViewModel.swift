@@ -112,9 +112,9 @@ final class MyPageViewModel: BaseViewModel<
             async let souvenirsTask = await fetchColletionSouvenirs()
 
             let profile = try await profileTask
-            let souvenirs = try await souvenirsTask
+            let souvenirPage = try await souvenirsTask
 
-            let mapSouvenirs = souvenirs.compactMap { souvenir -> SouvenirThumbnail? in
+            let mapSouvenirs = souvenirPage.items.compactMap { souvenir -> SouvenirThumbnail? in
                 guard let country = try? loadCountryDetail.execute(countryCode: souvenir.country) else { return nil }
 
                 return .init(
@@ -149,7 +149,7 @@ final class MyPageViewModel: BaseViewModel<
         )
     }
 
-    private func fetchColletionSouvenirs() async throws -> [SouvenirThumbnail] {
-        try await loadUserSouvenirs.execute()
+    private func fetchColletionSouvenirs() async throws -> UserSouvenirListPage {
+        try await loadUserSouvenirs.execute(page: 1, size: 12)
     }
 }
