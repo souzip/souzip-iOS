@@ -3,6 +3,7 @@ public protocol DomainUserFactory: AnyObject {
     func makeUploadPromptBubbleUseCase() -> UploadPromptBubbleUseCase
     func makeLoadUserProfileUseCase() -> LoadUserProfileUseCase
     func makeLoadUserSouvenirsUseCase() -> LoadUserSouvenirsUseCase
+    func makeLoadUserWishlistsUseCase() -> LoadUserWishlistsUseCase
 }
 
 public extension DefaultDomainFactory {
@@ -20,5 +21,9 @@ public extension DefaultDomainFactory {
 
     func makeLoadUserSouvenirsUseCase() -> LoadUserSouvenirsUseCase {
         DefaultLoadUserSouvenirsUseCase(userRepo: makeUserRepository())
+    }
+
+    func makeLoadUserWishlistsUseCase() -> LoadUserWishlistsUseCase {
+        DefaultLoadUserWishlistsUseCase(userRepo: makeUserRepository())
     }
 }

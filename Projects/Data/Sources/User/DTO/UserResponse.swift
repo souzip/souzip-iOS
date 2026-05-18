@@ -26,3 +26,19 @@ public struct SouvenirItemResponse: Decodable {
     public let wishlistCount: Int
     public let isWishlisted: Bool
 }
+
+// MARK: - Wishlists (내가 찜한 기념품 목록)
+
+public struct UserWishlistsResponse: Decodable {
+    public let content: [WishlistedSouvenirItemResponse]
+    public let pagination: PaginationDTO
+}
+
+public struct WishlistedSouvenirItemResponse: Decodable {
+    public let souvenirId: Int
+    public let name: String
+    public let countryCode: String
+    public let thumbnailUrl: String
+    public let wishedAt: String
+    public let isWishlisted: Bool
+}

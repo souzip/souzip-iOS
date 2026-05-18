@@ -4,6 +4,7 @@ import Networking
 public enum UserEndpoint {
     case getUserProfile
     case getUserSouvenirs(page: Int, size: Int)
+    case getUserWishlists(page: Int, size: Int)
 }
 
 extension UserEndpoint: APIEndpoint {
@@ -13,12 +14,14 @@ extension UserEndpoint: APIEndpoint {
             "/api/users/me"
         case .getUserSouvenirs:
             "/api/users/me/souvenirs"
+        case .getUserWishlists:
+            "/api/users/me/wishlists"
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .getUserProfile, .getUserSouvenirs:
+        case .getUserProfile, .getUserSouvenirs, .getUserWishlists:
             .get
         }
     }
@@ -31,7 +34,14 @@ extension UserEndpoint: APIEndpoint {
         switch self {
         case .getUserProfile:
             nil
+
         case let .getUserSouvenirs(page, size):
+            [
+                "page": page,
+                "size": size,
+            ]
+
+        case let .getUserWishlists(page, size):
             [
                 "page": page,
                 "size": size,

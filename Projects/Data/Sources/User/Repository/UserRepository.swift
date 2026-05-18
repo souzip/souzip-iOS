@@ -34,6 +34,16 @@ public final class DefaultUserRepository: UserRepository {
         }
     }
 
+    public func getUserWishlists(page: Int, size: Int) async throws -> PagedList<WishlistedSouvenirRow> {
+        do {
+            let request = SouvenirListRequest(page: page, size: size)
+            let dto = try await userRemote.getUserWishlists(request: request)
+            return UserDTOMapper.toPagedWishlistedSouvenirs(dto)
+        } catch {
+            throw mapToDomainError(error)
+        }
+    }
+
     // MARK: - Local (UserDefaults)
 
     public func getLocalUser() -> LoginUser? {
