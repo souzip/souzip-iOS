@@ -12,7 +12,9 @@ public enum DiscoveryDTOMapper {
             name: dto.name,
             category: SouvenirDTOMapper.mapToCategory(dto.category),
             countryCode: dto.countryCode,
-            thumbnailUrl: dto.thumbnailUrl
+            thumbnailUrl: dto.thumbnailUrl,
+            wishlistCount: dto.wishlistCount ?? 0,
+            isWishlisted: dto.isWishlisted
         )
     }
 }

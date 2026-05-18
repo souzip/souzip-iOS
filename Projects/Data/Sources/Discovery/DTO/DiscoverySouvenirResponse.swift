@@ -4,6 +4,8 @@ public struct DiscoverySouvenirResponse: Decodable {
     public let category: String
     public let countryCode: String
     public let thumbnailUrl: String
+    public let wishlistCount: Int?
+    public let isWishlisted: Bool?
 }
 
 public struct Top10CountrySouvenirResponse: Decodable {

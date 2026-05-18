@@ -54,7 +54,9 @@ public enum SouvenirDTOMapper {
                 nickname: dto.userNickname,
                 profileImageUrl: dto.userProfileImageUrl
             ),
-            files: dto.files.map { toDomain($0) }
+            files: dto.files.map { toDomain($0) },
+            wishlistCount: dto.wishlistCount ?? 0,
+            isWishlisted: dto.isWishlisted
         )
     }
 
@@ -84,7 +86,9 @@ public enum SouvenirDTOMapper {
             currencySymbol: dto.currencySymbol,
             thumbnail: dto.thumbnail,
             coordinate: Coordinate(latitude: dto.latitude, longitude: dto.longitude),
-            address: dto.address
+            address: dto.address,
+            wishlistCount: dto.wishlistCount ?? 0,
+            isWishlisted: dto.isWishlisted
         )
     }
 

@@ -12,6 +12,8 @@ public struct SouvenirDetail {
     /// 닉네임·프로필 등 **표시용** 작성자 정보. `isOwned`와의 비즈니스 규칙은 UseCase·도메인 서비스에서 조합한다.
     public let owner: SouvenirOwner
     public let files: [SouvenirFile]
+    public let wishlistCount: Int
+    public let isWishlisted: Bool?
 
     public init(
         id: Int,
@@ -24,7 +26,9 @@ public struct SouvenirDetail {
         countryCode: String,
         isOwned: Bool,
         owner: SouvenirOwner,
-        files: [SouvenirFile]
+        files: [SouvenirFile],
+        wishlistCount: Int = 0,
+        isWishlisted: Bool? = nil
     ) {
         self.id = id
         self.name = name
@@ -37,6 +41,8 @@ public struct SouvenirDetail {
         self.isOwned = isOwned
         self.owner = owner
         self.files = files
+        self.wishlistCount = wishlistCount
+        self.isWishlisted = isWishlisted
     }
 
     /// 대표 이미지 URL. **진실 소스는 첨부 `files` 순서**이며, 본 값은 첫 파일 URL에 대한 파생이다.

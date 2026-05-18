@@ -8,18 +8,24 @@ public struct CatalogSouvenir: Equatable {
     public let category: SouvenirCategory
     public let countryCode: String
     public let thumbnailUrl: String
+    public let wishlistCount: Int
+    public let isWishlisted: Bool?
 
     public init(
         id: Int,
         name: String,
         category: SouvenirCategory,
         countryCode: String,
-        thumbnailUrl: String
+        thumbnailUrl: String,
+        wishlistCount: Int,
+        isWishlisted: Bool?
     ) {
         self.id = id
         self.name = name
         self.category = category
         self.countryCode = countryCode
         self.thumbnailUrl = thumbnailUrl
+        self.wishlistCount = wishlistCount
+        self.isWishlisted = isWishlisted
     }
 }

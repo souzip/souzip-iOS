@@ -18,6 +18,8 @@ public struct SouvenirDetailResponse: Decodable {
     public let userProfileImageUrl: String
     public let isOwned: Bool?
     public let files: [SouvenirFileResponse]
+    public let wishlistCount: Int?
+    public let isWishlisted: Bool?
 }
 
 public struct SouvenirPriceResponse: Decodable {
@@ -55,4 +57,6 @@ public struct NearbySouvenirResponse: Decodable {
     public let latitude: Double
     public let longitude: Double
     public let address: String
+    public let wishlistCount: Int?
+    public let isWishlisted: Bool?
 }

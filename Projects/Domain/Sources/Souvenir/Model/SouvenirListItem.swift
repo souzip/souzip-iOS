@@ -9,6 +9,8 @@ public struct SouvenirListItem: Hashable {
     public let thumbnail: String
     public let coordinate: Coordinate
     public let address: String
+    public let wishlistCount: Int
+    public let isWishlisted: Bool?
 
     public init(
         id: Int,
@@ -20,7 +22,9 @@ public struct SouvenirListItem: Hashable {
         currencySymbol: String?,
         thumbnail: String,
         coordinate: Coordinate,
-        address: String
+        address: String,
+        wishlistCount: Int,
+        isWishlisted: Bool?
     ) {
         self.id = id
         self.name = name
@@ -32,6 +36,8 @@ public struct SouvenirListItem: Hashable {
         self.thumbnail = thumbnail
         self.coordinate = coordinate
         self.address = address
+        self.wishlistCount = wishlistCount
+        self.isWishlisted = isWishlisted
     }
 
     public static func == (lhs: SouvenirListItem, rhs: SouvenirListItem) -> Bool {
