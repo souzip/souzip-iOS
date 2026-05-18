@@ -190,6 +190,20 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - Wishlist
+
+    private lazy var cachedWishlistRepository: WishlistRepository = {
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let wishlistRemoteDataSource = DefaultWishlistRemoteDataSource(
+            networkClient: authedClient
+        )
+
+        return DefaultWishlistRepository(
+            remote: wishlistRemoteDataSource
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -218,5 +232,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeNoticeRepository() -> NoticeRepository {
         cachedNoticeRepository
+    }
+
+    public func makeWishlistRepository() -> WishlistRepository {
+        cachedWishlistRepository
     }
 }

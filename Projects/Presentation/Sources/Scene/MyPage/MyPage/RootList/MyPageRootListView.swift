@@ -44,7 +44,7 @@ final class MyPageRootListView: UIView {
 
         let layout = MyPageRootListLayout.makeLayout(
             sectionResolver: { [weak self] sectionIndex in
-                guard let self, let dataSource = self.dataSource else {
+                guard let self, let dataSource else {
                     return nil
                 }
                 let identifiers = dataSource.snapshot().sectionIdentifiers

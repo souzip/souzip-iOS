@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol LoadUserSouvenirsUseCase {
-    func execute() async throws -> [SouvenirThumbnail]
+    func execute(page: Int, size: Int) async throws -> UserSouvenirListPage
 }
 
 public final class DefaultLoadUserSouvenirsUseCase: LoadUserSouvenirsUseCase {
@@ -11,7 +11,7 @@ public final class DefaultLoadUserSouvenirsUseCase: LoadUserSouvenirsUseCase {
         self.userRepo = userRepo
     }
 
-    public func execute() async throws -> [SouvenirThumbnail] {
-        try await userRepo.getUserSouvenirs()
+    public func execute(page: Int, size: Int) async throws -> UserSouvenirListPage {
+        try await userRepo.getUserSouvenirs(page: page, size: size)
     }
 }

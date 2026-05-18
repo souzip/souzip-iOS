@@ -6,4 +6,5 @@ public protocol DataFactory: AnyObject {
     func makeDiscoveryRepository() -> DiscoveryRepository
     func makeUserRepository() -> UserRepository
     func makeNoticeRepository() -> NoticeRepository
+    func makeWishlistRepository() -> WishlistRepository
 }
