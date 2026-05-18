@@ -54,7 +54,9 @@ final class SouvenirDetailViewModel: BaseViewModel<
                         countryCode: editedDetail.countryCode,
                         isOwned: true,
                         owner: editedDetail.owner,
-                        files: detail.files
+                        files: detail.files,
+                        wishlistCount: editedDetail.wishlistCount,
+                        isWishlisted: editedDetail.isWishlisted
                     )
 
                     self?.mutate { $0.detail = newDetail }
