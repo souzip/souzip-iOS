@@ -1,6 +1,6 @@
 public protocol UserRepository {
     func getUserProfile() async throws -> UserProfile
-    func getUserSouvenirs() async throws -> [SouvenirThumbnail]
+    func getUserSouvenirs(page: Int, size: Int) async throws -> UserSouvenirListPage
     func getLocalUser() -> LoginUser?
     func saveLocalUser(userId: String, nickname: String, needsOnboarding: Bool)
     func deleteLocalUser()

@@ -25,17 +25,27 @@ public enum UserDTOMapper {
 
     // MARK: - 기념품 목록 매핑 (API 응답)
 
-    public static func toDomain(_ dto: UserSouvenirsResponse) -> [SouvenirThumbnail] {
-        dto.content.map { toDomain($0) }
+    public static func toUserSouvenirListPage(_ dto: UserSouvenirsResponse) -> UserSouvenirListPage {
+        UserSouvenirListPage(
+            items: dto.content.map { toCollectedSouvenirSummary($0) },
+            currentPage: dto.pagination.currentPage,
+            totalPages: dto.pagination.totalPages,
+            totalItems: dto.pagination.totalItems,
+            pageSize: dto.pagination.pageSize,
+            hasNext: dto.pagination.hasNext,
+            hasPrevious: dto.pagination.hasPrevious
+        )
     }
 
-    public static func toDomain(_ dto: SouvenirItemResponse) -> SouvenirThumbnail {
-        SouvenirThumbnail(
+    public static func toCollectedSouvenirSummary(_ dto: SouvenirItemResponse) -> CollectedSouvenirSummary {
+        CollectedSouvenirSummary(
             id: dto.id,
             thumbnailUrl: dto.thumbnailUrl,
             country: dto.countryCode,
             createdAt: dto.createdAt,
-            updatedAt: dto.updatedAt
+            updatedAt: dto.updatedAt,
+            wishlistCount: dto.wishlistCount,
+            isWishlisted: dto.isWishlisted
         )
     }
 }

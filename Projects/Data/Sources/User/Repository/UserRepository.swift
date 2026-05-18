@@ -24,11 +24,11 @@ public final class DefaultUserRepository: UserRepository {
         }
     }
 
-    public func getUserSouvenirs() async throws -> [SouvenirThumbnail] {
+    public func getUserSouvenirs(page: Int, size: Int) async throws -> UserSouvenirListPage {
         do {
-            let request = SouvenirListRequest()
+            let request = SouvenirListRequest(page: page, size: size)
             let dto = try await userRemote.getUserSouvenirs(request: request)
-            return UserDTOMapper.toDomain(dto)
+            return UserDTOMapper.toUserSouvenirListPage(dto)
         } catch {
             throw mapToDomainError(error)
         }

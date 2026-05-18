@@ -1,4 +1,5 @@
 import Foundation
+import Networking
 
 // MARK: - Profile (프로필 조회 API 응답)
 
@@ -13,7 +14,7 @@ public struct UserProfileResponse: Decodable {
 
 public struct UserSouvenirsResponse: Decodable {
     public let content: [SouvenirItemResponse]
-    public let pagination: PaginationResponse
+    public let pagination: PaginationDTO
 }
 
 public struct SouvenirItemResponse: Decodable {
@@ -22,15 +23,6 @@ public struct SouvenirItemResponse: Decodable {
     public let countryCode: String
     public let createdAt: String
     public let updatedAt: String
-}
-
-public struct PaginationResponse: Decodable {
-    public let currentPage: Int
-    public let totalPages: Int
-    public let totalItems: Int
-    public let pageSize: Int
-    public let first: Bool
-    public let last: Bool
-    public let hasNext: Bool
-    public let hasPrevious: Bool
+    public let wishlistCount: Int
+    public let isWishlisted: Bool
 }
