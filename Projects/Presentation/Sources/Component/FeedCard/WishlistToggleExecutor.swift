@@ -20,9 +20,9 @@ actor WishlistToggleExecutor {
 
         let shouldWishlist = currentlyWishlisted != true
         if shouldWishlist {
-            try? await addToWishlist.execute(souvenirId: souvenirId)
+            _ = try? await addToWishlist.execute(souvenirId: souvenirId)
         } else {
-            try? await removeFromWishlist.execute(souvenirId: souvenirId)
+            _ = try? await removeFromWishlist.execute(souvenirId: souvenirId)
         }
     }
 }

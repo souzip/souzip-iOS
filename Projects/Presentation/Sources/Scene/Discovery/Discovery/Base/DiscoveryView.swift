@@ -100,7 +100,7 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
             snapshot.appendItems(model.items, toSection: model.section)
         }
 
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
 
     func renderIsGuest(_ isGuest: Bool) {

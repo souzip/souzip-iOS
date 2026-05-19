@@ -107,7 +107,7 @@ final class RecommendView: BaseView<RecommendAction> {
             snapshot.appendItems(model.items, toSection: model.section)
         }
 
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        dataSource?.apply(snapshot, animatingDifferences: false)
     }
 
     func endRefreshing() {
