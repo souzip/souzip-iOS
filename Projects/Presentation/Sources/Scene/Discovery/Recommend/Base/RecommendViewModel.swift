@@ -1,4 +1,6 @@
 import Domain
+import RxCocoa
+import RxSwift
 
 final class RecommendViewModel: BaseViewModel<
     RecommendState,
@@ -11,6 +13,8 @@ final class RecommendViewModel: BaseViewModel<
     private let loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase
     private let loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase
     private let loadCountryDetail: LoadCountryDetailUseCase
+    private let authSessionStore: AuthSessionStore
+    private let wishlistToggleExecutor: WishlistToggleExecutor
 
     private var preferredAll: [CatalogSouvenir] = []
     private var uploadAll: [CatalogSouvenir] = []
@@ -20,12 +24,17 @@ final class RecommendViewModel: BaseViewModel<
     init(
         loadAIRecommendationsForCategory: LoadAIRecommendationsForCategoryUseCase,
         loadAIRecommendationsForUpload: LoadAIRecommendationsForUploadUseCase,
-        loadCountryDetail: LoadCountryDetailUseCase
+        loadCountryDetail: LoadCountryDetailUseCase,
+        authSessionStore: AuthSessionStore,
+        wishlistToggleExecutor: WishlistToggleExecutor
     ) {
         self.loadAIRecommendationsForCategory = loadAIRecommendationsForCategory
         self.loadAIRecommendationsForUpload = loadAIRecommendationsForUpload
         self.loadCountryDetail = loadCountryDetail
+        self.authSessionStore = authSessionStore
+        self.wishlistToggleExecutor = wishlistToggleExecutor
         super.init(initialState: State())
+        bindAuthSessionStore()
     }
 
     // MARK: - Action
@@ -54,6 +63,9 @@ final class RecommendViewModel: BaseViewModel<
         case let .souvenirCardTap(item):
             navigate(to: .souvenirRoute(.detail(id: item.id)))
 
+        case let .souvenirHeartTap(souvenirID):
+            handleSouvenirHeartTap(souvenirID: souvenirID)
+
         case .uploadButtonTap:
             navigate(to: .souvenirRoute(.create))
 
@@ -63,6 +75,19 @@ final class RecommendViewModel: BaseViewModel<
         case .uploadMoreTap:
             mutate { $0.isUploadExpanded.toggle() }
         }
+    }
+}
+
+// MARK: - Auth
+
+private extension RecommendViewModel {
+    func bindAuthSessionStore() {
+        authSessionStore.authStateChanges
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLogin in
+                self?.mutate { $0.isGuest = !isLogin }
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -220,5 +245,47 @@ private extension RecommendViewModel {
             }
         }
         return result
+    }
+}
+
+// MARK: - Wishlist
+
+private extension RecommendViewModel {
+    func handleSouvenirHeartTap(souvenirID: Int) {
+        if state.value.isGuest {
+            navigate(to: .loginBottomSheet)
+            return
+        }
+
+        guard let item = findFeedCard(souvenirID: souvenirID) else { return }
+
+        let currentlyWishlisted = item.isWishlisted
+        let nextWishlisted = currentlyWishlisted == true ? false : true
+        applyWishlisted(souvenirID: souvenirID, isWishlisted: nextWishlisted)
+
+        Task {
+            await wishlistToggleExecutor.toggle(
+                souvenirId: souvenirID,
+                currentlyWishlisted: currentlyWishlisted
+            )
+        }
+    }
+
+    func findFeedCard(souvenirID: Int) -> SouvenirFeedCardItem? {
+        if let item = state.value.preferredSouvenirs.first(where: { $0.id == souvenirID }) {
+            return item
+        }
+        return state.value.uploadSouvenirs.first(where: { $0.id == souvenirID })
+    }
+
+    func applyWishlisted(souvenirID: Int, isWishlisted: Bool?) {
+        mutate { state in
+            state.preferredSouvenirs = state.preferredSouvenirs.map {
+                $0.id == souvenirID ? $0.withWishlisted(isWishlisted) : $0
+            }
+            state.uploadSouvenirs = state.uploadSouvenirs.map {
+                $0.id == souvenirID ? $0.withWishlisted(isWishlisted) : $0
+            }
+        }
     }
 }

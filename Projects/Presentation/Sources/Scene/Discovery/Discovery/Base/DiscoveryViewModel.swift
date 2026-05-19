@@ -14,6 +14,7 @@ final class DiscoveryViewModel: BaseViewModel<
     private let loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase
     private let loadCountryDetail: LoadCountryDetailUseCase
     private let authSessionStore: AuthSessionStore
+    private let wishlistToggleExecutor: WishlistToggleExecutor
 
     // MARK: - Init
 
@@ -21,12 +22,14 @@ final class DiscoveryViewModel: BaseViewModel<
         loadCountryTopSouvenirs: LoadCountryTopSouvenirsUseCase,
         loadTopSouvenirsByCategory: LoadTopSouvenirsByCategoryUseCase,
         loadCountryDetail: LoadCountryDetailUseCase,
-        authSessionStore: AuthSessionStore
+        authSessionStore: AuthSessionStore,
+        wishlistToggleExecutor: WishlistToggleExecutor
     ) {
         self.loadCountryTopSouvenirs = loadCountryTopSouvenirs
         self.loadTopSouvenirsByCategory = loadTopSouvenirsByCategory
         self.loadCountryDetail = loadCountryDetail
         self.authSessionStore = authSessionStore
+        self.wishlistToggleExecutor = wishlistToggleExecutor
         super.init(initialState: State())
         bindAuthSessionStore()
     }
@@ -57,6 +60,9 @@ final class DiscoveryViewModel: BaseViewModel<
 
         case let .souvenirCardTap(item):
             navigate(to: .souvenirRoute(.detail(id: item.id)))
+
+        case let .souvenirHeartTap(souvenirID):
+            handleSouvenirHeartTap(souvenirID: souvenirID)
 
         case .moreButtonTap:
             handleMoreButtonTap()
@@ -226,5 +232,46 @@ final class DiscoveryViewModel: BaseViewModel<
 
     private func mapToFeedCardItems(_ souvenirs: [CatalogSouvenir]) -> [SouvenirFeedCardItem] {
         souvenirs.map { SouvenirFeedCardItem(catalogSouvenir: $0) }
+    }
+
+    // MARK: - Wishlist
+
+    private func handleSouvenirHeartTap(souvenirID: Int) {
+        if state.value.isGuest {
+            navigate(to: .loginBottomSheet)
+            return
+        }
+
+        guard let item = findFeedCard(souvenirID: souvenirID) else { return }
+
+        // `isWishlisted == nil`(비로그인·미설정)은 PRD상 비찜 UI — `guard let`으로 막지 않는다.
+        let currentlyWishlisted = item.isWishlisted
+        let nextWishlisted = currentlyWishlisted == true ? false : true
+        applyWishlisted(souvenirID: souvenirID, isWishlisted: nextWishlisted)
+
+        Task {
+            await wishlistToggleExecutor.toggle(
+                souvenirId: souvenirID,
+                currentlyWishlisted: currentlyWishlisted
+            )
+        }
+    }
+
+    private func findFeedCard(souvenirID: Int) -> SouvenirFeedCardItem? {
+        if let item = state.value.countrySouvenirs.first(where: { $0.id == souvenirID }) {
+            return item
+        }
+        return state.value.categorySouvenirs.first(where: { $0.id == souvenirID })
+    }
+
+    private func applyWishlisted(souvenirID: Int, isWishlisted: Bool?) {
+        mutate { state in
+            state.countrySouvenirs = state.countrySouvenirs.map {
+                $0.id == souvenirID ? $0.withWishlisted(isWishlisted) : $0
+            }
+            state.categorySouvenirs = state.categorySouvenirs.map {
+                $0.id == souvenirID ? $0.withWishlisted(isWishlisted) : $0
+            }
+        }
     }
 }

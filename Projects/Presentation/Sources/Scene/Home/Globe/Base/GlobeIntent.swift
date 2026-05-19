@@ -10,6 +10,7 @@ enum GlobeAction {
     case wantToGoMyLocation
     case wantToSeeSouvenirPin(SouvenirListItem) // 핀 탭 → 캐러셀 센터만 변경
     case wantToSeeSouvenirDetail(souvenirID: Int) // 그리드·캐러셀 아이템 탭 → 상세
+    case wantToToggleWishlist(souvenirID: Int)
     case wantToUploadSouvenir
     case wantToClose
 

@@ -189,6 +189,11 @@ final class GlobeView: BaseView<GlobeAction> {
             .bind(to: action)
             .disposed(by: disposeBag)
 
+        souvenirSheetView.tapSouvenirHeart
+            .map { .wantToToggleWishlist(souvenirID: $0) }
+            .bind(to: action)
+            .disposed(by: disposeBag)
+
         souvenirSheetView.tapUpload
             .map { .wantToUploadSouvenir }
             .bind(to: action)

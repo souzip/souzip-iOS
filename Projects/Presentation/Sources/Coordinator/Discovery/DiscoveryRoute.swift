@@ -4,6 +4,8 @@ enum DiscoveryRoute {
 
     case souvenirRoute(SouvenirRoute)
 
+    case loginBottomSheet
+
     case pop
     case dimiss
 }

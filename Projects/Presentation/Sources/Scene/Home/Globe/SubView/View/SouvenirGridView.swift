@@ -8,6 +8,7 @@ import UIKit
 
 enum SouvenirGridAction {
     case itemTap(souvenirID: Int)
+    case heartTap(souvenirID: Int)
     case tapUpload
     /// 시트 superview 좌표계 누적 translation.y (그래버 팬과 동일)
     case sheetPullBegan
@@ -215,8 +216,13 @@ private extension SouvenirGridView {
         let registration = UICollectionView.CellRegistration<
             SouvenirFeedCardCell,
             Item
-        > { cell, _, item in
+        > { [weak self] cell, _, item in
+            guard let self else { return }
             cell.render(item: item)
+            cell.action
+                .map { _ in SouvenirGridAction.heartTap(souvenirID: item.id) }
+                .bind(to: action)
+                .disposed(by: cell.disposeBag)
         }
 
         dataSource = .init(

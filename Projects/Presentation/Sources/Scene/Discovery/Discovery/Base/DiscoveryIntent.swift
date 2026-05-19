@@ -8,6 +8,7 @@ enum DiscoveryAction {
     case countryChipTap(CountryChipItem)
     case categoryChipTap(CategoryItem)
     case souvenirCardTap(SouvenirFeedCardItem)
+    case souvenirHeartTap(souvenirID: Int)
     case moreButtonTap
 
     case tapFAB

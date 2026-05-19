@@ -13,6 +13,7 @@ final class GlobeViewModel: BaseViewModel<
     private let loadPopularCountries: LoadPopularCountriesUseCase
     private let loadNearbySouvenirs: LoadNearbySouvenirsUseCase
     private let authSessionStore: AuthSessionStore
+    private let wishlistToggleExecutor: WishlistToggleExecutor
 
     // MARK: - Properties
 
@@ -32,11 +33,13 @@ final class GlobeViewModel: BaseViewModel<
     init(
         loadPopularCountries: LoadPopularCountriesUseCase,
         loadNearbySouvenirs: LoadNearbySouvenirsUseCase,
-        authSessionStore: AuthSessionStore
+        authSessionStore: AuthSessionStore,
+        wishlistToggleExecutor: WishlistToggleExecutor
     ) {
         self.loadPopularCountries = loadPopularCountries
         self.loadNearbySouvenirs = loadNearbySouvenirs
         self.authSessionStore = authSessionStore
+        self.wishlistToggleExecutor = wishlistToggleExecutor
         super.init(initialState: State())
     }
 
@@ -64,6 +67,9 @@ final class GlobeViewModel: BaseViewModel<
 
         case let .wantToSeeSouvenirDetail(souvenirID):
             handleSouvenirDetailSelection(souvenirID: souvenirID)
+
+        case let .wantToToggleWishlist(souvenirID):
+            handleWishlistToggle(souvenirID: souvenirID)
 
         case .wantToUploadSouvenir:
             Task {
@@ -453,6 +459,61 @@ private extension GlobeViewModel {
     func handleSouvenirDetailSelection(souvenirID: Int) {
         navigate(to: .souvenirRoute(.detail(id: souvenirID)))
     }
+
+    func handleWishlistToggle(souvenirID: Int) {
+        Task {
+            await authSessionStore.refreshSession()
+            guard authSessionStore.isFullyAuthenticatedValue else {
+                navigate(to: .loginBottomSheet)
+                return
+            }
+
+            guard let current = currentSouvenirs.first(where: { $0.id == souvenirID }) else { return }
+
+            let currentlyWishlisted = current.isWishlisted
+            let nextWishlisted = currentlyWishlisted == true ? false : true
+            let updated = currentSouvenirs.map {
+                $0.id == souvenirID ? $0.withIsWishlisted(nextWishlisted) : $0
+            }
+            applySouvenirsUpdate(updated)
+
+            await wishlistToggleExecutor.toggle(
+                souvenirId: souvenirID,
+                currentlyWishlisted: currentlyWishlisted
+            )
+        }
+    }
+
+    func applySouvenirsUpdate(_ souvenirs: [SouvenirListItem]) {
+        currentSouvenirs = souvenirs
+
+        switch state.value.scene {
+        case let .mapWithSheet(context):
+            let newContext = MapSheetContext(
+                souvenirs: souvenirs,
+                sheetLevel: context.sheetLevel,
+                center: context.center,
+                searchQuery: context.searchQuery,
+                showSearchButton: context.showSearchButton
+            )
+            mutate { $0.scene = .mapWithSheet(newContext) }
+            emit(.updateSouvenirsAndPinsOnly(souvenirs))
+
+        case let .mapWithCarousel(context):
+            let updatedSelected = souvenirs.first(where: { $0.id == context.selectedItem.id })
+                ?? context.selectedItem
+            let newContext = CarouselContext(
+                souvenirs: souvenirs,
+                selectedItem: updatedSelected,
+                searchQuery: context.searchQuery
+            )
+            mutate { $0.scene = .mapWithCarousel(newContext) }
+            emit(.updateSouvenirsAndPinsOnly(souvenirs))
+
+        case .globe:
+            break
+        }
+    }
 }
 
 // MARK: - Navigation
@@ -470,7 +531,7 @@ private extension GlobeViewModel {
         near coordinate: CLLocationCoordinate2D,
         radius: Int
     ) async throws -> [SouvenirListItem] {
-        return try await loadNearbySouvenirs.execute(
+        try await loadNearbySouvenirs.execute(
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
             radiusMeter: radius

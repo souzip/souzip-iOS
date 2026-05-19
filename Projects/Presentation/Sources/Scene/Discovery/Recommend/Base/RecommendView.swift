@@ -129,8 +129,13 @@ private extension RecommendView {
         let souvenirCardRegistration = UICollectionView.CellRegistration<
             SouvenirFeedCardCell,
             SouvenirFeedCardItem
-        > { cell, _, item in
+        > { [weak self] cell, _, item in
+            guard let self else { return }
             cell.render(item: item)
+            cell.action
+                .map { _ in RecommendAction.souvenirHeartTap(souvenirID: item.id) }
+                .bind(to: action)
+                .disposed(by: cell.disposeBag)
         }
 
         let moreButtonRegistration = UICollectionView.CellRegistration<

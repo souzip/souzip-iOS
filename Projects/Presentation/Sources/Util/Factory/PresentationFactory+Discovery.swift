@@ -9,7 +9,8 @@ extension DefaultPresentationFactory {
             loadCountryTopSouvenirs: domainFactory.makeLoadCountryTopSouvenirsUseCase(),
             loadTopSouvenirsByCategory: domainFactory.makeLoadTopSouvenirsByCategoryUseCase(),
             loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
-            authSessionStore: authSessionStore
+            authSessionStore: authSessionStore,
+            wishlistToggleExecutor: wishlistToggleExecutor
         )
         let view = DiscoveryView()
         let vc = DiscoveryViewController(viewModel: vm, contentView: view)
@@ -25,7 +26,9 @@ extension DefaultPresentationFactory {
         let vm = RecommendViewModel(
             loadAIRecommendationsForCategory: domainFactory.makeLoadAIRecommendationsForCategoryUseCase(),
             loadAIRecommendationsForUpload: domainFactory.makeLoadAIRecommendationsForUploadUseCase(),
-            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase()
+            loadCountryDetail: domainFactory.makeLoadCountryDetailUseCase(),
+            authSessionStore: authSessionStore,
+            wishlistToggleExecutor: wishlistToggleExecutor
         )
         let view = RecommendView()
         let vc = RecommendViewController(viewModel: vm, contentView: view)

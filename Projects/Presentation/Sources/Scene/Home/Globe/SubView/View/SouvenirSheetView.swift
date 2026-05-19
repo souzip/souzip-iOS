@@ -34,6 +34,7 @@ final class SouvenirSheetView: UIView {
 
     let heightRelay = PublishRelay<CGFloat>()
     let tapSouvenirItem = PublishRelay<Int>()
+    let tapSouvenirHeart = PublishRelay<Int>()
     let tapUpload = PublishRelay<Void>()
 
     private let disposeBag = DisposeBag()
@@ -194,6 +195,9 @@ final class SouvenirSheetView: UIView {
                 switch gridAction {
                 case let .itemTap(souvenirID):
                     self?.tapSouvenirItem.accept(souvenirID)
+
+                case let .heartTap(souvenirID):
+                    self?.tapSouvenirHeart.accept(souvenirID)
 
                 case .tapUpload:
                     self?.tapUpload.accept(())

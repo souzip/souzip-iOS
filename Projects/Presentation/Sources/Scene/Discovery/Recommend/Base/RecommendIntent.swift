@@ -9,6 +9,7 @@ enum RecommendAction {
 
     case countryChipTap(CountryChipItem)
     case souvenirCardTap(SouvenirFeedCardItem)
+    case souvenirHeartTap(souvenirID: Int)
     case uploadButtonTap
 
     case preferredMoreTap
@@ -24,6 +25,8 @@ enum RecommendEvent {
 // MARK: - State
 
 struct RecommendState {
+    var isGuest: Bool = true
+
     var countries: [CountryChipItem] = []
     var preferredSouvenirs: [SouvenirFeedCardItem] = []
 

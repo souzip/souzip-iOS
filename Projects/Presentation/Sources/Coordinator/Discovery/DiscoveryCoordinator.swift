@@ -23,6 +23,9 @@ final class DiscoveryCoordinator: BaseCoordinator<DiscoveryRoute, TabRoute> {
         case let .souvenirRoute(souvenirRoute):
             handleSouvenirRoute(souvenirRoute)
 
+        case .loginBottomSheet:
+            showLoginBottomSheet()
+
         case .pop:
             nav.popViewController(animated: true)
 
@@ -56,5 +59,14 @@ private extension DiscoveryCoordinator {
 
         addTemporaryChild(coordinator)
         coordinator.navigate(route)
+    }
+
+    func showLoginBottomSheet() {
+        let coordinator = LoginBottomSheetCoordinator(
+            nav: nav,
+            factory: factory
+        )
+        addTemporaryChild(coordinator)
+        coordinator.start()
     }
 }
