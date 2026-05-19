@@ -3,7 +3,7 @@ import Kingfisher
 import SnapKit
 import UIKit
 
-final class SouvenirCardCell: UICollectionViewCell {
+final class SouvenirFeedCardCell: UICollectionViewCell {
     // MARK: - UI
 
     private let imageView: UIImageView = {
@@ -31,6 +31,12 @@ final class SouvenirCardCell: UICollectionViewCell {
         return label
     }()
 
+    private let heartButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -43,24 +49,29 @@ final class SouvenirCardCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Override
+
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
         imageView.kf.cancelDownloadTask()
+        heartButton.setImage(nil, for: .normal)
     }
 
     // MARK: - Public
 
-    func render(item: SouvenirCardItem) {
+    func render(item: SouvenirFeedCardItem) {
         imageView.setFeedImage(item.imageURL)
         titleLabel.text = item.title
-        categoryLabel.text = item.category
+        categoryLabel.text = item.categoryTitle
+        let heartImage: UIImage = item.isWishlisted == true ? .dsIconHeartFilled : .dsIconHeart
+        heartButton.setImage(heartImage, for: .normal)
     }
 }
 
 // MARK: - UI Configuration
 
-private extension SouvenirCardCell {
+private extension SouvenirFeedCardCell {
     func configure() {
         setAttributes()
         setHierarchy()
@@ -76,6 +87,7 @@ private extension SouvenirCardCell {
             imageView,
             titleLabel,
             categoryLabel,
+            heartButton,
         ].forEach(contentView.addSubview)
     }
 
@@ -83,6 +95,12 @@ private extension SouvenirCardCell {
         imageView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
             make.height.equalTo(imageView.snp.width)
+        }
+
+        heartButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(8)
+            make.width.height.equalTo(24)
         }
 
         titleLabel.snp.makeConstraints { make in
