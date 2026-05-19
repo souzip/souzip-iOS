@@ -63,6 +63,17 @@ public struct SouvenirFeedCardItem: Hashable {
             listSlotID: listSlotID
         )
     }
+
+    public func withWishlisted(_ isWishlisted: Bool?) -> SouvenirFeedCardItem {
+        SouvenirFeedCardItem(
+            id: id,
+            imageURL: imageURL,
+            title: title,
+            categoryTitle: categoryTitle,
+            isWishlisted: isWishlisted,
+            listSlotID: listSlotID
+        )
+    }
 }
 
 public enum SouvenirFeedCardListSlot: String {

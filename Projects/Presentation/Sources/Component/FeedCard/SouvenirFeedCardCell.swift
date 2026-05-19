@@ -1,9 +1,18 @@
 import DesignSystem
 import Kingfisher
+import RxRelay
+import RxSwift
 import SnapKit
 import UIKit
 
-final class SouvenirFeedCardCell: UICollectionViewCell {
+final class SouvenirFeedCardCell: UICollectionViewCell, ActionBindable {
+    enum Action {
+        case heartTap
+    }
+
+    let action = PublishRelay<Action>()
+    var disposeBag = DisposeBag()
+
     // MARK: - UI
 
     private let imageView: UIImageView = {
@@ -31,11 +40,7 @@ final class SouvenirFeedCardCell: UICollectionViewCell {
         return label
     }()
 
-    private let heartButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.isUserInteractionEnabled = false
-        return button
-    }()
+    private let heartButton: UIButton = .init(type: .custom)
 
     // MARK: - Init
 
@@ -56,6 +61,8 @@ final class SouvenirFeedCardCell: UICollectionViewCell {
         imageView.image = nil
         imageView.kf.cancelDownloadTask()
         heartButton.setImage(nil, for: .normal)
+        disposeBag = DisposeBag()
+        setBindings()
     }
 
     // MARK: - Public
@@ -76,6 +83,7 @@ private extension SouvenirFeedCardCell {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
 
     func setAttributes() {
@@ -115,5 +123,9 @@ private extension SouvenirFeedCardCell {
             make.bottom.equalToSuperview()
             make.height.equalTo(21)
         }
+    }
+
+    func setBindings() {
+        bind(heartButton.rx.tap).to(.heartTap)
     }
 }

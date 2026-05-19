@@ -19,6 +19,11 @@ final class DefaultPresentationFactory: PresentationFactory {
 
     lazy var userSouvenirInvalidationStore: UserSouvenirInvalidationStore = .init()
 
+    lazy var wishlistToggleExecutor: WishlistToggleExecutor = .init(
+        addToWishlist: domainFactory.makeAddToWishlistUseCase(),
+        removeFromWishlist: domainFactory.makeRemoveFromWishlistUseCase()
+    )
+
     init(domainFactory: DomainFactory) {
         self.domainFactory = domainFactory
     }

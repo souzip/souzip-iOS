@@ -21,4 +21,21 @@ extension SouvenirListItem {
             "가격 정보 없음"
         }
     }
+
+    func withIsWishlisted(_ isWishlisted: Bool?) -> SouvenirListItem {
+        SouvenirListItem(
+            id: id,
+            name: name,
+            category: category,
+            purpose: purpose,
+            localPrice: localPrice,
+            krwPrice: krwPrice,
+            currencySymbol: currencySymbol,
+            thumbnail: thumbnail,
+            coordinate: coordinate,
+            address: address,
+            wishlistCount: wishlistCount,
+            isWishlisted: isWishlisted
+        )
+    }
 }
