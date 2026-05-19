@@ -138,6 +138,7 @@ enum GlobeEvent {
     case scrollCarouselToItem(SouvenirListItem) // 캐러셀 스크롤 (프로그래밍 방식)
     case moveCameraAndSelectPin(SouvenirListItem) // 카메라 이동 & 핀 선택
     case updateSouvenirsAndPinsOnly([SouvenirListItem]) // 기념품과 핀만 업데이트
+    case updateWishlistHeart(souvenirID: Int, isWishlisted: Bool?) // 그리드 하트 UI만 (전체 리렌더 X)
     case showSearchButton(Bool) // 검색 버튼만 표시/숨김
     case showLocationPermissionAlert
     case showError(String)

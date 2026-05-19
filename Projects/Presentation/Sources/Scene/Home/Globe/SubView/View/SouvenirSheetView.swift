@@ -134,6 +134,10 @@ final class SouvenirSheetView: UIView {
         souvenirGridView.render(souvenirs: items)
     }
 
+    func updateWishlistHeart(souvenirID: Int, isWishlisted: Bool?) {
+        souvenirGridView.updateWishlistHeart(souvenirID: souvenirID, isWishlisted: isWishlisted)
+    }
+
     // MARK: - Setup
 
     private func configure() {

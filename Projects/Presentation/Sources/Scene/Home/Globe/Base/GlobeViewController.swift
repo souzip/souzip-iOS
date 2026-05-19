@@ -37,6 +37,9 @@ final class GlobeViewController: BaseViewController<
         case let .updateSouvenirsAndPinsOnly(souvenirs):
             contentView.updateSouvenirsAndPinsOnly(souvenirs)
 
+        case let .updateWishlistHeart(souvenirID, isWishlisted):
+            contentView.updateWishlistHeart(souvenirID: souvenirID, isWishlisted: isWishlisted)
+
         case let .showSearchButton(show):
             contentView.showSearchButton(show)
 

@@ -313,6 +313,11 @@ extension GlobeView {
         searchInLocationButton.isHidden = true
     }
 
+    /// 찜 하트만 바꿀 때 — 그리드 전체 `renderGrid` 없이 해당 셀 UI만 갱신
+    func updateWishlistHeart(souvenirID: Int, isWishlisted: Bool?) {
+        souvenirSheetView.updateWishlistHeart(souvenirID: souvenirID, isWishlisted: isWishlisted)
+    }
+
     private func renderGlobeScene(animated: Bool) {
         hideAllSheets()
         searchInLocationButton.isHidden = true

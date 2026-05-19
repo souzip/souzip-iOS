@@ -472,16 +472,48 @@ private extension GlobeViewModel {
 
             let currentlyWishlisted = current.isWishlisted
             let nextWishlisted = currentlyWishlisted == true ? false : true
-            let updated = currentSouvenirs.map {
-                $0.id == souvenirID ? $0.withIsWishlisted(nextWishlisted) : $0
-            }
-            applySouvenirsUpdate(updated)
+            applyWishlistState(souvenirID: souvenirID, isWishlisted: nextWishlisted)
 
             await wishlistToggleExecutor.toggle(
                 souvenirId: souvenirID,
                 currentlyWishlisted: currentlyWishlisted
             )
         }
+    }
+
+    /// 찜 토글: VM state·캐시만 맞추고 그리드는 해당 셀 하트 UI만 갱신한다.
+    func applyWishlistState(souvenirID: Int, isWishlisted: Bool?) {
+        let updated = currentSouvenirs.map {
+            $0.id == souvenirID ? $0.withIsWishlisted(isWishlisted) : $0
+        }
+        currentSouvenirs = updated
+
+        switch state.value.scene {
+        case let .mapWithSheet(context):
+            let newContext = MapSheetContext(
+                souvenirs: updated,
+                sheetLevel: context.sheetLevel,
+                center: context.center,
+                searchQuery: context.searchQuery,
+                showSearchButton: context.showSearchButton
+            )
+            mutate { $0.scene = .mapWithSheet(newContext) }
+
+        case let .mapWithCarousel(context):
+            let updatedSelected = updated.first(where: { $0.id == context.selectedItem.id })
+                ?? context.selectedItem
+            let newContext = CarouselContext(
+                souvenirs: updated,
+                selectedItem: updatedSelected,
+                searchQuery: context.searchQuery
+            )
+            mutate { $0.scene = .mapWithCarousel(newContext) }
+
+        case .globe:
+            break
+        }
+
+        emit(.updateWishlistHeart(souvenirID: souvenirID, isWishlisted: isWishlisted))
     }
 
     func applySouvenirsUpdate(_ souvenirs: [SouvenirListItem]) {

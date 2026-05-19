@@ -67,6 +67,7 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
     // MARK: - Data
 
     private var dataSource: DataSource?
+    private var feedCardItems: [SouvenirFeedCardItem] = []
 
     /// 시트 높이 조절이 실제로 시작된 뒤에만 `sheetPullEnded`를 보내 스냅이 불필요하게 돌지 않게 함
     private var isSheetPullActive = false
@@ -129,15 +130,54 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
     }
 
     func render(feedCardItems items: [SouvenirFeedCardItem]) {
-        var snapshot = Snapshot()
-        snapshot.appendSections([0])
-        snapshot.appendItems(items, toSection: 0)
-        dataSource?.apply(snapshot, animatingDifferences: false)
-
+        feedCardItems = items
+        applyFeedCardSnapshot()
         updateEmptyState(isEmpty: items.isEmpty)
     }
 
+    /// 찜 토글: 보이는 셀은 하트만 즉시 갱신, 스냅샷은 `feedCardItems` 기준으로 맞춘다(delete/insert 없음).
+    func updateWishlistHeart(souvenirID: Int, isWishlisted: Bool?) {
+        guard let index = feedCardItems.firstIndex(where: { $0.id == souvenirID }) else { return }
+
+        feedCardItems[index] = feedCardItems[index].withWishlisted(isWishlisted)
+        updateVisibleHeartAppearance(souvenirID: souvenirID, isWishlisted: isWishlisted)
+    }
+
     // MARK: - Private
+
+    private func applyFeedCardSnapshot() {
+        var snapshot = Snapshot()
+        snapshot.appendSections([0])
+        snapshot.appendItems(feedCardItems, toSection: 0)
+        dataSource?.apply(snapshot, animatingDifferences: false)
+    }
+
+    /// Diffable Item은 찜 토글 직후 stale할 수 있어, 표시·액션은 `feedCardItems`를 우선한다.
+    private func resolvedFeedCardItem(for item: SouvenirFeedCardItem) -> SouvenirFeedCardItem {
+        feedCardItems.first(where: { $0.id == item.id && $0.listSlotID == item.listSlotID }) ?? item
+    }
+
+    /// 스냅샷 Item의 `isWishlisted`는 갱신 전 값일 수 있어, indexPath 조회는 **id** 로만 한다.
+    private func updateVisibleHeartAppearance(souvenirID: Int, isWishlisted: Bool?) {
+        if let dataSource,
+           let snapshotItem = dataSource.snapshot().itemIdentifiers(inSection: 0).first(where: { $0.id == souvenirID }),
+           let indexPath = dataSource.indexPath(for: snapshotItem),
+           let cell = collectionView.cellForItem(at: indexPath) as? SouvenirFeedCardCell {
+            cell.updateWishlistAppearance(isWishlisted: isWishlisted)
+            return
+        }
+
+        for visibleCell in collectionView.visibleCells {
+            guard let cardCell = visibleCell as? SouvenirFeedCardCell,
+                  let indexPath = collectionView.indexPath(for: visibleCell),
+                  let item = dataSource?.itemIdentifier(for: indexPath),
+                  item.id == souvenirID
+            else { continue }
+
+            cardCell.updateWishlistAppearance(isWishlisted: isWishlisted)
+            return
+        }
+    }
 
     private func updateEmptyState(isEmpty: Bool) {
         titleLabel.isHidden = isEmpty
@@ -218,9 +258,10 @@ private extension SouvenirGridView {
             Item
         > { [weak self] cell, _, item in
             guard let self else { return }
-            cell.render(item: item)
+            let resolved = resolvedFeedCardItem(for: item)
+            cell.render(item: resolved)
             cell.action
-                .map { _ in SouvenirGridAction.heartTap(souvenirID: item.id) }
+                .map { _ in SouvenirGridAction.heartTap(souvenirID: resolved.id) }
                 .bind(to: action)
                 .disposed(by: cell.disposeBag)
         }
