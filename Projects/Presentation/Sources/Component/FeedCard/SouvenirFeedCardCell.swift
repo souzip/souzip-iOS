@@ -42,6 +42,9 @@ final class SouvenirFeedCardCell: UICollectionViewCell, ActionBindable {
 
     private let heartButton: UIButton = .init(type: .custom)
 
+    /// Diffable 재구성 시 `render`가 다시 불려도 동일 URL이면 Kingfisher 재로드를 막는다.
+    private var renderedImageURL: String?
+
     // MARK: - Init
 
     override init(frame: CGRect) {
@@ -58,6 +61,7 @@ final class SouvenirFeedCardCell: UICollectionViewCell, ActionBindable {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        renderedImageURL = nil
         imageView.image = nil
         imageView.kf.cancelDownloadTask()
         heartButton.setImage(nil, for: .normal)
@@ -68,10 +72,18 @@ final class SouvenirFeedCardCell: UICollectionViewCell, ActionBindable {
     // MARK: - Public
 
     func render(item: SouvenirFeedCardItem) {
-        imageView.setFeedImage(item.imageURL)
+        if renderedImageURL != item.imageURL {
+            renderedImageURL = item.imageURL
+            imageView.setFeedImage(item.imageURL)
+        }
         titleLabel.text = item.title
         categoryLabel.text = item.categoryTitle
-        let heartImage: UIImage = item.isWishlisted == true ? .dsIconHeartFilled : .dsIconHeart
+        updateWishlistAppearance(isWishlisted: item.isWishlisted)
+    }
+
+    /// 찜 토글 등 하트만 바뀔 때 이미지·텍스트 재로드 없이 아이콘만 갱신한다.
+    func updateWishlistAppearance(isWishlisted: Bool?) {
+        let heartImage: UIImage = isWishlisted == true ? .dsIconHeartFilled : .dsIconHeart
         heartButton.setImage(heartImage, for: .normal)
     }
 }
