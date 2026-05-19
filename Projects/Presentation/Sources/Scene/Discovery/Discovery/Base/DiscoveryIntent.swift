@@ -7,7 +7,7 @@ enum DiscoveryAction {
 
     case countryChipTap(CountryChipItem)
     case categoryChipTap(CategoryItem)
-    case souvenirCardTap(SouvenirCardItem)
+    case souvenirCardTap(SouvenirFeedCardItem)
     case moreButtonTap
 
     case tapFAB
@@ -19,9 +19,9 @@ struct DiscoveryState {
     var countryTopSouvenirs: [String: CountryTopSouvenir] = [:]
 
     var countries: [CountryChipItem] = []
-    var countrySouvenirs: [SouvenirCardItem] = []
+    var countrySouvenirs: [SouvenirFeedCardItem] = []
     var categories: [CategoryItem] = []
-    var categorySouvenirs: [SouvenirCardItem] = []
+    var categorySouvenirs: [SouvenirFeedCardItem] = []
 
     var isCategoryExpanded: Bool = false
     var statCountry: [StatCountryChipItem] = []
@@ -42,9 +42,7 @@ struct DiscoveryState {
             let items: [DiscoveryItem] = countrySouvenirs.isEmpty
                 ? [.empty(id: "top10Cards-empty", text: "비어있습니다")]
                 : countrySouvenirs.map {
-                    var item = $0
-                    item.section = "discovery-country"
-                    return .souvenirCard(item)
+                    .souvenirCard($0.withListSlotID(SouvenirFeedCardListSlot.discoveryCountry.rawValue))
                 }
 
             models.append(.init(
@@ -83,9 +81,7 @@ struct DiscoveryState {
                 models.append(.init(
                     section: .categoryCards,
                     items: visible.map {
-                        var item = $0
-                        item.section = "discovery-category"
-                        return .souvenirCard(item)
+                        .souvenirCard($0.withListSlotID(SouvenirFeedCardListSlot.discoveryCategory.rawValue))
                     }
                 ))
 
@@ -111,7 +107,6 @@ struct DiscoveryState {
 
         return models
     }
-
 }
 
 enum DiscoveryEvent {

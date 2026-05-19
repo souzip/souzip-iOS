@@ -33,7 +33,7 @@ final class SouvenirSheetView: UIView {
     // MARK: - Action
 
     let heightRelay = PublishRelay<CGFloat>()
-    let tapSouvenirItem = PublishRelay<SouvenirListItem>()
+    let tapSouvenirItem = PublishRelay<Int>()
     let tapUpload = PublishRelay<Void>()
 
     private let disposeBag = DisposeBag()
@@ -130,7 +130,7 @@ final class SouvenirSheetView: UIView {
     }
 
     func renderGrid(_ items: [SouvenirListItem]) {
-        souvenirGridView.render(items: items)
+        souvenirGridView.render(souvenirs: items)
     }
 
     // MARK: - Setup
@@ -192,8 +192,8 @@ final class SouvenirSheetView: UIView {
         souvenirGridView.action
             .bind { [weak self] gridAction in
                 switch gridAction {
-                case let .itemTap(item):
-                    self?.tapSouvenirItem.accept(item)
+                case let .itemTap(souvenirID):
+                    self?.tapSouvenirItem.accept(souvenirID)
 
                 case .tapUpload:
                     self?.tapUpload.accept(())

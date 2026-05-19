@@ -2,7 +2,7 @@ import UIKit
 
 enum DiscoveryItem: Hashable {
     case countryChip(CountryChipItem)
-    case souvenirCard(SouvenirCardItem)
+    case souvenirCard(SouvenirFeedCardItem)
     case banner
     case categoryChip(CategoryItem)
     case moreButton(String)
@@ -18,25 +18,6 @@ struct CountryChipItem: Hashable {
     let title: String
     let flagImage: String
     let isSelected: Bool
-}
-
-/// 기념품 카드 아이템
-struct SouvenirCardItem: Hashable {
-    let id: Int
-    let imageURL: String
-    let title: String
-    let category: String
-    var section: String?
-
-    // id와 section으로 유니크성 판단
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(section)
-    }
-
-    static func == (lhs: SouvenirCardItem, rhs: SouvenirCardItem) -> Bool {
-        lhs.id == rhs.id && lhs.section == rhs.section
-    }
 }
 
 /// 통계 국가 칩 아이템

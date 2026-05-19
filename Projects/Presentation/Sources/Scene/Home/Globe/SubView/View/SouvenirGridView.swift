@@ -7,7 +7,7 @@ import UIKit
 // MARK: - SouvenirGridAction
 
 enum SouvenirGridAction {
-    case itemTap(SouvenirListItem)
+    case itemTap(souvenirID: Int)
     case tapUpload
     /// 시트 superview 좌표계 누적 translation.y (그래버 팬과 동일)
     case sheetPullBegan
@@ -26,7 +26,7 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
     }
 
     typealias Section = Int
-    typealias Item = SouvenirListItem // 기념품 모델
+    typealias Item = SouvenirFeedCardItem
 
     typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
@@ -107,7 +107,7 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
     override func setBindings() {
         bind(collectionView.rx.itemSelected)
             .compactMap { [weak self] in self?.dataSource?.itemIdentifier(for: $0) }
-            .map { .itemTap($0) }
+            .map { .itemTap(souvenirID: $0.id) }
 
         bind(emptyView.tapUpload)
             .to(.tapUpload)
@@ -122,7 +122,12 @@ final class SouvenirGridView: BaseView<SouvenirGridAction> {
         sheetPullTranslationSuperview = view
     }
 
-    func render(items: [Item]) {
+    func render(souvenirs items: [SouvenirListItem]) {
+        let feedItems = items.map { SouvenirFeedCardItem(listItem: $0) }
+        render(feedCardItems: feedItems)
+    }
+
+    func render(feedCardItems items: [SouvenirFeedCardItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(items, toSection: 0)
@@ -208,7 +213,7 @@ extension SouvenirGridView: UIGestureRecognizerDelegate {
 private extension SouvenirGridView {
     func configureDataSource() {
         let registration = UICollectionView.CellRegistration<
-            SouvenirGridCell,
+            SouvenirFeedCardCell,
             Item
         > { cell, _, item in
             cell.render(item: item)

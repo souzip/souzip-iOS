@@ -62,8 +62,8 @@ final class GlobeViewModel: BaseViewModel<
         case let .wantToSeeSouvenirPin(item):
             handleSouvenirPinSelection(item)
 
-        case let .wantToSeeSouvenirDetail(item):
-            handleSouvenirDetailSelection(item)
+        case let .wantToSeeSouvenirDetail(souvenirID):
+            handleSouvenirDetailSelection(souvenirID: souvenirID)
 
         case .wantToUploadSouvenir:
             Task {
@@ -450,8 +450,8 @@ private extension GlobeViewModel {
     }
 
     // 그리드/캐러셀 아이템 탭 → 상세
-    func handleSouvenirDetailSelection(_ item: SouvenirListItem) {
-        navigate(to: .souvenirRoute(.detail(id: item.id)))
+    func handleSouvenirDetailSelection(souvenirID: Int) {
+        navigate(to: .souvenirRoute(.detail(id: souvenirID)))
     }
 }
 
@@ -470,7 +470,7 @@ private extension GlobeViewModel {
         near coordinate: CLLocationCoordinate2D,
         radius: Int
     ) async throws -> [SouvenirListItem] {
-        try await loadNearbySouvenirs.execute(
+        return try await loadNearbySouvenirs.execute(
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
             radiusMeter: radius

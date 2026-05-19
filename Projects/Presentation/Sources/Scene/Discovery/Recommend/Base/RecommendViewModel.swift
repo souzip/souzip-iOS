@@ -181,7 +181,7 @@ private extension RecommendViewModel {
         }
     }
 
-    func makePreferredCardsAll(selectedCode: String?) -> [SouvenirCardItem] {
+    func makePreferredCardsAll(selectedCode: String?) -> [SouvenirFeedCardItem] {
         let filtered = filterByCountry(preferredAll, countryCode: selectedCode)
         return mapToCards(filtered)
     }
@@ -196,15 +196,8 @@ private extension RecommendViewModel {
 // MARK: - Helpers
 
 private extension RecommendViewModel {
-    func mapToCards(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
-        souvenirs.map {
-            SouvenirCardItem(
-                id: $0.id,
-                imageURL: $0.thumbnailUrl,
-                title: $0.name,
-                category: $0.category.title
-            )
-        }
+    func mapToCards(_ souvenirs: [CatalogSouvenir]) -> [SouvenirFeedCardItem] {
+        souvenirs.map { SouvenirFeedCardItem(catalogSouvenir: $0) }
     }
 
     func filterByCountry(

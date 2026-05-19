@@ -36,7 +36,7 @@ extension RecommendSection {
 
 enum RecommendItem: Hashable {
     case countryChip(CountryChipItem)
-    case souvenirCard(SouvenirCardItem)
+    case souvenirCard(SouvenirFeedCardItem)
     case moreButton(String)
     case uploadPrompt
     case spacer

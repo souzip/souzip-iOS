@@ -166,7 +166,7 @@ final class GlobeView: BaseView<GlobeAction> {
         bind(souvenirCarouselView.action)
             .compactMap { carouselAction -> GlobeAction? in
                 switch carouselAction {
-                case let .itemTapped(item): return .wantToSeeSouvenirDetail(item)
+                case let .itemTapped(item): return .wantToSeeSouvenirDetail(souvenirID: item.id)
                 case .closeButtonTapped: return .userClosedCarousel
                 case .centerItemChanged: return nil
                 }
@@ -185,7 +185,7 @@ final class GlobeView: BaseView<GlobeAction> {
     private func bindSheet() {
         // 시트 그리드 아이템 탭 → 상세
         souvenirSheetView.tapSouvenirItem
-            .map { .wantToSeeSouvenirDetail($0) }
+            .map { .wantToSeeSouvenirDetail(souvenirID: $0) }
             .bind(to: action)
             .disposed(by: disposeBag)
 

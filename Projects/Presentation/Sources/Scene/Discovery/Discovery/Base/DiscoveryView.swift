@@ -124,8 +124,8 @@ private extension DiscoveryView {
         }
 
         let souvenirCardRegistration = UICollectionView.CellRegistration<
-            SouvenirCardCell,
-            SouvenirCardItem
+            SouvenirFeedCardCell,
+            SouvenirFeedCardItem
         > { cell, _, item in
             cell.render(item: item)
         }

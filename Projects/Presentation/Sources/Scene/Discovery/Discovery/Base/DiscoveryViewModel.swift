@@ -91,7 +91,7 @@ final class DiscoveryViewModel: BaseViewModel<
 
             // 1) 국가별 기념품 + 카테고리별 기념품 동시 호출
             async let countrySouvenirsTask = loadCountryTopSouvenirs.execute()
-            async let categorySouvenirsTask: [SouvenirCardItem] = fetchTop10ByCategory(category: firstCategory)
+            async let categorySouvenirsTask: [SouvenirFeedCardItem] = fetchTop10ByCategory(category: firstCategory)
 
             let (allCountrySouvenirs, categorySouvenirs) = try await (
                 countrySouvenirsTask,
@@ -111,8 +111,8 @@ final class DiscoveryViewModel: BaseViewModel<
             }
 
             // 3) 첫번째 국가의 기념품
-            let firstCountrySouvenirs: [SouvenirCardItem] = allCountrySouvenirs.first.map {
-                mapToSouvenirCardItems($0.souvenirs)
+            let firstCountrySouvenirs: [SouvenirFeedCardItem] = allCountrySouvenirs.first.map {
+                mapToFeedCardItems($0.souvenirs)
             } ?? []
 
             // 4) 통계 (상위 3개)
@@ -155,7 +155,7 @@ final class DiscoveryViewModel: BaseViewModel<
 
         guard let cached = state.value.countryTopSouvenirs[item.countryCode] else { return }
 
-        let souvenirs = mapToSouvenirCardItems(cached.souvenirs)
+        let souvenirs = mapToFeedCardItems(cached.souvenirs)
         setCountrySouvenirs(souvenirs)
     }
 
@@ -172,7 +172,7 @@ final class DiscoveryViewModel: BaseViewModel<
         }
     }
 
-    private func setCountrySouvenirs(_ items: [SouvenirCardItem]) {
+    private func setCountrySouvenirs(_ items: [SouvenirFeedCardItem]) {
         mutate { $0.countrySouvenirs = items }
     }
 
@@ -205,7 +205,7 @@ final class DiscoveryViewModel: BaseViewModel<
         }
     }
 
-    private func setCategorySouvenirs(_ items: [SouvenirCardItem]) {
+    private func setCategorySouvenirs(_ items: [SouvenirFeedCardItem]) {
         mutate { $0.categorySouvenirs = items }
     }
 
@@ -219,19 +219,12 @@ final class DiscoveryViewModel: BaseViewModel<
 
     // MARK: - Fetch Helpers
 
-    private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirCardItem] {
+    private func fetchTop10ByCategory(category: SouvenirCategory) async throws -> [SouvenirFeedCardItem] {
         let souvenirs = try await loadTopSouvenirsByCategory.execute(category: category)
-        return mapToSouvenirCardItems(souvenirs)
+        return mapToFeedCardItems(souvenirs)
     }
 
-    private func mapToSouvenirCardItems(_ souvenirs: [CatalogSouvenir]) -> [SouvenirCardItem] {
-        souvenirs.map {
-            SouvenirCardItem(
-                id: $0.id,
-                imageURL: $0.thumbnailUrl,
-                title: $0.name,
-                category: $0.category.title
-            )
-        }
+    private func mapToFeedCardItems(_ souvenirs: [CatalogSouvenir]) -> [SouvenirFeedCardItem] {
+        souvenirs.map { SouvenirFeedCardItem(catalogSouvenir: $0) }
     }
 }

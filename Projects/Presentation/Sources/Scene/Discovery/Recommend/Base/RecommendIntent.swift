@@ -8,7 +8,7 @@ enum RecommendAction {
     case refresh
 
     case countryChipTap(CountryChipItem)
-    case souvenirCardTap(SouvenirCardItem)
+    case souvenirCardTap(SouvenirFeedCardItem)
     case uploadButtonTap
 
     case preferredMoreTap
@@ -25,9 +25,9 @@ enum RecommendEvent {
 
 struct RecommendState {
     var countries: [CountryChipItem] = []
-    var preferredSouvenirs: [SouvenirCardItem] = []
+    var preferredSouvenirs: [SouvenirFeedCardItem] = []
 
-    var uploadSouvenirs: [SouvenirCardItem] = []
+    var uploadSouvenirs: [SouvenirFeedCardItem] = []
     var uploadCountryName: String?
 
     var isPreferredExpanded: Bool = false
@@ -50,8 +50,8 @@ extension RecommendState {
 private extension RecommendState {
     func makeSectionModels(
         countries: [CountryChipItem],
-        preferredSouvenirs: [SouvenirCardItem],
-        uploadSouvenirs: [SouvenirCardItem],
+        preferredSouvenirs: [SouvenirFeedCardItem],
+        uploadSouvenirs: [SouvenirFeedCardItem],
         uploadCountryName: String?,
         isPreferredExpanded: Bool,
         isUploadExpanded: Bool
@@ -78,9 +78,7 @@ private extension RecommendState {
             models.append(.init(
                 section: .preferredCategoryCards,
                 items: preferredVisible.map {
-                    var item = $0
-                    item.section = "recommend-preferred"
-                    return .souvenirCard(item)
+                    .souvenirCard($0.withListSlotID(SouvenirFeedCardListSlot.recommendPreferred.rawValue))
                 }
             ))
 
@@ -113,9 +111,7 @@ private extension RecommendState {
             models.append(.init(
                 section: .uploadBasedCards(country: country),
                 items: uploadVisible.map {
-                    var item = $0
-                    item.section = "recommend-upload"
-                    return .souvenirCard(item)
+                    .souvenirCard($0.withListSlotID(SouvenirFeedCardListSlot.recommendUpload.rawValue))
                 }
             ))
 
