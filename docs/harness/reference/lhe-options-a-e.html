@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LHE → Souzip 적용 옵션 A~E</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface2: #243044;
+      --text: #e7ecf3;
+      --muted: #8b9cb3;
+      --accent: #5b9fd4;
+      --accent2: #7ec8a4;
+      --warn: #e8b86d;
+      --border: #2d3a4f;
+      --a: #6eb5ff;
+      --b: #b794f6;
+      --c: #7ec8a4;
+      --d: #e8b86d;
+      --e: #f48fb1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+    }
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+    header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+    .subtitle a { color: var(--accent); }
+    nav.toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    nav.toc h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+    nav.toc ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.35rem;
+    }
+    nav.toc a {
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+    }
+    nav.toc a:hover { color: var(--accent); }
+    nav.toc .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    section.option {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem 1.75rem 2rem;
+      margin-bottom: 2rem;
+      scroll-margin-top: 1rem;
+    }
+    section.option h2 {
+      font-size: 1.35rem;
+      margin: 0 0 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    section.option .tagline {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0 0 1.25rem;
+    }
+    section.option[data-opt="a"] h2 .badge { background: rgba(110,181,255,0.2); color: var(--a); }
+    section.option[data-opt="b"] h2 .badge { background: rgba(183,148,246,0.2); color: var(--b); }
+    section.option[data-opt="c"] h2 .badge { background: rgba(126,200,164,0.2); color: var(--c); }
+    section.option[data-opt="d"] h2 .badge { background: rgba(232,184,109,0.2); color: var(--d); }
+    section.option[data-opt="e"] h2 .badge { background: rgba(244,143,177,0.2); color: var(--e); }
+    h3 {
+      font-size: 1rem;
+      color: var(--accent2);
+      margin: 1.5rem 0 0.6rem;
+      font-weight: 600;
+    }
+    h3:first-of-type { margin-top: 0; }
+    p { margin: 0 0 0.85rem; }
+    ul, ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+    li { margin-bottom: 0.35rem; }
+    .diagram {
+      background: var(--bg);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 1rem 0;
+      color: var(--muted);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .compare-yes { color: var(--accent2); }
+    .compare-partial { color: var(--warn); }
+    .compare-no { color: #f07178; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .card {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+    }
+    .card strong {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+    .pros-cons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) {
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+    .pros, .cons {
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.9rem;
+    }
+    .pros {
+      background: rgba(126, 200, 164, 0.08);
+      border: 1px solid rgba(126, 200, 164, 0.25);
+    }
+    .cons {
+      background: rgba(240, 113, 120, 0.06);
+      border: 1px solid rgba(240, 113, 120, 0.2);
+    }
+    .pros h4, .cons h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .pros h4 { color: var(--accent2); }
+    .cons h4 { color: #f07178; }
+    .pros ul, .cons ul { margin: 0; padding-left: 1.1rem; }
+    .souzip-box {
+      background: linear-gradient(135deg, rgba(91,159,212,0.12), rgba(126,200,164,0.08));
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+    .souzip-box strong { color: var(--accent); }
+    section.summary {
+      background: var(--surface2);
+      border-radius: 14px;
+      padding: 1.75rem;
+      border: 1px solid var(--accent);
+    }
+    section.summary h2 { margin-top: 0; }
+    .matrix {
+      font-size: 0.85rem;
+    }
+    .matrix td:first-child { font-weight: 600; white-space: nowrap; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .note {
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>LHE → Souzip 적용 옵션 A~E</h1>
+      <p class="subtitle">
+        <a href="https://walkinglabs.github.io/learn-harness-engineering/ko/" target="_blank" rel="noopener">Learn Harness Engineering</a>
+        최소 팩 구조를 Souzip 하네스에 어떻게 가져올지 — 판단용 가이드 (구현 전)
+      </p>
+    </header>
+
+    <nav class="toc" aria-label="목차">
+      <h2>목차</h2>
+      <ul>
+        <li><a href="#intro"><span class="badge" style="background:var(--surface2);color:var(--muted)">·</span> 먼저 읽기</a></li>
+        <li><a href="#opt-a"><span class="badge" style="background:rgba(110,181,255,0.2);color:var(--a)">A</span> progress — 세션 이어 받기</a></li>
+        <li><a href="#opt-b"><span class="badge" style="background:rgba(183,148,246,0.2);color:var(--b)">B</span> feature_list + evidence</a></li>
+        <li><a href="#opt-c"><span class="badge" style="background:rgba(126,200,164,0.2);color:var(--c)">C</span> AGENTS 루틴 + DoD</a></li>
+        <li><a href="#opt-d"><span class="badge" style="background:rgba(232,184,109,0.2);color:var(--d)">D</span> init / preflight</a></li>
+        <li><a href="#opt-e"><span class="badge" style="background:rgba(244,143,177,0.2);color:var(--e)">E</span> 전부 (순서만 정함)</a></li>
+        <li><a href="#summary"><span class="badge" style="background:var(--surface2);color:var(--accent)">★</span> 비교표 · 추천 순서</a></li>
+      </ul>
+    </nav>
+
+    <section id="intro" class="option" style="border-style: dashed;">
+      <h2>먼저 읽기 — LHE와 Souzip이 만나는 지점</h2>
+      <p class="tagline">두 하네스는 대체가 아니라 <strong>합성</strong>입니다.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <strong>LHE 최소 팩</strong>
+          상태·기능·기준선·DoD·증거
+        </div>
+        <div class="card">
+          <strong>Souzip (지금)</strong>
+          5모드·G1~G5·plan Before/After
+        </div>
+        <div class="card">
+          <strong>합치면</strong>
+          승인 주도권 + 세션 연속성
+        </div>
+      </div>
+
+      <div class="diagram">[LHE 닫힌 루프]
+  읽기(progress + feature) → 기준선(init) → 구현 → 검증+증거 → 기록 → 다음 세션
+
+[Souzip 닫힌 루프]
+  plan(G1) → 승인 → implement → verify(G3) → ship(G4)</div>
+
+      <p class="note">
+        A~E는 “LHE에서 뭘 가져올지” 고르는 메뉴입니다. 여러 개 골라도 되고, <strong>한 번에 하나만</strong> 넣는 것을 권장합니다.
+      </p>
+    </section>
+
+    <!-- A -->
+    <section id="opt-a" class="option" data-opt="a">
+      <h2><span class="badge">A</span> progress — 세션 이어 받기</h2>
+      <p class="tagline">LHE: <code>claude-progress.md</code> → Souzip 후보: <code>harness/progress.md</code></p>
+
+      <h3>무엇인가?</h3>
+      <p>
+        <strong>시간·세션 축</strong>의 단일 진실 원천(SSOT)입니다. “지금 저장소가 검증된 상태인가”, “다음 세션은 뭘부터 할까”, “지난 세션에서 뭘 했는가”를 <strong>채팅이 아니라 파일</strong>에 남깁니다.
+      </p>
+
+      <h3>LHE 파일 구조 (두 블록)</h3>
+      <table>
+        <thead>
+          <tr><th>블록</th><th>내용</th><th>갱신 시점</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Current Verified State</strong></td>
+            <td>루트 경로, 시작 명령, 검증 명령, 최우선 미완 기능, 현재 blocker</td>
+            <td>검증 상태가 바뀔 때마다 <em>항상 1벌만</em> 최신으로</td>
+          </tr>
+          <tr>
+            <td><strong>Session Record</strong></td>
+            <td>Goal, Completed, Verification run, Evidence, Commits, Known risks, Next action</td>
+            <td>세션 종료마다 <em>항목 하나 추가</em></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="diagram">[새 Cursor 채팅 시작]
+        │
+        ▼
+  harness/progress.md 읽기 ──► "Next: wishlist M4 plan 메모 반영"
+        │
+        ▼
+  (채팅 없이도) 어디서 이어갈지 알 수 있음</div>
+
+      <h3>Souzip 지금 vs A 적용 후</h3>
+      <table>
+        <thead>
+          <tr><th></th><th>지금</th><th>A 적용 후</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>임시 메모</td>
+            <td class="compare-partial"><code>harness/state/</code> (gitignore, 버려짐)</td>
+            <td class="compare-yes"><code>harness/progress.md</code> (커밋, 이어 받기용)</td>
+          </tr>
+          <tr>
+            <td>기능 범위</td>
+            <td class="compare-partial"><code>plan.md</code>에만</td>
+            <td class="compare-yes">progress = 세션·전역, plan = 그 기능 구현</td>
+          </tr>
+          <tr>
+            <td>5모드</td>
+            <td class="compare-yes">그대로</td>
+            <td class="compare-yes">세션 시작 = intake/plan 전에 progress 읽기 추가</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="souzip-box">
+        <strong>Souzip에 넣을 때 최소 diff</strong><br />
+        파일 1개 + <code>AGENTS.md</code> / <code>00-triggers.md</code>에 “새 세션 → progress 먼저” 한 줄. <code>state/</code>는 당일 스크래치만 유지 가능.
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>장점</h4>
+          <ul>
+            <li>새 채팅마다 저장소 재탐색 감소</li>
+            <li>vision §성공 2 (문서화)와 직결</li>
+            <li>LHE 5레이어 중 <strong>상태 관리</strong> 채움</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>부담</h4>
+          <ul>
+            <li>세션 끝에 2~3분 기록 필요</li>
+            <li>안 쓰면 stale — “읽되 안 쓰면” 무용</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- B -->
+    <section id="opt-b" class="option" data-opt="b">
+      <h2><span class="badge">B</span> feature_list + evidence — 기능·완료 증거</h2>
+      <p class="tagline">LHE: <code>feature_list.json</code> → Souzip 후보: <code>docs/plans/{feature}/feature-tracker.json</code></p>
+
+      <h3>무엇인가?</h3>
+      <p>
+        <strong>기능 축</strong>의 SSOT입니다. PRD·milestones를 “에이전트가 기계적으로 읽고 갱신”할 수 있는 카드 목록으로 둡니다. 핵심은 <strong>status</strong>와 <strong>evidence</strong> — 코드를 썼다고 <code>passing</code>이 되지 않습니다.
+      </p>
+
+      <h3>기능 카드 한 장의 필드</h3>
+      <table>
+        <thead>
+          <tr><th>필드</th><th>의미</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>id</code>, <code>priority</code>, <code>area</code></td><td>식별·우선순위·영역 (예: wishlist, mypage)</td></tr>
+          <tr><td><code>user_visible_behavior</code></td><td>사용자 눈에 보이는 “완료” 모습</td></tr>
+          <tr><td><code>status</code></td><td><code>not_started</code> · <code>in_progress</code> · <code>blocked</code> · <code>passing</code></td></tr>
+          <tr><td><code>verification</code></td><td>확인 절차 (단계별, 예: 빌드, 화면 수동 확인)</td></tr>
+          <tr><td><code>evidence</code></td><td>실제로 verification을 돌렸다는 기록</td></tr>
+        </tbody>
+      </table>
+
+      <p class="note"><strong>규칙:</strong> <code>in_progress</code>는 동시에 <strong>하나만</strong>. 반쯤 된 기능이 여러 개면 에이전트가 산만해집니다.</p>
+
+      <div class="diagram">plan.md (Before/After)     feature-tracker.json
+      "어떻게 고칠지"          "이 기능 전체가 끝났는지 + 증거"
+            │                            │
+            └────────── verify ──────────┘
+                    evidence 기록 후 passing</div>
+
+      <h3>Souzip 지금 vs B 적용 후</h3>
+      <table>
+        <thead>
+          <tr><th></th><th>지금</th><th>B 적용 후</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>범위·완료</td>
+            <td class="compare-partial"><code>milestones.md</code> + plan 체크박스 (사람 위주)</td>
+            <td class="compare-yes">JSON + evidence (에이전트·검증 위주)</td>
+          </tr>
+          <tr>
+            <td>모든 작업에</td>
+            <td class="compare-no">—</td>
+            <td class="compare-partial"><strong>큰 기능만</strong> (wishlist M4 등). Quick Flow·한 줄 버그는 생략</td>
+          </tr>
+          <tr>
+            <td>G3 verify</td>
+            <td class="compare-partial">체크리스트 5개</td>
+            <td class="compare-yes">“evidence 없으면 passing 금지” 연동</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>장점</h4>
+          <ul>
+            <li>“완료했어” vs 실제 완료 <strong>검증 격차</strong> 축소</li>
+            <li>여러 마일스톤을 한 기능 단위로 추적</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>부담</h4>
+          <ul>
+            <li>JSON 유지 비용 · 작은 수정에는 과함</li>
+            <li><code>docs/plans/</code>가 gitignore면 팀 공유는 별도 정책 필요</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- C -->
+    <section id="opt-c" class="option" data-opt="c">
+      <h2><span class="badge">C</span> AGENTS 루틴 + Definition of Done</h2>
+      <p class="tagline">LHE: <code>AGENTS.md</code> 섹션 → Souzip: <code>AGENTS.md</code> + <code>plan.md</code> 보강</p>
+
+      <h3>무엇인가?</h3>
+      <p>
+        “코드 쓰기 전·후에 <strong>무조건 하는 일</strong>”과 “<strong>끝났다</strong>의 정의”를 진입점 파일에 고정합니다. 5모드(G1~G5)와 겹치지 않고 <strong>보완</strong>합니다.
+      </p>
+
+      <h3>LHE AGENTS.md 네 덩어리</h3>
+      <ol>
+        <li><strong>Startup Workflow</strong> — progress 읽기 → feature 선택 → init → 기준선 검증</li>
+        <li><strong>Working Rules</strong> — 한 번에 한 기능, 증거 없이 완료 표시 금지</li>
+        <li><strong>Definition of Done</strong> — 4조건 (구현 · 검증 실행 · 증거 기록 · 재시작 가능)</li>
+        <li><strong>End of Session</strong> — progress/feature 갱신 · blocker 기록 · clean 상태</li>
+      </ol>
+
+      <h3>Souzip에 넣는 실제 모습</h3>
+      <table>
+        <thead>
+          <tr><th>LHE 섹션</th><th>Souzip 대응</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Startup</td>
+            <td><code>AGENTS.md</code> + (A 있으면) progress 읽기</td>
+          </tr>
+          <tr>
+            <td>Working Rules</td>
+            <td>이미 <code>00-triggers.md</code> · G1·G2 — 중복 최소화</td>
+          </tr>
+          <tr>
+            <td>DoD</td>
+            <td>각 <code>plan.md</code>에 <code>## 완료 기준</code> (기계 검증 가능 bullet)</td>
+          </tr>
+          <tr>
+            <td>End of Session</td>
+            <td>verify/ship 전 checklist 5줄 (A·B와 연동)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="diagram">## 완료 기준 (plan.md 예시)
+- [ ] MyPageLikedTab 2열 그리드, mock 6개 표시
+- [ ] Xcode scheme Souzip Debug 빌드 성공 (증거: 빌드 로그 한 줄)
+- [ ] Presentation → Data import 없음 (verify)</div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>장점</h4>
+          <ul>
+            <li>가장 가벼움 — 문서 섹션만 추가</li>
+            <li>고통 1 (plan 검토) + G3와 직결</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>부담</h4>
+          <ul>
+            <li>DoD를 대충 쓰면 형식만 늘어남 — 구체적이어야 함</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- D -->
+    <section id="opt-d" class="option" data-opt="d">
+      <h2><span class="badge">D</span> init / preflight — 환경·기준선</h2>
+      <p class="tagline">LHE: <code>init.sh</code> → Souzip 후보: <code>harness/scripts/preflight.sh</code></p>
+
+      <h3>무엇인가?</h3>
+      <p>
+        새 기능을 쌓기 <strong>전에</strong>, 저장소가 “이미 망가져 있지 않은지” 확인하는 스크립트입니다. LHE 실패 레이어 <strong>③ 실행 환경</strong>을 코드로 고정합니다.
+      </p>
+
+      <h3>LHE init.sh가 하는 일</h3>
+      <ol>
+        <li>현재 디렉터리 출력 (위치 확인)</li>
+        <li>의존성 설치 (<code>INSTALL_CMD</code>)</li>
+        <li>검증 실행 (<code>VERIFY_CMD</code>) — 실패 시 <strong>중단</strong></li>
+        <li>(선택) 개발 서버 시작 명령 출력</li>
+      </ol>
+
+      <h3>Souzip iOS에 맞게 바꾸면</h3>
+      <table>
+        <thead>
+          <tr><th>LHE 변수</th><th>Souzip 예시 (합의 필요)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>INSTALL_CMD</td><td><code>tuist install</code></td></tr>
+          <tr><td>VERIFY_CMD (가벼운)</td><td><code>tuist generate</code> 성공</td></tr>
+          <tr><td>VERIFY_CMD (무거운)</td><td>Xcode build (scheme·시간 합의 후)</td></tr>
+          <tr><td>START_CMD</td><td>Xcode에서 Souzip.xcworkspace 열기 안내</td></tr>
+        </tbody>
+      </table>
+
+      <div class="diagram">implement 요청
+    │
+    ▼
+./harness/scripts/preflight.sh
+    │
+    ├─ 실패 → "기준선부터 고칠까요?" (새 기능 X)
+    └─ 성공 → plan 구현 시작</div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>장점</h4>
+          <ul>
+            <li>에이전트가 tuist/경로에서 헤매는 시간 감소</li>
+            <li>“완료”인데 빌드 안 되는 상황 조기 발견</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>부담</h4>
+          <ul>
+            <li>Xcode CLI 환경·scheme 설정 필요</li>
+            <li>로컬마다 다르면 스크립트 조정 필요</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- E -->
+    <section id="opt-e" class="option" data-opt="e">
+      <h2><span class="badge">E</span> 전부 — 단, 한 번에 하나씩 순서만 정함</h2>
+      <p class="tagline">LHE 최소 팩 4종 + 선택 파일을 Souzip 5모드 위에 합성</p>
+
+      <h3>합성 후 큰 그림</h3>
+      <div class="diagram">┌─────────────────────────────────────────────────────────┐
+│ AGENTS.md  (C: Startup / DoD / End)                        │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+     ┌──────────────────────┼──────────────────────┐
+     ▼                      ▼                      ▼
+ progress.md (A)    feature-tracker (B)    preflight.sh (D)
+     │                      │                      │
+     └──────────────────────┼──────────────────────┘
+                            ▼
+              harness/workflows/00-triggers.md
+              intake → plan → implement → verify → ship
+                            │
+                            ▼
+              docs/plans/{feature}/plan.md + ## 완료 기준 (C)</div>
+
+      <h3>E를 선택했을 때 권장 순서 (천천히)</h3>
+      <ol>
+        <li><strong>C</strong> — plan에 <code>## 완료 기준</code> (가장 가벼움)</li>
+        <li><strong>A</strong> — <code>harness/progress.md</code></li>
+        <li><strong>D</strong> — preflight (tuist generate부터)</li>
+        <li><strong>B</strong> — 큰 기능 1개로 feature-tracker 시범</li>
+        <li>선택: session-handoff, clean-state, evaluator-rubric</li>
+      </ol>
+
+      <p class="note">
+        <strong>E ≠ 한 번에 전부 구현.</strong> “구조는 LHE처럼 가고 싶다”는 방향 선택이고, 실제 반영은 위 순서대로 마일스톤 하나씩이 안전합니다.
+      </p>
+    </section>
+
+    <!-- Summary -->
+    <section id="summary" class="summary">
+      <h2>한눈에 비교 · 다음 액션</h2>
+
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>옵션</th>
+            <th>LHE 원본</th>
+            <th>막는 고통/레이어</th>
+            <th>난이도</th>
+            <th>Souzip 우선순위 (E일 때)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A progress</td>
+            <td>claude-progress.md</td>
+            <td>세션 끊김 · 상태⑤</td>
+            <td>중</td>
+            <td>2번째</td>
+          </tr>
+          <tr>
+            <td>B feature+evidence</td>
+            <td>feature_list.json</td>
+            <td>조기 완료 · 검증④</td>
+            <td>중~상</td>
+            <td>4번째</td>
+          </tr>
+          <tr>
+            <td>C DoD·루틴</td>
+            <td>AGENTS.md 섹션</td>
+            <td>완료 모호 · 명세①</td>
+            <td>하</td>
+            <td>1번째</td>
+          </tr>
+          <tr>
+            <td>D preflight</td>
+            <td>init.sh</td>
+            <td>환경③</td>
+            <td>중 (Xcode)</td>
+            <td>3번째</td>
+          </tr>
+          <tr>
+            <td>E 전부</td>
+            <td>최소 팩</td>
+            <td>전 레이어</td>
+            <td>순차</td>
+            <td>C→A→D→B</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>당신이 할 일 (판단용)</h3>
+      <ol>
+        <li>브라우저로 이 HTML 열기</li>
+        <li>A~E 중 <strong>먼저 넣고 싶은 것</strong>에 mental check</li>
+        <li>이 설계 세션에 예: “C부터, E 방향” 한 줄 전달</li>
+        <li>그때 그 <strong>한 옵션만</strong> harness에 반영 요청</li>
+      </ol>
+    </section>
+
+    <footer>
+      <p>
+        파일 위치: <code>docs/harness/reference/lhe-options-a-e.html</code><br />
+        열기: Finder에서 더블클릭, 또는 브라우저에 파일 드래그.<br />
+        참고: <a href="https://walkinglabs.github.io/learn-harness-engineering/ko/resources/templates/" style="color:var(--accent)">LHE Template Guide</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
