@@ -1,0 +1,32 @@
+---
+description: Souzip AI 하네스 — 모드·게이트·스킬 라우팅 (triggers.md 정본)
+alwaysApply: true
+---
+
+# Souzip AI Harness
+
+정본: `docs/harness/workflows/00-triggers.md` · 진입: `AGENTS.md` · progress: `docs/harness/progress.md`
+
+## 모드 판별
+
+사용자 메시지에 맞는 **`.cursor/skills/souzip-*`** 스킬을 적용한다. 해당 스킬 본문을 따른다.
+
+| 신호 (예) | 스킬 |
+|-----------|------|
+| 기능 요청, 플랜, 리서치, 메모 반영 | `souzip-plan` (intake 포함 시 `souzip-intake` 후 plan) |
+| 구현해, 구현 시작해 | `souzip-implement` |
+| 리뷰해, 검증해 | `souzip-verify` |
+| 작업 시작, worktree, 브랜치 만들어 | `souzip-start` |
+| 커밋해, ~만 커밋해 | `souzip-commit` |
+| PR 만들어줘 | `souzip-pr` |
+| (호환) ship | `souzip-ship` → commit/pr |
+
+## 게이트 (위반 시 중단)
+
+- **G1**: plan 없이·「구현해」 없이 코드 변경 금지 (Quick Flow 예외는 `triggers.md` §4)
+- **G4**: 「커밋해」「PR」명시 없이 git commit / push / `gh pr` 금지
+- **G5**: 방향 이탈 시 revert → plan 재작성
+
+## 충돌
+
+`.claude/skills/`와 내용이 겹치면 **`.cursor/skills/souzip-*` + triggers.md** 우선 (ADR-002).
