@@ -1,5 +1,6 @@
 ## 📌 변경 요약
-@coderabbitai summary
+
+Plan: `docs/plans/{feature-slug}/plan.md`
 
 ## 📌 변경 내용
 <!-- 변경한 기능, UI, 로직, 아키텍처 수정 등을 간단히 정리해주세요. -->
