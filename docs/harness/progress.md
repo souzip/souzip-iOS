@@ -15,8 +15,8 @@
 | Standard start | Xcode → `*.xcworkspace` (tuist generate 후) |
 | Highest priority unfinished | [SOU-637](https://souzip.atlassian.net/browse/SOU-637) AI 하네스 · `docs/plans/agent-harness-rebuild/` |
 | Current blocker | H3 dogfood·Cursor smoke 미실행 (harness-improvement 루프 문서화 완료) |
-| Working directory | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
-| SOZIP_MAIN_REPO | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
+| Working directory | _(세션마다 갱신 — worktree 또는 본 저장소 clone 절대 경로)_ |
+| SOZIP_MAIN_REPO | _(선택)_ `export SOZIP_MAIN_REPO=/path/to/main-clone` — [`souzip-start`](../../.cursor/skills/souzip-start/SKILL.md) |
 | Branch | `chore/SOU-637/agent-harness-rebuild` |
 
 ---

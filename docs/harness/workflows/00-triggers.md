@@ -31,12 +31,12 @@ intake → plan → implement → verify → ship
 
 | ID | 이름 | 막는 것 | 풀리는 조건 |
 |----|------|---------|-------------|
-| **G1** | Plan | implement 코드·diff | `plan.md` + 승인·「구현해」 |
+| **G0** | Baseline | 망가진 위에 구현 | `preflight.sh` 통과 |
+| **G1** | Plan | implement 코드·diff | `plan.md` + **사용자 승인** + 「구현해」/「구현 시작해」 (**모두**) |
 | **G2** | Plan 편집 | plan 밖 파일 | plan 갱신 후 |
 | **G3** | Verify | “완료” 선언 | verify + **증거** 또는 “넘어가” |
 | **G4** | Ship | commit·push·PR | ship + 명시 지시 |
 | **G5** | 방향 이탈 | 패치 누적 | revert → plan 재작성 |
-| **G0** | Baseline | 망가진 위에 구현 | `preflight.sh` 통과 |
 
 ---
 
@@ -49,7 +49,7 @@ intake → plan → implement → verify → ship
 | “~ 만들고 싶어”, 큰 작업 | **intake** → **plan** | plan 작성, 대기 (G1) |
 | “플랜만”, “리서치해줘” | **plan** | `plan.md`, 코드 ❌ |
 | 「메모 반영해서 업데이트해」 | **plan** | `plan.md`만 |
-| 「구현해」「구현 시작해」 | **implement** | preflight → plan만 구현 |
+| 「구현해」「구현 시작해」 | **implement** | G1 충족 후 preflight(G0) → plan 범위만 구현 |
 | 「리뷰해」「검증해」 | **verify** | 체크 + evidence |
 | 「작업 시작」「worktree」「브랜치 만들어」 | **start** | Jira MCP · worktree · G4(commit/PR ❌) |
 | 「커밋해」「~만 커밋해」 | **commit** | G4 · `souzip-commit` |
@@ -75,8 +75,10 @@ intake → plan → implement → verify → ship
 ## 5. verify 체크리스트
 
 - [ ] `plan.md` 범위 · **§완료 기준**
-- [ ] Presentation → Data import 없음
-- [ ] Domain · `!` · Combine 없음
+- [ ] Presentation → Data 직접 import 없음
+- [ ] Domain 레이어 외부 의존 없음
+- [ ] 강제 언래핑(`!`)·IUO 없음 (전역)
+- [ ] Combine 없음 — RxSwift만 (전역, [`constitution.md`](../constitution.md))
 - [ ] plan 테스트 있으면 실행
 - [ ] **증거** → `progress.md` 또는 `feature-tracker.json`
 - [ ] Factory 5단계 (필요 시)

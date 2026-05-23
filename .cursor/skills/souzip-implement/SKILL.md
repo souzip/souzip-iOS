@@ -11,7 +11,7 @@ description: >
 
 ## 게이트 (진입 전 확인)
 
-- **G1**: `docs/plans/{feature}/plan.md` 존재 + 사용자가 「구현해」/「구현 시작해」라고 했을 것
+- **G1**: `docs/plans/{feature}/plan.md` 존재 + **사용자 승인** + 「구현해」/「구현 시작해」 (**모두**)
 - 없으면 implement 하지 말고 **souzip-plan** 제안
 
 ## 구현

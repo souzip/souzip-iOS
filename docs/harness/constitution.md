@@ -34,7 +34,7 @@
 
 ## AI 협업 (constitution급)
 
-- **G1**: plan 승인·「구현해」 전 코드 변경 금지 ([`workflows/00-triggers.md`](workflows/00-triggers.md))
+- **G1**: plan + 사용자 승인 + 「구현해」/「구현 시작해」 **모두** 전 코드 변경 금지 ([`workflows/00-triggers.md`](workflows/00-triggers.md))
 - **G3/G4**: verify·ship 게이트 — [`workflows/00-triggers.md`](workflows/00-triggers.md)
 - **G4**: 명시 없이 commit / push / PR 금지
 - 커밋·PR 주도권: 사용자 ([`../plans/agent-harness-rebuild/vision.md`](../plans/agent-harness-rebuild/vision.md))

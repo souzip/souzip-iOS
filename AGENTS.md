@@ -26,7 +26,7 @@
 ## Working Rules
 
 - 한 번에 **하나의 기능** (`feature-tracker` `in_progress` 1개)
-- **G1**: plan 승인·「구현해」 전 코드 변경 금지
+- **G1**: plan + 사용자 승인 + 「구현해」/「구현 시작해」 **모두** 전 코드 변경 금지
 - **G4**: 「커밋해」「PR」명시 전 commit·push·PR 금지
 - 증거 없이 완료·`passing` 표시 금지
 - 채팅만 X → `progress` · `plan.md` · `docs/plans/`

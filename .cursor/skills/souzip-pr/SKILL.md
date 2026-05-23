@@ -33,7 +33,9 @@ description: >
 
 - [ ] 변경이 `plan.md` 범위 안 (`docs/plans/{feature}/plan.md` — 브랜치·diff로 추론)
 - [ ] Presentation → Data 직접 import 없음
-- [ ] Domain 외부 의존 없음 · `!` · Combine 없음
+- [ ] Domain 레이어 외부 의존 없음
+- [ ] 강제 언래핑(`!`)·IUO 없음 (전역)
+- [ ] Combine 없음 — RxSwift만 (전역)
 - [ ] plan에 테스트 있으면 **실행** (실패 → No-Go)
 - [ ] Factory·새 피처 시 5단계 점검
 - [ ] (권장) `progress.md` / `feature-tracker.json`에 검증 요약 1~2줄

@@ -130,6 +130,8 @@ Souzip AI 하네스에 **이벤트 기반 개선 절차**를 추가한다. 평�
 
 ## 완료 기준
 
+> **상태 (2026-05-24):** 아래는 PR [#70](https://github.com/souzip/souzip-iOS/pull/70)(`chore/SOU-637/agent-harness-rebuild`)에서 구현·검증 완료. **새 plan**은 이 섹션을 `[ ]`로 시작한다.
+
 - [x] `docs/harness/friction-log.md` 존재·표 템플릿·상단 사용법
 - [x] `docs/harness/workflows/02-harness-improvement.md` 가 부록 A와 동일
 - [x] `00-triggers.md` §3.1 에 기록/개선 행 2개
