@@ -39,6 +39,7 @@ Config/*.xcconfig
 # IDE
 .vscode/
 .idea/
+buildServer.json
 .cursor/settings.json
 .cursor/mcp.json
 
