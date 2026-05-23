@@ -53,7 +53,7 @@ intake → plan → implement → verify → ship
 | 「리뷰해」「검증해」 | **verify** | 체크 + evidence |
 | 「작업 시작」「worktree」「브랜치 만들어」 | **start** | Jira MCP · worktree · G4(commit/PR ❌) |
 | 「커밋해」「~만 커밋해」 | **commit** | G4 · `souzip-commit` |
-| 「PR 만들어줘」 | **PR** | G4 · `souzip-pr` · base `develop` |
+| 「PR 만들어줘」 | **PR** | G4 · `souzip-pr` · **verify 후** `gh pr` · base `develop` |
 | 「마찰 기록해」「왜 그렇게 했는지 기록해」 | **(기록)** | [`friction-log.md`](../friction-log.md) 한 행 · harness/스킬 **수정 ❌** |
 | 「이거 토대로 개선하자」「하네스 개선하자」 | **plan** | [`harness-improvement/plan.md`](../../plans/harness-improvement/plan.md) 갱신 또는 당회 plan · 정본·코드 **대기 (G1)** |
 

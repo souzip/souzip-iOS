@@ -18,7 +18,7 @@ alwaysApply: true
 | 리뷰해, 검증해 | `souzip-verify` |
 | 작업 시작, worktree, 브랜치 만들어 | `souzip-start` |
 | 커밋해, ~만 커밋해 | `souzip-commit` |
-| PR 만들어줘 | `souzip-pr` |
+| PR 만들어줘 | `souzip-pr` (verify 후 PR) |
 | (호환) ship | `souzip-ship` → commit/pr |
 | 마찰 기록해, 왜 그렇게 했는지 기록해 | `friction-log.md`만 · 정본 수정 ❌ — [`02-harness-improvement.md`](docs/harness/workflows/02-harness-improvement.md) |
 | 이거 토대로 개선하자, 하네스 개선하자 | `souzip-plan` → G1 후 implement — 위 02 |

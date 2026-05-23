@@ -26,4 +26,5 @@ description: >
 ## 산출
 
 - 심각도별 이슈 목록 (Critical은 implement 재개 전 해결)
-- PR 전이면 **souzip-ship** 안내 가능 (강제 X)
+- **「PR 만들어줘」** → `souzip-pr`가 이 체크를 **먼저** 수행 (Go 전 `gh pr` 금지)
+- 검증만 요청 시 PR 안내 가능 (강제 X)
