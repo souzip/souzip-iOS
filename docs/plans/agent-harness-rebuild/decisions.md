@@ -29,9 +29,9 @@
 - **상태**: Accepted (2026-05-19)
 - **맥락**: H1; 기존 `.claude/skills/`와 중복 제거 방향
 - **결정**:
-  - **plan-before-code** → harness **plan** + **implement** 모드로 흡수. 정본: [`triggers.md`](./triggers.md) §3.3. 산출물·Before/After 포맷·G5(revert) 유지.
-  - **create-pr** → **ship** 모드 전용. 정본: `triggers.md` §3.4. base `develop`, Co-Authored-By 금지 유지.
-  - H6 전까지 `.claude/skills/*` 파일은 삭제하지 않되, **충돌 시 triggers.md 우선**.
+  - **plan-before-code** → harness **plan** + **implement** 모드로 흡수. 정본: [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §3. 산출물·Before/After 포맷·G5(revert) 유지.
+  - **create-pr** → **ship** 모드 전용. 정본: [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §3. base `develop`, Co-Authored-By 금지 유지.
+  - H6 전까지 `.claude/skills/*` 파일은 삭제하지 않되, **충돌 시 `00-triggers.md` 우선**.
 - **대안**: 스킬만 유지 / 폐기 후 triggers만
 - **결과**: H4 `harness/workflows/` 이관 시 본문 이동
 
@@ -46,7 +46,7 @@
   - `.cursor/rules/00-souzip-harness.mdc` — `alwaysApply`, 모드·G1·G4 요약
   - 스킬 description에 **한국어 트리거** 포함 → 에이전트 자동 선택 유도
   - `disable-model-invocation` 미설정(기본) — 자동 호출 허용
-  - 정본: `triggers.md`; 스킬·rule은 링크·요약만
+  - 정본: [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md); 스킬·rule은 링크·요약만
 - **대안**: 말(트리거 표)만 / Superpowers 플러그인 설치
 - **결과**: H5에서 iOS glob rule 추가 예정
 
@@ -56,7 +56,7 @@
 
 - **상태**: Accepted (2026-05-19)
 - **맥락**: H1; vision §성공 3·4
-- **결정**: 5모드 + 게이트 G1~G5 + [`triggers.md`](./triggers.md) 트리거 표. 주도권은 제품·플랜·ship 전부 **사용자**. AI는 명시 트리거·게이트 없이 커밋·구현·완료 선언 금지.
+- **결정**: 5모드 + 게이트 G1~G5 + [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) 트리거 표. 주도권은 제품·플랜·ship 전부 **사용자**. AI는 명시 트리거·게이트 없이 커밋·구현·완료 선언 금지.
 - **대안**: 3모드만 / 게이트 없음
 - **결과**: H5 `.cursor/rules`에 G1·G4 요약 반영 예정
 
@@ -67,14 +67,14 @@
 - **상태**: Accepted (2026-05-19)
 - **맥락**: H2
 - **결정**:
-  - 루트 **`AGENTS.md`** + **`harness/`** (도구 중립)
+  - 루트 **`AGENTS.md`** + **`docs/harness/`** (도구 중립)
   - 4층: `constitution.md` · `context/` · `workflows/` · artifact=`docs/plans/{feature}/`
-  - 협업 정본: `harness/workflows/00-triggers.md`
-  - 세션 스크래치: `harness/state/` (gitignore)
-  - 로드 정책: [`harness/README.md`](../../harness/README.md)
+  - 협업 정본: `docs/harness/workflows/00-triggers.md`
+  - 세션 스크래치: `docs/harness/scratch/` (gitignore)
+  - 로드 정책: [`docs/harness/README.md`](../../harness/README.md)
   - artifact `plan.md` Before/After 유지 (ADR-010)
 - **대안**: `agent/`, `.agent/`, triggers만 docs/plans에 유지
-- **결과**: H4 context/workflows 이관 — [`harness/migration-map.md`](../../harness/migration-map.md)
+- **결과**: H4 context/workflows 이관 — [`docs/harness/migration-map.md`](../../harness/migration-map.md)
 
 ---
 
@@ -119,7 +119,7 @@
   4. **verify** — 리뷰·테스트·레이어 점검
   5. **ship** — 커밋·PR (명시 시만)
 - **대안**: plan + implement 2단만
-- **결과**: H1에서 `00-triggers.md` 초안 작성
+- **결과**: H1에서 `docs/harness/workflows/00-triggers.md` 초안 작성
 
 ---
 

@@ -14,8 +14,8 @@
 | Standard verify (기준선) | `docs/harness/scripts/preflight.sh` |
 | Standard start | Xcode → `*.xcworkspace` (tuist generate 후) |
 | Highest priority unfinished | [SOU-637](https://souzip.atlassian.net/browse/SOU-637) AI 하네스 · `docs/plans/agent-harness-rebuild/` |
-| Current blocker | _(없음 / 한 줄)_ |
-| Working directory | `~/work/souzip/SOU-637-agent-harness-rebuild` |
+| Current blocker | H3 dogfood·Cursor smoke 미실행 |
+| Working directory | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
 | SOZIP_MAIN_REPO | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
 | Branch | `chore/SOU-637/agent-harness-rebuild` |
 
@@ -24,6 +24,18 @@
 ## Session Records
 
 <!-- 세션 종료마다 위에 최신 항목 추가. 오래된 것은 삭제해도 됨. -->
+
+### 2026-05-22 — SOU-637 하네스 정합성 보정
+
+| 필드 | 내용 |
+|------|------|
+| **Goal** | 하네스 구조 다이어트가 아니라, 깨진 링크·정책 충돌·stale 상태·preflight 환경 문제 수정 |
+| **Completed** | `triggers.md` 정본 참조를 `docs/harness/workflows/00-triggers.md`로 정리 · Jira MCP 정책을 Cursor 플러그인 우선/로컬 `.cursor/mcp.json` 선택으로 통일 · H3/H4/H5 상태를 “초안 선행 + dogfood/smoke 미완료”로 보정 · `preflight.sh`에 `mise exec -- tuist` fallback 추가 |
+| **Verification run** | 링크/문구 `rg` 점검 · `docs/harness/scripts/preflight.sh` OK (`tuist install` + `tuist generate`) |
+| **Evidence** | 수정 파일: `AGENTS.md`, `.cursor/rules/00-souzip-harness.mdc`, `.cursor/skills/souzip-*`, `docs/harness/jira-mcp-setup.md`, `docs/harness/scripts/preflight.sh`, `docs/plans/agent-harness-rebuild/{decisions,milestones,vision}.md` |
+| **Commits** | 없음 |
+| **Known risks** | `.mise.toml`에 기존 uncommitted task 변경 있음 · H3 dogfood / Cursor 새 채팅 smoke 미실행 · sandbox 안 preflight는 Tuist 홈 로그 권한으로 실패 가능 |
+| **Next best action** | 리뷰 단위 `커밋해` 또는 H3 dogfood 작업 1건 선정 |
 
 ### 2026-05-19 — SOU-637 하네스 스토리 생성
 

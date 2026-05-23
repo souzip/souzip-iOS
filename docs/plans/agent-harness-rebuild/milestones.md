@@ -87,9 +87,9 @@ flowchart TB
 **완료 정의**
 
 - [x] 5모드: intake → plan → implement → verify → ship (ADR-007)
-- [x] 게이트 G1~G5 — [`triggers.md`](./triggers.md) §2
-- [x] 트리거 표 + plan-before-code·create-pr 매핑 — `triggers.md` §3
-- [x] Quick Flow 예외 — `triggers.md` §4
+- [x] 게이트 G1~G5 — [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §2
+- [x] 트리거 표 + plan-before-code·create-pr 매핑 — [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §3
+- [x] Quick Flow 예외 — [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §4
 - [x] ADR-002 (스킬 흡수), ADR-011 (주도권·게이트)
 
 **포함**
@@ -107,7 +107,7 @@ flowchart TB
 
 **완료 정의**
 
-- [x] 4층 모델 — [`harness/README.md`](../../harness/README.md)
+- [x] 4층 모델 — [`docs/harness/README.md`](../../harness/README.md)
 - [x] 항상 vs 필요 시 로드 정책 — 동일
 - [x] `docs/plans/` vs `docs/harness/scratch/` — plans 추적, scratch만 ignore (ADR-013)
 - [x] ADR-003 — `AGENTS.md` + `docs/harness/`
@@ -124,6 +124,9 @@ flowchart TB
 ---
 
 ## H3 — 첫 workflow 실험 (가장 중요)
+
+> 현재 상태: `docs/harness/workflows/00-triggers.md`와 Cursor 스킬 초안은 선행 작성됨.  
+> H3의 남은 일은 “문서 작성”이 아니라 **실제 Souzip 작업 1건에 dogfood하고 마찰을 기록하는 것**이다.
 
 **완료 정의**
 
@@ -146,6 +149,9 @@ flowchart TB
 
 ## H4 — 확장·이관
 
+> 현재 상태: context·constitution·AGENTS 골격은 선행 작성됨.  
+> 완료로 보지 않는 이유: H3 dogfood 이후 1회 개정과 링크/정합성 검증이 아직 남아 있음.
+
 **완료 정의**
 
 - [ ] H3에서 검증된 패턴으로 나머지 단계 문서화 (개수는 H1 계약 따름)
@@ -162,10 +168,13 @@ flowchart TB
 
 ## H5 — Cursor 어댑터
 
+> 현재 상태: rule·skills 초안은 선행 작성됨.  
+> 완료로 보지 않는 이유: 새 채팅 smoke와 Swift/Projects glob rule 판단이 남아 있음.
+
 **완료 정의**
 
 - [x] `alwaysApply` — `.cursor/rules/00-souzip-harness.mdc` (ADR-012, 2026-05-19)
-- [x] 5모드 + 라우터 스킬 — `.cursor/skills/souzip-*` (triggers.md §8)
+- [x] 5모드 + 라우터 스킬 — `.cursor/skills/souzip-*` ([`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) §8)
 - [ ] glob 규칙: Swift / Projects 레이어 (중복 최소)
 - [ ] 새 채팅 2회 smoke: plan 게이트 / 구현 트리거
 
@@ -187,10 +196,12 @@ flowchart TB
 |----------|------|------|
 | H0a | **완료** | ADR-006~010 (2026-05-19) |
 | H0 | **완료** | vision.md 확정 (2026-05-19) |
-| H1 | **완료** | triggers.md (2026-05-19) |
+| H1 | **완료** | `docs/harness/workflows/00-triggers.md` (2026-05-19) |
 | H2 | **완료** | docs/harness/ + AGENTS.md (ADR-013, 2026-05) |
-| H3 | **다음** | plan workflow dogfood |
-| H4–H6 | 대기 | |
+| H3 | **진행 중** | workflow 초안 있음 · 실제 작업 dogfood / friction-log 미완료 |
+| H4 | **초안 선행** | context·constitution·AGENTS 골격 있음 · H3 후 개정 필요 |
+| H5 | **초안 선행** | Cursor rule·skills 있음 · smoke 미완료 |
+| H6 | 대기 | 레거시 제거 전 |
 
 ## 관련 문서
 
@@ -199,6 +210,6 @@ flowchart TB
 | [`references.md`](./references.md) | BMAD·SP·OMX·gstack·소크라테스·PRD·ADR 레퍼런스 북 |
 | [`vision.md`](./vision.md) | H0–H1 공동 작성본 |
 | [`decisions.md`](./decisions.md) | ADR 로그 |
-| [`triggers.md`](./triggers.md) | H1 트리거·게이트 정본 |
+| [`docs/harness/workflows/00-triggers.md`](../../harness/workflows/00-triggers.md) | H1 트리거·게이트 정본 |
 | [`friction-log.md`](./friction-log.md) | H3+ 실험 마찰 |
 | [`plan.md`](./plan.md) | 초기 리서치·참고안 (H2 이후 스냅샷 갱신) |

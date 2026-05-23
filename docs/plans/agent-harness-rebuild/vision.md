@@ -115,15 +115,15 @@
 ### 예외 (Quick Flow, ADR-006)
 
 오타·한 줄 버그·단일 파일 명확 수정 → plan·「구현해」 생략 가능.  
-Factory·레이어·새 화면·PRD 기능 단위 → **Full** 필수. → [`triggers.md` §4](./triggers.md)
+Factory·레이어·새 화면·PRD 기능 단위 → **Full** 필수. → [`docs/harness/workflows/00-triggers.md` §4](../../harness/workflows/00-triggers.md)
 
 ### plan-before-code (ADR-002)
 
-**흡수** — `souzip-plan` / `souzip-implement` + `harness/workflows/00-triggers.md` §3.3.
+**흡수** — `souzip-plan` / `souzip-implement` + `docs/harness/workflows/00-triggers.md` §3.
 
 ### create-pr (ADR-002)
 
-**ship** — `souzip-ship` + `00-triggers.md` §3.4.
+**ship** — `souzip-ship` + `docs/harness/workflows/00-triggers.md` §3.
 
 ### Cursor · harness (ADR-012, ADR-003)
 
@@ -135,4 +135,3 @@ Factory·레이어·새 화면·PRD 기능 단위 → **Full** 필수. → [`tri
 
 - 기능 개발 문서 층: PRD → milestones → plan (`references.md` §1)
 - intake를 plan과 **한 턴에 합칠지** 분리할지 → H3 dogfood 후 조정
-
