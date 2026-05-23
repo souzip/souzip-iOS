@@ -62,13 +62,28 @@ git diff develop...HEAD
 - 템플릿: `.github/pull_request_template.md`
 - 채우기: `docs/harness/templates/pr-body.md`
 - **변경 요약**: `Plan: docs/plans/{feature-slug}/plan.md` + bullet 2~4개 (`develop...HEAD` **전체**)
-- **변경 내용** · **스크린샷** · **기타**: 템플릿 섹션 유지
+- **변경 내용** · **기타**: 템플릿 섹션만 (스크린샷 섹션 **없음** — UI 증거는 Jira·코멘트)
+
+## Label · Assignee (자동)
+
+| 필드 | 규칙 |
+|------|------|
+| **Label** | 브랜치 첫 세그먼트: `feat`/`fix`/`chore`/`docs`/`refactor`/`test` — 레포 라벨과 일치해야 함 |
+| **Assignee** | `gh api user -q .login` (PR 요청자) |
+
+- 브랜치가 `type/SOU-XXX/...` 형식이 아니면 `develop..HEAD` 커밋 `type:` 다수결 → 없으면 `chore`
+- `gh label list`에 없는 type → **라벨 생략** + 기타에 1줄
+- 사용자가 다른 assignee·label 지정 시 그 값 우선
 
 ## 생성
 
 ```bash
 git push -u origin HEAD   # upstream 없을 때만 (push는 G4·사용자 맥락)
-gh pr create --base develop --title "[SOU-XXX] …" --body "$(cat <<'EOF'
+LABEL="$(echo "$branch" | cut -d/ -f1)"   # feat|chore|…
+ASSIGNEE="$(gh api user -q .login)"
+gh pr create --base develop --title "[SOU-XXX] …" \
+  --label "$LABEL" --assignee "$ASSIGNEE" \
+  --body "$(cat <<'EOF'
 …
 EOF
 )"
@@ -76,6 +91,7 @@ EOF
 
 - `--draft` **사용하지 않음**
 - PR URL 반환
+- 이미 연 PR 수정: `gh pr edit <num> --add-label … --add-assignee … --body …`
 
 ## 선행
 

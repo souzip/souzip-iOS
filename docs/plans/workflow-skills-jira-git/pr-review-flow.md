@@ -67,8 +67,7 @@ GitHub이 `.github/pull_request_template.md`를 넣어 주면, AI가 섹션을 �
 |------|------|
 | **📌 변경 요약** | `docs/plans/{feature-slug}/plan.md` · bullet (`develop...HEAD` 전체) |
 | **📌 변경 내용** | 레이어/기능 bullet |
-| **📌 스크린샷 / 동작 확인** | UI 있을 때 표 |
-| **📌 기타 참고 사항** | worktree·임시·생략 사유 |
+| **📌 기타 참고 사항** | worktree·임시·생략 사유 · UI 스크린샷은 PR 본문 대신 코멘트·Jira |
 
 상세 채우기: [`docs/harness/templates/pr-body.md`](../../harness/templates/pr-body.md)
 
@@ -86,9 +85,18 @@ GitHub이 `.github/pull_request_template.md`를 넣어 주면, AI가 섹션을 �
 ## 6. 생성 (Go 이후만)
 
 ```bash
-gh pr create --base develop --title "[SOU-XXX] …" --body-file …
+# label: 브랜치 첫 세그먼트 (feat|fix|chore|docs|refactor|test)
+# assignee: gh api user -q .login
+gh pr create --base develop --title "[SOU-XXX] …" \
+  --label "<type>" --assignee "<login>" \
+  --body-file …
 # 또는 HEREDOC — --draft 없음
 ```
+
+| 필드 | 규칙 |
+|------|------|
+| **Label** | `feat/SOU-633/...` → `feat` · 레포 라벨과 동일 6종 |
+| **Assignee** | `gh` 로그인 사용자 (`gh api user -q .login`) |
 
 ---
 
@@ -110,3 +118,4 @@ gh pr create --base develop --title "[SOU-XXX] …" --body-file …
 |------|------|
 | 2026-05 | Ready for review (A) · 기존 PR 템플릿 + Jira·plan·테스트 섹션 |
 | 2026-05-24 | PR 전 `souzip-verify` 필수 (G3) · 생략은 사용자 명시 + 기타 경고 |
+| 2026-05-24 | `gh pr` label·assignee 자동 · 스크린샷 섹션 템플릿 제거 |

@@ -9,7 +9,6 @@
 |------|------|
 | 변경 요약 | **Plan** 경로 한 줄 · bullet 2~4개 (`develop...HEAD` 전체) |
 | 변경 내용 | bullet |
-| 스크린샷 | UI 변경 시 표 · 없으면 섹션 유지 또는 비움 |
 | 기타 | 필요 시만 · verify 생략 시 **1줄 경고** |
 
 **금지**: Co-Authored-By · API 키
@@ -28,12 +27,6 @@ Plan: `docs/plans/wishlist-mypage-grid/plan.md`
 
 - Wishlist Domain·Data·Presentation Factory
 - MyPage 찜 탭 UI
-
-## 📌 스크린샷 / 동작 확인
-
-| 기기 | 화면 |
-|:---:|:---:|
-| iPhone 16 Pro | (첨부) |
 
 ## 📌 기타 참고 사항
 
