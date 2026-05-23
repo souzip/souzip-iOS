@@ -10,9 +10,10 @@
 - 브라우저 (OAuth 2.1 로그인)
 - (조직 정책 시) [API 토큰](https://id.atlassian.com/manage-profile/security/api-tokens) — 관리자가 MCP 토큰 인증을 켠 경우
 
-## 1. 워크스페이스 설정 (이 레포)
+## 1. 워크스페이스 설정
 
-이미 추가됨: [`.cursor/mcp.json`](../../.cursor/mcp.json)
+권장: Cursor 플러그인/설정 UI에서 Atlassian MCP를 추가한다.  
+로컬 파일을 쓸 때만 `.cursor/mcp.json`을 만들며, 이 파일은 `.gitignore` 대상이라 커밋하지 않는다.
 
 ```json
 {
@@ -25,7 +26,7 @@
 }
 ```
 
-최신 Cursor만 쓰는 경우 UI에서 **HTTP** 서버로 같은 URL 추가해도 됨:  
+최신 Cursor는 UI에서 **HTTP** 서버로 같은 URL을 추가해도 된다:  
 `https://mcp.atlassian.com/v1/mcp/authv2`  
 (공식: [Atlassian — Setting up IDEs](https://support.atlassian.com/rovo/docs/setting-up-ides/))
 
@@ -49,7 +50,7 @@ Agent 도구 목록에 **Jira / Atlassian** 관련 MCP 도구가 보이면 성�
 
 | 증상 | 조치 |
 |------|------|
-| MCP 목록에 `atlassian` 없음 | `.cursor/mcp.json` 경로·JSON 문법 확인, 재시작 |
+| MCP 목록에 `atlassian` 없음 | Cursor 플러그인/설정 UI 확인. 로컬 파일 사용 시 `.cursor/mcp.json` 경로·JSON 문법 확인, 재시작 |
 | OAuth 안 뜸 | 터미널에서 `npx -y mcp-remote@latest https://mcp.atlassian.com/v1/mcp/authv2` 수동 실행 후 브라우저 인증 |
 | 권한 거부 | Jira 사이트 관리자 — [Rovo MCP 설정](https://support.atlassian.com/security-and-access-policies/docs/control-atlassian-rovo-mcp-server-settings/) |
 | `npx` 없음 | Node 18+ 설치 |

@@ -2,7 +2,7 @@
 name: souzip-harness
 description: >
   Souzip AI 협업 하네스 라우터. 5모드(intake/plan/implement/verify/ship)와 게이트 G1-G4.
-  작업 요청·기능 개발·AI 협업 시 적용. 모드 불명확 시 triggers.md 기준으로 souzip-plan 등 선택.
+  작업 요청·기능 개발·AI 협업 시 적용. 모드 불명확 시 docs/harness/workflows/00-triggers.md 기준으로 souzip-plan 등 선택.
 ---
 
 # Souzip Harness (라우터)
@@ -22,4 +22,4 @@ description: >
 | PR | souzip-pr |
 | ship | souzip-ship (라우터) |
 
-Quick Flow: `triggers.md` §4
+Quick Flow: `docs/harness/workflows/00-triggers.md` §4

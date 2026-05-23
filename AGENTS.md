@@ -69,7 +69,7 @@
 
 ## Jira (작업 시작 전)
 
-- Atlassian MCP: [`.cursor/mcp.json`](.cursor/mcp.json) · 연결: [`docs/harness/jira-mcp-setup.md`](docs/harness/jira-mcp-setup.md)
+- Atlassian MCP: Cursor 플러그인 설정 우선 · 로컬 `.cursor/mcp.json`은 선택(커밋 제외) · 연결: [`docs/harness/jira-mcp-setup.md`](docs/harness/jira-mcp-setup.md)
 - **미연결 시** `souzip-start`는 setup 안내만 — 웹 수동이 기본이 아님
 
 ## Gitignore

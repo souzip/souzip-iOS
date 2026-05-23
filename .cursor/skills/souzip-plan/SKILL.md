@@ -33,7 +33,7 @@ description: >
 
 ## Quick Flow
 
-오타·한 줄·단일 파일 명확 수정은 plan 생략 가능 — `triggers.md` §4. 애매하면 Full vs Quick 질문 1회.
+오타·한 줄·단일 파일 명확 수정은 plan 생략 가능 — `docs/harness/workflows/00-triggers.md` §4. 애매하면 Full vs Quick 질문 1회.
 
 ## 산출
 

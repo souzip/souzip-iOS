@@ -1,5 +1,5 @@
 ---
-description: Souzip AI 하네스 — 모드·게이트·스킬 라우팅 (triggers.md 정본)
+description: Souzip AI 하네스 — 모드·게이트·스킬 라우팅 (00-triggers.md 정본)
 alwaysApply: true
 ---
 
@@ -23,10 +23,10 @@ alwaysApply: true
 
 ## 게이트 (위반 시 중단)
 
-- **G1**: plan 없이·「구현해」 없이 코드 변경 금지 (Quick Flow 예외는 `triggers.md` §4)
+- **G1**: plan 없이·「구현해」 없이 코드 변경 금지 (Quick Flow 예외는 `docs/harness/workflows/00-triggers.md` §4)
 - **G4**: 「커밋해」「PR」명시 없이 git commit / push / `gh pr` 금지
 - **G5**: 방향 이탈 시 revert → plan 재작성
 
 ## 충돌
 
-`.claude/skills/`와 내용이 겹치면 **`.cursor/skills/souzip-*` + triggers.md** 우선 (ADR-002).
+`.claude/skills/`와 내용이 겹치면 **`.cursor/skills/souzip-*` + `docs/harness/workflows/00-triggers.md`** 우선 (ADR-002).

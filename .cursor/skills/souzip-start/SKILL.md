@@ -35,7 +35,7 @@ description: >
 2. **Jira**
    - **신규**: `jira-story-format.md` → 확인 표 → `createJiraIssue` → `SOU-XXX`
    - **기존 키**: 조회만
-   - **비상**: MCP 불가 + 사용자가 키 직접 입력
+   - **예외**: MCP 장애 + 사용자가 Jira 키를 직접 제공한 경우 조회 없이 키만 기록 가능
 3. **slug** — kebab-case · `docs/plans/{feature-slug}/` 와 맞추기
 4. **git**
 
