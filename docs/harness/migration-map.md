@@ -9,7 +9,7 @@
 | `docs/claude/architecture.md` | `context/architecture.md` + `presentation.md` + `domain-and-data.md` |
 | `docs/claude/module-layer-constitution.md` | `context/layers.md` |
 | `docs/plans/.../triggers.md` (미러) | `workflows/00-triggers.md` |
-| `harness/reference/harness-structure.html` | `harness-quick-guide.html` + context md |
+| `harness/reference/*.html` (하네스 HTML) | **제거** — 구조는 `README.md`·`workflows/`·`context/` md |
 | 루트 `harness/README.md` | `docs/harness/README.md` |
 
 `docs/claude/` — 본문 삭제, [`README.md`](../claude/README.md) 리다이렉트만 유지.

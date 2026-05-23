@@ -14,7 +14,7 @@
 | Standard verify (기준선) | `docs/harness/scripts/preflight.sh` |
 | Standard start | Xcode → `*.xcworkspace` (tuist generate 후) |
 | Highest priority unfinished | [SOU-637](https://souzip.atlassian.net/browse/SOU-637) AI 하네스 · `docs/plans/agent-harness-rebuild/` |
-| Current blocker | H3 dogfood·Cursor smoke 미실행 |
+| Current blocker | H3 dogfood·Cursor smoke 미실행 (harness-improvement 루프 문서화 완료) |
 | Working directory | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
 | SOZIP_MAIN_REPO | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` |
 | Branch | `chore/SOU-637/agent-harness-rebuild` |
@@ -24,6 +24,17 @@
 ## Session Records
 
 <!-- 세션 종료마다 위에 최신 항목 추가. 오래된 것은 삭제해도 됨. -->
+
+### 2026-05-24 — harness-improvement 루프 implement
+
+| 필드 | 내용 |
+|------|------|
+| **Goal** | 이벤트 기반 하네스 마찰 기록·개선 절차 (`docs/plans/harness-improvement/plan.md`) |
+| **Completed** | `friction-log.md`, `workflows/02-harness-improvement.md`, `00-triggers` §3.1·§6, `01-session-lifecycle`, README·AGENTS·Rule |
+| **Verification run** | plan §완료 기준 전항목 · `git diff Projects/` 없음 · **verify 2026-05-24** (triggers·링크·02=부록 A) |
+| **Evidence** | `docs/harness/friction-log.md` 첫 행(조치) · plan 체크박스 [x] · verify 통과 |
+| **Commits** | 없음 |
+| **Next best action** | `커밋해`(docs/harness) 또는 실제 기능 dogfood 후 friction 한 줄 |
 
 ### 2026-05-22 — SOU-637 하네스 정합성 보정
 

@@ -10,7 +10,7 @@ LHE 최소 팩(A~E) + Souzip 5모드·게이트를 [`docs/harness/`](.)에 일�
 |----|------|-------|-----|
 | **constitution** | `docs/harness/constitution.md` | 바뀌지 않는 규칙·금지·Git | `!` 금지 |
 | **context** | `docs/harness/context/` | 프로젝트·아키텍처 | Tuist, 레이어 |
-| **workflow** | `docs/harness/workflows/` | 모드·절차 | `00-triggers.md`, `01-session-lifecycle.md` |
+| **workflow** | `docs/harness/workflows/` | 모드·절차 | `00-triggers.md`, `01-session-lifecycle.md`, `02-harness-improvement.md` |
 | **artifact** | `docs/plans/{feature}/` | 작업별 산출물 | `plan.md`, `feature-tracker.json` |
 
 하네스 **제작** 메타: `docs/plans/agent-harness-rebuild/`.
@@ -64,17 +64,23 @@ docs/
 ├── README.md
 ├── harness/              # 이 폴더
 │   ├── progress.md
+│   ├── friction-log.md   # 마찰·회고 (이벤트 기반)
 │   ├── constitution.md
 │   ├── context/
-│   ├── workflows/
+│   ├── workflows/        # 00·01·02
 │   ├── scripts/preflight.sh
 │   ├── templates/
-│   ├── reference/
 │   └── scratch/          # gitignore
 └── plans/{feature}/
 ```
 
 [`migration-map.md`](migration-map.md) · [`gitignore-policy.md`](gitignore-policy.md) · [`jira-mcp-setup.md`](jira-mcp-setup.md)
 
-**쉬운 설명 (HTML):** [`reference/harness-quick-guide.html`](reference/harness-quick-guide.html)  
-**LHE 옵션 메모 (HTML):** [`reference/lhe-options-a-e.html`](reference/lhe-options-a-e.html) — 도입 시 참고용
+## 하네스 개선 (이벤트 기반)
+
+| 문서 | 용도 |
+|------|------|
+| [`friction-log.md`](friction-log.md) | 「마찰 기록해」「왜 그렇게 했어」→ 한 행 추가 |
+| [`workflows/02-harness-improvement.md`](workflows/02-harness-improvement.md) | 「이거 토대로 개선하자」→ plan → 구현 |
+
+**plan·PRD HTML 미리보기** (로컬·git 제외): [`../plans/README.md`](../plans/README.md) · `docs/plans/{feature}/*.html`

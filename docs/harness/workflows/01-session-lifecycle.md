@@ -35,6 +35,7 @@
 3. blocker·Next action 명시
 4. (사용자 「커밋해」 시만) ship — G4
 5. `scratch/`는 버려도 됨 — 중요 내용은 progress·plan으로
+6. (선택) 이번 세션 마찰·회고가 있으면 [`friction-log.md`](../friction-log.md) 한 행 — 개선은 하지 않음 ([`02-harness-improvement.md`](02-harness-improvement.md))
 
 ## clean-state (짧게)
 

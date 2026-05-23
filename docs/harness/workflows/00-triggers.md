@@ -2,7 +2,7 @@
 
 > **정본 경로** — `docs/harness/workflows/00-triggers.md`  
 > 하네스 제작 배경: [`docs/plans/agent-harness-rebuild/`](../../plans/agent-harness-rebuild/)  
-> 세션 루틴: [`01-session-lifecycle.md`](01-session-lifecycle.md)
+> 세션 루틴: [`01-session-lifecycle.md`](01-session-lifecycle.md) · 하네스 개선: [`02-harness-improvement.md`](02-harness-improvement.md)
 
 ---
 
@@ -54,6 +54,8 @@ intake → plan → implement → verify → ship
 | 「작업 시작」「worktree」「브랜치 만들어」 | **start** | Jira MCP · worktree · G4(commit/PR ❌) |
 | 「커밋해」「~만 커밋해」 | **commit** | G4 · `souzip-commit` |
 | 「PR 만들어줘」 | **PR** | G4 · `souzip-pr` · base `develop` |
+| 「마찰 기록해」「왜 그렇게 했는지 기록해」 | **(기록)** | [`friction-log.md`](../friction-log.md) 한 행 · harness/스킬 **수정 ❌** |
+| 「이거 토대로 개선하자」「하네스 개선하자」 | **plan** | [`harness-improvement/plan.md`](../../plans/harness-improvement/plan.md) 갱신 또는 당회 plan · 정본·코드 **대기 (G1)** |
 
 ### 3.2 모호할 때
 
@@ -90,6 +92,7 @@ intake → plan → implement → verify → ship
 | C DoD | `plan.md` §완료 기준 · `AGENTS.md` |
 | D baseline | `docs/harness/scripts/preflight.sh` |
 | scratch | `docs/harness/scratch/` (gitignore) |
+| friction-log | [`docs/harness/friction-log.md`](../friction-log.md) |
 
 ---
 
@@ -97,7 +100,7 @@ intake → plan → implement → verify → ship
 
 1. `AGENTS.md` → [`progress.md`](../progress.md) → (기능 작업 시) `docs/plans/{feature}/`
 2. `.cursor/rules/00-souzip-harness.mdc` + `souzip-*`
-3. [`01-session-lifecycle.md`](01-session-lifecycle.md)
+3. [`01-session-lifecycle.md`](01-session-lifecycle.md) · (하네스 개선 시) [`02-harness-improvement.md`](02-harness-improvement.md)
 
 ---
 

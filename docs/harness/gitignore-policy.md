@@ -21,7 +21,7 @@
 | `docs/plans/**/local-*` | 개인 메모 |
 | `docs/plans/**/notes-*` | 민감·사업 가설 등 |
 | `docs/plans/**/local-notes.md` | 고정 파일명 메모 |
-| `docs/plans/**/*.html` | UI 가이드 HTML (`harness/reference/` 사용) |
+| `docs/plans/**/*.html` | plan·PRD **브라우저 미리보기** (정본은 `plan.md`·`prd.md`) |
 | `.cursor/settings.json` | Cursor 로컬 플러그인 설정 |
 | `.cursor/mcp.json` | MCP 중복 설정 (플러그인 우선) |
 
@@ -44,7 +44,7 @@
 
 - 기능당 **`docs/plans/{feature}/` 하나**, 마일스톤은 `plan.md` §로 통합 (폴더 `*-m2` 남발 지양).
 - 완료·머지 후: [`../plans/archive/README.md`](../plans/archive/README.md) 참고해 `archive/`로 이동.
-- HTML 가이드·장문 UI 스펙: `docs/plans/` 대신 `docs/harness/reference/` 또는 plan 요약만.
+- plan·PRD를 HTML로 보고 싶을 때: **`docs/plans/{feature}/`** 에 `preview.html` 등 (gitignore). 승인·구현 근거는 **`plan.md`** 만.
 
 ## 판단 기준 (추가 ignore 전)
 
@@ -59,3 +59,4 @@
 |------|------|
 | 2026-05 | plans 전체 추적 (SoR) |
 | 2026-05 | 추천 조합: `draft-*` / `local-*` / `notes-*` ignore, archive 가이드 |
+| 2026-05 | `docs/harness/reference/` 제거 — plan HTML은 `docs/plans/{feature}/` 로컬만 |

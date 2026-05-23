@@ -30,6 +30,7 @@
 - **G4**: 「커밋해」「PR」명시 전 commit·push·PR 금지
 - 증거 없이 완료·`passing` 표시 금지
 - 채팅만 X → `progress` · `plan.md` · `docs/plans/`
+- 하네스 마찰 → [`docs/harness/friction-log.md`](docs/harness/friction-log.md) (기록만) · 개선은 「이거 토대로 개선하자」+ plan — [`02-harness-improvement.md`](docs/harness/workflows/02-harness-improvement.md)
 
 ## Definition of Done
 
@@ -47,7 +48,8 @@
 1. `docs/harness/progress.md` 갱신
 2. `feature-tracker.json` (있을 때)
 3. blocker·Next action 기록
-4. 커밋은 사용자 **ship** 지시 시만
+4. (선택) 마찰·회고 → `friction-log.md` 한 행
+5. 커밋은 사용자 **ship** 지시 시만
 
 ## 비협상
 
