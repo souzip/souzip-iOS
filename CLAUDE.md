@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **AI 진입점은 [`AGENTS.md`](AGENTS.md) · [`docs/harness/`](docs/harness/) 입니다.** 이 파일은 H6까지 레거시 미러입니다.
+
 이 파일은 Claude Code(claude.ai/code)가 이 저장소에서 작업할 때 참고하는 가이드입니다.
 
 ## 프로젝트 개요
@@ -43,7 +45,7 @@ App → Presentation → Domain ← Data → Core
 | Core | Networking, Logger, Analytics, Storage, Ads | `Projects/Core/{module}/` |
 | Shared | DesignSystem, Utils | `Projects/Shared/{module}/` |
 
-상세 내용(Tuist 설정, Factory 체인, Presentation 패턴, Domain/Data 구조, Networking): [`docs/claude/architecture.md`](docs/claude/architecture.md) 참조. 모듈·레이어 import 규범: [`docs/claude/module-layer-constitution.md`](docs/claude/module-layer-constitution.md).
+상세: [`docs/harness/context/README.md`](docs/harness/context/README.md) — 전체 구조·레이어·Presentation·Domain/Data 패턴.
 
 ## 금지 사항 (DO NOT)
 
@@ -107,7 +109,7 @@ App → Presentation → Domain ← Data → Core
 
 ## AI 협업 워크플로우
 
-`plan-before-code` 스킬 참조. 리서치 → 플랜 → 승인 → 구현 순서를 따른다.
+[`docs/harness/workflows/00-triggers.md`](docs/harness/workflows/00-triggers.md) · `.cursor/skills/souzip-*`
 
 ## 새 기능 추가 절차
 

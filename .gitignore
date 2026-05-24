@@ -39,6 +39,9 @@ Config/*.xcconfig
 # IDE
 .vscode/
 .idea/
+buildServer.json
+.cursor/settings.json
+.cursor/mcp.json
 
 # SwiftFormat
 .swiftformat.cache
@@ -49,5 +52,13 @@ Config/*.xcconfig
 # Misc
 *.log
 
-# AI 작업 문서 (플랜·리서치)
-docs/plans/
+# AI harness — 정본은 추적, 임시·초안만 제외 (docs/harness/gitignore-policy.md)
+docs/harness/scratch/*
+!docs/harness/scratch/.gitignore
+
+# docs/plans — plan.md 정본만 SoR; 초안·개인·민감 메모는 로컬
+docs/plans/**/draft-*
+docs/plans/**/local-*
+docs/plans/**/notes-*
+docs/plans/**/local-notes.md
+docs/plans/**/*.html

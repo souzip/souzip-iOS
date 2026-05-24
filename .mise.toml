@@ -2,3 +2,8 @@
 tuist = "4.109.2"
 swiftformat = "0.60.1"
 swiftlint = "0.58.2"
+
+[tasks.run-debug]
+description = "Run 수집-Debug scheme"
+alias = ["tr"]
+run = "tuist run 수집-Debug"

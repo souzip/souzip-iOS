@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: ko-KR
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  poem: false
+  in_progress_fortune: false
+  collapse_walkthrough: true
+  sequence_diagrams: true
+  auto_apply_labels: false
+  auto_assign_reviewers: false
+  suggested_labels: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    base_branches:
+      - develop
+
+  path_filters:
+    - "!**/Derived/**"
+    - "!**/*.xcodeproj/**"
+    - "!**/*.xcworkspace/**"
+    - "!**/Tuist/.build/**"
+    - "!docs/harness/scratch/**"
+    - "!Config/**"
+    - "!**/*.xcassets/**"
+    - "!**/*.lproj/**"
+
+  path_instructions:
+    - path: "Projects/**"
+      instructions: |
+        Souzip iOS: Tuist, Swift 5.9, RxSwift only (no Combine).
+        DO NOT: force unwrap(!), IUO, Storyboard/XIB, Domain 외부 의존, Presentation→Data import.
+        SnapKit only; makeConstraints { make in }. Mapper로 DTO→Domain. Factory DI.
+        상세: AGENTS.md, docs/harness/constitution.md, docs/harness/context/.
+
+    - path: "Projects/Domain/**"
+      instructions: |
+        Domain은 순수 비즈니스만. 외부 프레임워크·다른 모듈 import 금지.
+        Repository는 프로토콜만.
+
+    - path: "Projects/Presentation/**"
+      instructions: |
+        Domain만 의존 — Data/Networking 직접 import는 Critical.
+        BaseViewModel 4타입, Coordinator, RxSwift/RxCocoa.
+
+    - path: "Projects/Data/**"
+      instructions: |
+        Repository 구현·DTO·Endpoint. toDomain()은 Mapper 경유.
+
+    - path: "Tuist/**"
+      instructions: |
+        ModuleDependencies가 docs/harness/context/layers.md와 일치하는지 확인.
+
+    - path: "docs/**"
+      instructions: |
+        하네스·plan 문서. 링크·게이트 정합만. 코드 스타일 nitpick 금지.
+
+    - path: ".cursor/skills/**"
+      instructions: |
+        souzip-* 스킬은 docs/harness/workflows/00-triggers.md와 모순 없게.
+
+  labeling_instructions:
+    - label: feat
+      instructions: 새 기능·화면·API·UseCase
+    - label: fix
+      instructions: 버그 수정
+    - label: refactor
+      instructions: 동작 동일 구조 변경
+    - label: docs
+      instructions: 문서·하네스·plan만
+    - label: chore
+      instructions: 빌드·설정·gitignore·도구
+    - label: test
+      instructions: 테스트만
+
+  finishing_touches:
+    unit_tests:
+      enabled: false
+
+  tools:
+    swiftlint:
+      enabled: true
+      config_file: .swiftlint.yml
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - AGENTS.md
+      - docs/harness/constitution.md
+      - docs/harness/context/layers.md
+  learnings:
+    scope: auto
