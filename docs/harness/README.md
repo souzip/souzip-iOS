@@ -52,8 +52,10 @@ implement 전: [`scripts/preflight.sh`](scripts/preflight.sh) (기준선, D).
 
 | | `plan.md` | `draft-*` / `notes-*` | `scratch/` |
 |---|-----------|------------------------|------------|
-| 용도 | 승인·DoD·구현 근거 | 초안·민감·장문 메모 | 당일 임시 |
+| 용도 | 승인·DoD·구현 근거 | 초안·민감·장문 메모 | 당일 임시·**개발 인사이트 백업** 등 |
 | git | **추적** | **ignore** | **ignore** |
+
+개발 메모·인사이트 **로컬 백업** (gitignore): `scratch/backlog-dev-insights-log.md`, `scratch/xcode-tuist-structure.md` — friction-log 2026-05-24 행 참고.
 
 가이드: [`../plans/README.md`](../plans/README.md) · [`gitignore-policy.md`](gitignore-policy.md)
 
@@ -64,7 +66,7 @@ docs/
 ├── README.md
 ├── harness/              # 이 폴더
 │   ├── progress.md
-│   ├── friction-log.md   # 마찰·회고 (이벤트 기반)
+│   ├── friction-log.md   # 하네스·AI 마찰 (이벤트 기반)
 │   ├── constitution.md
 │   ├── context/
 │   ├── workflows/        # 00·01·02
@@ -80,7 +82,7 @@ docs/
 
 | 문서 | 용도 |
 |------|------|
-| [`friction-log.md`](friction-log.md) | 「마찰 기록해」「왜 그렇게 했어」→ 한 행 추가 |
+| [`friction-log.md`](friction-log.md) | 「마찰 기록해」「왜 그렇게 했어」→ **하네스·AI 협업** 마찰 한 행 |
 | [`workflows/02-harness-improvement.md`](workflows/02-harness-improvement.md) | 「이거 토대로 개선하자」→ plan → 구현 |
 
 **plan·PRD HTML 미리보기** (로컬·git 제외): [`../plans/README.md`](../plans/README.md) · `docs/plans/{feature}/*.html`
