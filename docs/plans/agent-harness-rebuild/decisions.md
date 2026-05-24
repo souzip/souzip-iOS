@@ -140,7 +140,7 @@
 
 - **상태**: Accepted (2026-05-19)
 - **맥락**: OMX `.omx/`; H0a 질문 4.
-- **결정**: **`harness/state/`** (또는 H2에서 확정한 동등 경로)를 둔다. **gitignore** — 막힌 점·중간 가설·세션 메모만. `docs/plans/`·ADR·plan.md와 **역할 분리** (state는 커밋 안 함).
+- **결정**: **`harness/state/`** (또는 H2에서 확정한 동등 경로)를 둔다. **gitignore** — 막힌 점·중간 가설·세션 메모만. `docs/plans/`·ADR·plan.md와 **역할 분리** (state는 커밋 안 함). *(경로는 ADR-013에서 `docs/harness/scratch/`로 변경 — 역할 동일.)*
 - **대안**: state 없음, 채팅만
 - **결과**: H2 디렉터리 확정 시 `.gitignore` 추가
 

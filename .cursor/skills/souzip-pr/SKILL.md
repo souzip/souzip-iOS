@@ -12,7 +12,7 @@ description: >
 ## 게이트
 
 - **G4**: 「PR 만들어줘」 등 **명시** 없으면 `gh pr` / push **금지**
-- **G3 (PR 내장)**: `gh pr` / push **전** 아래 **1. 검증** 통과. **Critical** 있으면 PR 중단
+- **G3 (PR 내장)**: `gh pr` / push **전** 아래 **1. 검증** 통과. **Critical** 있으면 PR 중단 — 정본 [`00-triggers.md`](../../docs/harness/workflows/00-triggers.md) §2 G3 (PR)
 - **cwd**: worktree — `progress.md` Working directory와 일치
 - **`--draft` 없음** — Ready for review
 - **Co-Authored-By 금지**

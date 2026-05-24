@@ -35,6 +35,7 @@ intake → plan → implement → verify → ship
 | **G1** | Plan | implement 코드·diff | `plan.md` + **사용자 승인** + 「구현해」/「구현 시작해」 (**모두**) |
 | **G2** | Plan 편집 | plan 밖 파일 | plan 갱신 후 |
 | **G3** | Verify | “완료” 선언 | verify + **증거** 또는 “넘어가” |
+| **G3 (PR)** | — | (PR만) `gh pr` | `souzip-pr` — verify 필수 · 「verify 생략하고 PR」 명시 시 경고 후 진행 |
 | **G4** | Ship | commit·push·PR | ship + 명시 지시 |
 | **G5** | 방향 이탈 | 패치 누적 | revert → plan 재작성 |
 
@@ -53,7 +54,7 @@ intake → plan → implement → verify → ship
 | 「리뷰해」「검증해」 | **verify** | 체크 + evidence |
 | 「작업 시작」「worktree」「브랜치 만들어」 | **start** | Jira MCP · worktree · G4(commit/PR ❌) |
 | 「커밋해」「~만 커밋해」 | **commit** | G4 · `souzip-commit` |
-| 「PR 만들어줘」 | **PR** | G4 · `souzip-pr` · **verify 후** `gh pr` · base `develop` |
+| 「PR 만들어줘」 | **PR** | G4 · `souzip-pr` · **verify 필수** 후 `gh pr` · base `develop` |
 | 「마찰 기록해」「왜 그렇게 했는지 기록해」 | **(기록)** | [`friction-log.md`](../friction-log.md) 한 행 · harness/스킬 **수정 ❌** |
 | 「이거 토대로 개선하자」「하네스 개선하자」 | **plan** | [`harness-improvement/plan.md`](../../plans/harness-improvement/plan.md) 갱신 또는 당회 plan · 정본·코드 **대기 (G1)** |
 

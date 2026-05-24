@@ -62,7 +62,7 @@ Souzip AI 하네스에 **이벤트 기반 개선 절차**를 추가한다. 평�
 
 - **이유**: 기록 vs 개선 게이트를 workflow로 고정
 - **Before**: 없음
-- **After**: [부록 A](#부록-a-02-harness-improvementmd-초안) 전문 (구현 시 파일 생성)
+- **After**: [부록 A](#부록-a--02-harness-improvementmd-초안) 전문 (구현 시 파일 생성)
 
 ---
 

@@ -27,7 +27,7 @@ description: >
 | `SOZIP_WORK_ROOT` | `~/work/souzip` |
 | `SOZIP_MAIN_REPO` | `~/work/souzip/main` |
 
-`main` 없으면 clone 안내 후 worktree **보류**. 기존 `…/Souzip` 클론 → `SOZIP_MAIN_REPO`만 지정 가능 (`progress.md` 기록).
+`main` 없으면 clone 안내 후 worktree **보류**. 기존 클론을 main으로 쓸 때는 `export SOZIP_MAIN_REPO=/path/to/Souzip` 후 진행 (`progress.md`에 기록).
 
 ## 흐름
 
@@ -35,7 +35,7 @@ description: >
 2. **Jira**
    - **신규**: `jira-story-format.md` → 확인 표 → `createJiraIssue` → `SOU-XXX`
    - **기존 키**: 조회만
-   - **예외**: MCP 장애 + 사용자가 Jira 키를 직접 제공한 경우 조회 없이 키만 기록 가능
+   - **예외**: MCP 장애 + 사용자가 Jira 키를 직접 제공한 경우 — 형식 `SOU-\d+` 검증 후 기록 (Jira 조회 없이 진행)
 3. **slug** — kebab-case · `docs/plans/{feature-slug}/` 와 맞추기
 4. **git**
 
@@ -51,7 +51,13 @@ git worktree add "$WT_PATH" -b "$BRANCH" origin/develop
 cd "$WT_PATH"
 ```
 
-5. **Tuist** — Config 없으면 `cp Config/Example.xcconfig` → `Debug.xcconfig` (Release 동일)
+5. **Tuist** — Config 없으면 아래 복사 · `Example.xcconfig` 없거나 복사 실패 시 **중단**하고 수동 안내 (preflight에서도 감지)
+
+```bash
+cp Config/Example.xcconfig Config/Debug.xcconfig
+cp Config/Example.xcconfig Config/Release.xcconfig
+```
+
 6. **preflight** — worktree 루트에서 `docs/harness/scripts/preflight.sh`
 7. **기록** — `docs/harness/progress.md`: Jira, 브랜치, **Working directory**, plans 경로
 8. **작업 루트** — `cd "$WT_PATH"` 필수 · Cursor는 **Open Folder** (선택)

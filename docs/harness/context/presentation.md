@@ -45,7 +45,7 @@ override 순서 고정:
 
 1. `setAttributes()` — DS 색·컴포넌트
 2. `setHierarchy()` — `[a, b].forEach(addSubview)` (멀티라인 배열 + forEach)
-3. `setConstraints()` — `snp.makeConstraints { make in ... }` (`$0` 단축 금지)
+3. `setConstraints()` — `snp.makeConstraints { make in ... }` (`$0` 단축 금지 — 가독성·팀 컨벤션)
 4. `setBindings()` — `bind(...).to(.action)` / `ActionBinder`
 
 **ActionBinder**: `throttle`, `debounce`, `map`, `compactMap`, `withLatestFrom` → terminal `.to(Action)` 또는 `.map { }`.

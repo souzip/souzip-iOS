@@ -30,7 +30,7 @@
 | `SOZIP_WORK_ROOT` | `~/work/souzip` |
 | `SOZIP_MAIN_REPO` | `~/work/souzip/main` |
 
-`main` 없으면 clone 안내 후 worktree 보류. 기존 `…/Souzip` 클론을 main으로 쓸 경우 `progress.md`에 `SOZIP_MAIN_REPO`만 기록.
+`main` 없으면 clone 안내 후 worktree 보류. 기존 클론을 main으로 쓸 때는 `export SOZIP_MAIN_REPO=/path/to/Souzip` (`progress.md`에 기록).
 
 ---
 
@@ -53,7 +53,7 @@
 **공통 필수 (지금·나중 모두):**
 
 ```bash
-cd ~/work/souzip/SOU-633-wishlist-mypage-grid
+cd ~/work/souzip/SOU-633-wishlist-toggle-mypage-grid
 ```
 
 | 환경 | 권장 (추가) | 비고 |
@@ -73,11 +73,12 @@ cd ~/work/souzip/main && git fetch origin develop
 git worktree add ~/work/souzip/SOU-633-wishlist-toggle-mypage-grid \
   -b feat/SOU-633/wishlist-toggle-mypage-grid origin/develop
 cd ~/work/souzip/SOU-633-wishlist-toggle-mypage-grid
-# Config: cp Config/Example.xcconfig → Debug.xcconfig (Release 동일)
+cp Config/Example.xcconfig Config/Debug.xcconfig
+cp Config/Example.xcconfig Config/Release.xcconfig
 docs/harness/scripts/preflight.sh
 ```
 
-- plans: `docs/plans/wishlist-ui-m4/plan.md` (있으면) 또는 slug 폴더 제안  
+- plans: `docs/plans/wishlist-toggle-mypage-grid/plan.md` (있으면) 또는 slug 폴더 제안  
 - Cursor: 위 폴더를 워크스페이스로 열기  
 - 다음: `souzip-plan` → 승인 → implement
 
@@ -86,8 +87,8 @@ docs/harness/scripts/preflight.sh
 ## 예시 — 신규 스토리 + start
 
 1. 스토리 생성 (`jira-story-format.md`) → SOU-634  
-2. 위와 동일, `SOU-634-{slug}` worktree  
-3. `docs/plans/wishlist-mypage-grid/plan.md` 제안 (plan 상단 Jira 링크)
+2. 위와 동일, `SOU-634-notification-badge` worktree · `feat/SOU-634/notification-badge`  
+3. `docs/plans/notification-badge/plan.md` 제안 (plan 상단 Jira 링크)
 
 ---
 
