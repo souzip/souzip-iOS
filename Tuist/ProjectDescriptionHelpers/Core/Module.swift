@@ -17,6 +17,18 @@ public enum Module: String, CaseIterable {
 }
 
 public extension Module {
+    /// `Project.framework(..., hasTests: true)` 인 모듈 — 앱 스킴 Test(⌘U)에 포함
+    static let modulesWithUnitTests: [Module] = [
+        .domain,
+        .data,
+        .presentation,
+        .storage,
+    ]
+
+    var unitTestsTargetName: String {
+        "\(rawValue)Tests"
+    }
+
     var path: Path {
         switch self {
         case .app:

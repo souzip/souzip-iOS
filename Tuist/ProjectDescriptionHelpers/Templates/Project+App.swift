@@ -12,6 +12,9 @@ public extension Project {
         return Project(
             name: module.rawValue,
             organizationName: Environment.organizationName,
+            options: .options(
+                automaticSchemesOptions: .disabled
+            ),
             settings: .settings(
                 configurations: DefaultSettings.configurations(isApp: true)
             ),
