@@ -17,7 +17,8 @@
 | Current blocker | H3 dogfood·Cursor smoke 미실행 (harness-improvement 루프 문서화 완료) |
 | Working directory | `/Users/parkjuseng/MySpace/Projects/사이드프로젝트_Souzip/Souzip` (worktree **없음**) |
 | SOZIP_MAIN_REPO | _(미사용 — branch-only)_ |
-| Branch | `feat/domain-module-tests` (Jira 키 확보 후 `feat/SOU-XXX/domain-module-tests`로 rename 권장) |
+| Branch | `feat/SOU-639/domain-module-tests` |
+| Jira | [SOU-639](https://souzip.atlassian.net/browse/SOU-639) — Domain UseCase 단위 테스트 |
 | Active plan | `docs/plans/domain-module-tests/plan.md` |
 
 ---
@@ -32,7 +33,7 @@
 |------|------|
 | **Goal** | Jira 스토리 + 브랜치 준비 (`souzip-start`, worktree **생략**) |
 | **Completed** | `git checkout -b feat/domain-module-tests` from `origin/develop` · 미커밋 DomainTests·Tuist 변경 유지 |
-| **Jira** | **미생성** — MCP `atlassian` 없음 · Summary 초안 plan 상단 · 웹 생성 후 `SOU-XXX` 알려주면 plan·`git branch -m` 반영 |
+| **Jira** | [SOU-639](https://souzip.atlassian.net/browse/SOU-639) 생성 (MCP, Sprint 16) · 브랜치 rename |
 | **Verification run** | preflight (start 후) |
 | **Next best action** | Jira 웹 생성 또는 MCP 연결 → `커밋해` (Tests/plan vs Tuist 분리) |
 

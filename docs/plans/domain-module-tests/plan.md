@@ -1,8 +1,7 @@
 # domain-module-tests — Domain UseCase 전수 단위 테스트
 
-> **Jira**: _(생성 대기 — Atlassian MCP 미연결. 웹에서 스토리 생성 후 링크 추가)_  
-> **스토리 Summary 초안**: `[iOS] Domain — UseCase 단위 테스트 전수 (DomainTests)` · Label `ios` · Description 비움  
-> **브랜치**: `feat/domain-module-tests` (임시) → 키 확보 후 `git branch -m feat/SOU-XXX/domain-module-tests` 권장
+> **Jira**: [SOU-639](https://souzip.atlassian.net/browse/SOU-639)  
+> **브랜치**: `feat/SOU-639/domain-module-tests`
 
 > **민감 정보 금지**: API 키·토큰·실계정·미공개 사업/수치·장문 내부 전략은 이 파일에 쓰지 않는다.  
 > 초안·가설·장문 메모 → `draft-*` / `notes-*` (gitignore) 또는 `docs/harness/scratch/`.
