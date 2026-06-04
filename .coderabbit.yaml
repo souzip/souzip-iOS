@@ -61,9 +61,9 @@ reviews:
       instructions: |
         하네스·plan 문서. 링크·게이트 정합만. 코드 스타일 nitpick 금지.
 
-    - path: ".cursor/skills/**"
+    - path: ".codex/skills/**"
       instructions: |
-        souzip-* 스킬은 docs/harness/workflows/00-triggers.md와 모순 없게.
+        souzip-* 스킬은 docs/harness/workflow/story-plan-session.md와 모순 없게.
 
   labeling_instructions:
     - label: feat
