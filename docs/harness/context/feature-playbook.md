@@ -141,7 +141,7 @@ return .init(vc: vc, route: vm.route, disposeBag: vc.disposeBag)
 - [ ] Presentation → Data import 없음 (grep 또는 리뷰)
 - [ ] (증거) Xcode scheme 빌드 또는 스크린샷
 
-verify 모드: [`../workflows/00-triggers.md`](../workflows/00-triggers.md) §5 + `feature-tracker.json` evidence.
+verify: [`../workflow/story-plan-session.md`](../workflow/story-plan-session.md) · plan §검증 + story Plans 표.
 
 ---
 

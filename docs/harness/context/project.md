@@ -19,13 +19,12 @@
 ```bash
 tuist install
 tuist generate
-# Xcode에서 *.xcworkspace 열기
 swiftformat .
 ```
 
-세션·implement 전 기준선: [`../scripts/preflight.sh`](../scripts/preflight.sh)
+기본 검증: [`../scripts/verify.sh`](../scripts/verify.sh)
 
-## 레이어 (한 줄)
+## 레이어
 
 ```text
 App → Presentation → Domain ← Data → Core / Shared
@@ -37,9 +36,9 @@ App → Presentation → Domain ← Data → Core / Shared
 
 | 경로 | 용도 |
 |------|------|
-| `docs/harness/context/` | 프로젝트 구조·규칙 (이 폴더) |
-| `docs/harness/workflows/` | AI 협업 5모드·게이트 |
-| `docs/plans/{feature}/` | 기능별 plan·tracker |
-| `Projects/` | Tuist 모듈 소스 |
+| `docs/harness/context/` | 프로젝트 구조 |
+| `docs/harness/workflow/` | Goal → Story → Plan 흐름 |
+| `docs/goals/{feature}/` | Goal, Story, Plan 실행 문서 (로컬) |
+| `Projects/` | Tuist 소스 |
 
 `Config/*.xcconfig` — API 키 등, **git 제외**.

@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Souzip Harness Overview</title>
+  <style>
+    :root {
+      --ink: #1e2329;
+      --muted: #667085;
+      --line: #d8dee8;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --accent: #2563eb;
+      --accent-soft: #e8f0ff;
+      --ok: #0f766e;
+      --warn: #b45309;
+      --stop: #b42318;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 36px 22px 64px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 28px;
+      align-items: end;
+      padding: 34px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: 40px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 17px;
+      letter-spacing: 0;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    code {
+      padding: 2px 6px;
+      background: #f0f3f8;
+      border-radius: 5px;
+      color: #26313f;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    .kicker {
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .summary {
+      margin-bottom: 0;
+      max-width: 720px;
+      font-size: 18px;
+    }
+
+    .rules {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rules li {
+      padding: 11px 12px;
+      background: #f9fafc;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 14px;
+    }
+
+    section {
+      margin-top: 28px;
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(110px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .step {
+      min-height: 132px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--accent);
+      border-radius: 8px;
+      background: #fbfcff;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .step span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 190px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcff;
+    }
+
+    .card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      padding: 12px 14px;
+      border-left: 4px solid var(--ok);
+      background: #f7fbfa;
+      border-radius: 6px;
+      color: #31514e;
+    }
+
+    .gate li {
+      border-left-color: var(--stop);
+      background: #fff8f7;
+      color: #63322d;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #f1c27d;
+      border-radius: 8px;
+      background: #fff8ed;
+      color: #6f4600;
+    }
+
+    .cmd {
+      display: block;
+      overflow-x: auto;
+      margin: 14px 0 0;
+      padding: 14px;
+      color: #e6edf3;
+      background: #172033;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      white-space: pre;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .table th,
+    .table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .table th {
+      background: #f7f9fc;
+      color: #344054;
+      font-size: 13px;
+    }
+
+    .table td {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #174ea6;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      header,
+      .grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      section,
+      header {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <div class="kicker">Codex 기준 Souzip Harness</div>
+        <h1>작업 전 합의, 작은 PR, 검증까지 포함하는 기능 개발 흐름</h1>
+        <p class="summary">
+          이 하네스는 Souzip 기능 작업을 바로 구현하지 않고, Goal 인터뷰로 의도를 분명히 한 뒤
+          Story와 Plan으로 나누고, 각 Plan을 검증 가능한 단위로 끝내기 위한 기준입니다.
+        </p>
+      </div>
+      <ul class="rules">
+        <li>Goal 승인 전에는 Story, Jira, worktree, Plan으로 넘어가지 않습니다.</li>
+        <li>Story 하나는 worktree 하나이자 PR 하나입니다.</li>
+        <li>Plan은 한 세션에서 구현과 검증까지 끝낼 수 있어야 합니다.</li>
+        <li>commit은 “커밋해”, PR 생성과 PR용 push는 “PR” 지시 뒤에만 합니다.</li>
+      </ul>
+    </header>
+
+    <section>
+      <h2>전체 흐름</h2>
+      <div class="flow" aria-label="Souzip harness flow">
+        <div class="step"><strong>1. Goal 인터뷰</strong><span>질문은 한 번에 1~3개만 하고, 목표와 이해관계를 명확히 합니다.</span></div>
+        <div class="step"><strong>2. Goal 승인</strong><span>사용자가 자연어로 명확히 동의하면 승인으로 봅니다.</span></div>
+        <div class="step"><strong>3. Story 후보</strong><span>전체 후보를 만들되 Jira는 active 1~2개만 생성합니다.</span></div>
+        <div class="step"><strong>4. Worktree</strong><span>Story worktree는 항상 <code>develop</code>에서 만듭니다.</span></div>
+        <div class="step"><strong>5. Plan</strong><span>세션 안에서 구현과 검증까지 가능한 크기로 나눕니다.</span></div>
+        <div class="step"><strong>6. 구현</strong><span>사용자가 “구현해”라고 한 뒤 Plan 범위 안에서만 고칩니다.</span></div>
+        <div class="step"><strong>7. 검증</strong><span><code>verify.sh</code>로 포맷, lint, generate, build, 관련 테스트를 확인합니다.</span></div>
+        <div class="step"><strong>8. PR</strong><span>develop 변경 파일 겹침을 확인한 뒤 사용자가 “PR”이라고 하면 진행합니다.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>작업 단위</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="pill">Goal</span>
+          <h3>기능 목표와 이해관계</h3>
+          <p>무엇을 왜 바꾸는지, 성공 기준과 하지 않을 범위를 정합니다.</p>
+          <ul>
+            <li>한 줄 목표</li>
+            <li>사용자와 이해관계</li>
+            <li>성공 기준</li>
+            <li>Story 후보</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="pill">Story</span>
+          <h3>PR 하나의 단위</h3>
+          <p>기본은 기술 경계로 나누고, 너무 크면 사용자 가치 기준으로 다시 나눕니다.</p>
+          <ul>
+            <li>worktree 하나</li>
+            <li>Jira Story 하나</li>
+            <li>PR 하나</li>
+            <li>target branch: develop</li>
+          </ul>
+        </article>
+        <article class="card">
+          <span class="pill">Plan</span>
+          <h3>한 세션의 실행 단위</h3>
+          <p>사용자 승인 뒤 구현하고, 검증 결과가 있어야 닫을 수 있습니다.</p>
+          <ul>
+            <li>구현 범위</li>
+            <li>하지 않을 것</li>
+            <li>검증 명령</li>
+            <li>실행 결과</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Story 선택 기준</h2>
+      <div class="split">
+        <div class="card">
+          <h3>첫 번째 active Story</h3>
+          <p>작지만 끝단 흐름을 실제로 연결해 볼 수 있는 Story를 고릅니다.</p>
+          <ul>
+            <li>API, 도메인, 저장, UI 중 필요한 경로가 이어짐</li>
+            <li>작은 PR로 앱이 깨지지 않음</li>
+            <li>다음 Story의 기준을 만들어 줌</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>두 번째 active Story</h3>
+          <p>필요하면 가장 불확실한 기술 리스크를 검증하는 Story를 고릅니다.</p>
+          <ul>
+            <li>나중에 막히면 설계가 흔들릴 수 있음</li>
+            <li>기술 가능성을 먼저 확인해야 함</li>
+            <li>너무 크면 Jira와 worktree 전에 다시 쪼갬</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>검증</h2>
+      <p>Plan은 구현만 끝났다고 닫지 않습니다. 방금 실행한 검증 명령과 결과가 있어야 합니다.</p>
+      <pre class="cmd">docs/harness/scripts/verify.sh plan
+
+VERIFY_TEST_TARGETS="DomainTests" docs/harness/scripts/verify.sh plan
+VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan</pre>
+      <div class="split">
+        <ul class="checklist">
+          <li>SwiftFormat lint</li>
+          <li>SwiftLint</li>
+          <li>Tuist generate</li>
+          <li>Tuist build</li>
+          <li>관련 테스트</li>
+        </ul>
+        <ul class="checklist gate">
+          <li>Plan 밖 요구가 생기면 Plan을 먼저 고칩니다.</li>
+          <li>Tuist, Factory, 모듈 경계, 레이어 규칙 변경은 멈추고 묻습니다.</li>
+          <li>같은 실패를 두 번 이상 고쳐도 해결되지 않으면 원인 조사로 전환합니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>PR 전 develop 변경 확인</h2>
+      <p>
+        Story 작업 중 <code>develop</code>이 바뀔 수 있으므로 PR 전에 변경 파일이 겹치는지 확인합니다.
+        겹치는 파일이 있으면 멈추고 사용자에게 알립니다.
+      </p>
+      <pre class="cmd">git fetch origin develop
+git diff --name-only {base_commit}..origin/develop
+git diff --name-only {base_commit}..HEAD</pre>
+      <div class="note">
+        두 변경 파일 목록이 겹치지 않으면 Story 종료 검증 결과를 유지하고 PR로 갈 수 있습니다.
+        겹치면 Plan이나 구현이 낡았을 수 있으므로 사용자 판단이 필요합니다.
+      </div>
+    </section>
+
+    <section>
+      <h2>워크플로우 스킬</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>스킬</th>
+            <th>쓰는 시점</th>
+            <th>막는 선</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>souzip-goal</code></td>
+            <td>기능 아이디어를 Goal로 만들 때</td>
+            <td>Story, Jira, worktree, Plan, 코드로 넘어가지 않음</td>
+          </tr>
+          <tr>
+            <td><code>souzip-story</code></td>
+            <td>승인된 Goal을 Story 후보와 active Story로 나눌 때</td>
+            <td>모든 Jira Story를 한 번에 만들지 않음</td>
+          </tr>
+          <tr>
+            <td><code>souzip-plan</code></td>
+            <td>선택된 Story를 한 세션 Plan으로 나눌 때</td>
+            <td>“구현해” 전 코드 수정하지 않음</td>
+          </tr>
+          <tr>
+            <td><code>souzip-verify</code></td>
+            <td>Plan 또는 Story 검증과 실패 분류가 필요할 때</td>
+            <td>방금 실행한 검증 없이 완료라고 말하지 않음</td>
+          </tr>
+          <tr>
+            <td><code>souzip-commit</code></td>
+            <td>사용자가 “커밋해”라고 했을 때</td>
+            <td><code>&lt;type&gt;: &lt;한국어 설명&gt;</code> 한 줄 형식 유지</td>
+          </tr>
+          <tr>
+            <td><code>souzip-pr</code></td>
+            <td>사용자가 “PR”이라고 했을 때</td>
+            <td>develop 변경 파일 확인 뒤 PR용 push와 PR 생성</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        구현 스킬은 아직 만들지 않습니다. 구현은 승인된 Plan과 사용자의 “구현해” 지시 아래에서만 진행합니다.
+      </div>
+    </section>
+
+    <section>
+      <h2>서브에이전트</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>역할</th>
+            <th>쓰는 시점</th>
+            <th>유형</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>researcher</code></td>
+            <td>레퍼런스나 로컬 문서를 조사할 때</td>
+            <td>독립형, 필요 시 병렬형</td>
+          </tr>
+          <tr>
+            <td><code>interviewer</code></td>
+            <td>Goal 질문과 초안을 만들 때</td>
+            <td>독립형</td>
+          </tr>
+          <tr>
+            <td><code>story-splitter</code></td>
+            <td>Goal을 PR 단위 Story로 나눌 때</td>
+            <td>독립형</td>
+          </tr>
+          <tr>
+            <td><code>planner</code></td>
+            <td>Story를 세션 단위 Plan으로 나눌 때</td>
+            <td>독립형</td>
+          </tr>
+          <tr>
+            <td><code>implementer</code></td>
+            <td>승인된 Plan을 구현할 때</td>
+            <td>독립형</td>
+          </tr>
+          <tr>
+            <td><code>verifier</code></td>
+            <td>검증과 실패 분류를 맡길 때</td>
+            <td>독립형, 필요 시 병렬형</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>파일 위치</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>위치</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>실제 작업 순서</td>
+            <td><code>docs/harness/workflow/operating-sequence.md</code></td>
+          </tr>
+          <tr>
+            <td>작업 템플릿</td>
+            <td><code>docs/harness/templates/</code></td>
+          </tr>
+          <tr>
+            <td>로컬 실행 문서</td>
+            <td><code>docs/goals/{feature}/</code> 아래에 두며 Git에는 올리지 않음</td>
+          </tr>
+          <tr>
+            <td>검증 스크립트</td>
+            <td><code>docs/harness/scripts/verify.sh</code></td>
+          </tr>
+          <tr>
+            <td>서브에이전트 역할</td>
+            <td><code>.agents/agents/workflow/</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      Souzip Harness Overview · Codex 기준 작업 전 설명 문서
+    </footer>
+  </main>
+</body>
+</html>
