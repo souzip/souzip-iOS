@@ -1,0 +1,4 @@
+interface:
+  display_name: "Souzip Plan"
+  short_description: "Plan one verified implementation session"
+  default_prompt: "Use $souzip-plan to create a Souzip Plan for one session."

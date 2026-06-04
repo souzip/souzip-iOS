@@ -1,0 +1,4 @@
+interface:
+  display_name: "Souzip Goal"
+  short_description: "Goal interview and approval flow"
+  default_prompt: "Use $souzip-goal to interview and draft a Souzip Goal."

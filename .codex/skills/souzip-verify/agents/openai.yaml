@@ -1,0 +1,4 @@
+interface:
+  display_name: "Souzip Verify"
+  short_description: "Run and classify Souzip verification"
+  default_prompt: "Use $souzip-verify to verify a Souzip Plan or Story."
