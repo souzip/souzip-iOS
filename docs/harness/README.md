@@ -23,7 +23,8 @@
 - Story 하나는 PR 하나입니다.
 - Plan 하나는 한 세션에서 구현과 검증까지 끝낼 수 있어야 합니다.
 - Story worktree는 항상 `develop` 기준으로 만듭니다.
-- 실제 작업 순서는 `Goal → Story 후보 → active Story → worktree → Plan → 구현 → 검증 → PR`입니다.
-- 반복 실행은 `souzip-goal`, `souzip-story`, `souzip-plan`, `souzip-verify`, `souzip-commit`, `souzip-pr` 스킬로 나눕니다.
+- 실제 작업 순서는 `Goal → Story 후보 → active Story → Jira 초안·생성 → worktree → Plan → 구현 → 검증 → PR`입니다.
+- worktree와 Jira 생성 순서는 자유입니다. Jira 키가 없으면 PR 타이틀은 `[NO-ISSUE]`를 씁니다.
+- 반복 실행은 `souzip-goal`, `souzip-story`, `souzip-jira-story`, `souzip-plan`, `souzip-verify`, `souzip-commit`, `souzip-pr` 스킬로 나눕니다.
 - 검증 실패는 Plan 범위 안에서 고치고 다시 검증합니다.
 - 큰 구조 변경은 AI가 혼자 진행하지 않고 사용자에게 묻습니다.

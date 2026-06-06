@@ -41,7 +41,20 @@ Jira는 처음부터 전부 만들지 않습니다.
 
 너무 큰 Story는 Jira와 worktree로 올리기 전에 다시 쪼갭니다.
 
-## 3. Story 시작하기
+## 3. Jira Story 준비하기
+
+사용 스킬: `souzip-jira-story`
+
+active Story 확정 뒤 Epic·Story Jira 초안을 준비합니다.
+초안 승인 후, 사용자가 `Jira 만들어`처럼 명시적으로 말할 때만 Jira에 생성하거나 기존 이슈에 연결합니다.
+
+- Goal Epic: 없으면 Goal 기준으로 Epic 초안 → 승인 → 생성
+- Story: active 1~2개만 대상
+- 중복 검색: Goal `jira` 키 우선, 없으면 Epic 하위 유사 summary 검색
+- `priority`, `description`은 넣지 않음
+- worktree·브랜치 순서는 자유
+
+## 4. Story 시작하기
 
 Story 하나는 worktree 하나이자 PR 하나입니다.
 
@@ -57,7 +70,7 @@ Story를 시작하기 전에는 `develop` 기준점이 분명해야 합니다.
 `tuist install`은 `Tuist/Package.resolved`를 기준으로 필요한 의존성 상태를 맞추며, 도구의 캐시가 있으면 재사용합니다.
 실제 Story 문서는 `docs/goals/` 아래에 로컬로만 보관하고 Git에 올리지 않습니다.
 
-## 4. Plan 만들기
+## 5. Plan 만들기
 
 사용 스킬: `souzip-plan`
 
@@ -72,14 +85,14 @@ Plan은 아래 기준을 만족해야 합니다.
 사용자가 Plan을 승인하고 “구현해”라고 말한 뒤에만 코드를 고칩니다.
 실제 Plan 문서는 `docs/goals/` 아래에 로컬로만 보관하고 Git에 올리지 않습니다.
 
-## 5. 구현하기
+## 6. 구현하기
 
 구현은 승인된 Plan 범위 안에서만 합니다.
 Plan 밖 요구가 생기면 Plan을 먼저 고칩니다.
 
 Tuist, Factory, 모듈 경계, 레이어 규칙처럼 큰 구조 변경이 필요하면 멈추고 사용자에게 묻습니다.
 
-## 6. 검증하기
+## 7. 검증하기
 
 사용 스킬: `souzip-verify`
 
@@ -99,7 +112,7 @@ VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan
 검증 실패가 Plan 범위 안이면 AI가 고치고 같은 검증을 다시 실행합니다.
 같은 실패를 두 번 이상 수정해도 해결되지 않으면 원인 조사로 전환합니다.
 
-## 7. Story 끝내기
+## 8. Story 끝내기
 
 Story의 모든 Plan이 끝나면 Story 종료 검증을 합니다.
 
@@ -119,7 +132,7 @@ git diff --name-only {base_commit}..HEAD
 두 결과에서 겹치는 파일이 있으면 멈추고 사용자에게 알립니다.
 겹치는 파일이 없으면 Story 종료 검증을 유지하고 PR로 갈 수 있습니다.
 
-## 8. Ship
+## 9. Ship
 
 사용 스킬: `souzip-commit`, `souzip-pr`
 
@@ -129,3 +142,4 @@ commit, PR 생성, PR 생성을 위한 push는 사용자가 명시적으로 말�
 - “PR”: PR 준비 확인 통과 뒤 Story 브랜치 push와 PR 생성 가능
 
 Story PR은 `develop`으로 보냅니다.
+PR 타이틀은 Jira 키가 있으면 `[SOU-xxx] {제목}`, 없으면 `[NO-ISSUE] {제목}`을 씁니다.

@@ -38,6 +38,11 @@ Use this skill only when the user explicitly asks for a PR.
 7. Push only the intended Story branch when needed for PR creation.
 8. Create the PR only after readiness checks pass.
 
+## PR Title
+
+- Jira key exists: `[SOU-xxx] {title}`
+- Jira key missing: `[NO-ISSUE] {title}`
+
 ## PR Convention
 
 Use the existing GitHub PR template:
