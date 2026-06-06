@@ -10,6 +10,7 @@ public enum ModuleDependencies {
                 .module(.data),
                 .module(.designSystem),
                 .module(.analytics),
+                .module(.fcm),
                 .module(.storage),
                 .module(.networking),
                 .module(.utils),
@@ -61,6 +62,14 @@ public enum ModuleDependencies {
         case .analytics:
             [
                 .external(.amplitudeSwift),
+            ]
+
+        case .fcm:
+            [
+                .module(.logger),
+
+                .external(.firebaseCore),
+                .external(.firebaseMessaging),
             ]
 
         case .storage:

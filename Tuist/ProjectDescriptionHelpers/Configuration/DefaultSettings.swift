@@ -36,6 +36,9 @@ public enum DefaultSettings {
 
         // Scripts
         "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
+
+        // static SPM + 멀티모듈 클린 빌드 시 explicit module 스캔 순서 이슈 방지
+        "SWIFT_ENABLE_EXPLICIT_MODULES": "NO",
     ]
 
     // MARK: - Debug Settings
@@ -47,7 +50,8 @@ public enum DefaultSettings {
         "GCC_OPTIMIZATION_LEVEL": "0",
         "DEBUG_INFORMATION_FORMAT": "dwarf",
         "ENABLE_TESTABILITY": "YES",
-        "OTHER_SWIFT_FLAGS": "-D DEBUG",
+        // Tuist SPM(static)이 주입하는 -Xcc -fmodule-map-file 플래그를 유지해야 함
+        "OTHER_SWIFT_FLAGS": "$(inherited) -D DEBUG",
     ]
 
     // MARK: - Release Settings
@@ -95,9 +99,32 @@ public enum DefaultSettings {
         ]
     }
 
+    /// 프레임워크 타겟 전용 — configuration마다 동일한 override를 병합한다.
+    public static func frameworkConfigurations(
+        merging additional: SettingsDictionary = [:]
+    ) -> [Configuration] {
+        let debug = base.merging(debugSettings).merging(additional)
+        let release = base.merging(releaseSettings).merging(additional)
+
+        return [
+            .debug(
+                name: Environment.debugConfigName,
+                settings: debug
+            ),
+            .release(
+                name: Environment.releaseConfigName,
+                settings: release
+            ),
+        ]
+    }
+
     public static func targetConfigurations() -> [Configuration] {
-        let debugAppSettings = appSettings(for: .debug)
-        let releaseAppSettings = appSettings(for: .release)
+        let debugAppSettings = appSettings(for: .debug).merging([
+            "CODE_SIGN_ENTITLEMENTS": .string("App-Debug.entitlements"),
+        ])
+        let releaseAppSettings = appSettings(for: .release).merging([
+            "CODE_SIGN_ENTITLEMENTS": .string("App-Release.entitlements"),
+        ])
 
         return [
             .debug(
