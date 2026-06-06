@@ -42,3 +42,5 @@ App → Presentation → Domain ← Data → Core / Shared
 | `Projects/` | Tuist 소스 |
 
 `Config/*.xcconfig` — API 키 등, **git 제외**.
+새 worktree에서는 `docs/harness/scripts/bootstrap-worktree.sh`가 `~/.souzip/config`에서 필요한 xcconfig를 복사합니다.
+다른 위치를 쓰려면 `SOUZIP_CONFIG_DIR`를 지정합니다.

@@ -31,6 +31,14 @@ Story는 기본적으로 기술 경계로 나눕니다. 예를 들어 API, Domai
 
 어떤 방식으로 나누든 Story 하나는 PR 하나로 들어가도 앱이 깨지지 않아야 합니다.
 Story worktree는 `develop`에서 만들고, Story PR도 `develop`으로 보냅니다.
+새 worktree를 만든 직후에는 아래 bootstrap을 한 번 실행합니다.
+
+```bash
+docs/harness/scripts/bootstrap-worktree.sh
+```
+
+bootstrap은 Git에 올리지 않는 `Config/Debug.xcconfig`, `Config/Release.xcconfig`를 로컬 설정 저장소에서 복사하고, `Tuist/Package.resolved` 기준으로 `tuist install`과 `tuist generate`를 실행합니다.
+로컬 설정 저장소 기본 위치는 `~/.souzip/config`이며, 필요하면 `SOUZIP_CONFIG_DIR` 환경 변수로 바꿀 수 있습니다.
 
 Goal 승인 뒤 Story 목록을 만들지만, Jira Story를 처음부터 전부 만들지는 않습니다.
 실제로 시작할 active Story 1~2개만 먼저 Jira에 만들고, 나머지는 후보로 둡니다.

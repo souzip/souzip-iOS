@@ -49,8 +49,12 @@ Story 하나는 worktree 하나이자 PR 하나입니다.
 - target branch: `develop`
 - Jira Story: active Story만 생성
 - Story 문서: worktree, branch, base commit 기록
+- 새 worktree 준비: `docs/harness/scripts/bootstrap-worktree.sh`
 
 Story를 시작하기 전에는 `develop` 기준점이 분명해야 합니다.
+새 worktree를 만든 직후에는 bootstrap 스크립트를 한 번 실행합니다.
+이 스크립트는 로컬 `Config` 파일을 복사한 뒤 `tuist install`과 `tuist generate`를 실행합니다.
+`tuist install`은 `Tuist/Package.resolved`를 기준으로 필요한 의존성 상태를 맞추며, 도구의 캐시가 있으면 재사용합니다.
 실제 Story 문서는 `docs/goals/` 아래에 로컬로만 보관하고 Git에 올리지 않습니다.
 
 ## 4. Plan 만들기

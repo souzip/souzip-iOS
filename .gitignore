@@ -21,6 +21,7 @@ graph.png
 .swiftpm
 .build
 Package.resolved
+!Tuist/Package.resolved
 
 # Swift
 *.swiftmodule
