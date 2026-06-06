@@ -1,6 +1,6 @@
 # 새 기능 플레이북
 
-> API·화면·도메인 로직을 **처음부터** 넣을 때의 순서. 플랜(`docs/plans/{feature}/plan.md`) §완료 기준과 함께 쓴다.
+> API·화면·도메인 로직을 **처음부터** 넣을 때의 순서. Plan(`docs/goals/{feature}/stories/{story}/plans/{date}-{slice}/plan.md`) 완료 기준과 함께 쓴다.
 
 ## 시작 전
 

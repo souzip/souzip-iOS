@@ -48,4 +48,3 @@ Story 하나는 PR 하나입니다. Story를 끝내기 위해 여러 Plan을 차
 - 워크플로우 스킬: [`docs/harness/skills.md`](docs/harness/skills.md)
 - 작업 흐름: [`docs/harness/workflow/story-plan-session.md`](docs/harness/workflow/story-plan-session.md)
 - 검증 기준: [`docs/harness/verification.md`](docs/harness/verification.md)
-- 설계 노트: [`docs/harness/orchestration/README.md`](docs/harness/orchestration/README.md)

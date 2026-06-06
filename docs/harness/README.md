@@ -14,7 +14,6 @@
 | [`agents.md`](agents.md) | 서브에이전트 역할과 승인 기준 |
 | [`verification.md`](verification.md) | 검증과 실패 처리 |
 | [`templates/`](templates/README.md) | Goal, Story, Plan 문서 양식 |
-| [`orchestration/`](orchestration/README.md) | 하네스 개선을 위한 설계 노트 |
 | [`context/`](context/README.md) | Souzip iOS 구현 맥락 |
 
 ## 기본 원칙
