@@ -8,7 +8,7 @@ public final class DSNavigationBar: UIView {
         case title
         case back // back
         case close // close
-        case Settings // back + settings
+        case trailingSettings // settings only (e.g. tab root)
         case backManage // back + edit, delete
         case backEtc
     }
@@ -109,7 +109,7 @@ public final class DSNavigationBar: UIView {
         case .close:
             renderLeft(.close)
 
-        case .Settings:
+        case .trailingSettings:
             renderRight([.settings])
 
         case .backManage:

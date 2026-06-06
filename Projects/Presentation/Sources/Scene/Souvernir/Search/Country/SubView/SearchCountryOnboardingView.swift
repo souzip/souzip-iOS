@@ -53,9 +53,9 @@ final class SearchCountryOnboardingView: UIStackView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let w = bounds.width
-        guard w > 0 else { return }
-        messageLabel.preferredMaxLayoutWidth = w
+        let width = bounds.width
+        guard width > 0 else { return }
+        messageLabel.preferredMaxLayoutWidth = width
     }
 
     // MARK: - Public

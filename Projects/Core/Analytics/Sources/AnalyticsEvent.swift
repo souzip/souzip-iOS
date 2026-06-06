@@ -59,15 +59,15 @@ public enum AnalyticsEvent {
 
     public var eventType: String {
         switch self {
-        case let .app(e): e.eventType
-        case let .upload(e): e.eventType
+        case let .app(event): event.eventType
+        case let .upload(event): event.eventType
         }
     }
 
     public var properties: [String: Any]? {
         switch self {
-        case let .app(e): e.properties
-        case let .upload(e): e.properties
+        case let .app(event): event.properties
+        case let .upload(event): event.properties
         }
     }
 }

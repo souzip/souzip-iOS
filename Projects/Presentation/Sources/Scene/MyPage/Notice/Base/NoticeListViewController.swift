@@ -34,7 +34,11 @@ final class NoticeListViewController: BaseViewController<
     override func handleEvent(_ event: Event) {
         switch event {
         case let .loading(isLoading):
-            isLoading ? loadingIndicator.startAnimating() : loadingIndicator.stopAnimating()
+            if isLoading {
+                loadingIndicator.startAnimating()
+            } else {
+                loadingIndicator.stopAnimating()
+            }
 
         case let .showAlert(message):
             showDSAlert(message: message)

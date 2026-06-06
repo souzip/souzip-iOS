@@ -7,7 +7,7 @@ final class MyPageView: BaseView<MyPageAction> {
 
     private let navigationBar = DSNavigationBar(
         title: "마이컬렉션",
-        style: .Settings
+        style: .trailingSettings
     )
 
     private let myPageRootListView = MyPageRootListView()

@@ -55,9 +55,9 @@ final class SearchCountryNoResultsView: UIStackView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        let w = bounds.width - layoutMargins.left - layoutMargins.right
-        guard w > 0 else { return }
-        primaryLabel.preferredMaxLayoutWidth = w
-        secondaryLabel.preferredMaxLayoutWidth = w
+        let width = bounds.width - layoutMargins.left - layoutMargins.right
+        guard width > 0 else { return }
+        primaryLabel.preferredMaxLayoutWidth = width
+        secondaryLabel.preferredMaxLayoutWidth = width
     }
 }

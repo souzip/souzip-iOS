@@ -5,6 +5,18 @@ import RxCocoa
 import SnapKit
 import UIKit
 
+struct SouvenirFormPhotoRenderLine {
+    let mode: SouvenirFormMode
+    let localPhotos: [LocalPhoto]
+    let existingFiles: [SouvenirFile]
+}
+
+struct SouvenirFormAddressRenderLine {
+    let address: String
+    let locationDetail: String
+    let showsPreciseLocationEntry: Bool
+}
+
 final class SouvenirFormView: BaseView<SouvenirFormAction> {
     // MARK: - UI
 
@@ -161,12 +173,12 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         naviBar.render(title: title, style: .close)
     }
 
-    func renderPhotos(_ line: (SouvenirFormMode, [LocalPhoto], [SouvenirFile])) {
-        switch line.0 {
+    func renderPhotos(_ line: SouvenirFormPhotoRenderLine) {
+        switch line.mode {
         case .create:
-            photoSectionView.renderCreate(localPhotos: line.1)
+            photoSectionView.renderCreate(localPhotos: line.localPhotos)
         case .edit:
-            photoSectionView.renderEdit(existingFiles: line.2)
+            photoSectionView.renderEdit(existingFiles: line.existingFiles)
         }
     }
 
@@ -174,12 +186,11 @@ final class SouvenirFormView: BaseView<SouvenirFormAction> {
         nameFieldView.setText(text)
     }
 
-    /// `(주소, 상세·힌트 문구, 정밀 위치 진입 표시 여부)`
-    func renderAddress(_ line: (String, String, Bool)) {
-        addressFieldView.render(text: line.0)
+    func renderAddress(_ line: SouvenirFormAddressRenderLine) {
+        addressFieldView.render(text: line.address)
         addressFieldView.renderDetailOrHintLine(
-            detailText: line.1,
-            showPreciseLocationEntry: line.2
+            detailText: line.locationDetail,
+            showPreciseLocationEntry: line.showsPreciseLocationEntry
         )
     }
 

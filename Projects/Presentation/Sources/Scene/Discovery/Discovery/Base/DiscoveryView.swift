@@ -114,140 +114,139 @@ final class DiscoveryView: BaseView<DiscoveryAction> {
 
 // MARK: - Diffable / CellRegistration
 
+private struct DiscoveryCellRegistrations {
+    let countryChip: UICollectionView.CellRegistration<CountryChipCell, CountryChipItem>
+    let souvenirCard: UICollectionView.CellRegistration<SouvenirCardCell, SouvenirCardItem>
+    let categoryChip: UICollectionView.CellRegistration<DiscoveryCategoryChipCell, CategoryItem>
+    let moreButton: UICollectionView.CellRegistration<MoreButtonCell, String>
+    let rankCard: UICollectionView.CellRegistration<RankCardCell, [StatCountryChipItem]>
+    let empty: UICollectionView.CellRegistration<EmptyStateCell, String>
+    let spacer: UICollectionView.CellRegistration<UICollectionViewCell, Void>
+    let banner: UICollectionView.CellRegistration<BannerCell, Void>
+    let header: UICollectionView.SupplementaryRegistration<DiscoverySectionHeaderView>
+}
+
 private extension DiscoveryView {
+    func makeCellRegistrations() -> DiscoveryCellRegistrations {
+        DiscoveryCellRegistrations(
+            countryChip: .init { cell, _, item in
+                cell.render(item: item)
+            },
+            souvenirCard: .init { cell, _, item in
+                cell.render(item: item)
+            },
+            categoryChip: .init { cell, _, item in
+                cell.render(item: item)
+            },
+            moreButton: .init { cell, _, item in
+                cell.render(title: item)
+            },
+            rankCard: .init { cell, _, item in
+                cell.render(item)
+            },
+            empty: .init { cell, _, text in
+                cell.render(text)
+            },
+            spacer: .init { _, _, _ in },
+            banner: .init { [weak self] cell, _, _ in
+                guard let viewController = self?.window?.rootViewController else { return }
+                cell.configure(rootViewController: viewController)
+            },
+            header: .init(
+                elementKind: UICollectionView.elementKindSectionHeader
+            ) { [weak self] supplementaryView, _, indexPath in
+                guard let self,
+                      let section = dataSource?.sectionIdentifier(for: indexPath.section)
+                else { return }
+
+                supplementaryView.render(section: section)
+            }
+        )
+    }
+
+    func dequeueConfiguredCell(
+        collectionView: UICollectionView,
+        indexPath: IndexPath,
+        item: Item,
+        registrations: DiscoveryCellRegistrations
+    ) -> UICollectionViewCell {
+        switch item {
+        case let .countryChip(chipItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.countryChip,
+                for: indexPath,
+                item: chipItem
+            )
+
+        case let .souvenirCard(cardItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.souvenirCard,
+                for: indexPath,
+                item: cardItem
+            )
+
+        case let .categoryChip(chipItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.categoryChip,
+                for: indexPath,
+                item: chipItem
+            )
+
+        case let .moreButton(title):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.moreButton,
+                for: indexPath,
+                item: title
+            )
+
+        case let .statCountryChip(chipItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.rankCard,
+                for: indexPath,
+                item: chipItem
+            )
+
+        case let .empty(_, text):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.empty,
+                for: indexPath,
+                item: text
+            )
+
+        case .banner:
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.banner,
+                for: indexPath,
+                item: ()
+            )
+
+        case .spacer:
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.spacer,
+                for: indexPath,
+                item: ()
+            )
+        }
+    }
+
     func configureDataSource() {
-        let countryChipRegistration = UICollectionView.CellRegistration<
-            CountryChipCell,
-            CountryChipItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
-
-        let souvenirCardRegistration = UICollectionView.CellRegistration<
-            SouvenirCardCell,
-            SouvenirCardItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
-
-        let categoryChipRegistration = UICollectionView.CellRegistration<
-            DiscoveryCategoryChipCell,
-            CategoryItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
-
-        let moreButtonRegistration = UICollectionView.CellRegistration<
-            MoreButtonCell,
-            String
-        > { cell, _, item in
-            cell.render(title: item)
-        }
-
-        let rankCardRegistration = UICollectionView.CellRegistration<
-            RankCardCell,
-            [StatCountryChipItem]
-        > { cell, _, item in
-            cell.render(item)
-        }
-
-        let emptyRegistration = UICollectionView.CellRegistration<
-            EmptyStateCell,
-            String
-        > { cell, _, text in
-            cell.render(text)
-        }
-
-        let spacerRegistration = UICollectionView.CellRegistration<
-            UICollectionViewCell,
-            Void
-        > { _, _, _ in }
-
-        let bannerRegistration = UICollectionView.CellRegistration<
-            BannerCell,
-            Void
-        > { [weak self] cell, _, _ in
-            guard let vc = self?.window?.rootViewController else { return }
-            cell.configure(rootViewController: vc)
-        }
-
-        let headerRegistration = UICollectionView.SupplementaryRegistration<
-            DiscoverySectionHeaderView
-        >(
-            elementKind: UICollectionView.elementKindSectionHeader
-        ) { [weak self] supplementaryView, _, indexPath in
-            guard let self,
-                  let section = dataSource?.sectionIdentifier(for: indexPath.section)
-            else { return }
-
-            supplementaryView.render(section: section)
-        }
+        let registrations = makeCellRegistrations()
 
         dataSource = .init(
             collectionView: collectionView
-        ) { collectionView, indexPath, item in
-            switch item {
-            case let .countryChip(chipItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: countryChipRegistration,
-                    for: indexPath,
-                    item: chipItem
-                )
-
-            case let .souvenirCard(cardItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: souvenirCardRegistration,
-                    for: indexPath,
-                    item: cardItem
-                )
-
-            case let .categoryChip(chipItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: categoryChipRegistration,
-                    for: indexPath,
-                    item: chipItem
-                )
-
-            case let .moreButton(title):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: moreButtonRegistration,
-                    for: indexPath,
-                    item: title
-                )
-
-            case let .statCountryChip(chipItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: rankCardRegistration,
-                    for: indexPath,
-                    item: chipItem
-                )
-
-            case let .empty(_, text):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: emptyRegistration,
-                    for: indexPath,
-                    item: text
-                )
-
-            case .banner:
-                collectionView.dequeueConfiguredReusableCell(
-                    using: bannerRegistration,
-                    for: indexPath,
-                    item: ()
-                )
-
-            case .spacer:
-                collectionView.dequeueConfiguredReusableCell(
-                    using: spacerRegistration,
-                    for: indexPath,
-                    item: ()
-                )
-            }
+        ) { [weak self] collectionView, indexPath, item in
+            guard let self else { return UICollectionViewCell() }
+            return dequeueConfiguredCell(
+                collectionView: collectionView,
+                indexPath: indexPath,
+                item: item,
+                registrations: registrations
+            )
         }
 
         dataSource?.supplementaryViewProvider = { collectionView, _, indexPath in
             collectionView.dequeueConfiguredReusableSupplementary(
-                using: headerRegistration,
+                using: registrations.header,
                 for: indexPath
             )
         }
@@ -266,40 +265,58 @@ private extension DiscoveryView {
         static let horizontal: CGFloat = 20
     }
 
+    func isSectionEmpty(_ kind: Section) -> Bool {
+        guard let dataSource else { return false }
+        let items = dataSource.snapshot().itemIdentifiers(inSection: kind)
+        guard items.count == 1 else { return false }
+        if case .empty = items[0] { return true }
+        return false
+    }
+
+    func sectionLayout(for kind: Section, isEmptySection: Bool) -> NSCollectionLayoutSection {
+        switch kind {
+        case .top10CountryChips:
+            makeTop10ChipsSectionLayout()
+
+        case .top10Cards:
+            if isEmptySection {
+                makeEmptyFullWidthSectionLayout(height: 219)
+            } else {
+                makeTop10CardsSectionLayout()
+            }
+
+        case .banner:
+            makeBannerSectionLayout()
+
+        case .categoryChips:
+            makeCategoryChipsSectionLayout()
+
+        case .categoryCards:
+            if isEmptySection {
+                makeEmptyFullWidthSectionLayout(height: 219)
+            } else {
+                makeCategoryCardsSectionLayout()
+            }
+
+        case .categoryMore:
+            makeCategoryMoreSectionLayout()
+
+        case .statisticsChips:
+            makeStatisticsChipsSectionLayout()
+
+        case .spacer:
+            makeSpacerSectionLayout()
+        }
+    }
+
     func makeCVLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
             guard let self,
                   let kind = dataSource?.sectionIdentifier(for: sectionIndex)
             else { return nil }
 
-            let isEmptySection: Bool = {
-                guard let ds = self.dataSource else { return false }
-                let snapshot = ds.snapshot()
-                let items = snapshot.itemIdentifiers(inSection: kind)
-                return items.count == 1 && {
-                    if case .empty = items[0] { return true }
-                    return false
-                }()
-            }()
-
-            let section = switch kind {
-            case .top10CountryChips:
-                makeTop10ChipsSectionLayout()
-            case .top10Cards:
-                isEmptySection ? makeEmptyFullWidthSectionLayout(height: 219) : makeTop10CardsSectionLayout()
-            case .banner:
-                makeBannerSectionLayout()
-            case .categoryChips:
-                makeCategoryChipsSectionLayout()
-            case .categoryCards:
-                isEmptySection ? makeEmptyFullWidthSectionLayout(height: 219) : makeCategoryCardsSectionLayout()
-            case .categoryMore:
-                makeCategoryMoreSectionLayout()
-            case .statisticsChips:
-                makeStatisticsChipsSectionLayout()
-            case .spacer:
-                makeSpacerSectionLayout()
-            }
+            let isEmptySection = isSectionEmpty(kind)
+            let section = sectionLayout(for: kind, isEmptySection: isEmptySection)
 
             section.contentInsets.top = topSpacing(for: kind)
             section.contentInsets.bottom = bottomSpacing(for: kind)

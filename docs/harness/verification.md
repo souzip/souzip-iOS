@@ -6,10 +6,16 @@ Plan은 구현만 끝났다고 닫지 않습니다.
 ## 기본 검증
 
 - SwiftFormat lint
-- SwiftLint
+- SwiftLint strict (warning/error 모두 실패)
 - Tuist generate
 - Tuist build
 - 관련 테스트
+
+PR CI(`.github/workflows/verify.yml`)도 동일한 strict lint 기준을 사용합니다.
+로컬 Xcode 빌드는 lint 실패로 막지 않고, PR의 `lint` job에서만 막습니다.
+
+CI `build` job은 `tuist build` 뒤 `tuist test --skip-ui-tests`까지 실행합니다.
+Config secrets가 없으면 `build` job(빌드·테스트)만 실패하고 `lint` job은 통과합니다.
 
 기본 스크립트:
 
