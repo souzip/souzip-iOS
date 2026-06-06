@@ -45,6 +45,11 @@ public enum DefaultInfoPlist {
             ],
         ],
 
+        // Push Notifications
+        "UIBackgroundModes": [
+            "remote-notification",
+        ],
+
         // Export Compliance
         "ITSAppUsesNonExemptEncryption": false,
 

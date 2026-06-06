@@ -22,3 +22,7 @@ AMPLITUDE_API_KEY =
 // AdMob App ID
 ADMOB_APP_ID = 
 ADMOB_BANNER_AD_UNIT_ID =
+
+// Firebase (GoogleService-Info.plist — Git 미추적, Config/에 로컬 배치)
+// Debug: GoogleService-Info-Debug.plist  (BUNDLE_ID: com.swyp.souzip.dev)
+// Release: GoogleService-Info-Release.plist (BUNDLE_ID: com.swyp.souzip)
