@@ -40,8 +40,6 @@ Config/*.xcconfig
 .vscode/
 .idea/
 buildServer.json
-.cursor/settings.json
-.cursor/mcp.json
 
 # SwiftFormat
 .swiftformat.cache
@@ -52,13 +50,6 @@ buildServer.json
 # Misc
 *.log
 
-# AI harness — 정본은 추적, 임시·초안만 제외 (docs/harness/gitignore-policy.md)
-docs/harness/scratch/*
-!docs/harness/scratch/.gitignore
-
-# docs/plans — plan.md 정본만 SoR; 초안·개인·민감 메모는 로컬
-docs/plans/**/draft-*
-docs/plans/**/local-*
-docs/plans/**/notes-*
-docs/plans/**/local-notes.md
-docs/plans/**/*.html
+# docs/goals — Goal/Story/Plan 실행 문서는 로컬 보관 (README만 Git 추적)
+docs/goals/*
+!docs/goals/README.md

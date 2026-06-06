@@ -1,6 +1,6 @@
 # 새 기능 플레이북
 
-> API·화면·도메인 로직을 **처음부터** 넣을 때의 순서. 플랜(`docs/plans/{feature}/plan.md`) §완료 기준과 함께 쓴다.
+> API·화면·도메인 로직을 **처음부터** 넣을 때의 순서. Plan(`docs/goals/{feature}/stories/{story}/plans/{date}-{slice}/plan.md`) 완료 기준과 함께 쓴다.
 
 ## 시작 전
 
@@ -141,7 +141,7 @@ return .init(vc: vc, route: vm.route, disposeBag: vc.disposeBag)
 - [ ] Presentation → Data import 없음 (grep 또는 리뷰)
 - [ ] (증거) Xcode scheme 빌드 또는 스크린샷
 
-verify 모드: [`../workflows/00-triggers.md`](../workflows/00-triggers.md) §5 + `feature-tracker.json` evidence.
+verify: [`../workflow/story-plan-session.md`](../workflow/story-plan-session.md) · plan §검증 + story Plans 표.
 
 ---
 

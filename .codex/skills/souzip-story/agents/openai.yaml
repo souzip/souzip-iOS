@@ -1,0 +1,4 @@
+interface:
+  display_name: "Souzip Story"
+  short_description: "Split Goals into PR-sized Stories"
+  default_prompt: "Use $souzip-story to split a Souzip Goal into Stories."

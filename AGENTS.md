@@ -1,83 +1,50 @@
-# Souzip — AI 에이전트 진입점
+# Souzip — Codex 작업 기준
 
-**수집(Souzip)**: 여행 기념품 iOS 앱 · Tuist · Swift 5.9 · iOS 16+
+수집(Souzip)은 여행 기념품 iOS 앱입니다. 이 레포에서 AI 작업 기준은 **Codex**입니다.
 
-목표: 코드만 많이가 아니라 **다음 세션이 추측 없이 이어지게** 저장소를 남긴다 (LHE).
+## 말하는 방식
 
----
+사용자에게는 한국어 존댓말로, 평소 작업 설명하듯 답합니다.
+왜 그런지 먼저 말하고, 파일·폴더 이름은 그다음에 말합니다.
+낯선 영어와 기술 용어는 처음 나올 때 바로 풀어 설명합니다.
 
-## Startup Workflow (세션 시작)
+자세한 기준: [`docs/harness/communication.md`](docs/harness/communication.md)
 
-코드 작성 **전**:
+## 기본 흐름
 
-1. [`docs/harness/progress.md`](docs/harness/progress.md) — 검증된 상태·다음 액션
-2. 작업 feature → [`docs/plans/{feature}/plan.md`](docs/plans/)
-3. `git log --oneline -5`
-4. implement 예정 → [`docs/harness/scripts/preflight.sh`](docs/harness/scripts/preflight.sh)  
-   실패 시 새 기능 중단, 기준선부터
+```text
+Goal
+  └── Story
+        └── Plan
+```
 
-## 읽는 순서 (상세)
+- **Goal**: 기능 목표와 이해관계를 문서화한 단위입니다.
+- **Story**: PR 하나가 되는 작업 단위입니다.
+- **Plan**: 한 세션에서 구현과 검증까지 끝낼 수 있는 작업 단위입니다.
 
-1. [`docs/harness/README.md`](docs/harness/README.md) — 4층·LHE A~E
-2. [`docs/harness/workflows/00-triggers.md`](docs/harness/workflows/00-triggers.md) — 모드·게이트 (**정본**)
-3. [`docs/harness/workflows/01-session-lifecycle.md`](docs/harness/workflows/01-session-lifecycle.md)
-4. `.cursor/skills/souzip-*`
+AI는 인터뷰로 요구사항을 먼저 명확히 하고, 목표 문서를 만든 뒤 Story를 나눕니다.
+Story 하나는 PR 하나입니다. Story를 끝내기 위해 여러 Plan을 차례로 처리합니다.
 
-## Working Rules
+## 지켜야 할 선
 
-- 한 번에 **하나의 기능** (`feature-tracker` `in_progress` 1개)
-- **G1**: plan + 사용자 승인 + 「구현해」/「구현 시작해」 **모두** 전 코드 변경 금지
-- **G4**: 「커밋해」「PR」명시 전 commit·push·PR 금지
-- 증거 없이 완료·`passing` 표시 금지
-- 채팅만 X → `progress` · `plan.md` · `docs/plans/`
-- 하네스 마찰 → [`docs/harness/friction-log.md`](docs/harness/friction-log.md) (기록만) · 개선은 「이거 토대로 개선하자」+ plan — [`02-harness-improvement.md`](docs/harness/workflows/02-harness-improvement.md)
+- 목표 문서와 Story 분리안은 사용자 확인 후 확정합니다.
+- Story worktree는 항상 `develop` 기준으로 만듭니다.
+- Plan은 사용자 승인 후 구현합니다.
+- 사용자가 "구현해"라고 하기 전에는 코드를 고치지 않습니다.
+- Plan 범위 안의 검증 실패는 AI가 고치고 다시 검증합니다.
+- Tuist, Factory, 모듈 경계, 레이어 규칙처럼 큰 구조 변경이 필요하면 멈추고 묻습니다.
+- 사용자가 "커밋해"라고 하기 전에는 commit을 하지 않습니다.
+- 사용자가 "PR"이라고 하기 전에는 PR 생성과 PR 생성을 위한 push를 하지 않습니다.
 
-## Definition of Done
+## 서브에이전트
 
-다음이 **모두**일 때만 기능 완료:
+역할 지시는 [`.agents/agents/`](.agents/agents/)에 둡니다.
+현재 기준은 독립된 세션으로 메인 대화를 깨끗하게 유지하는 것입니다. 병렬 작업은 나중에 필요할 때 붙입니다.
 
-- `plan.md` **§완료 기준** 충족
-- 검증 실행 (preflight, plan 테스트, 빌드 등)
-- 증거가 `progress` 또는 `feature-tracker.json`에 기록
-- preflight로 재시작 가능한 저장소 상태
+## 참고 문서
 
-템플릿: [`docs/harness/templates/plan-dod-section.md`](docs/harness/templates/plan-dod-section.md)
-
-## End of Session
-
-1. `docs/harness/progress.md` 갱신
-2. `feature-tracker.json` (있을 때)
-3. blocker·Next action 기록
-4. (선택) 마찰·회고 → `friction-log.md` 한 행
-5. 커밋은 사용자 **ship** 지시 시만
-
-## 비협상
-
-[`docs/harness/constitution.md`](docs/harness/constitution.md)
-
-## 프로젝트·아키텍처
-
-[`docs/harness/context/`](docs/harness/context/)
-
-## 산출물
-
-- `docs/plans/{feature}/` — `plan.md`, (선택) `feature-tracker.json`
-- 하네스 메타: `docs/plans/agent-harness-rebuild/`
-
-## Cursor
-
-- Rule: `.cursor/rules/00-souzip-harness.mdc`
-- Skills: `.cursor/skills/souzip-*`
-
-## Jira (작업 시작 전)
-
-- Atlassian MCP: Cursor 플러그인 설정 우선 · 로컬 `.cursor/mcp.json`은 선택(커밋 제외) · 연결: [`docs/harness/jira-mcp-setup.md`](docs/harness/jira-mcp-setup.md)
-- **미연결 시** `souzip-start`는 setup 안내만 — 웹 수동이 기본이 아님
-
-## Gitignore
-
-- **추적**: `docs/plans/{feature}/plan.md`, (선택) `feature-tracker.json`, `docs/plans/archive/`
-- **제외**: `docs/harness/scratch/`, `docs/plans/**/draft-*`, `local-*`, `notes-*`
-- 정책: [`docs/harness/gitignore-policy.md`](docs/harness/gitignore-policy.md) · 구조: [`docs/plans/README.md`](docs/plans/README.md)
-
-레거시 `CLAUDE.md` · `.claude/skills/` → H6 제거 ([`docs/harness/migration-map.md`](docs/harness/migration-map.md))
+- 하네스 개요: [`docs/harness/README.md`](docs/harness/README.md)
+- 실제 작업 순서: [`docs/harness/workflow/operating-sequence.md`](docs/harness/workflow/operating-sequence.md)
+- 워크플로우 스킬: [`docs/harness/skills.md`](docs/harness/skills.md)
+- 작업 흐름: [`docs/harness/workflow/story-plan-session.md`](docs/harness/workflow/story-plan-session.md)
+- 검증 기준: [`docs/harness/verification.md`](docs/harness/verification.md)

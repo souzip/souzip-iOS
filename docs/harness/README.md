@@ -1,86 +1,29 @@
 # Souzip AI Harness
 
-도구 중립 협업 규약. 진입: 루트 [`AGENTS.md`](../../AGENTS.md).
+이 폴더는 Codex가 Souzip 작업을 진행할 때 따르는 흐름과 기준을 담습니다.
+구현보다 먼저 요구사항을 명확히 하고, Story 단위로 PR을 나누며, 검증과 기록 가능한 산출물을 남기는 것이 목적입니다.
 
-LHE 최소 팩(A~E) + Souzip 5모드·게이트를 [`docs/harness/`](.)에 일원화했다.
+## 핵심 문서
 
-## 4층 모델
-
-| 층 | 경로 | 한 줄 | 예 |
-|----|------|-------|-----|
-| **constitution** | `docs/harness/constitution.md` | 바뀌지 않는 규칙·금지·Git | `!` 금지 |
-| **context** | `docs/harness/context/` | 프로젝트·아키텍처 | Tuist, 레이어 |
-| **workflow** | `docs/harness/workflows/` | 모드·절차 | `00-triggers.md`, `01-session-lifecycle.md`, `02-harness-improvement.md` |
-| **artifact** | `docs/plans/{feature}/` | 작업별 산출물 | `plan.md`, `feature-tracker.json` |
-
-하네스 **제작** 메타: `docs/plans/agent-harness-rebuild/`.
-
-## Context (프로젝트 구조)
-
-AI가 코드 전체를 훑기 전에 읽는 정본: [`context/README.md`](context/README.md)
-
-| 문서 | 용도 |
+| 파일 | 용도 |
 |------|------|
-| [`context/architecture.md`](context/architecture.md) | **전체** 레이어·부트스트랩·Coordinator 트리 |
-| [`context/layers.md`](context/layers.md) | 모듈·import·Factory 경계 |
-| [`context/presentation.md`](context/presentation.md) | MVVM-C·BaseView·Scene |
-| [`context/domain-and-data.md`](context/domain-and-data.md) | UseCase·Repository·DTO |
-| [`context/feature-playbook.md`](context/feature-playbook.md) | 새 기능 ①~⑤ 단계 |
+| [`workflow/operating-sequence.md`](workflow/operating-sequence.md) | 실제 작업 순서 |
+| [`workflow/story-plan-session.md`](workflow/story-plan-session.md) | Goal → Story → Plan 흐름 |
+| [`workflow/gates.md`](workflow/gates.md) | 구현·커밋·PR을 막는 조건 |
+| [`skills.md`](skills.md) | 워크플로우 실행 스킬 |
+| [`agents.md`](agents.md) | 서브에이전트 역할과 승인 기준 |
+| [`verification.md`](verification.md) | 검증과 실패 처리 |
+| [`templates/`](templates/README.md) | Goal, Story, Plan 문서 양식 |
+| [`context/`](context/README.md) | Souzip iOS 구현 맥락 |
 
-## LHE 대응 (A~E)
+## 기본 원칙
 
-| 옵션 | 파일 |
-|------|------|
-| A progress | [`progress.md`](progress.md) |
-| B feature + evidence | [`templates/feature-tracker.json`](templates/feature-tracker.json) |
-| C DoD·루틴 | [`AGENTS.md`](../../AGENTS.md) · [`workflows/01-session-lifecycle.md`](workflows/01-session-lifecycle.md) |
-| D preflight | [`scripts/preflight.sh`](scripts/preflight.sh) |
-| E 합성 | 위 + [`workflows/00-triggers.md`](workflows/00-triggers.md) 5모드 |
-
-## 로드 정책
-
-| 항상 (세션 시작) | 필요 시 |
-|------------------|---------|
-| `AGENTS.md` | `constitution.md` |
-| `.cursor/rules/00-souzip-harness.mdc` | `context/*.md` |
-| [`progress.md`](progress.md) | `workflows/{단계}.md` |
-| 스킬 → `souzip-*` | `docs/plans/{feature}/plan.md` |
-
-implement 전: [`scripts/preflight.sh`](scripts/preflight.sh) (기준선, D).
-
-## `docs/plans/` vs `scratch/` vs 초안
-
-| | `plan.md` | `draft-*` / `notes-*` | `scratch/` |
-|---|-----------|------------------------|------------|
-| 용도 | 승인·DoD·구현 근거 | 초안·민감·장문 메모 | 당일 임시 |
-| git | **추적** | **ignore** | **ignore** |
-
-가이드: [`../plans/README.md`](../plans/README.md) · [`gitignore-policy.md`](gitignore-policy.md)
-
-## 디렉터리
-
-```text
-docs/
-├── README.md
-├── harness/              # 이 폴더
-│   ├── progress.md
-│   ├── friction-log.md   # 마찰·회고 (이벤트 기반)
-│   ├── constitution.md
-│   ├── context/
-│   ├── workflows/        # 00·01·02
-│   ├── scripts/preflight.sh
-│   ├── templates/
-│   └── scratch/          # gitignore
-└── plans/{feature}/
-```
-
-[`migration-map.md`](migration-map.md) · [`gitignore-policy.md`](gitignore-policy.md) · [`jira-mcp-setup.md`](jira-mcp-setup.md)
-
-## 하네스 개선 (이벤트 기반)
-
-| 문서 | 용도 |
-|------|------|
-| [`friction-log.md`](friction-log.md) | 「마찰 기록해」「왜 그렇게 했어」→ 한 행 추가 |
-| [`workflows/02-harness-improvement.md`](workflows/02-harness-improvement.md) | 「이거 토대로 개선하자」→ plan → 구현 |
-
-**plan·PRD HTML 미리보기** (로컬·git 제외): [`../plans/README.md`](../plans/README.md) · `docs/plans/{feature}/*.html`
+- 구현보다 먼저 인터뷰로 목표와 이해관계를 명확히 합니다.
+- 목표 문서를 바탕으로 Story를 나눕니다.
+- Story 하나는 PR 하나입니다.
+- Plan 하나는 한 세션에서 구현과 검증까지 끝낼 수 있어야 합니다.
+- Story worktree는 항상 `develop` 기준으로 만듭니다.
+- 실제 작업 순서는 `Goal → Story 후보 → active Story → worktree → Plan → 구현 → 검증 → PR`입니다.
+- 반복 실행은 `souzip-goal`, `souzip-story`, `souzip-plan`, `souzip-verify`, `souzip-commit`, `souzip-pr` 스킬로 나눕니다.
+- 검증 실패는 Plan 범위 안에서 고치고 다시 검증합니다.
+- 큰 구조 변경은 AI가 혼자 진행하지 않고 사용자에게 묻습니다.

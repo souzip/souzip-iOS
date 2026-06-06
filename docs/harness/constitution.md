@@ -1,6 +1,6 @@
 # Constitution — 비협상 규칙
 
-> workflow·context보다 우선. H4에서 `CLAUDE.md`와 병합·정리.
+> workflow·context보다 우선. Codex 운영 기준은 `AGENTS.md`와 `docs/harness/`에 둔다.
 
 ## DO NOT
 
@@ -34,9 +34,9 @@
 
 ## AI 협업 (constitution급)
 
-- **G1**: plan + 사용자 승인 + 「구현해」/「구현 시작해」 **모두** 전 코드 변경 금지 ([`workflows/00-triggers.md`](workflows/00-triggers.md))
-- **G3/G4**: verify·ship 게이트 — [`workflows/00-triggers.md`](workflows/00-triggers.md)
-- **G4**: 명시 없이 commit / push / PR 금지
+- **G1**: plan + 사용자 승인 + 「구현해」 **전** 코드 변경 금지 — [`workflow/gates.md`](workflow/gates.md)
+- **G3-plan / G3-story / G4**: verify·PR·ship — [`workflow/gates.md`](workflow/gates.md) · [`workflow/story-plan-session.md`](workflow/story-plan-session.md)
+- **G4**: 명시 없이 commit 금지. 명시 없이 PR 생성과 PR 생성을 위한 push 금지
 - 커밋·PR 주도권: 사용자 ([`../plans/agent-harness-rebuild/vision.md`](../plans/agent-harness-rebuild/vision.md))
 - **기준선**: implement 전 `docs/harness/scripts/preflight.sh` 실패 시 새 기능 중단
 
@@ -48,4 +48,4 @@
 - BaseViewModel 4타입 · Mapper로 DTO→Domain · Factory DI
 - `import` testable 맨 아래
 
-전체: [`CLAUDE.md`](../../CLAUDE.md) (레거시 요약) · 구조 정본: [`context/README.md`](context/README.md)
+전체 구조 정본: [`context/README.md`](context/README.md)

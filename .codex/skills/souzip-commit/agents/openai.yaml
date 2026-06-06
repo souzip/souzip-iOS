@@ -1,0 +1,4 @@
+interface:
+  display_name: "Souzip Commit"
+  short_description: "Prepare and create a Souzip commit"
+  default_prompt: "Use $souzip-commit to prepare a Souzip commit."
