@@ -117,125 +117,128 @@ final class RecommendView: BaseView<RecommendAction> {
 
 // MARK: - DataSource Configuration
 
+private struct RecommendCellRegistrations {
+    let countryChip: UICollectionView.CellRegistration<CountryChipCell, CountryChipItem>
+    let souvenirCard: UICollectionView.CellRegistration<SouvenirCardCell, SouvenirCardItem>
+    let moreButton: UICollectionView.CellRegistration<MoreButtonCell, String>
+    let uploadPrompt: UICollectionView.CellRegistration<UploadPromptCell, Void>
+    let spacer: UICollectionView.CellRegistration<UICollectionViewCell, Void>
+    let empty: UICollectionView.CellRegistration<EmptyStateCell, String>
+    let header: UICollectionView.SupplementaryRegistration<RecommendSectionHeaderView>
+}
+
 private extension RecommendView {
-    func configureDataSource() {
-        let countryChipRegistration = UICollectionView.CellRegistration<
-            CountryChipCell,
-            CountryChipItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
+    func makeCellRegistrations() -> RecommendCellRegistrations {
+        RecommendCellRegistrations(
+            countryChip: .init { cell, _, item in
+                cell.render(item: item)
+            },
+            souvenirCard: .init { cell, _, item in
+                cell.render(item: item)
+            },
+            moreButton: .init { cell, _, title in
+                cell.render(title: title)
+            },
+            uploadPrompt: .init { [weak self] cell, _, _ in
+                cell.action
+                    .bind { [weak self] in
+                        self?.action.accept(.uploadButtonTap)
+                    }
+                    .disposed(by: cell.disposeBag)
+            },
+            spacer: .init { _, _, _ in },
+            empty: .init { cell, _, text in
+                cell.render(text)
+            },
+            header: .init(
+                elementKind: UICollectionView.elementKindSectionHeader
+            ) { [weak self] supplementaryView, _, indexPath in
+                guard let self,
+                      let section = dataSource?.sectionIdentifier(for: indexPath.section)
+                else { return }
 
-        let souvenirCardRegistration = UICollectionView.CellRegistration<
-            SouvenirCardCell,
-            SouvenirCardItem
-        > { cell, _, item in
-            cell.render(item: item)
-        }
+                switch section {
+                case .preferredMore, .uploadMore, .uploadEmpty, .spacer:
+                    supplementaryView.isHidden = true
+                    supplementaryView.render(title: "")
 
-        let moreButtonRegistration = UICollectionView.CellRegistration<
-            MoreButtonCell,
-            String
-        > { cell, _, title in
-            cell.render(title: title)
-        }
-
-        let uploadPromptRegistration = UICollectionView.CellRegistration<
-            UploadPromptCell,
-            Void
-        > { cell, _, _ in
-            cell.action
-                .bind { [weak self] in
-                    self?.action.accept(.uploadButtonTap)
+                default:
+                    supplementaryView.isHidden = false
+                    supplementaryView.render(title: section.title)
                 }
-                .disposed(by: cell.disposeBag)
-        }
-
-        let spacerRegistration = UICollectionView.CellRegistration<
-            UICollectionViewCell,
-            Void
-        > { _, _, _ in }
-
-        let emptyRegistration = UICollectionView.CellRegistration<
-            EmptyStateCell,
-            String
-        > { cell, _, text in
-            cell.render(text)
-        }
-
-        let headerRegistration = UICollectionView.SupplementaryRegistration<
-            RecommendSectionHeaderView
-        >(
-            elementKind: UICollectionView.elementKindSectionHeader
-        ) { [weak self] supplementaryView, _, indexPath in
-            guard let self,
-                  let section = dataSource?.sectionIdentifier(for: indexPath.section)
-            else { return }
-
-            // 헤더 없는 섹션은 여기서 early return
-            switch section {
-            case .preferredMore, .uploadMore, .uploadEmpty, .spacer:
-                supplementaryView.isHidden = true
-                supplementaryView.render(title: "")
-                return
-
-            default:
-                supplementaryView.isHidden = false
-                supplementaryView.render(title: section.title)
             }
+        )
+    }
+
+    func dequeueConfiguredCell(
+        collectionView: UICollectionView,
+        indexPath: IndexPath,
+        item: Item,
+        registrations: RecommendCellRegistrations
+    ) -> UICollectionViewCell {
+        switch item {
+        case let .countryChip(countryItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.countryChip,
+                for: indexPath,
+                item: countryItem
+            )
+
+        case let .souvenirCard(cardItem):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.souvenirCard,
+                for: indexPath,
+                item: cardItem
+            )
+
+        case let .moreButton(title):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.moreButton,
+                for: indexPath,
+                item: title
+            )
+
+        case .uploadPrompt:
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.uploadPrompt,
+                for: indexPath,
+                item: ()
+            )
+
+        case .spacer:
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.spacer,
+                for: indexPath,
+                item: ()
+            )
+
+        case let .empty(_, text):
+            collectionView.dequeueConfiguredReusableCell(
+                using: registrations.empty,
+                for: indexPath,
+                item: text
+            )
         }
+    }
+
+    func configureDataSource() {
+        let registrations = makeCellRegistrations()
 
         dataSource = .init(
             collectionView: collectionView
-        ) { collectionView, indexPath, item in
-            switch item {
-            case let .countryChip(countryItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: countryChipRegistration,
-                    for: indexPath,
-                    item: countryItem
-                )
-
-            case let .souvenirCard(cardItem):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: souvenirCardRegistration,
-                    for: indexPath,
-                    item: cardItem
-                )
-
-            case let .moreButton(title):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: moreButtonRegistration,
-                    for: indexPath,
-                    item: title
-                )
-
-            case .uploadPrompt:
-                collectionView.dequeueConfiguredReusableCell(
-                    using: uploadPromptRegistration,
-                    for: indexPath,
-                    item: ()
-                )
-
-            case .spacer:
-                collectionView.dequeueConfiguredReusableCell(
-                    using: spacerRegistration,
-                    for: indexPath,
-                    item: ()
-                )
-
-            case let .empty(_, text):
-                collectionView.dequeueConfiguredReusableCell(
-                    using: emptyRegistration,
-                    for: indexPath,
-                    item: text
-                )
-            }
+        ) { [weak self] collectionView, indexPath, item in
+            guard let self else { return UICollectionViewCell() }
+            return dequeueConfiguredCell(
+                collectionView: collectionView,
+                indexPath: indexPath,
+                item: item,
+                registrations: registrations
+            )
         }
 
         dataSource?.supplementaryViewProvider = { collectionView, _, indexPath in
             collectionView.dequeueConfiguredReusableSupplementary(
-                using: headerRegistration,
+                using: registrations.header,
                 for: indexPath
             )
         }
@@ -255,51 +258,55 @@ private extension RecommendView {
         static let moreBottom: CGFloat = 40
     }
 
+    func isSectionEmpty(_ section: Section) -> Bool {
+        guard let dataSource else { return false }
+        let items = dataSource.snapshot().itemIdentifiers(inSection: section)
+        guard items.count == 1 else { return false }
+        if case .empty = items[0] { return true }
+        return false
+    }
+
+    func sectionLayout(for section: Section, isEmptySection: Bool) -> NSCollectionLayoutSection {
+        switch section {
+        case .preferredCategoryChips:
+            makeChipsSectionLayout(hasHeader: true)
+
+        case .preferredCategoryCards:
+            if isEmptySection {
+                makeEmptyFullWidthSectionLayout(height: 219, hasHeader: false)
+            } else {
+                makeCardsSectionLayout(hasHeader: false)
+            }
+
+        case .preferredMore:
+            makeMoreButtonSectionLayout()
+
+        case .spacer:
+            makeSpacerSectionLayout()
+
+        case .uploadEmpty:
+            makeUploadEmptySectionLayout(hasHeader: false)
+
+        case .uploadBasedCards:
+            makeCardsSectionLayout(hasHeader: true)
+
+        case .uploadMore:
+            makeMoreButtonSectionLayout()
+        }
+    }
+
     func makeCVLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout { [weak self] sectionIndex, _ in
             guard let self,
                   let section = dataSource?.sectionIdentifier(for: sectionIndex)
             else { return nil }
 
-            let isEmptySection: Bool = {
-                guard let ds = self.dataSource else { return false }
-                let snapshot = ds.snapshot()
-                let items = snapshot.itemIdentifiers(inSection: section)
-                guard items.count == 1 else { return false }
-                if case .empty = items[0] { return true }
-                return false
-            }()
+            let isEmptySection = isSectionEmpty(section)
+            let layoutSection = sectionLayout(for: section, isEmptySection: isEmptySection)
 
-            let layoutSection: NSCollectionLayoutSection = switch section {
-            case .preferredCategoryChips:
-                makeChipsSectionLayout(hasHeader: true)
-
-            case .preferredCategoryCards:
-                isEmptySection
-                    ? makeEmptyFullWidthSectionLayout(height: 219, hasHeader: false)
-                    : makeCardsSectionLayout(hasHeader: false)
-
-            case .preferredMore:
-                makeMoreButtonSectionLayout()
-
-            case .spacer:
-                makeSpacerSectionLayout()
-
-            case .uploadEmpty:
-                makeUploadEmptySectionLayout(hasHeader: false)
-
-            case .uploadBasedCards:
-                makeCardsSectionLayout(hasHeader: true)
-
-            case .uploadMore:
-                makeMoreButtonSectionLayout()
-            }
-
-            // insets
             layoutSection.contentInsets.top = topSpacing(for: section)
             layoutSection.contentInsets.bottom = bottomSpacing(for: section)
 
-            // horizontal insets: spacer는 전체폭, 나머지는 20
             switch section {
             case .spacer:
                 layoutSection.contentInsets.leading = 0

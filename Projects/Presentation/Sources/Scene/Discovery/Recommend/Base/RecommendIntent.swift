@@ -36,26 +36,12 @@ struct RecommendState {
 
 extension RecommendState {
     var sectionModels: [RecommendSectionModel] {
-        makeSectionModels(
-            countries: countries,
-            preferredSouvenirs: preferredSouvenirs,
-            uploadSouvenirs: uploadSouvenirs,
-            uploadCountryName: uploadCountryName,
-            isPreferredExpanded: isPreferredExpanded,
-            isUploadExpanded: isUploadExpanded
-        )
+        makeSectionModels()
     }
 }
 
 private extension RecommendState {
-    func makeSectionModels(
-        countries: [CountryChipItem],
-        preferredSouvenirs: [SouvenirCardItem],
-        uploadSouvenirs: [SouvenirCardItem],
-        uploadCountryName: String?,
-        isPreferredExpanded: Bool,
-        isUploadExpanded: Bool
-    ) -> [RecommendSectionModel] {
+    func makeSectionModels() -> [RecommendSectionModel] {
         var models: [RecommendSectionModel] = []
 
         // 1) 선호 카테고리 기반 - chips (항상)

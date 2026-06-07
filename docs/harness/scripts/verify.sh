@@ -61,8 +61,8 @@ echo "=== Souzip verify: $MODE ==="
 echo "=== SwiftFormat lint ==="
 run_tool swiftformat . --config .swiftformat --lint
 
-echo "=== SwiftLint ==="
-run_tool swiftlint lint --config .swiftlint.yml
+echo "=== SwiftLint (strict) ==="
+docs/harness/scripts/swiftlint-strict.sh
 
 echo "=== Tuist generate ==="
 run_tool tuist generate

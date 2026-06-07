@@ -14,6 +14,8 @@
 **Tuist**로 관리되는 iOS 프로젝트입니다. Swift 5.9, iOS 16.0+ 배포 타겟.
 
 ```bash
+mise trust       # 최초 1회 (worktree/클론 경로마다 필요)
+mise install     # swiftformat, swiftlint, tuist 설치
 tuist install    # 외부 의존성 다운로드
 tuist generate   # xcworkspace, xcodeproj 파일 생성
 swiftformat .    # 코드 포맷

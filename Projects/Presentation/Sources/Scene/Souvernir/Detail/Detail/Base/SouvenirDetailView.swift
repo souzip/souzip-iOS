@@ -5,6 +5,7 @@ import Kingfisher
 import SnapKit
 import UIKit
 
+// swiftlint:disable:next type_body_length
 final class SouvenirDetailView: BaseView<SouvenirDetailAction> {
     // MARK: - Types
 

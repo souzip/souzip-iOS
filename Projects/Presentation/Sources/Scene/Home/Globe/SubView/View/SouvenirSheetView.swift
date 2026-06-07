@@ -272,16 +272,16 @@ final class SouvenirSheetView: UIView {
 
     /// 시트를 키운 방향이면 현재 높이 이상 앵커 중 최소(올림), 줄이면 이하 중 최대(내림). 변화가 작으면 가장 가까운 앵커.
     private func snapAfterPanEnded() {
-        let h = currentHeight
-        let delta = h - panStartHeight
+        let height = currentHeight
+        let delta = height - panStartHeight
         let anchors = [minHeight, midHeight, maxHeight].sorted()
 
         let target: CGFloat = if abs(delta) < SnapMetric.directionAmbiguousThreshold {
-            anchors.min { abs($0 - h) < abs($1 - h) } ?? midHeight
+            anchors.min { abs($0 - height) < abs($1 - height) } ?? midHeight
         } else if delta > 0 {
-            anchors.first { $0 >= h - 0.5 } ?? maxHeight
+            anchors.first { $0 >= height - 0.5 } ?? maxHeight
         } else {
-            anchors.last { $0 <= h + 0.5 } ?? minHeight
+            anchors.last { $0 <= height + 0.5 } ?? minHeight
         }
 
         setHeight(clamp(target, minHeight, maxHeight), animated: true)
@@ -311,7 +311,7 @@ final class SouvenirSheetView: UIView {
 
     // MARK: - Utils
 
-    private func clamp(_ x: CGFloat, _ a: CGFloat, _ b: CGFloat) -> CGFloat {
-        min(max(x, a), b)
+    private func clamp(_ value: CGFloat, _ lowerBound: CGFloat, _ upperBound: CGFloat) -> CGFloat {
+        min(max(value, lowerBound), upperBound)
     }
 }

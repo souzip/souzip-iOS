@@ -34,7 +34,13 @@ final class SouvenirFormViewController: BaseViewController<
             .onNext(contentView.renderTitle)
 
         observeState()
-            .map { ($0.mode, $0.localPhotos, $0.existingFiles) }
+            .map {
+                SouvenirFormPhotoRenderLine(
+                    mode: $0.mode,
+                    localPhotos: $0.localPhotos,
+                    existingFiles: $0.existingFiles
+                )
+            }
             .onNext(contentView.renderPhotos)
 
         observe(\.name)
@@ -42,7 +48,13 @@ final class SouvenirFormViewController: BaseViewController<
             .onNext(contentView.renderName)
 
         observeState()
-            .map { ($0.address, $0.locationDetail, $0.coordinate != nil) }
+            .map {
+                SouvenirFormAddressRenderLine(
+                    address: $0.address,
+                    locationDetail: $0.locationDetail,
+                    showsPreciseLocationEntry: $0.coordinate != nil
+                )
+            }
             .onNext(contentView.renderAddress)
 
         observeState()

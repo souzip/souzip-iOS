@@ -85,8 +85,8 @@ final class MyCollectionView: BaseView<MyCollectionItem> {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             collectionView.layoutIfNeeded()
-            let h = collectionView.collectionViewLayout.collectionViewContentSize.height
-            heightConstraint?.update(offset: h)
+            let height = collectionView.collectionViewLayout.collectionViewContentSize.height
+            heightConstraint?.update(offset: height)
             superview?.layoutIfNeeded()
         }
     }

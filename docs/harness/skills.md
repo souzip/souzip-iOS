@@ -12,7 +12,7 @@ Souzip workflow를 반복 실행하기 위한 Codex project skills입니다.
 | `souzip-jira-story` | active Story 확정 뒤 Jira Epic·Story 초안·생성·연결이 필요할 때 | 초안 승인·명시 지시 없이 Jira 생성하지 않기 |
 | `souzip-plan` | 선택된 Story를 한 세션 Plan으로 나눌 때 | “구현해” 전 코드 수정하지 않기 |
 | `souzip-verify` | Plan 또는 Story 검증과 실패 분류가 필요할 때 | 방금 실행한 검증 없이 완료라고 말하지 않기 |
-| `souzip-commit` | 사용자가 “커밋해”라고 했을 때 | 기존 커밋 컨벤션을 벗어나지 않기 |
+| `souzip-commit` | 사용자가 “커밋해”라고 했을 때 | 기존 커밋 컨벤션을 벗어나지 않기 · `docs/lint-format-changelog.html` 등 [로컬 전용 파일](../../.codex/skills/souzip-commit/SKILL.md#never-commit-로컬-전용) stage·commit 금지 |
 | `souzip-pr` | 사용자가 “PR”이라고 했을 때 | 기존 PR 템플릿과 develop 변경 파일 확인을 건너뛰지 않기 |
 
 ## 위치

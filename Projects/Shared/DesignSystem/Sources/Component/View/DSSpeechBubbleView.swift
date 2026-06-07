@@ -142,28 +142,28 @@ private extension DSSpeechBubbleView {
         let midX = rect.midX
         let tailLeft = midX - Metric.tailWidth / 2
         let tailRight = midX + Metric.tailWidth / 2
-        let r = min(Metric.cornerRadius, bodyHeight / 2)
+        let radius = min(Metric.cornerRadius, bodyHeight / 2)
 
         let path = UIBezierPath()
 
         // 상단 좌측 → 상단 우측 (top edge)
-        path.move(to: CGPoint(x: r, y: 0))
-        path.addLine(to: CGPoint(x: rect.maxX - r, y: 0))
+        path.move(to: CGPoint(x: radius, y: 0))
+        path.addLine(to: CGPoint(x: rect.maxX - radius, y: 0))
 
         // 상단 우측 모서리 (top-right corner)
         path.addArc(
-            withCenter: CGPoint(x: rect.maxX - r, y: r),
-            radius: r,
+            withCenter: CGPoint(x: rect.maxX - radius, y: radius),
+            radius: radius,
             startAngle: -.pi / 2,
             endAngle: 0,
             clockwise: true
         )
 
         // 우측 edge → 하단 우측 모서리 (right edge + bottom-right corner)
-        path.addLine(to: CGPoint(x: rect.maxX, y: bodyHeight - r))
+        path.addLine(to: CGPoint(x: rect.maxX, y: bodyHeight - radius))
         path.addArc(
-            withCenter: CGPoint(x: rect.maxX - r, y: bodyHeight - r),
-            radius: r,
+            withCenter: CGPoint(x: rect.maxX - radius, y: bodyHeight - radius),
+            radius: radius,
             startAngle: 0,
             endAngle: .pi / 2,
             clockwise: true
@@ -175,20 +175,20 @@ private extension DSSpeechBubbleView {
         path.addLine(to: CGPoint(x: tailLeft, y: bodyHeight))
 
         // 하단 좌측 모서리 (bottom-left corner)
-        path.addLine(to: CGPoint(x: r, y: bodyHeight))
+        path.addLine(to: CGPoint(x: radius, y: bodyHeight))
         path.addArc(
-            withCenter: CGPoint(x: r, y: bodyHeight - r),
-            radius: r,
+            withCenter: CGPoint(x: radius, y: bodyHeight - radius),
+            radius: radius,
             startAngle: .pi / 2,
             endAngle: .pi,
             clockwise: true
         )
 
         // 좌측 edge → 상단 좌측 모서리 (left edge + top-left corner)
-        path.addLine(to: CGPoint(x: 0, y: r))
+        path.addLine(to: CGPoint(x: 0, y: radius))
         path.addArc(
-            withCenter: CGPoint(x: r, y: r),
-            radius: r,
+            withCenter: CGPoint(x: radius, y: radius),
+            radius: radius,
             startAngle: .pi,
             endAngle: -.pi / 2,
             clockwise: true

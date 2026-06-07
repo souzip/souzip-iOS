@@ -1,0 +1,70 @@
+name: Verify
+
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Trust and install tools
+        run: |
+          mise trust
+          mise install
+
+      - name: SwiftFormat lint
+        run: swiftformat . --config .swiftformat --lint
+
+      - name: SwiftLint (strict)
+        run: docs/harness/scripts/swiftlint-strict.sh
+
+  build:
+    name: Build
+    needs: lint
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Trust and install tools
+        run: |
+          mise trust
+          mise install
+
+      - name: Prepare CI config
+        env:
+          DEBUG_XCCONFIG: ${{ secrets.SOUZIP_DEBUG_XCCONFIG }}
+          RELEASE_XCCONFIG: ${{ secrets.SOUZIP_RELEASE_XCCONFIG }}
+          GOOGLE_SERVICE_DEBUG: ${{ secrets.SOUZIP_GOOGLE_SERVICE_DEBUG }}
+          GOOGLE_SERVICE_RELEASE: ${{ secrets.SOUZIP_GOOGLE_SERVICE_RELEASE }}
+        run: docs/harness/scripts/prepare-ci-config.sh
+
+      - name: Tuist install and generate
+        run: |
+          tuist install
+          tuist generate
+
+      - name: Tuist build
+        run: tuist build "수집-Debug"
+
+      - name: Tuist test
+        run: tuist test --skip-ui-tests --no-upload

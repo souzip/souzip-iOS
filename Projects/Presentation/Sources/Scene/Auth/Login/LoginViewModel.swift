@@ -36,12 +36,12 @@ final class LoginViewModel: BaseViewModel<
         case let .tapLogin(provider):
             Task {
                 emit(.loading(true))
-                await Login(provider)
+                await performLogin(provider)
                 emit(.loading(false))
             }
 
         case .tapGuest:
-            Task { await Login(nil) }
+            Task { await performLogin(nil) }
         }
     }
 
@@ -52,7 +52,7 @@ final class LoginViewModel: BaseViewModel<
         mutate { $0.recentAuthProvider = provider }
     }
 
-    private func Login(_ provider: AuthProvider?) async {
+    private func performLogin(_ provider: AuthProvider?) async {
         do {
             let result = try await login.execute(provider: provider)
             switch result {

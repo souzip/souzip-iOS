@@ -5,6 +5,7 @@ import RxSwift
 import SnapKit
 import UIKit
 
+// swiftlint:disable:next type_body_length
 final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
     // MARK: - Types
 
@@ -354,8 +355,8 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
     /// 리스트 순 높이(섹션 인셋 포함), `createLayout`과 동일 규칙
     private func intrinsicListHeight(itemCount: Int) -> CGFloat {
         guard itemCount > 0 else { return 0 }
-        let n = CGFloat(itemCount)
-        return n * SheetMetric.cellHeight
+        let rowCount = CGFloat(itemCount)
+        return rowCount * SheetMetric.cellHeight
             + CGFloat(max(0, itemCount - 1)) * SheetMetric.interItemSpacing
     }
 
@@ -429,16 +430,16 @@ final class LocationSearchResultView: BaseView<LocationSearchResultAction> {
     /// 팬 종료 시: 시트를 키운 방향이면 현재 높이 이상인 앵커 중 가장 낮은 값(올림), 줄인 방향이면 이하 중 가장 높은 값(내림).
     /// 변화량이 작으면 가장 가까운 앵커(기존 nearest).
     private func snapSheetAfterPanEnded() {
-        let h = currentSheetHeight
-        let delta = h - panStartHeight
+        let height = currentSheetHeight
+        let delta = height - panStartHeight
         let anchors = [SheetMetric.minHeight, midHeight, maxHeight].sorted()
 
         let target: CGFloat = if abs(delta) < SheetMetric.sheetSnapDirectionAmbiguousThreshold {
-            anchors.min { abs($0 - h) < abs($1 - h) } ?? midHeight
+            anchors.min { abs($0 - height) < abs($1 - height) } ?? midHeight
         } else if delta > 0 {
-            anchors.first { $0 >= h - 0.5 } ?? maxHeight
+            anchors.first { $0 >= height - 0.5 } ?? maxHeight
         } else {
-            anchors.last { $0 <= h + 0.5 } ?? SheetMetric.minHeight
+            anchors.last { $0 <= height + 0.5 } ?? SheetMetric.minHeight
         }
 
         let clamped = max(SheetMetric.minHeight, min(target, maxHeight))

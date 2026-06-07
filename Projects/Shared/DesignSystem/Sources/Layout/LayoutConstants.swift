@@ -40,7 +40,7 @@ public enum LayoutConstants {
     /// 공통 크기 값
     public enum Size {
         /// 아이콘 크기
-        public enum Icon {
+        public enum Icon { // swiftlint:disable:this nesting
             public static let xSmall: CGFloat = 16
             public static let small: CGFloat = 20
             public static let medium: CGFloat = 24
@@ -49,7 +49,7 @@ public enum LayoutConstants {
         }
 
         /// 버튼 높이
-        public enum Button {
+        public enum Button { // swiftlint:disable:this nesting
             public static let small: CGFloat = 40
             public static let medium: CGFloat = 48
             public static let large: CGFloat = 56

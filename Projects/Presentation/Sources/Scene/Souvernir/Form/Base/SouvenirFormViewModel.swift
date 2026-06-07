@@ -14,25 +14,25 @@ final class SouvenirFormViewModel: BaseViewModel<
 > {
     // MARK: - UseCase
 
-    private let loadCountryDetail: LoadCountryDetailUseCase
-    private let loadLocationAddress: LoadLocationAddressUseCase
-    private let createSouvenir: CreateSouvenirUseCase
-    private let updateSouvenir: UpdateSouvenirUseCase
-    private let userSouvenirInvalidationStore: UserSouvenirInvalidationStore
+    let loadCountryDetail: LoadCountryDetailUseCase
+    let loadLocationAddress: LoadLocationAddressUseCase
+    let createSouvenir: CreateSouvenirUseCase
+    let updateSouvenir: UpdateSouvenirUseCase
+    let userSouvenirInvalidationStore: UserSouvenirInvalidationStore
 
-    private let onResult: ((SouvenirDetail) -> Void)?
+    let onResult: ((SouvenirDetail) -> Void)?
 
     /// 검색화면 재진입 시 유지할 마지막 검색어
-    private var locationSearchQuery: String = ""
+    var locationSearchQuery: String = ""
 
     /// 업로드 퍼널 이벤트 중복 발송 방지
-    private var firedUploadEvents: Set<String> = []
+    var firedUploadEvents: Set<String> = []
 
     /// 폼에 입력 이벤트가 한 번이라도 발생했는지 여부
-    private var isDirty: Bool = false
+    var isDirty: Bool = false
 
     /// 역지오코딩 요청 세대 — 늦게 도착한 응답이 최신 좌표를 덮어쓰지 않게 함
-    private var addressLookupGeneration: UInt64 = 0
+    var addressLookupGeneration: UInt64 = 0
 
     // MARK: - Life Cycle
 
@@ -67,417 +67,35 @@ final class SouvenirFormViewModel: BaseViewModel<
     // MARK: - Action Handling
 
     override func handleAction(_ action: Action) {
-        switch action {
-        case .tapClose, .confirmClose, .tapSubmit,
-             .tapPhotoAdd, .tapAddress, .tapPreciseLocation, .tapCategory:
-            break
-        default:
-            isDirty = true
-        }
+        markDirtyIfNeeded(for: action)
 
         switch action {
-        case .tapClose:
-            if isDirty {
-                emit(.showConfirmClose)
-            } else {
-                navigate(to: .dismiss)
-                navigate(to: .finish)
-            }
-
-        case .confirmClose:
-            navigate(to: .dismiss)
-            navigate(to: .finish)
-
-        case .tapPhotoAdd:
-            guard case .create = state.value.mode else { return }
-            emit(.showImagePicker)
-
-        case let .addLocalPhotos(photos):
-            handleAddLocalPhotos(photos)
-
-        case let .removeLocalPhoto(id):
-            handleRemoveLocalPhoto(id)
-
+        case .tapClose, .confirmClose:
+            handleCloseAction(action)
+        case .tapPhotoAdd, .addLocalPhotos, .removeLocalPhoto:
+            handlePhotoAction(action)
         case let .updateName(text):
-            let wasEmpty = state.value.name.isEmpty
-            mutate { state in
-                if text.count <= 30 {
-                    state.name = text
-                }
-            }
-            if wasEmpty, !text.isEmpty {
-                trackUploadOnce(.upload(.titleAdded))
-            }
-
+            handleUpdateName(text)
         case .tapPreciseLocation:
-            guard let coordinate = state.value.coordinate else { return }
-            navigate(to: .locationPicker(
-                initialCoordinate: coordinate.toCLLocationCoordinate2D,
-                onComplete: { [weak self] clCoordinate, detail in
-                    self?.handleAction(.updateAddress(
-                        clCoordinate.toCoordinate,
-                        detail
-                    ))
-                }
-            ))
-
-        // 주소 입력 탭 처리
+            handleTapPreciseLocation()
         case .tapAddress:
-            navigate(to: .search(.init(
-                initialQuery: locationSearchQuery,
-                mode: .store,
-                onResult: { [weak self] items, selectedItem, searchText in
-                    self?.locationSearchQuery = searchText
-                    let orderedItems = Self.searchResultsPlacingSelectedFirst(
-                        items,
-                        selected: selectedItem
-                    )
-                    self?.navigate(
-                        to: .locationSearchResult(
-                            items: orderedItems,
-                            searchText: searchText,
-                            centerCoordinate: selectedItem.coordinate,
-                            onConfirm: { [weak self] confirmedItem in
-                                // 상세주소는 피커에서만 입력; 검색 결과 이름은 locationDetail에 넣지 않음
-                                self?.handleAction(.updateAddress(
-                                    confirmedItem.coordinate.toCoordinate,
-                                    ""
-                                ))
-                            }
-                        )
-                    )
-                }
-            )))
-
+            handleTapAddress()
         case let .updateAddress(coordinate, detail):
-            mutate { state in
-                state.coordinate = coordinate
-                state.locationDetail = detail
-            }
-            trackUploadOnce(.upload(.locationSet))
-
-            addressLookupGeneration += 1
-            let generation = addressLookupGeneration
-            let lookupCoordinate = coordinate
-            Task { [weak self] in
-                await self?.resolveAddressIfLatest(
-                    coordinate: lookupCoordinate,
-                    generation: generation
-                )
-            }
-
+            handleUpdateAddress(coordinate: coordinate, detail: detail)
         case let .updateLocalPrice(text):
             handleUpdatePrice(text)
-
         case let .updateCurrencySymbol(symbol):
-            mutate { state in
-                state.currencySymbol = symbol
-            }
-
+            handleUpdateCurrencySymbol(symbol)
         case let .selectPurpose(purpose):
-            mutate { state in
-                state.purpose = purpose
-            }
-            trackUploadOnce(.upload(.targetAdded))
-
+            handleSelectPurpose(purpose)
         case .tapCategory:
-            let category = state.value.category
-
-            navigate(to: .categoryPicker(
-                initailCategory: category
-            ) { [weak self] selected in
-                self?.handleAction(.selectCategory(selected))
-            })
-
+            handleTapCategory()
         case let .selectCategory(category):
-            mutate { state in
-                state.category = category
-            }
-            trackUploadOnce(.upload(.categoryAdded))
-
+            handleSelectCategory(category)
         case let .updateDescription(text):
             handleUpdateDescription(text)
-
         case .tapSubmit:
             handleSubmit()
-        }
-    }
-
-    // MARK: - Private
-
-    /// 옵션 B: `countryCode`가 있으면 국가 메타 `currency.symbol`로 `localCurrencySymbol`을 갱신한다. 실패 시 `SouvenirFormState` 초기값 유지(편집: `detail.price.localCurrencySymbol` → `$`, 생성: `$`).
-    private func applyLocalCurrencySymbolFromCountryIfAvailable(countryCode: String) {
-        guard !countryCode.isEmpty else { return }
-        do {
-            let country = try loadCountryDetail.execute(countryCode: countryCode)
-            mutate { $0.localCurrencySymbol = country.currency.symbol }
-        } catch {
-            // 국가 조회 실패 — 폴백은 `SouvenirFormState` 편집 초기화에 위임. 로그는 네트워크/번들 계층 정책에 따름.
-        }
-    }
-
-    private func handleAddLocalPhotos(_ photos: [LocalPhoto]) {
-        let wasEmpty = state.value.localPhotos.isEmpty
-        mutate { state in
-            guard case .create = state.mode else { return }
-            let remaining = max(0, 5 - state.localPhotos.count)
-            state.localPhotos.append(contentsOf: photos.prefix(remaining))
-        }
-        if wasEmpty, !state.value.localPhotos.isEmpty {
-            trackUploadOnce(.upload(.photoAdded))
-        }
-    }
-
-    private func handleRemoveLocalPhoto(_ id: UUID) {
-        mutate { state in
-            guard case .create = state.mode else { return }
-            state.localPhotos.removeAll { $0.id == id }
-        }
-    }
-
-    private func resolveAddressIfLatest(coordinate: Coordinate, generation: UInt64) async {
-        do {
-            let locationAddress = try await loadLocationAddress.execute(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
-            )
-
-            let country = try loadCountryDetail.execute(countryCode: locationAddress.countryCode)
-            await MainActor.run { [weak self] in
-                guard let self else { return }
-                guard generation == addressLookupGeneration else { return }
-                guard state.value.coordinate == coordinate else { return }
-                mutate {
-                    $0.address = locationAddress.address
-                    $0.currencySymbol = country.currency.symbol
-                    $0.localCurrencySymbol = country.currency.symbol
-                    $0.countryCode = locationAddress.countryCode
-                }
-            }
-        } catch {
-            await MainActor.run { [weak self] in
-                guard let self else { return }
-                guard generation == addressLookupGeneration else { return }
-                guard state.value.coordinate == coordinate else { return }
-                emit(.showError(error.localizedDescription))
-            }
-        }
-    }
-
-    private func handleUpdatePrice(_ text: String) {
-        let wasEmpty = state.value.price.isEmpty
-        let filtered = text.filter(\.isNumber)
-        mutate { state in
-            state.price = filtered
-        }
-        if wasEmpty, !filtered.isEmpty {
-            trackUploadOnce(.upload(.priceAdded))
-        }
-    }
-
-    private func handleUpdateDescription(_ text: String) {
-        let wasEmpty = state.value.description.isEmpty
-        mutate { state in
-            if text.count <= 2000 {
-                state.description = text
-            }
-        }
-        if wasEmpty, !text.isEmpty {
-            trackUploadOnce(.upload(.introduceAdded))
-        }
-    }
-
-    private func handleSubmit() {
-        guard let input = makeSubmitInput() else {
-            emit(.showError("필수 정보를 모두 입력해주세요."))
-            return
-        }
-
-        switch state.value.mode {
-        case .create:
-            trackUploadOnce(.upload(.complete))
-            handleCreate(input: input)
-
-        case let .edit(original):
-            handleUpdate(id: original.id, input: input)
-        }
-    }
-
-    // MARK: - Analytics
-
-    /// 업로드 퍼널 이벤트를 폼 세션 당 1회만 발송
-    private func trackUploadOnce(_ event: AnalyticsEvent) {
-        guard case .create = state.value.mode else { return }
-        guard !firedUploadEvents.contains(event.eventType) else { return }
-        firedUploadEvents.insert(event.eventType)
-        AnalyticsManager.shared.track(event: event)
-    }
-
-    // MARK: - Private Helpers
-
-    private func makeSubmitInput() -> SouvenirInput? {
-        let currentState = state.value
-
-        guard let coordinate = currentState.coordinate,
-              let category = currentState.category
-        else { return nil }
-
-        let price: Int? = currentState.price.isEmpty ? nil : Int(currentState.price)
-        let currencyCode: String? = if currentState.currencySymbol == "₩" {
-            "KRW"
-        } else {
-            try? loadCountryDetail
-                .execute(countryCode: currentState.countryCode)
-                .currency
-                .code
-        }
-
-        return SouvenirInput(
-            name: currentState.name,
-            price: price,
-            currencyCode: currencyCode,
-            description: currentState.description,
-            address: currentState.address,
-            locationDetail: currentState.locationDetail.isEmpty ? nil : currentState.locationDetail,
-            coordinate: coordinate,
-            category: category,
-            purpose: currentState.purpose,
-            countryCode: currentState.countryCode
-        )
-    }
-
-    private func handleCreate(input: SouvenirInput) {
-        Task {
-            do {
-                emit(.loading(true))
-                let imageData = try convertPhotosToData(state.value.localPhotos)
-                _ = try await createSouvenir.execute(
-                    input: input,
-                    images: imageData
-                )
-                userSouvenirInvalidationStore.notifyUserSouvenirsChanged()
-                emit(.loading(false))
-                navigate(to: .dismiss)
-            } catch {
-                emit(.loading(false))
-                emit(.showError(error.localizedDescription))
-            }
-        }
-    }
-
-    private func handleUpdate(id: Int, input: SouvenirInput) {
-        Task {
-            do {
-                emit(.loading(true))
-                let souvenirDetail = try await updateSouvenir.execute(id: id, input: input)
-                userSouvenirInvalidationStore.notifyUserSouvenirsChanged()
-                onResult?(souvenirDetail)
-                emit(.loading(false))
-                navigate(to: .dismiss)
-            } catch {
-                emit(.loading(false))
-                emit(.showError(error.localizedDescription))
-            }
-        }
-    }
-
-    private func convertPhotosToData(_ photos: [LocalPhoto]) throws -> [Data] {
-        var results: [Data] = []
-        results.reserveCapacity(photos.count)
-
-        for photo in photos {
-            try autoreleasepool {
-                guard FileManager.default.fileExists(atPath: photo.url.path) else {
-                    throw ImageProcessingError.invalidSource
-                }
-
-                guard let jpegData = resizeImageFromFile(at: photo.url, maxDimension: 3000, compressionQuality: 0.75) else {
-                    throw ImageProcessingError.jpegConversionFailed
-                }
-
-                results.append(jpegData)
-            }
-        }
-
-        return results
-    }
-
-    private func resizeImageFromFile(
-        at url: URL,
-        maxDimension: CGFloat,
-        compressionQuality: CGFloat
-    ) -> Data? {
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else {
-            return nil
-        }
-
-        guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
-              let pixelWidth = properties[kCGImagePropertyPixelWidth] as? Int,
-              let pixelHeight = properties[kCGImagePropertyPixelHeight] as? Int else {
-            return nil
-        }
-
-        let needsResize = pixelWidth > Int(maxDimension) || pixelHeight > Int(maxDimension)
-
-        let cgImage: CGImage?
-
-        if needsResize {
-            let options: [CFString: Any] = [
-                kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: maxDimension,
-                kCGImageSourceShouldCacheImmediately: true,
-            ]
-            cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
-        } else {
-            let options: [CFString: Any] = [
-                kCGImageSourceCreateThumbnailFromImageAlways: true,
-                kCGImageSourceCreateThumbnailWithTransform: true,
-                kCGImageSourceThumbnailMaxPixelSize: max(pixelWidth, pixelHeight),
-                kCGImageSourceShouldCacheImmediately: true,
-            ]
-            cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary)
-        }
-
-        guard let finalCGImage = cgImage else {
-            return nil
-        }
-
-        let uiImage = UIImage(cgImage: finalCGImage)
-        return uiImage.jpegData(compressionQuality: compressionQuality)
-    }
-}
-
-// MARK: - 위치 검색 결과 순서
-
-private extension SouvenirFormViewModel {
-    /// 탭한 항목만 맨 앞으로, 나머지는 기존 상대 순서 유지
-    static func searchResultsPlacingSelectedFirst(
-        _ items: [SearchResultItem],
-        selected: SearchResultItem
-    ) -> [SearchResultItem] {
-        guard let index = items.firstIndex(where: { $0.id == selected.id }) else {
-            return items
-        }
-        var rest = items
-        let chosen = rest.remove(at: index)
-        return [chosen] + rest
-    }
-}
-
-enum ImageProcessingError: LocalizedError {
-    case invalidSource
-    case thumbnailCreationFailed
-    case jpegConversionFailed
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidSource:
-            "사진을 불러오는 데 실패했어요."
-        case .thumbnailCreationFailed:
-            "사진을 처리하는 중 문제가 발생했어요."
-        case .jpegConversionFailed:
-            "사진을 저장 형식으로 변환하지 못했어요."
         }
     }
 }

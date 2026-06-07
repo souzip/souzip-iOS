@@ -66,15 +66,7 @@ final class GlobeViewModel: BaseViewModel<
             handleSouvenirDetailSelection(item)
 
         case .wantToUploadSouvenir:
-            Task {
-                await authSessionStore.refreshSession()
-                let isLogin = authSessionStore.isFullyAuthenticatedValue
-                if isLogin {
-                    navigate(to: .souvenirRoute(.create))
-                } else {
-                    navigate(to: .loginBottomSheet)
-                }
-            }
+            handleUploadSouvenirTap()
 
         case .wantToClose:
             handleCloseTap()
@@ -458,6 +450,18 @@ private extension GlobeViewModel {
 // MARK: - Navigation
 
 private extension GlobeViewModel {
+    func handleUploadSouvenirTap() {
+        Task {
+            await authSessionStore.refreshSession()
+            let isLogin = authSessionStore.isFullyAuthenticatedValue
+            if isLogin {
+                navigate(to: .souvenirRoute(.create))
+            } else {
+                navigate(to: .loginBottomSheet)
+            }
+        }
+    }
+
     func handleCloseTap() {
         transitionToGlobe()
     }
