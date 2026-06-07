@@ -27,7 +27,10 @@ public extension DefaultDomainFactory {
 
     func makeLogoutUseCase() -> LogoutUseCase {
         let authRepo = factory.makeAuthRepository()
-        return DefaultLogoutUseCase(authRepo: authRepo)
+        return DefaultLogoutUseCase(
+            authRepo: authRepo,
+            deactivateFCMToken: makeDeactivateFCMTokenUseCase()
+        )
     }
 
     func makeCheckFullAuthenticationUseCase() -> CheckFullAuthenticationUseCase {

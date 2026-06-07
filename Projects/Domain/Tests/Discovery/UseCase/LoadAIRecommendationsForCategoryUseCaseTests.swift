@@ -26,7 +26,7 @@ final class LoadAIRecommendationsForCategoryUseCaseTests: XCTestCase {
         let result = try await sut.execute()
 
         XCTAssertEqual(result, expected)
-        XCTAssertEqual(mockRepository.loadAIRecommendationsForCategoryCallCount, 1)
+        XCTAssertEqual(mockRepository.aiRecCategoryCallCount, 1)
     }
 
     func test_조회실패_에러전파() async {
@@ -40,6 +40,6 @@ final class LoadAIRecommendationsForCategoryUseCaseTests: XCTestCase {
             XCTAssertEqual(error as? MockDiscoveryError, .failed)
         }
 
-        XCTAssertEqual(mockRepository.loadAIRecommendationsForCategoryCallCount, 1)
+        XCTAssertEqual(mockRepository.aiRecCategoryCallCount, 1)
     }
 }

@@ -15,8 +15,8 @@ final class MockDiscoveryRepository: DiscoveryRepository {
     private(set) var loadCountrySouvenirsCallCount = 0
     private(set) var loadTopSouvenirsByCategoryCallCount = 0
     private(set) var lastCategory: SouvenirCategory?
-    private(set) var loadAIRecommendationsForCategoryCallCount = 0
-    private(set) var loadAIRecommendationsForUploadCallCount = 0
+    private(set) var aiRecCategoryCallCount = 0
+    private(set) var aiRecUploadCallCount = 0
 
     func loadCountrySouvenirs() async throws -> [CountryTopSouvenir] {
         loadCountrySouvenirsCallCount += 1
@@ -40,7 +40,7 @@ final class MockDiscoveryRepository: DiscoveryRepository {
     }
 
     func loadAIRecommendationsForCategory() async throws -> [CatalogSouvenir] {
-        loadAIRecommendationsForCategoryCallCount += 1
+        aiRecCategoryCallCount += 1
 
         if let loadAIRecommendationsForCategoryError {
             throw loadAIRecommendationsForCategoryError
@@ -50,7 +50,7 @@ final class MockDiscoveryRepository: DiscoveryRepository {
     }
 
     func loadAIRecommendationsForUpload() async throws -> [CatalogSouvenir] {
-        loadAIRecommendationsForUploadCallCount += 1
+        aiRecUploadCallCount += 1
 
         if let loadAIRecommendationsForUploadError {
             throw loadAIRecommendationsForUploadError
