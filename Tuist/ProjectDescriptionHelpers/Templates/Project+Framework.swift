@@ -5,12 +5,13 @@ public extension Project {
         _ module: Module,
         hasResources: Bool = false,
         hasTests: Bool = false,
-        additionalScripts: [TargetScript] = []
+        additionalScripts: [TargetScript] = [],
+        additionalBaseSettings: SettingsDictionary = [:]
     ) -> Project {
         let dependencies = ModuleDependencies.dependencies(for: module)
         let resources: ResourceFileElements? = hasResources ? ["Resources/**"] : nil
         let scripts = BuildScripts.framework + additionalScripts
-
+        let baseSettings = DefaultSettings.base.merging(additionalBaseSettings)
         var targets: [Target] = [
             .target(
                 name: module.rawValue,
@@ -22,7 +23,15 @@ public extension Project {
                 sources: ["Sources/**"],
                 resources: resources,
                 scripts: scripts,
-                dependencies: dependencies
+                dependencies: dependencies,
+                settings: additionalBaseSettings.isEmpty
+                    ? nil
+                    : .settings(
+                        base: baseSettings,
+                        configurations: DefaultSettings.frameworkConfigurations(
+                            merging: additionalBaseSettings
+                        )
+                    )
             ),
         ]
 
@@ -39,7 +48,7 @@ public extension Project {
             name: module.rawValue,
             organizationName: Environment.organizationName,
             settings: .settings(
-                base: DefaultSettings.base,
+                base: baseSettings,
                 configurations: DefaultSettings.configurations()
             ),
             targets: targets

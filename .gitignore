@@ -31,6 +31,7 @@ Package.resolved
 # Config files
 Config/*.xcconfig
 !Config/Example.xcconfig
+Config/GoogleService-Info*.plist
 
 # System files
 .DS_Store

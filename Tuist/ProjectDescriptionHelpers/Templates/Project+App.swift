@@ -25,7 +25,6 @@ public extension Project {
                     infoPlist: infoPlist ?? DefaultInfoPlist.app,
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
-                    entitlements: .file(path: .relativeToRoot("Projects/App/App.entitlements")),
                     scripts: scripts,
                     dependencies: dependencies,
                     settings: .settings(

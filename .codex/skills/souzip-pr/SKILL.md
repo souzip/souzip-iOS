@@ -37,6 +37,9 @@ Use this skill only when the user explicitly asks for a PR.
    - Jira link
 7. Push only the intended Story branch when needed for PR creation.
 8. Create the PR only after readiness checks pass.
+9. Set PR metadata immediately after creation:
+   - assignee: current user (`gh pr edit --add-assignee @me`)
+   - label: pick **one** from the allowed set below
 
 ## PR Title
 
@@ -58,6 +61,32 @@ Use the existing GitHub PR template:
 Write the Goal and Plan slice as a short summary only.
 Actual Goal, Story, and Plan documents stay local under `docs/goals/`.
 
+## PR Labels
+
+Use **only** these GitHub labels (same names as commit types):
+
+- `feat`
+- `fix`
+- `chore`
+- `refactor`
+- `docs`
+- `test`
+
+Pick one label per PR:
+
+1. Story PR with user-facing change → `feat` (even if the branch has `chore` setup commits)
+2. Bugfix Story → `fix`
+3. Docs-only Story → `docs`
+4. Test-only Story → `test`
+5. Structure-only Story with no behavior change → `refactor`
+6. Tooling, CI, harness-only Story → `chore`
+
+When unsure, prefer the Story intent over the majority commit type.
+
+```bash
+gh pr edit <number> --add-assignee @me --add-label <label>
+```
+
 ## Output
 
 - Story completion status
@@ -66,6 +95,7 @@ Actual Goal, Story, and Plan documents stay local under `docs/goals/`.
 - PR body
 - Push result when a branch push was needed
 - PR result
+- Assignee and label applied
 
 ## Boundaries
 

@@ -5,6 +5,7 @@ import UIKit
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     private var coordinator: RootCoordinator?
+    private let pushNotificationRegistrar = PushNotificationRegistrar()
 
     func scene(
         _ scene: UIScene,
@@ -14,6 +15,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let config = AppConfiguration()
+        pushNotificationRegistrar.requestPermissionIfNeeded()
+
         let factory = AppFactory(config: config)
 
         let nav = CommonNavigationController()
@@ -27,6 +30,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = nav
         window?.makeKeyAndVisible()
+    }
+
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        pushNotificationRegistrar.syncRegistrationIfAuthorized()
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

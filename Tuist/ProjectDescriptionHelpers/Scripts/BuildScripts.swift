@@ -33,10 +33,41 @@ public enum BuildScripts {
         basedOnDependencyAnalysis: false
     )
 
+    // MARK: - GoogleService-Info.plist
+
+    public static let copyGoogleServiceInfo: TargetScript = .pre(
+        script: """
+        ROOT_DIR="${SRCROOT}"
+        while [ ! -f "${ROOT_DIR}/Config/Example.xcconfig" ] && [ "${ROOT_DIR}" != "/" ]; do
+            ROOT_DIR=$(dirname "${ROOT_DIR}")
+        done
+
+        if [ "${CONFIGURATION}" = "Debug" ]; then
+            SOURCE_PLIST="${ROOT_DIR}/Config/GoogleService-Info-Debug.plist"
+        else
+            SOURCE_PLIST="${ROOT_DIR}/Config/GoogleService-Info-Release.plist"
+        fi
+
+        DEST_DIR="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+        mkdir -p "${DEST_DIR}"
+
+        if [ ! -f "${SOURCE_PLIST}" ]; then
+            echo "error: Firebase plist not found at ${SOURCE_PLIST}."
+            echo "Place GoogleService-Info-Debug.plist and GoogleService-Info-Release.plist in Config/. See Config/Example.xcconfig."
+            exit 1
+        fi
+
+        cp "${SOURCE_PLIST}" "${DEST_DIR}/GoogleService-Info.plist"
+        echo "Copied ${SOURCE_PLIST} -> ${DEST_DIR}/GoogleService-Info.plist"
+        """,
+        name: "Copy GoogleService-Info.plist",
+        basedOnDependencyAnalysis: false
+    )
+
     // MARK: - Default Collections
 
     public static var app: [TargetScript] {
-        [swiftFormat]
+        [copyGoogleServiceInfo, swiftFormat]
     }
 
     public static var framework: [TargetScript] {
