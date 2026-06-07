@@ -204,6 +204,25 @@ public final class DefaultDataFactory: DataFactory {
         )
     }()
 
+    // MARK: - FCM
+
+    private lazy var cachedDeviceIdStore = DeviceIdStore(
+        keychain: keychainFactory.makeKeychainStorage()
+    )
+
+    private lazy var cachedFCMRepository: FCMRepository = {
+        let authedClient = networkFactory.makeAuthedClient(cachedTokenRefresher)
+
+        let fcmRemoteDataSource = DefaultFCMRemoteDataSource(
+            authed: authedClient
+        )
+
+        return DefaultFCMRepository(
+            fcmRemote: fcmRemoteDataSource,
+            deviceIdStore: cachedDeviceIdStore
+        )
+    }()
+
     // MARK: - Public
 
     public func makeAuthRepository() -> AuthRepository {
@@ -236,5 +255,9 @@ public final class DefaultDataFactory: DataFactory {
 
     public func makeWishlistRepository() -> WishlistRepository {
         cachedWishlistRepository
+    }
+
+    public func makeFCMRepository() -> FCMRepository {
+        cachedFCMRepository
     }
 }
