@@ -4,14 +4,15 @@ import UIKit
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let fcmTokenProvider: FCMTokenProviding = DefaultFCMFactory.shared.makeFCMTokenProvider()
-    private let pushTokenSyncer: PushTokenSyncing = DeferredPushTokenSyncer()
     private var pushTokenSyncTask: Task<Void, Never>?
 
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        AppContainer.bootstrap(config: AppConfiguration())
+
+        let fcmTokenProvider = AppContainer.shared.factory.fcmTokenProvider
         fcmTokenProvider.configure()
         observeFCMTokenUpdates()
         return true
@@ -21,7 +22,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        fcmTokenProvider.setAPNSToken(deviceToken)
+        AppContainer.shared.factory.fcmTokenProvider.setAPNSToken(deviceToken)
     }
 
     func application(
@@ -37,8 +38,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private func observeFCMTokenUpdates() {
         pushTokenSyncTask?.cancel()
 
-        let tokenUpdates = fcmTokenProvider.fcmTokenUpdates()
-        let pushTokenSyncer = pushTokenSyncer
+        let tokenUpdates = AppContainer.shared.factory.fcmTokenProvider.fcmTokenUpdates()
+        let pushTokenSyncer = AppContainer.shared.pushTokenSyncer
 
         pushTokenSyncTask = Task {
             for await token in tokenUpdates {

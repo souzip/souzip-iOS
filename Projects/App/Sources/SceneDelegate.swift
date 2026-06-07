@@ -14,10 +14,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
-        let config = AppConfiguration()
+        AppContainer.bootstrap(config: AppConfiguration())
         pushNotificationRegistrar.requestPermissionIfNeeded()
 
-        let factory = AppFactory(config: config)
+        let factory = AppContainer.shared.factory
 
         let nav = CommonNavigationController()
 
@@ -34,6 +34,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidBecomeActive(_ scene: UIScene) {
         pushNotificationRegistrar.syncRegistrationIfAuthorized()
+
+        Task {
+            await AppContainer.shared.pushTokenSyncer.syncCurrentTokenIfAuthenticated()
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

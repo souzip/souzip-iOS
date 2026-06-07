@@ -53,4 +53,17 @@ final class AppFactory {
         self.dataFactory = dataFactory
         self.domainFactory = domainFactory
     }
+
+    func makePushTokenSyncer() -> PushTokenSyncing {
+        let deviceIdStore = DeviceIdStore(
+            keychain: keychainFactory.makeKeychainStorage()
+        )
+
+        return DefaultPushTokenSyncer(
+            registerFCMToken: domainFactory.makeRegisterFCMTokenUseCase(),
+            checkFullAuthentication: domainFactory.makeCheckFullAuthenticationUseCase(),
+            fcmTokenProvider: fcmTokenProvider,
+            deviceIdStore: deviceIdStore
+        )
+    }
 }
