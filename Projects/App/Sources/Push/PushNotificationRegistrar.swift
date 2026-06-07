@@ -19,11 +19,6 @@ final class PushNotificationRegistrar {
             .badge,
             .sound,
         ]) { granted, error in
-            UserDefaults.standard.set(
-                true,
-                forKey: UserDefaultsKey.hasPresentedPushPermissionPrompt
-            )
-
             if let error {
                 Logger.shared.error(
                     "푸시 권한 요청 실패: \(error.localizedDescription)",
@@ -31,6 +26,11 @@ final class PushNotificationRegistrar {
                 )
                 return
             }
+
+            UserDefaults.standard.set(
+                true,
+                forKey: UserDefaultsKey.hasPresentedPushPermissionPrompt
+            )
 
             Logger.shared.info(
                 "푸시 권한 \(granted ? "허용" : "거부")",
