@@ -25,7 +25,8 @@ docs/harness/scripts/verify.sh plan
 관련 테스트:
 
 ```bash
-# 예: VERIFY_TEST_TARGETS="DomainTests" docs/harness/scripts/verify.sh plan
+# 예: VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan
+# 예: VERIFY_TEST_SCHEME="Domain" VERIFY_TEST_TARGETS="DomainTests/RegisterFCMTokenUseCaseTests" docs/harness/scripts/verify.sh plan
 ```
 
 ## 완료 기준

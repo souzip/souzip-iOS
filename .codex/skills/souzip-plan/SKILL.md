@@ -22,7 +22,8 @@ Use this skill to create a Plan that can be implemented and verified in one sess
 4. List implementation tasks.
 5. Add verification commands:
    - default: `docs/harness/scripts/verify.sh plan`
-   - related tests with `VERIFY_TEST_TARGETS` or `VERIFY_TEST_SCHEME` when applicable
+   - related module tests with `VERIFY_TEST_SCHEME` when applicable, for example `VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan`
+   - use `VERIFY_TEST_TARGETS` only with `VERIFY_TEST_SCHEME` to narrow `xcodebuild -only-testing`
 6. Add stop conditions for structural changes.
 7. Wait for user approval and the explicit "구현해" instruction before code edits.
 

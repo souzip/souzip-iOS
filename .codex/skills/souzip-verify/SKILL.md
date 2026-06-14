@@ -20,7 +20,10 @@ Use this skill to verify completed work and classify failures.
 2. Run the matching verification command when appropriate:
    - Plan: `docs/harness/scripts/verify.sh plan`
    - Story: `docs/harness/scripts/verify.sh story`
-3. Include related tests with `VERIFY_TEST_TARGETS` or `VERIFY_TEST_SCHEME` when applicable.
+3. Include related tests with `VERIFY_TEST_SCHEME` when applicable.
+   - For module tests, prefer `VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan`.
+   - The script routes module schemes to `xcodebuild test` directly because `tuist test` can miss module tests via selective testing or workspace scheme resolution.
+   - Use `VERIFY_TEST_TARGETS` only as an optional `xcodebuild -only-testing` filter together with `VERIFY_TEST_SCHEME`.
 4. Record passed checks, failed checks, skipped checks, and skip reasons.
 5. Classify failures:
    - Plan scope: fix and rerun the same verification.

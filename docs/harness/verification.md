@@ -26,8 +26,28 @@ docs/harness/scripts/verify.sh plan
 관련 테스트는 Plan에 맞게 지정합니다.
 
 ```bash
-VERIFY_TEST_TARGETS="DomainTests" docs/harness/scripts/verify.sh plan
 VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan
+VERIFY_TEST_SCHEME="Domain" VERIFY_TEST_TARGETS="DomainTests/RegisterFCMTokenUseCaseTests" docs/harness/scripts/verify.sh plan
+```
+
+`VERIFY_TEST_SCHEME`이 `Domain`, `Data`, `Presentation`, `Storage`처럼 모듈 프로젝트와 같은 이름이면
+스크립트는 `tuist test` 대신 아래 형태의 `xcodebuild test`를 직접 실행합니다.
+`tuist test`가 선택 테스트나 워크스페이스 스킴 해석 때문에 테스트를 못 잡는 경우가 있어서입니다.
+
+```bash
+xcodebuild test \
+  -project Projects/Domain/Domain.xcodeproj \
+  -scheme Domain \
+  -destination "platform=iOS Simulator,id={available-simulator-id}"
+```
+
+기본 시뮬레이터 대상은 `xcrun simctl list devices available`에서 찾은 첫 번째 사용 가능 기기입니다.
+특정 기기를 고정해야 하면 `VERIFY_TEST_DESTINATION`을 지정합니다.
+
+```bash
+VERIFY_TEST_SCHEME="Domain" \
+VERIFY_TEST_DESTINATION="platform=iOS Simulator,name=iPhone 13 mini" \
+docs/harness/scripts/verify.sh plan
 ```
 
 관련 테스트가 없으면 Plan 문서에 생략 이유를 적습니다.

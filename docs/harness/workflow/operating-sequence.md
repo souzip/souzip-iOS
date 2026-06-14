@@ -105,8 +105,8 @@ docs/harness/scripts/verify.sh plan
 관련 테스트가 있으면 Plan에 맞게 지정합니다.
 
 ```bash
-VERIFY_TEST_TARGETS="DomainTests" docs/harness/scripts/verify.sh plan
 VERIFY_TEST_SCHEME="Domain" docs/harness/scripts/verify.sh plan
+VERIFY_TEST_SCHEME="Domain" VERIFY_TEST_TARGETS="DomainTests/RegisterFCMTokenUseCaseTests" docs/harness/scripts/verify.sh plan
 ```
 
 검증 실패가 Plan 범위 안이면 AI가 고치고 같은 검증을 다시 실행합니다.
